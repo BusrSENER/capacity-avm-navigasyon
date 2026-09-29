@@ -4512,134 +4512,115 @@
       ],
       "amenities": [
         {
-          "id": "amenity_fountain_4",
-          "name": "Capacity Müzikli Gösteri Havuzu",
-          "kind": "fountain",
-          "category": "entertainment",
-          "floor": 4,
-          "floor_name": "Zemin Kat",
-          "cx": 258,
-          "cy": 365,
-          "doors": [
-            "n_4_amenity_fountain_4"
-          ],
-          "doorP": [
-            258,
-            365
-          ],
-          "nav_node": "n_4_amenity_fountain_4",
-          "is_anchor": false
-        },
-        {
           "id": "amenity_info_4",
-          "name": "Ana Danışma & Müşteri Hizmetleri",
+          "name": "Danışma",
           "kind": "info",
           "category": "service",
           "floor": 4,
           "floor_name": "Zemin Kat",
-          "cx": 390,
-          "cy": 365,
+          "cx": 345,
+          "cy": 255,
           "doors": [
             "n_4_amenity_info_4"
           ],
           "doorP": [
-            390,
-            365
+            345,
+            255
           ],
           "nav_node": "n_4_amenity_info_4",
           "is_anchor": false
         },
         {
           "id": "amenity_atm_4",
-          "name": "ATM Banka Alanı (Zemin Kat)",
+          "name": "ATM",
           "kind": "atm",
           "category": "atm",
           "floor": 4,
           "floor_name": "Zemin Kat",
-          "cx": 165,
-          "cy": 365,
+          "cx": 175,
+          "cy": 255,
           "doors": [
             "n_4_amenity_atm_4"
           ],
           "doorP": [
-            165,
-            365
+            175,
+            255
           ],
           "nav_node": "n_4_amenity_atm_4",
           "is_anchor": false
         },
         {
           "id": "amenity_wc_4_n",
-          "name": "Kuzey WC & Engelli",
+          "name": "Kuzey WC",
           "kind": "wc",
           "category": "service",
           "floor": 4,
           "floor_name": "Zemin Kat",
           "cx": 258,
-          "cy": 115,
+          "cy": 105,
           "doors": [
             "n_4_amenity_wc_4_n"
           ],
           "doorP": [
             258,
-            115
+            105
           ],
           "nav_node": "n_4_amenity_wc_4_n",
           "is_anchor": false
         },
         {
           "id": "amenity_wc_4_s",
-          "name": "Güney WC & Bebek Bakım",
+          "name": "Güney WC",
           "kind": "wc",
           "category": "service",
           "floor": 4,
           "floor_name": "Zemin Kat",
           "cx": 258,
-          "cy": 625,
+          "cy": 635,
           "doors": [
             "n_4_amenity_wc_4_s"
           ],
           "doorP": [
             258,
-            625
+            635
           ],
           "nav_node": "n_4_amenity_wc_4_s",
           "is_anchor": false
         },
         {
           "id": "amenity_taxi_4",
-          "name": "Capacity Taksi Durağı",
+          "name": "Taksi",
           "kind": "taxi",
           "category": "service",
           "floor": 4,
           "floor_name": "Zemin Kat",
-          "cx": 490,
-          "cy": 410,
+          "cx": 485,
+          "cy": 440,
           "doors": [
             "n_4_amenity_taxi_4"
           ],
           "doorP": [
-            490,
-            410
+            485,
+            440
           ],
           "nav_node": "n_4_amenity_taxi_4",
           "is_anchor": false
         },
         {
           "id": "amenity_valet_4",
-          "name": "Fişekhane Vale Teslim",
+          "name": "Vale",
           "kind": "valet",
           "category": "valet",
           "floor": 4,
           "floor_name": "Zemin Kat",
-          "cx": 490,
-          "cy": 320,
+          "cx": 485,
+          "cy": 290,
           "doors": [
             "n_4_amenity_valet_4"
           ],
           "doorP": [
-            490,
-            320
+            485,
+            290
           ],
           "nav_node": "n_4_amenity_valet_4",
           "is_anchor": false
@@ -8534,134 +8515,115 @@
       "is_anchor": false
     },
     {
-      "id": "amenity_fountain_4",
-      "name": "Capacity Müzikli Gösteri Havuzu",
-      "kind": "fountain",
-      "category": "entertainment",
-      "floor": 4,
-      "floor_name": "Zemin Kat",
-      "cx": 258,
-      "cy": 365,
-      "doors": [
-        "n_4_amenity_fountain_4"
-      ],
-      "doorP": [
-        258,
-        365
-      ],
-      "nav_node": "n_4_amenity_fountain_4",
-      "is_anchor": false
-    },
-    {
       "id": "amenity_info_4",
-      "name": "Ana Danışma & Müşteri Hizmetleri",
+      "name": "Danışma",
       "kind": "info",
       "category": "service",
       "floor": 4,
       "floor_name": "Zemin Kat",
-      "cx": 390,
-      "cy": 365,
+      "cx": 345,
+      "cy": 255,
       "doors": [
         "n_4_amenity_info_4"
       ],
       "doorP": [
-        390,
-        365
+        345,
+        255
       ],
       "nav_node": "n_4_amenity_info_4",
       "is_anchor": false
     },
     {
       "id": "amenity_atm_4",
-      "name": "ATM Banka Alanı (Zemin Kat)",
+      "name": "ATM",
       "kind": "atm",
       "category": "atm",
       "floor": 4,
       "floor_name": "Zemin Kat",
-      "cx": 165,
-      "cy": 365,
+      "cx": 175,
+      "cy": 255,
       "doors": [
         "n_4_amenity_atm_4"
       ],
       "doorP": [
-        165,
-        365
+        175,
+        255
       ],
       "nav_node": "n_4_amenity_atm_4",
       "is_anchor": false
     },
     {
       "id": "amenity_wc_4_n",
-      "name": "Kuzey WC & Engelli",
+      "name": "Kuzey WC",
       "kind": "wc",
       "category": "service",
       "floor": 4,
       "floor_name": "Zemin Kat",
       "cx": 258,
-      "cy": 115,
+      "cy": 105,
       "doors": [
         "n_4_amenity_wc_4_n"
       ],
       "doorP": [
         258,
-        115
+        105
       ],
       "nav_node": "n_4_amenity_wc_4_n",
       "is_anchor": false
     },
     {
       "id": "amenity_wc_4_s",
-      "name": "Güney WC & Bebek Bakım",
+      "name": "Güney WC",
       "kind": "wc",
       "category": "service",
       "floor": 4,
       "floor_name": "Zemin Kat",
       "cx": 258,
-      "cy": 625,
+      "cy": 635,
       "doors": [
         "n_4_amenity_wc_4_s"
       ],
       "doorP": [
         258,
-        625
+        635
       ],
       "nav_node": "n_4_amenity_wc_4_s",
       "is_anchor": false
     },
     {
       "id": "amenity_taxi_4",
-      "name": "Capacity Taksi Durağı",
+      "name": "Taksi",
       "kind": "taxi",
       "category": "service",
       "floor": 4,
       "floor_name": "Zemin Kat",
-      "cx": 490,
-      "cy": 410,
+      "cx": 485,
+      "cy": 440,
       "doors": [
         "n_4_amenity_taxi_4"
       ],
       "doorP": [
-        490,
-        410
+        485,
+        440
       ],
       "nav_node": "n_4_amenity_taxi_4",
       "is_anchor": false
     },
     {
       "id": "amenity_valet_4",
-      "name": "Fişekhane Vale Teslim",
+      "name": "Vale",
       "kind": "valet",
       "category": "valet",
       "floor": 4,
       "floor_name": "Zemin Kat",
-      "cx": 490,
-      "cy": 320,
+      "cx": 485,
+      "cy": 290,
       "doors": [
         "n_4_amenity_valet_4"
       ],
       "doorP": [
-        490,
-        320
+        485,
+        290
       ],
       "nav_node": "n_4_amenity_valet_4",
       "is_anchor": false
@@ -12065,53 +12027,46 @@
         "y": 590,
         "type": "door"
       },
-      "n_4_amenity_fountain_4": {
-        "id": "n_4_amenity_fountain_4",
-        "floor": 4,
-        "x": 258,
-        "y": 365,
-        "type": "amenity"
-      },
       "n_4_amenity_info_4": {
         "id": "n_4_amenity_info_4",
         "floor": 4,
-        "x": 390,
-        "y": 365,
+        "x": 345,
+        "y": 255,
         "type": "amenity"
       },
       "n_4_amenity_atm_4": {
         "id": "n_4_amenity_atm_4",
         "floor": 4,
-        "x": 165,
-        "y": 365,
+        "x": 175,
+        "y": 255,
         "type": "amenity"
       },
       "n_4_amenity_wc_4_n": {
         "id": "n_4_amenity_wc_4_n",
         "floor": 4,
         "x": 258,
-        "y": 115,
+        "y": 105,
         "type": "amenity"
       },
       "n_4_amenity_wc_4_s": {
         "id": "n_4_amenity_wc_4_s",
         "floor": 4,
         "x": 258,
-        "y": 625,
+        "y": 635,
         "type": "amenity"
       },
       "n_4_amenity_taxi_4": {
         "id": "n_4_amenity_taxi_4",
         "floor": 4,
-        "x": 490,
-        "y": 410,
+        "x": 485,
+        "y": 440,
         "type": "amenity"
       },
       "n_4_amenity_valet_4": {
         "id": "n_4_amenity_valet_4",
         "floor": 4,
-        "x": 490,
-        "y": 320,
+        "x": 485,
+        "y": 290,
         "type": "amenity"
       },
       "n_4_gate_east": {
@@ -15263,6 +15218,12 @@
           "dist": 21.1,
           "type": "walk",
           "portalKind": "walk"
+        },
+        {
+          "to": "n_4_amenity_atm_4",
+          "dist": 16.4,
+          "type": "walk",
+          "portalKind": "walk"
         }
       ],
       "n_4_w_285": [
@@ -15345,12 +15306,6 @@
         {
           "to": "n_4_door_9",
           "dist": 20.1,
-          "type": "walk",
-          "portalKind": "walk"
-        },
-        {
-          "to": "n_4_amenity_atm_4",
-          "dist": 3.0,
           "type": "walk",
           "portalKind": "walk"
         },
@@ -15555,6 +15510,12 @@
           "dist": 21.1,
           "type": "walk",
           "portalKind": "walk"
+        },
+        {
+          "to": "n_4_amenity_info_4",
+          "dist": 13.5,
+          "type": "walk",
+          "portalKind": "walk"
         }
       ],
       "n_4_e_285": [
@@ -15581,6 +15542,12 @@
           "dist": 23.0,
           "type": "walk",
           "portalKind": "walk"
+        },
+        {
+          "to": "n_4_amenity_valet_4",
+          "dist": 131.1,
+          "type": "walk",
+          "portalKind": "walk"
         }
       ],
       "n_4_e_325": [
@@ -15605,12 +15572,6 @@
         {
           "to": "n_4_door_25",
           "dist": 25.7,
-          "type": "walk",
-          "portalKind": "walk"
-        },
-        {
-          "to": "n_4_amenity_valet_4",
-          "dist": 136.1,
           "type": "walk",
           "portalKind": "walk"
         }
@@ -15647,12 +15608,6 @@
           "portalKind": "walk"
         },
         {
-          "to": "n_4_amenity_info_4",
-          "dist": 36.0,
-          "type": "walk",
-          "portalKind": "walk"
-        },
-        {
           "to": "n_4_gate_east",
           "dist": 141.0,
           "type": "walk",
@@ -15683,12 +15638,6 @@
           "dist": 20.3,
           "type": "walk",
           "portalKind": "walk"
-        },
-        {
-          "to": "n_4_amenity_taxi_4",
-          "dist": 136.1,
-          "type": "walk",
-          "portalKind": "walk"
         }
       ],
       "n_4_e_445": [
@@ -15713,6 +15662,12 @@
         {
           "to": "n_4_door_30",
           "dist": 21.5,
+          "type": "walk",
+          "portalKind": "walk"
+        },
+        {
+          "to": "n_4_amenity_taxi_4",
+          "dist": 131.1,
           "type": "walk",
           "portalKind": "walk"
         }
@@ -15856,7 +15811,7 @@
         },
         {
           "to": "n_4_amenity_wc_4_n",
-          "dist": 50.5,
+          "dist": 60.4,
           "type": "walk",
           "portalKind": "walk"
         }
@@ -15948,7 +15903,7 @@
         },
         {
           "to": "n_4_amenity_wc_4_s",
-          "dist": 60.4,
+          "dist": 70.3,
           "type": "walk",
           "portalKind": "walk"
         }
@@ -15997,12 +15952,6 @@
         {
           "to": "n_4_mid_306",
           "dist": 48.0,
-          "type": "walk",
-          "portalKind": "walk"
-        },
-        {
-          "to": "n_4_amenity_fountain_4",
-          "dist": 0.0,
           "type": "walk",
           "portalKind": "walk"
         }
@@ -18999,26 +18948,18 @@
           "portalKind": "walk"
         }
       ],
-      "n_4_amenity_fountain_4": [
-        {
-          "to": "n_4_mid_258",
-          "dist": 0.0,
-          "type": "walk",
-          "portalKind": "walk"
-        }
-      ],
       "n_4_amenity_info_4": [
         {
-          "to": "n_4_e_365",
-          "dist": 36.0,
+          "to": "n_4_e_245",
+          "dist": 13.5,
           "type": "walk",
           "portalKind": "walk"
         }
       ],
       "n_4_amenity_atm_4": [
         {
-          "to": "n_4_w_365",
-          "dist": 3.0,
+          "to": "n_4_w_245",
+          "dist": 16.4,
           "type": "walk",
           "portalKind": "walk"
         }
@@ -19026,7 +18967,7 @@
       "n_4_amenity_wc_4_n": [
         {
           "to": "n_4_n_265",
-          "dist": 50.5,
+          "dist": 60.4,
           "type": "walk",
           "portalKind": "walk"
         }
@@ -19034,23 +18975,23 @@
       "n_4_amenity_wc_4_s": [
         {
           "to": "n_4_s_265",
-          "dist": 60.4,
+          "dist": 70.3,
           "type": "walk",
           "portalKind": "walk"
         }
       ],
       "n_4_amenity_taxi_4": [
         {
-          "to": "n_4_e_405",
-          "dist": 136.1,
+          "to": "n_4_e_445",
+          "dist": 131.1,
           "type": "walk",
           "portalKind": "walk"
         }
       ],
       "n_4_amenity_valet_4": [
         {
-          "to": "n_4_e_325",
-          "dist": 136.1,
+          "to": "n_4_e_285",
+          "dist": 131.1,
           "type": "walk",
           "portalKind": "walk"
         }

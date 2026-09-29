@@ -129,20 +129,42 @@ class MallMap {
 
     const fragment = document.createDocumentFragment();
 
-    // 1. Mağaza Rozetleri
-    const stores = floorInfo.stores || [];
-    stores.forEach(store => {
-      const isFiltered = this.activeCategoryFilter === 'all' || store.category === this.activeCategoryFilter;
-      if (!isFiltered) return;
+    // 1. Mağazalar: Sıralama & Çakışma Önleme (Spatial Collision Avoidance)
+    let stores = floorInfo.stores || [];
+    if (this.activeCategoryFilter && this.activeCategoryFilter !== 'all') {
+      stores = stores.filter(s => s.category === this.activeCategoryFilter);
+    }
 
-      const isAnchor = store.is_anchor;
+    const isZoomed = this.scale >= 1.35;
+    const isFiltered = this.activeCategoryFilter && this.activeCategoryFilter !== 'all';
+    const showAll = this.displayMode === 'all' || isZoomed || isFiltered;
+
+    // Hedef ve Başlangıç en öncelikli, sonra Anchor mağazalar
+    const sortedStores = [...stores].sort((a, b) => {
+      const aPrio = (this.activeTargetStore?.id === a.id || this.activeStartStore?.id === a.id) ? 3 : (a.is_anchor ? 2 : 1);
+      const bPrio = (this.activeTargetStore?.id === b.id || this.activeStartStore?.id === b.id) ? 3 : (b.is_anchor ? 2 : 1);
+      return bPrio - aPrio;
+    });
+
+    const placedPositions = [];
+    const minDistance = isZoomed ? 24 : (showAll ? 32 : 42);
+
+    sortedStores.forEach(store => {
       const isTarget = this.activeTargetStore && this.activeTargetStore.id === store.id;
       const isStart = this.activeStartStore && this.activeStartStore.id === store.id;
+      const isAnchor = !!store.is_anchor;
 
-      // LOD Filtresi: anchor modundaysa sadece öne çıkanlar ve hedefler gösterilir
-      if (this.displayMode === 'anchor' && !isAnchor && !isTarget && !isStart && this.scale < 1.35) {
+      if (!showAll && !isAnchor && !isTarget && !isStart) {
         return;
       }
+
+      // Çakışma kontrolü (Hedef ve başlangıç hariç)
+      if (!isTarget && !isStart) {
+        const collides = placedPositions.some(p => Math.hypot(p.x - store.cx, p.y - store.cy) < minDistance);
+        if (collides) return;
+      }
+
+      placedPositions.push({ x: store.cx, y: store.cy });
 
       const marker = document.createElement('div');
       marker.className = `brand-marker-wrapper ${isAnchor ? 'is-anchor' : 'is-regular'} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
@@ -151,17 +173,25 @@ class MallMap {
       marker.style.position = 'absolute';
       marker.style.pointerEvents = 'auto';
       marker.setAttribute('data-store-id', store.id);
+      marker.title = `${store.name} (${store.floor_name || store.floor + '. Kat'})`;
 
-      const logoHtml = getStoreLogo(store, isAnchor ? 38 : 32);
+      const badgeSize = isTarget || isStart ? 44 : (isAnchor ? 38 : 30);
+      const logoHtml = getStoreLogo(store, badgeSize);
 
       marker.innerHTML = `
-        <div class="brand-marker flex flex-col items-center cursor-pointer transition-transform hover:scale-110">
+        <div class="brand-marker flex flex-col items-center cursor-pointer transition-transform hover:scale-115 group">
           <div class="marker-logo-box shadow-md rounded-2xl p-0.5">
             ${logoHtml}
           </div>
-          <span class="marker-name-label text-[10px] font-bold text-slate-800 dark:text-slate-200 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-xs border border-slate-200/80 dark:border-slate-800 whitespace-nowrap mt-1 pointer-events-none">
-            ${store.name}
-          </span>
+          ${isAnchor || isTarget || isStart ? `
+            <span class="marker-name-label text-[9px] font-extrabold text-slate-200 bg-slate-900/90 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-700 whitespace-nowrap mt-1 pointer-events-none group-hover:scale-105 transition-all">
+              ${store.name}
+            </span>
+          ` : `
+            <span class="marker-name-label hidden group-hover:block text-[9px] font-bold text-slate-200 bg-slate-900/95 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
+              ${store.name}
+            </span>
+          `}
         </div>
       `;
 
@@ -175,8 +205,8 @@ class MallMap {
       fragment.appendChild(marker);
     });
 
-    // 2. Servis Noktaları (WC, ATM, Info, Taksi, Vale, Fıskiye)
-    const amenities = floorInfo.amenities || [];
+    // 2. Servis Noktaları (Sade, dairesel, taşmayan rozetler)
+    const amenities = (floorInfo.amenities || []).filter(a => a.kind !== 'fountain');
     amenities.forEach(am => {
       const amMarker = document.createElement('div');
       amMarker.className = `amenity-marker-wrapper kind-${am.kind}`;
@@ -184,14 +214,15 @@ class MallMap {
       amMarker.style.top = `${am.cy}px`;
       amMarker.style.position = 'absolute';
       amMarker.style.pointerEvents = 'auto';
+      amMarker.title = am.name;
 
-      let iconHtml = getStoreLogo(am, 30);
+      let iconHtml = getStoreLogo(am, 28);
       amMarker.innerHTML = `
-        <div class="amenity-marker flex flex-col items-center cursor-pointer transition-transform hover:scale-110">
-          <div class="marker-amenity-box shadow-md rounded-2xl p-0.5">
+        <div class="amenity-marker flex flex-col items-center cursor-pointer transition-transform hover:scale-115 group">
+          <div class="marker-amenity-box shadow-md rounded-full p-0.5 border border-cyan-400/40 bg-slate-900/90">
             ${iconHtml}
           </div>
-          <span class="text-[9px] font-bold text-cyan-600 dark:text-cyan-400 bg-slate-950/80 px-1.5 py-0.5 rounded-full shadow-xs whitespace-nowrap mt-0.5 pointer-events-none">
+          <span class="hidden group-hover:block text-[8px] font-bold text-cyan-300 bg-slate-950/95 px-1.5 py-0.5 rounded-full shadow-xs border border-cyan-500/30 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
             ${am.name}
           </span>
         </div>
@@ -209,6 +240,7 @@ class MallMap {
 
     this.markersLayer.appendChild(fragment);
   }
+
 
   /**
    * 4-Katmanlı Neon Rota Çizim Pipeline'ı

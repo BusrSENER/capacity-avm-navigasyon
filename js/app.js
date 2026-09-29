@@ -84,7 +84,15 @@ function initApp() {
   setupSearchEngine();
   setupTheme();
   highlightActiveFloorBtn(mallMap.currentFloor);
+
+  // Başlangıçta tüm mağazalar listesini sol panele doldur
+  renderStoreSearchResults(filterStoresByCategory('all'));
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
+
 
 function setupUIEventListeners() {
   // Kat Değiştirme Butonları
