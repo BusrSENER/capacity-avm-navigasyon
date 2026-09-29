@@ -1,126 +1,456 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 516 735" width="100%" height="100%" class="map__svg">
-  <defs>
-    <filter id="slab-shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.08"/>
-    </filter>
-    <linearGradient id="fountainWaterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.35"/>
-    </linearGradient>
-    <linearGradient id="atriumVoidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.95"/>
-      <stop offset="100%" stop-color="#f1f5f9" stop-opacity="0.95"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850" width="100%" height="100%" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background-color: transparent;">
+  <!-- ================= BİNA TABANI VE MİMARİ OMURGA (1400 x 850) ================= -->
+  <!-- Saf Beyaz Kat Gövdesi (#ffffff, stroke #cbd5e1) -->
+  <path d="M 90,130 
+           L 660,130 
+           L 660,50 L 740,50 L 740,130 
+           L 1090,130 
+           C 1170,130 1280,220 1280,440 
+           C 1280,660 1170,750 1090,750 
+           L 90,750 
+           C 60,750 60,130 90,130 Z" 
+        fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
 
-  <!-- 1. TEMİZ BEYAZ MİMARİ KAT TABANI (SLAB) -->
-  <g id="FloorSlab" class="map__slab">
-    <!-- Dış Bina Duvarı (Kavisli Beyaz Mimari Döşeme) -->
-    <path id="slab_outer_4" class="slab corridor-path" d="M 120 45 C 200 35, 316 35, 396 45 C 475 55, 490 120, 488 200 L 488 535 C 490 620, 470 685, 396 695 C 316 705, 200 705, 120 695 C 45 685, 26 620, 28 535 L 28 200 C 26 120, 45 55, 120 45 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.5" />
+  <!-- Yürüme Koridorları (#f8fafc) -->
+  <path d="M 200,320 
+           L 1080,320 
+           C 1180,320 1240,360 1240,440 
+           C 1240,520 1180,560 1080,560 
+           L 200,560 
+           C 160,560 160,320 200,320 Z" 
+        fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Kuzey Koridoru (Carousel Bağlantısı) -->
+  <path d="M 660,50 L 740,50 L 740,340 L 660,340 Z" 
+        fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Dış Cadde / Yön Bilgilendirmeleri -->
+  <text x="700" y="32" fill="#0284c7" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">
+    ▲ HALİT ZİYA UŞAKLIGİL CADDESİ (CAROUSEL GEÇİŞİ)
+  </text>
+  <text x="1355" y="440" fill="#d97706" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(90 1355 440)" letter-spacing="2">
+    ▲ FİŞEKHANE CADDESİ (ANA GİRİŞ / MEYDAN)
+  </text>
+  <text x="700" y="795" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">
+    ▼ DADYAN SOKAK / ACIBADEM BAKIRKÖY HASTANESİ
+  </text>
+  <text x="35" y="440" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 35 440)" letter-spacing="1">
+    ◄ ZEBERCET SOKAK / ATAKÖY YÖNÜ
+  </text>
+
+  <!-- Atrium & Sirkülasyon Elemanları -->
+  
+    <!-- Atrium Dış Çeperi -->
+    <ellipse cx="700" cy="440" rx="90" ry="65" fill="#f8fafc" stroke="#0284c7" stroke-width="2.5"/>
+    <ellipse cx="700" cy="440" rx="95" ry="70" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="3 3"/>
     
-    <!-- Batı Yürüyüş Promenadı -->
-    <path class="corridor-lane" d="M 144 140 L 180 140 L 180 590 L 144 590 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <!-- Doğu Yürüyüş Promenadı -->
-    <path class="corridor-lane" d="M 336 140 L 372 140 L 372 590 L 336 590 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <!-- Kuzey Bağlantı Koridoru -->
-    <path class="corridor-lane" d="M 144 140 L 372 140 L 372 170 L 144 170 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <!-- Güney Bağlantı Koridoru -->
-    <path class="corridor-lane" d="M 144 560 L 372 560 L 372 590 L 144 590 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-
-    <!-- Kuzey Skybridge -->
-    <rect x="178" y="233" width="160" height="24" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" />
-    <!-- Orta Skybridge (Geçiş Köprüsü) -->
-    <rect x="178" y="351" width="160" height="28" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" />
-    <!-- Güney Skybridge -->
-    <rect x="178" y="473" width="160" height="24" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" />
-  </g>
-
-  <!-- 2. MERKEZİ ATRIUM & MÜZİKLİ GÖSTERİ HAVUZU -->
-  <g id="FloorVoids">
-    <!-- Capacity İkonik Müzikli Gösteri Havuzu -->
-    <ellipse cx="258" cy="365" rx="74" ry="138" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5" class="central-fountain" />
-    <circle cx="258" cy="365" r="34" fill="#bae6fd" opacity="0.5" stroke="#0284c7" stroke-width="1.5" />
-    <circle cx="258" cy="365" r="8" fill="#0284c7" />
-    <!-- Su Dalgacık Halkaları -->
-    <circle cx="258" cy="365" r="20" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="4 4" opacity="0.75" />
-    <circle cx="258" cy="365" r="50" fill="none" stroke="#0ea5e9" stroke-width="1" stroke-dasharray="8 6" opacity="0.5" />
-    <text x="258" y="325" text-anchor="middle" fill="#0369a1" font-size="11" font-weight="800" letter-spacing="0.5">MÜZİKLİ GÖSTERİ HAVUZU</text>
-    <text x="258" y="415" text-anchor="middle" fill="#64748b" font-size="9.5" font-weight="600">ETKİNLİK ALANI</text>
-  </g>
-
-  <!-- 3. MİMARİ MAĞAZA ODALARI (PASTEL RENKLER) -->
-  <g id="FloorRooms">
-    <path id="room_4_1" class="room room--tenant g-accessories cat-accessories store-polygon" d="M 34.0 176.5 L 142.0 176.5 L 142.0 197.2 L 34.0 197.2 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_1" />
-    <path id="room_4_2" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 200.2 L 142.0 200.2 L 142.0 221.0 L 34.0 221.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_2" />
-    <path id="room_4_3" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 224.0 L 142.0 224.0 L 142.0 244.8 L 34.0 244.8 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_3" />
-    <path id="room_4_4" class="room room--tenant g-accessories cat-accessories store-polygon" d="M 34.0 247.8 L 142.0 247.8 L 142.0 268.5 L 34.0 268.5 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_4" />
-    <path id="room_4_5" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 271.5 L 142.0 271.5 L 142.0 292.2 L 34.0 292.2 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_5" />
-    <path id="room_4_6" class="room room--tenant g-service cat-service store-polygon" d="M 34.0 295.2 L 142.0 295.2 L 142.0 316.0 L 34.0 316.0 Z" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.2" fillRule="evenodd" data-id="store_4_6" />
-    <path id="room_4_7" class="room room--tenant g-service cat-service store-polygon" d="M 34.0 319.0 L 142.0 319.0 L 142.0 339.8 L 34.0 339.8 Z" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.2" fillRule="evenodd" data-id="store_4_7" />
-    <path id="room_4_8" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 342.8 L 142.0 342.8 L 142.0 363.5 L 34.0 363.5 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_4_8" />
-    <path id="room_4_9" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 366.5 L 142.0 366.5 L 142.0 387.2 L 34.0 387.2 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_9" />
-    <path id="room_4_10" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 390.2 L 142.0 390.2 L 142.0 411.0 L 34.0 411.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_10" />
-    <path id="room_4_11" class="room room--tenant g-shoes cat-shoes store-polygon" d="M 34.0 414.0 L 142.0 414.0 L 142.0 434.8 L 34.0 434.8 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2" fillRule="evenodd" data-id="store_4_11" />
-    <path id="room_4_12" class="room room--tenant g-home cat-home store-polygon" d="M 34.0 437.8 L 142.0 437.8 L 142.0 458.5 L 34.0 458.5 Z" fill="#ede9fe" stroke="#a855f7" stroke-width="1.2" fillRule="evenodd" data-id="store_4_12" />
-    <path id="room_4_13" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 461.5 L 142.0 461.5 L 142.0 482.2 L 34.0 482.2 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_13" />
-    <path id="room_4_14" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 485.2 L 142.0 485.2 L 142.0 506.0 L 34.0 506.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_14" />
-    <path id="room_4_15" class="room room--tenant g-shoes cat-shoes store-polygon" d="M 34.0 509.0 L 142.0 509.0 L 142.0 529.8 L 34.0 529.8 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2" fillRule="evenodd" data-id="store_4_15" />
-    <path id="room_4_16" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 34.0 532.8 L 142.0 532.8 L 142.0 553.5 L 34.0 553.5 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_16" />
-    <path id="room_4_17" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 374.0 176.5 L 482.0 176.5 L 482.0 197.2 L 374.0 197.2 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_17" />
-    <path id="room_4_18" class="room room--tenant g-shoes cat-shoes store-polygon" d="M 374.0 200.2 L 482.0 200.2 L 482.0 221.0 L 374.0 221.0 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2" fillRule="evenodd" data-id="store_4_18" />
-    <path id="room_4_19" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 374.0 224.0 L 482.0 224.0 L 482.0 244.8 L 374.0 244.8 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_19" />
-    <path id="room_4_20" class="room room--tenant g-accessories cat-accessories store-polygon" d="M 374.0 247.8 L 482.0 247.8 L 482.0 268.5 L 374.0 268.5 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_20" />
-    <path id="room_4_21" class="room room--tenant g-cosmetics cat-cosmetics store-polygon" d="M 374.0 271.5 L 482.0 271.5 L 482.0 292.2 L 374.0 292.2 Z" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.2" fillRule="evenodd" data-id="store_4_21" />
-    <path id="room_4_22" class="room room--tenant g-home cat-home store-polygon" d="M 374.0 295.2 L 482.0 295.2 L 482.0 316.0 L 374.0 316.0 Z" fill="#ede9fe" stroke="#a855f7" stroke-width="1.2" fillRule="evenodd" data-id="store_4_22" />
-    <path id="room_4_23" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 374.0 319.0 L 482.0 319.0 L 482.0 339.8 L 374.0 339.8 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_23" />
-    <path id="room_4_24" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 374.0 342.8 L 482.0 342.8 L 482.0 363.5 L 374.0 363.5 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_24" />
-    <path id="room_4_25" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 366.5 L 482.0 366.5 L 482.0 387.2 L 374.0 387.2 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_4_25" />
-    <path id="room_4_26" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 374.0 390.2 L 482.0 390.2 L 482.0 411.0 L 374.0 411.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_26" />
-    <path id="room_4_27" class="room room--tenant g-home cat-home store-polygon" d="M 374.0 414.0 L 482.0 414.0 L 482.0 434.8 L 374.0 434.8 Z" fill="#ede9fe" stroke="#a855f7" stroke-width="1.2" fillRule="evenodd" data-id="store_4_27" />
-    <path id="room_4_28" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 437.8 L 482.0 437.8 L 482.0 458.5 L 374.0 458.5 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_4_28" />
-    <path id="room_4_29" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 374.0 461.5 L 482.0 461.5 L 482.0 482.2 L 374.0 482.2 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_29" />
-    <path id="room_4_30" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 374.0 485.2 L 482.0 485.2 L 482.0 506.0 L 374.0 506.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_30" />
-    <path id="room_4_31" class="room room--tenant g-accessories cat-accessories store-polygon" d="M 374.0 509.0 L 482.0 509.0 L 482.0 529.8 L 374.0 529.8 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_31" />
-    <path id="room_4_32" class="room room--tenant g-accessories cat-accessories store-polygon" d="M 374.0 532.8 L 482.0 532.8 L 482.0 553.5 L 374.0 553.5 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_32" />
-    <path id="room_4_33" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 72.0 56.0 L 143.2 56.0 L 143.2 136.0 L 72.0 136.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_33" />
-    <path id="room_4_34" class="room room--tenant g-accessories cat-accessories store-polygon" d="M 147.2 56.0 L 218.4 56.0 L 218.4 136.0 L 147.2 136.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_34" />
-    <path id="room_4_35" class="room room--tenant g-shoes cat-shoes store-polygon" d="M 222.4 56.0 L 293.6 56.0 L 293.6 136.0 L 222.4 136.0 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2" fillRule="evenodd" data-id="store_4_35" />
-    <path id="room_4_36" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 297.6 56.0 L 368.8 56.0 L 368.8 136.0 L 297.6 136.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_36" />
-    <path id="room_4_37" class="room room--tenant g-food cat-food store-polygon" d="M 372.8 56.0 L 444.0 56.0 L 444.0 136.0 L 372.8 136.0 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_4_37" />
-    <path id="room_4_38" class="room room--tenant g-service cat-service store-polygon" d="M 72.0 594.0 L 143.2 594.0 L 143.2 674.0 L 72.0 674.0 Z" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.2" fillRule="evenodd" data-id="store_4_38" />
-    <path id="room_4_39" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 147.2 594.0 L 218.4 594.0 L 218.4 674.0 L 147.2 674.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_39" />
-    <path id="room_4_40" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 222.4 594.0 L 293.6 594.0 L 293.6 674.0 L 222.4 674.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_40" />
-    <path id="room_4_41" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 297.6 594.0 L 368.8 594.0 L 368.8 674.0 L 297.6 674.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_41" />
-    <path id="room_4_42" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 372.8 594.0 L 444.0 594.0 L 444.0 674.0 L 372.8 674.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_42" />
-    <path id="room_4_43" class="room room--tenant g-fashion cat-fashion store-polygon" d="M 182.0 280.0 L 206.0 280.0 L 206.0 304.0 L 182.0 304.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_43" />
-    <path id="room_4_44" class="room room--tenant g-accessories cat-accessories store-polygon" d="M 310.0 280.0 L 334.0 280.0 L 334.0 304.0 L 310.0 304.0 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1.2" fillRule="evenodd" data-id="store_4_44" />
-  </g>
-
-  <!-- 4. SABİT DİKEY İKONLAR (Asansör, Yürüyen Merdiven, Girişler) -->
-  <g id="FloorIcons" class="pointer-events-none">
-    <!-- Güney Panoramik Cam Asansörler -->
-    <g transform="translate(258, 535)" class="portal-svg portal-elevator" opacity="0.95">
-      <rect x="-14" y="-12" width="28" height="24" rx="6" fill="#0284c7" stroke="#38bdf8" stroke-width="1.8"/>
-      <path d="M-6 -4 L0 -10 L6 -4 M-6 4 L0 10 L6 4" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- İnteraktif Müzikli Gösteri Havuzu -->
+    <g id="interactiveFountain">
+      <ellipse cx="700" cy="440" rx="60" ry="40" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+      <ellipse cx="700" cy="440" rx="42" ry="27" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="4 2"/>
+      <circle cx="700" cy="440" r="5" fill="#0284c7" />
+      <text x="700" y="443" fill="#0369a1" font-size="9" font-weight="800" text-anchor="middle">MÜZİKLİ GÖSTERİ HAVUZU</text>
+      <text x="700" y="454" fill="#0284c7" font-size="7.5" font-weight="600" text-anchor="middle">ETKİNLİK ALANI</text>
     </g>
-
-    <!-- Kuzey Servis Asansörü -->
-    <g transform="translate(210, 155)" class="portal-svg portal-elevator" opacity="0.9">
-      <rect x="-11" y="-10" width="22" height="20" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
-      <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="900">AS</text>
+    
+    <!-- Danışma Bankosu -->
+    <g id="infoDesk" transform="translate(1085, 425)">
+      <circle cx="0" cy="0" r="14" fill="#f59e0b" stroke="#ffffff" stroke-width="2"/>
+      <text x="0" y="4" fill="#ffffff" font-size="11" font-weight="900" text-anchor="middle">i</text>
+      <text x="0" y="24" fill="#92400e" font-size="8" font-weight="800" text-anchor="middle">DANIŞMA</text>
     </g>
-
-    <!-- Güney Yürüyen Merdivenler -->
-    <g transform="translate(220, 520)" class="portal-svg portal-escalator" opacity="0.95">
-      <rect x="-13" y="-11" width="26" height="22" rx="5" fill="#10b981" stroke="#34d399" stroke-width="1.5"/>
-      <path d="M-7 4 L-2 4 L3 -4 L7 -4" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- Fişekhane Ana Giriş Portali -->
+    <g transform="translate(1245, 410)">
+      <rect x="-10" y="-15" width="30" height="30" rx="6" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
+      <text x="5" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🚪</text>
+      <text x="5" y="26" fill="#065f46" font-size="8" font-weight="800" text-anchor="middle">FİŞEKHANE</text>
     </g>
+    
+    <!-- Carousel Kuzey Girişi -->
+    <g transform="translate(680, 50)">
+      <rect x="-15" y="-10" width="30" height="24" rx="5" fill="#0284c7" stroke="#ffffff" stroke-width="2"/>
+      <text x="0" y="6" fill="#ffffff" font-size="9" font-weight="900" text-anchor="middle">🚪</text>
+      <text x="0" y="24" fill="#0369a1" font-size="7.5" font-weight="800" text-anchor="middle">CAROUSEL</text>
+    </g>
+        
+  
+    <!-- Batı Yürüyen Merdiven Grubu -->
+    <g transform="translate(265, 420)">
+      <rect width="45" height="38" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+      <text x="22" y="24" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
+      <text x="22" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+    </g>
+    
+    <!-- Doğu Yürüyen Merdiven Grubu -->
+    <g transform="translate(1010, 420)">
+      <rect width="45" height="38" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+      <text x="22" y="24" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
+      <text x="22" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+    </g>
+    
+    <!-- Panoramik Cam Asansörler -->
+    <g transform="translate(565, 420)">
+      <rect width="28" height="38" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+      <text x="14" y="24" fill="#0284c7" font-size="12" text-anchor="middle">🛗</text>
+      <text x="14" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">ASANSÖR</text>
+    </g>
+    
 
-    <!-- Kuzey Yürüyen Merdivenler -->
-    <g transform="translate(258, 200)" class="portal-svg portal-escalator" opacity="0.95">
-      <rect x="-13" y="-11" width="26" height="22" rx="5" fill="#10b981" stroke="#34d399" stroke-width="1.5"/>
-      <path d="M-7 -4 L-2 -4 L3 4 L7 4" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- ================= MAĞAZALAR ================= -->
+  <g id="stores-layer">
+    
+    <g class="store-polygon" data-id="store_4_1" id="room_4_1" data-name="Atasay">
+      <rect x="590.0" y="495.0" width="60.0" height="40.0" rx="6"
+            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="620.0" y="519.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Atasay
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_2" id="room_4_2" data-name="Avva">
+      <rect x="210.0" y="330.0" width="60.0" height="75.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="240.0" y="371.5"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Avva
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_3" id="room_4_3" data-name="Beymen Club">
+      <rect x="370.0" y="140.0" width="100.0" height="180.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="420.0" y="234.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Beymen Club
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_4" id="room_4_4" data-name="Blue Diamond">
+      <rect x="660.0" y="495.0" width="60.0" height="40.0" rx="6"
+            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="690.0" y="519.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Blue Diamond
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_5" id="room_4_5" data-name="Cacharel">
+      <rect x="1000.0" y="240.0" width="80.0" height="80.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1040.0" y="284.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Cacharel
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_6" id="room_4_6" data-name="Capacity Eczane">
+      <rect x="1030.0" y="330.0" width="90.0" height="65.0" rx="6"
+            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1075.0" y="366.5"
+            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Capacity Eczane
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_7" id="room_4_7" data-name="Capacity Taksi">
+      <rect x="1030.0" y="485.0" width="90.0" height="65.0" rx="6"
+            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1075.0" y="521.5"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Capacity Taksi
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_8" id="room_4_8" data-name="Cookshop">
+      <rect x="1090.0" y="140.0" width="160.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1170.0" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Cookshop
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_9" id="room_4_9" data-name="Damat Tween">
+      <rect x="920.0" y="140.0" width="70.0" height="180.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="955.0" y="234.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Damat Tween
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_10" id="room_4_10" data-name="Derimod">
+      <rect x="470.0" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="510.0" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Derimod
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_11" id="room_4_11" data-name="Divarese">
+      <rect x="815.0" y="560.0" width="75.0" height="170.0" rx="6"
+            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="852.5" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Divarese
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_12" id="room_4_12" data-name="English Home">
+      <rect x="835.0" y="500.0" width="80.0" height="50.0" rx="6"
+            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="875.0" y="529.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        English Home
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_13" id="room_4_13" data-name="Faik Sönmez">
+      <rect x="735.0" y="560.0" width="70.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="770.0" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Faik Sönmez
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_14" id="room_4_14" data-name="G Lingerie">
+      <rect x="555.0" y="500.0" width="75.0" height="50.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="592.5" y="529.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        G Lingerie
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_15" id="room_4_15" data-name="Hotiç">
+      <rect x="900.0" y="560.0" width="70.0" height="170.0" rx="6"
+            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="935.0" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Hotiç
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_16" id="room_4_16" data-name="Hugo Boss">
+      <rect x="750.0" y="140.0" width="80.0" height="180.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="790.0" y="234.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Hugo Boss
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_17" id="room_4_17" data-name="ipekyol">
+      <rect x="250.0" y="140.0" width="80.0" height="160.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="290.0" y="224.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        ipekyol
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_18" id="room_4_18" data-name="Kemal Tanca">
+      <rect x="980.0" y="560.0" width="60.0" height="170.0" rx="6"
+            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1010.0" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Kemal Tanca
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_19" id="room_4_19" data-name="Lacoste">
+      <rect x="480.0" y="140.0" width="80.0" height="180.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="520.0" y="234.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Lacoste
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_20" id="room_4_20" data-name="Lizay">
+      <rect x="800.0" y="495.0" width="55.0" height="40.0" rx="6"
+            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="827.5" y="519.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Lizay
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_21" id="room_4_21" data-name="Mac">
+      <rect x="610.0" y="140.0" width="80.0" height="160.0" rx="6"
+            fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="650.0" y="224.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Mac
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_22" id="room_4_22" data-name="Madame Coco">
+      <rect x="925.0" y="500.0" width="80.0" height="50.0" rx="6"
+            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="965.0" y="529.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Madame Coco
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_23" id="room_4_23" data-name="Marks&Spencer">
+      <rect x="790.0" y="140.0" width="80.0" height="160.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="830.0" y="224.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Marks&Spencer
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_24" id="room_4_24" data-name="Massimo Dutti">
+      <rect x="250.0" y="140.0" width="110.0" height="180.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="305.0" y="234.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Massimo Dutti
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_25" id="room_4_25" data-name="Midpoint">
+      <rect x="1090.0" y="560.0" width="160.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1170.0" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Midpoint
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_26" id="room_4_26" data-name="Network Women">
+      <rect x="370.0" y="560.0" width="90.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="415.0" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Network Women
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_27" id="room_4_27" data-name="Paşabahçe Mağazaları">
+      <rect x="250.0" y="560.0" width="110.0" height="170.0" rx="6"
+            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="305.0" y="649.0"
+            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Paşabahçe Mağazaları
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_28" id="room_4_28" data-name="Pelit">
+      <rect x="930.0" y="495.0" width="65.0" height="40.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="962.5" y="519.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Pelit
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_29" id="room_4_29" data-name="Pierre Cardin">
+      <rect x="100.0" y="310.0" width="100.0" height="100.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="150.0" y="364.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Pierre Cardin
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_30" id="room_4_30" data-name="Ramsey">
+      <rect x="840.0" y="140.0" width="70.0" height="180.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="875.0" y="234.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Ramsey
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_31" id="room_4_31" data-name="Saat&Saat">
+      <rect x="790.0" y="140.0" width="80.0" height="160.0" rx="6"
+            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="830.0" y="224.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Saat&Saat
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_32" id="room_4_32" data-name="So Chic">
+      <rect x="745.0" y="345.0" width="65.0" height="40.0" rx="6"
+            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="777.5" y="369.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        So Chic
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_33" id="room_4_33" data-name="Stefanel">
+      <rect x="100.0" y="420.0" width="100.0" height="80.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="150.0" y="464.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Stefanel
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_34" id="room_4_34" data-name="Storks Diamond">
+      <rect x="865.0" y="495.0" width="55.0" height="40.0" rx="6"
+            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="892.5" y="519.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Storks Diamond
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_35" id="room_4_35" data-name="SuperStep">
+      <rect x="1050.0" y="560.0" width="35.0" height="80.0" rx="6"
+            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1067.5" y="604.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        SuperStep
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_36" id="room_4_36" data-name="Suwen">
+      <rect x="470.0" y="500.0" width="75.0" height="50.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="507.5" y="529.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Suwen
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_37" id="room_4_37" data-name="The Hunger">
+      <rect x="1050.0" y="650.0" width="35.0" height="80.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1067.5" y="694.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        The Hunger
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_38" id="room_4_38" data-name="Tobacco Shop">
+      <rect x="1005.0" y="495.0" width="40.0" height="40.0" rx="6"
+            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1025.0" y="519.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Tobacco Shop
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_39" id="room_4_39" data-name="Tommy Hilfiger">
+      <rect x="570.0" y="140.0" width="80.0" height="180.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="610.0" y="234.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Tommy Hilfiger
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_40" id="room_4_40" data-name="Tüzün">
+      <rect x="210.0" y="475.0" width="60.0" height="75.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="240.0" y="516.5"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Tüzün
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_41" id="room_4_41" data-name="Twist">
+      <rect x="650.0" y="560.0" width="75.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="687.5" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Twist
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_42" id="room_4_42" data-name="Vakko">
+      <rect x="100.0" y="140.0" width="140.0" height="160.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="170.0" y="224.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Vakko
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_43" id="room_4_43" data-name="W Collection">
+      <rect x="1000.0" y="140.0" width="80.0" height="90.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1040.0" y="189.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        W Collection
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_4_44" id="room_4_44" data-name="Zen">
+      <rect x="730.0" y="495.0" width="60.0" height="40.0" rx="6"
+            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="760.0" y="519.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Zen
+      </text>
     </g>
   </g>
 </svg>

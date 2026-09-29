@@ -29,9 +29,9 @@ class MallMap {
     this.startX = 0;
     this.startY = 0;
 
-    // ViewBox dimensions
-    this.vbWidth = this.mallData.meta?.width || 516;
-    this.vbHeight = this.mallData.meta?.height || 735;
+    // ViewBox dimensions (1400x850 Gerçek Chapman Taylor Mimari Düzlemi)
+    this.vbWidth = this.mallData.meta?.width || 1400;
+    this.vbHeight = this.mallData.meta?.height || 850;
 
     this.initMap();
     this.setupEventListeners();
@@ -43,14 +43,14 @@ class MallMap {
         <!-- SVG Floor Layer -->
         <div id="svg-layer" class="absolute inset-0 pointer-events-auto" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 5;"></div>
         
-        <!-- Navigation Route SVG Layer (4-Pass Shader) -->
-        <svg id="route-svg" class="absolute inset-0 pointer-events-none" width="${this.vbWidth}" height="${this.vbHeight}" viewBox="0 0 ${this.vbWidth} ${this.vbHeight}" style="z-index: 15;"></svg>
-        
         <!-- HTML Markers Layer (Brand Logos & Icons) -->
         <div id="markers-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 25;"></div>
 
+        <!-- Navigation Route SVG Layer (Mağaza poligonlarının EN ÜSTÜNDE) -->
+        <svg id="route-svg" class="absolute inset-0 pointer-events-none" width="${this.vbWidth}" height="${this.vbHeight}" viewBox="0 0 ${this.vbWidth} ${this.vbHeight}" style="z-index: 50; overflow: visible;"></svg>
+
         <!-- Animated Shopping Cart Layer -->
-        <div id="avatar-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 45;"></div>
+        <div id="avatar-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 60;"></div>
       </div>
     `;
 
@@ -333,12 +333,12 @@ class MallMap {
       glowPath.setAttribute('d', d);
       glowPath.setAttribute('class', 'route__glow');
       glowPath.setAttribute('fill', 'none');
-      glowPath.setAttribute('stroke', '#38bdf8');
-      glowPath.setAttribute('stroke-width', '16');
+      glowPath.setAttribute('stroke', '#60a5fa');
+      glowPath.setAttribute('stroke-width', '14');
       glowPath.setAttribute('stroke-linecap', 'round');
       glowPath.setAttribute('stroke-linejoin', 'round');
-      glowPath.setAttribute('opacity', '0.45');
-      glowPath.setAttribute('style', 'filter: blur(3px);');
+      glowPath.setAttribute('opacity', '0.35');
+      glowPath.setAttribute('style', 'filter: blur(2.5px);');
       g.appendChild(glowPath);
 
       // Katman 2: White Casing (Net Kontrast Beyaz Çerçeve)
@@ -347,30 +347,31 @@ class MallMap {
       casePath.setAttribute('class', 'route__case');
       casePath.setAttribute('fill', 'none');
       casePath.setAttribute('stroke', '#ffffff');
-      casePath.setAttribute('stroke-width', '9');
+      casePath.setAttribute('stroke-width', '7');
       casePath.setAttribute('stroke-linecap', 'round');
       casePath.setAttribute('stroke-linejoin', 'round');
       g.appendChild(casePath);
 
-      // Katman 3: Main Line (Canlı Çekirdek Hat)
+      // Katman 3: Main Line (Parlak Mavi #2563eb, 4px Kesikli Hat)
       const linePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       linePath.setAttribute('d', d);
       linePath.setAttribute('class', 'route__line');
       linePath.setAttribute('fill', 'none');
-      linePath.setAttribute('stroke', '#0284c7');
-      linePath.setAttribute('stroke-width', '5');
+      linePath.setAttribute('stroke', '#2563eb');
+      linePath.setAttribute('stroke-width', '4');
+      linePath.setAttribute('stroke-dasharray', '8 6');
       linePath.setAttribute('stroke-linecap', 'round');
       linePath.setAttribute('stroke-linejoin', 'round');
       g.appendChild(linePath);
 
-      // Katman 4: Flowing Dash (Hareketli Akış Noktaları)
+      // Katman 4: Flowing Dash (Canlı Akış Animasyonu)
       const flowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       flowPath.setAttribute('d', d);
       flowPath.setAttribute('class', 'route__flow');
       flowPath.setAttribute('fill', 'none');
       flowPath.setAttribute('stroke', '#ffffff');
-      flowPath.setAttribute('stroke-width', '2.4');
-      flowPath.setAttribute('stroke-dasharray', '5 13');
+      flowPath.setAttribute('stroke-width', '2');
+      flowPath.setAttribute('stroke-dasharray', '4 10');
       flowPath.setAttribute('stroke-linecap', 'round');
       flowPath.setAttribute('stroke-linejoin', 'round');
       g.appendChild(flowPath);

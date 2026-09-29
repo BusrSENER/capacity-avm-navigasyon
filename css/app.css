@@ -60,28 +60,35 @@
 .route__line {
   fill: none;
   stroke: #2563eb;
-  stroke-width: 5.5px;
+  stroke-width: 4px;
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-dasharray: 8 6;
+  animation: routeDashFlow 1s linear infinite;
 }
 
 .route__flow {
   fill: none;
   stroke: #ffffff;
-  stroke-width: 2.2px;
+  stroke-width: 2px;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 4 14;
-  animation: routeFlow 1.2s linear infinite;
+  stroke-dasharray: 4 10;
+  animation: routeDashFlow 1s linear infinite;
 }
 
-@keyframes routeFlow {
+@keyframes routeDashFlow {
   from {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: 28px;
   }
   to {
-    stroke-dashoffset: -18px;
+    stroke-dashoffset: 0;
   }
+}
+
+#route-svg {
+  z-index: 50 !important;
+  pointer-events: none;
 }
 
 .route-start-pin, .route-end-pin {

@@ -14,40 +14,37 @@ Bu belge, **İstanbul Bakırköy Capacity AVM Akıllı İç Mekân Navigasyon & 
 
 ## 2. Mimari & Koordinat Sistemi
 
-### 2.1. Standart SVG ViewBox
-* Tüm kat SVG planları (`public/svg/1.svg` - `6.svg`) ve rota katmanları (`#route-svg`) **kesinlikle `516 × 735`** koordinat düzleminde çalışır:
+### 2.1. Standart SVG ViewBox & Mimari Koordinat Düzlemi
+* Tüm kat SVG planları (`public/svg/1.svg` - `6.svg`) ve rota katmanları (`#route-svg`) **kesinlikle `1400 × 850`** Chapman Taylor & Muammer Bakır mimari koordinat düzleminde çalışır:
   ```html
-  <svg viewBox="0 0 516 735" width="516" height="735">
+  <svg viewBox="0 0 1400 850" width="1400" height="850">
   ```
-* Koordinat referansları:
-  * Merkez X: `258`
-  * Merkez Y: `365`
-  * Batı Koridoru X: `132 – 148`
-  * Doğu Koridoru X: `368 – 384`
-  * Kuzey-Güney koridor uzunluğu: `Y = 70` ile `Y = 665` arası
+* Temel Mimari Referans Koordinatları:
+  * Merkez Atrium & Müzikli Havuz: `CX: 700, CY: 440` (`RX: 60, RY: 40`)
+  * **Fişekhane Caddesi Ana Giriş (Cadde):** `X: 1245, Y: 410` (Zemin Kat)
+  * **Carousel Geçiş Kapısı (Kuzey Portali):** `X: 680, Y: 50` (Zemin Kat)
+  * **Zemin Kat Danışma (Info Desk):** `X: 1085, Y: 425` (Zemin Kat)
+  * Panoramik Cam Asansörler: `X: 565, Y: 420`
+  * Batı Yürüyen Merdivenler: `X: 265, Y: 420`
+  * Doğu Yürüyen Merdivenler: `X: 1010, Y: 420`
+  * Cookshop Kuzey Terası: `X: 1090, Y: 140, W: 160, H: 170`
+  * Midpoint Güney Terası: `X: 1090, Y: 560, W: 160, H: 170`
+  * VAKKO Amiral Mağaza: `X: 100, Y: 140, W: 140, H: 160`
 
-### 2.2. Kat Yapısı (6 Kat Mimarisi)
-| Kat No | Kod / Label | Kat Adı & Teması | Önemli Noktalar |
-| :---: | :---: | :--- | :--- |
-| **6** | `2` | 2. Kat: Sinema & Çocuk Dünyası | Cinemaximum, Playland, Bowling |
-| **5** | `1` | 1. Kat: Fast Food & Teras Restoranları | Food Court, Bay Döner, HD İskender, KFC, Popeyes |
-| **4** | `Z` | **Zemin Kat (Ana Giriş & Lüks Moda)** | **Müzikli Gösteri Havuzu**, Beymen Club, Vakko, Cookshop, Atasay, Fişekhane & Carousel Girişleri |
-| **3** | `B1` | 1. Bodrum Kat: Spor & Gençlik Modası | Nike, Adidas, Zara, Pull&Bear, Bershka, Stradivarius, Oysho |
-| **2** | `B2` | 2. Bodrum Kat: Market & Teknoloji | Macrocenter, MediaMarkt, D&R, Vale & Kapalı Otopark Girişi |
-| **1** | `B3` | 3. Bodrum Kat: Hizmet & Kapalı Otopark | Kuru Temizleme, Terzi, Oto Yıkama, Otopark Ödeme Noktaları |
+### 2.2. Kat Yapısı (6 Kat Mimarisi - 173 Gerçek Mağaza)
+| Kat No | Kod / Label | Kat Adı & Teması | Mağaza Sayısı | Önemli Noktalar |
+| :---: | :---: | :--- | :---: | :--- |
+| **6** | `2` | 2. Kat: Food Court & Sinema | 24 | Paribu Cineverse (9 Salon), Playland, D&R, Starbucks, Burger King, HD İskender |
+| **5** | `1` | 1. Kat: Küresel Moda & Kozmetik | 45 | Zara, Bershka, Pull&Bear, Stradivarius, Oysho, Sephora, Mango, Mavi |
+| **4** | `Z` | **Zemin Kat (Ana Giriş & Lüks Moda)** | **44** | **Müzikli Gösteri Havuzu**, Vakko, Beymen Club, Cookshop, Midpoint, Fişekhane & Carousel |
+| **3** | `B1` | 1. Bodrum Kat: Spor & Hipermarket | 51 | Migros MMM, Decathlon, LC Waikiki, Adidas, Nike, Puma, Under Armour |
+| **2** | `B2` | 2. Bodrum Kat: Market & Vale | 1 | Hibatech Oto Yıkama & Detailing, Kapalı Otopark & Vale Girişi |
+| **1** | `B3` | 3. Bodrum Kat: Hizmet & Lostra | 8 | Dry Clean Express, Altın İğne Terzi, Başak Lostra, Nail Up, Otopark |
 
-### 2.3. Mimari Elemanlar & Koridorlar
-1. **Atrium & Müzikli Havuz:**
-   * Zemin katta (Kat 4): Merkezde eliptik **Müzikli Gösteri Havuzu** (`cx: 258, cy: 365, rx: 78, ry: 130`) ve su fıskiyeleri yer alır.
-   * Üst katlarda (Kat 5 ve 6): Zemin kata bakan cam korkuluklu eliptik galeri boşluğu (`void-atrium`).
-2. **Skybridge (Geçiş Köprüleri):**
-   * Doğu ve batı kanatlarını birbirine bağlayan 3 ana köprü hattı:
-     * Kuzey Köprüsü: `y ≈ 200`
-     * Merkez Köprüsü: `y ≈ 365` (Zemin katta havuz etrafından dolaşır)
-     * Güney Köprüsü: `y ≈ 530`
-3. **Dijkstra Navigasyon Grafı:**
-   * Koridor düğümleri (`c_{floor}_{dir}_{idx}`), mağaza kapı düğümleri (`n_{floor}_door_{idx}`), yürüyen merdivenler (`esc_{floor}_{dir}`) ve asansörler (`lift_{floor}_{idx}`) 100% bağlı bir ağ oluşturur.
-   * Hiçbir mağaza veya servis kapısı izole/bağlantısız bırakılamaz.
+### 2.3. Rota Katmanı ve Görünürlük Kuralı
+* Rota SVG katmanı (`#route-svg`) mağaza poligonlarının ve marka rozetlerinin **kesinlikle en üstünde (`z-index: 50`)** yer alır.
+* Navigasyon çizgisi parlak mavi (`#2563eb`), 4px kalınlığında, animasyonlu kesikli çizgi (`stroke-dasharray: 8 6`, `animation: routeDashFlow 1s linear infinite`) olarak render edilir. Altında 7px saf beyaz kontrast kenar bulunur.
+* Alışveriş sepeti maskotu (`#avatar-layer`, `z-index: 60`) bu çizgi üzerinde 60 FPS akışla hareket eder.
 
 ---
 

@@ -289,6 +289,41 @@ function setupUIEventListeners() {
     openEntranceModal();
   });
 
+  // 3 Hızlı Başlangıç Butonu (1-Tıkla Anında Seçim)
+  const quickStartMap = {
+    'btn-quick-fisekhane': 'ent_fisekhane',
+    'btn-quick-carousel': 'ent_carousel',
+    'btn-quick-danisma': 'ent_danisma'
+  };
+
+  Object.entries(quickStartMap).forEach(([btnId, entId]) => {
+    document.getElementById(btnId)?.addEventListener('click', () => {
+      const ent = mallData.entrances.find(e => e.id === entId);
+      if (ent) {
+        selectedStartStore = ent;
+        updateStartBadgeUI(ent.name);
+
+        mallMap.activeStartStore = selectedStartStore;
+        mallMap.updateActiveStorePolygons();
+        showToast(`📍 Başlangıç: ${ent.name}`, 'info');
+
+        if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
+          calculateAndDisplayRoute();
+        } else {
+          // Zemin kata ve noktaya odaklan
+          if (mallMap.currentFloor !== ent.floor) {
+            mallMap.loadFloor(ent.floor).then(() => {
+              updateFloorUI(ent.floor);
+              mallMap.flyTo(ent.cx, ent.cy, 1.35);
+            });
+          } else {
+            mallMap.flyTo(ent.cx, ent.cy, 1.35);
+          }
+        }
+      }
+    });
+  });
+
   // Rota kartı üzerindeki başlangıç etiketine tıklanırsa da başlangıç seçim modalını aç
   document.getElementById('route-start-label')?.addEventListener('click', () => {
     openEntranceModal();
@@ -675,17 +710,32 @@ function resetSimControls() {
   if (playText) playText.textContent = 'Sepeti Başlat';
 }
 
-// 10. Başlangıç Konumu Rozetini Güncelle
+// 10. Başlangıç Konumu Rozetini ve Hızlı Butonları Güncelle
 function updateStartBadgeUI(name) {
   const badge = document.getElementById('start-badge-text');
   if (badge && name) {
     let shortName = name
       .replace(' (Cadde)', '')
       .replace(' (Meydan)', '')
+      .replace(' (Kuzey)', '')
+      .replace(' (Info Desk)', '')
       .replace(' Caddesi Ana Giriş', ' Girişi')
-      .replace(' Tarafı Batı Giriş', ' Girişi');
+      .replace(' Tarafı Batı Giriş', ' Girişi')
+      .replace(' Ana Giriş', '');
     badge.textContent = shortName;
     badge.parentElement?.setAttribute('title', `Başlangıç Konumu: ${name}`);
+
+    // 3 Hızlı Başlangıç Çipini Senkronize Et
+    document.querySelectorAll('.quick-start-chip').forEach(b => {
+      const isMatch = (b.id === 'btn-quick-fisekhane' && name.includes('Fişekhane')) ||
+                      (b.id === 'btn-quick-carousel' && name.includes('Carousel')) ||
+                      (b.id === 'btn-quick-danisma' && name.includes('Danışma'));
+      if (isMatch) {
+        b.className = 'quick-start-chip active px-2.5 py-1 rounded-xl bg-emerald-600 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-sm';
+      } else {
+        b.className = 'quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700';
+      }
+    });
   }
 }
 

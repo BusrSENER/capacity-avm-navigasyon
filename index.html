@@ -100,9 +100,23 @@
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-        <button id="start-location-btn" class="h-10 px-2.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 text-xs font-bold transition-all shrink-0 shadow-sm" title="Başlangıç Konumunuzu Seçin (Kapılar / Danışma)">
+        <button id="start-location-btn" class="h-10 px-2.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 text-xs font-bold transition-all shrink-0 shadow-sm" title="Başlangıç Konumunuzu Seçin (Tüm Liste)">
           <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
-          <span id="start-badge-text" class="text-[11px] font-bold">Konumum</span>
+          <span id="start-badge-text" class="text-[11px] font-bold">Fişekhane</span>
+        </button>
+      </div>
+
+      <!-- 3 Hızlı Başlangıç Noktası (1-Tıkla Anında Seçim) -->
+      <div class="flex items-center gap-1.5 mb-2 overflow-x-auto no-scrollbar py-0.5 shrink-0">
+        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Giriş:</span>
+        <button id="btn-quick-fisekhane" class="quick-start-chip active px-2.5 py-1 rounded-xl bg-emerald-600 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-sm" data-point="fisekhane" title="Fişekhane Ana Giriş (x: 1245, y: 410)">
+          <span>🚪 Fişekhane</span>
+        </button>
+        <button id="btn-quick-carousel" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="carousel" title="Carousel Geçiş Kapısı (x: 680, y: 50)">
+          <span>🚪 Carousel</span>
+        </button>
+        <button id="btn-quick-danisma" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="danisma" title="Zemin Kat Danışma (x: 1085, y: 425)">
+          <span>ℹ️ Danışma</span>
         </button>
       </div>
 

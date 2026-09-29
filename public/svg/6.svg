@@ -1,100 +1,270 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 516 735" width="100%" height="100%" class="map__svg">
-  <defs>
-    <filter id="slab-shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.08"/>
-    </filter>
-    <linearGradient id="fountainWaterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.35"/>
-    </linearGradient>
-    <linearGradient id="atriumVoidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.95"/>
-      <stop offset="100%" stop-color="#f1f5f9" stop-opacity="0.95"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850" width="100%" height="100%" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background-color: transparent;">
+  <!-- ================= BİNA TABANI VE MİMARİ OMURGA (1400 x 850) ================= -->
+  <!-- Saf Beyaz Kat Gövdesi (#ffffff, stroke #cbd5e1) -->
+  <path d="M 90,130 
+           L 660,130 
+           L 660,50 L 740,50 L 740,130 
+           L 1090,130 
+           C 1170,130 1280,220 1280,440 
+           C 1280,660 1170,750 1090,750 
+           L 90,750 
+           C 60,750 60,130 90,130 Z" 
+        fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
 
-  <!-- 1. TEMİZ BEYAZ MİMARİ KAT TABANI (SLAB) -->
-  <g id="FloorSlab" class="map__slab">
-    <!-- Dış Bina Duvarı (Kavisli Beyaz Mimari Döşeme) -->
-    <path id="slab_outer_6" class="slab corridor-path" d="M 120 45 C 200 35, 316 35, 396 45 C 475 55, 490 120, 488 200 L 488 535 C 490 620, 470 685, 396 695 C 316 705, 200 705, 120 695 C 45 685, 26 620, 28 535 L 28 200 C 26 120, 45 55, 120 45 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.5" />
+  <!-- Yürüme Koridorları (#f8fafc) -->
+  <path d="M 200,320 
+           L 1080,320 
+           C 1180,320 1240,360 1240,440 
+           C 1240,520 1180,560 1080,560 
+           L 200,560 
+           C 160,560 160,320 200,320 Z" 
+        fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Kuzey Koridoru (Carousel Bağlantısı) -->
+  <path d="M 660,50 L 740,50 L 740,340 L 660,340 Z" 
+        fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Dış Cadde / Yön Bilgilendirmeleri -->
+  <text x="700" y="32" fill="#0284c7" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">
+    ▲ HALİT ZİYA UŞAKLIGİL CADDESİ (CAROUSEL GEÇİŞİ)
+  </text>
+  <text x="1355" y="440" fill="#d97706" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(90 1355 440)" letter-spacing="2">
+    ▲ FİŞEKHANE CADDESİ (ANA GİRİŞ / MEYDAN)
+  </text>
+  <text x="700" y="795" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">
+    ▼ DADYAN SOKAK / ACIBADEM BAKIRKÖY HASTANESİ
+  </text>
+  <text x="35" y="440" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 35 440)" letter-spacing="1">
+    ◄ ZEBERCET SOKAK / ATAKÖY YÖNÜ
+  </text>
+
+  <!-- Atrium & Sirkülasyon Elemanları -->
+  
+    <!-- Atrium Galeri Boşluğu (Aşağıya Bakan Cam Korkuluk) -->
+    <ellipse cx="700" cy="440" rx="90" ry="65" fill="#eef2f6" stroke="#cbd5e1" stroke-width="2.5" stroke-dasharray="6 3"/>
+    <text x="700" y="444" fill="#94a3b8" font-size="10" font-weight="700" text-anchor="middle">GALERİ BOŞLUĞU (ATRİUM)</text>
     
-    <!-- Batı Yürüyüş Promenadı -->
-    <path class="corridor-lane" d="M 144 140 L 180 140 L 180 590 L 144 590 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <!-- Doğu Yürüyüş Promenadı -->
-    <path class="corridor-lane" d="M 336 140 L 372 140 L 372 590 L 336 590 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <!-- Kuzey Bağlantı Koridoru -->
-    <path class="corridor-lane" d="M 144 140 L 372 140 L 372 170 L 144 170 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <!-- Güney Bağlantı Koridoru -->
-    <path class="corridor-lane" d="M 144 560 L 372 560 L 372 590 L 144 590 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-
-    <!-- Kuzey Skybridge -->
-    <rect x="178" y="233" width="160" height="24" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" />
-    <!-- Orta Skybridge (Geçiş Köprüsü) -->
-    <rect x="178" y="351" width="160" height="28" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" />
-    <!-- Güney Skybridge -->
-    <rect x="178" y="473" width="160" height="24" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" />
-  </g>
-
-  <!-- 2. MERKEZİ ATRIUM & MÜZİKLİ GÖSTERİ HAVUZU -->
-  <g id="FloorVoids">
-    <!-- Açık Galeri Boşluğu & Cam Korkuluk -->
-    <ellipse cx="258" cy="365" rx="74" ry="145" fill="url(#atriumVoidGrad)" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="6 4" class="void-atrium" />
-    <text x="258" y="365" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="700" letter-spacing="1" opacity="0.85">ATRIUM GALERİ BOŞLUĞU</text>
-  </g>
-
-  <!-- 3. MİMARİ MAĞAZA ODALARI (PASTEL RENKLER) -->
-  <g id="FloorRooms">
-    <path id="room_6_1" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 176.5 L 142.0 176.5 L 142.0 215.7 L 34.0 215.7 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_1" />
-    <path id="room_6_2" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 218.7 L 142.0 218.7 L 142.0 257.9 L 34.0 257.9 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_2" />
-    <path id="room_6_3" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 260.9 L 142.0 260.9 L 142.0 300.2 L 34.0 300.2 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_3" />
-    <path id="room_6_4" class="room room--tenant g-entertainment cat-entertainment store-polygon" d="M 34.0 303.2 L 142.0 303.2 L 142.0 342.4 L 34.0 342.4 Z" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.2" fillRule="evenodd" data-id="store_6_4" />
-    <path id="room_6_5" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 345.4 L 142.0 345.4 L 142.0 384.6 L 34.0 384.6 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_5" />
-    <path id="room_6_6" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 387.6 L 142.0 387.6 L 142.0 426.8 L 34.0 426.8 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_6" />
-    <path id="room_6_7" class="room room--tenant g-service cat-service store-polygon" d="M 34.0 429.8 L 142.0 429.8 L 142.0 469.1 L 34.0 469.1 Z" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.2" fillRule="evenodd" data-id="store_6_7" />
-    <path id="room_6_8" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 472.1 L 142.0 472.1 L 142.0 511.3 L 34.0 511.3 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_8" />
-    <path id="room_6_9" class="room room--tenant g-food cat-food store-polygon" d="M 34.0 514.3 L 142.0 514.3 L 142.0 553.5 L 34.0 553.5 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_9" />
-    <path id="room_6_10" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 176.5 L 482.0 176.5 L 482.0 215.7 L 374.0 215.7 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_10" />
-    <path id="room_6_11" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 218.7 L 482.0 218.7 L 482.0 257.9 L 374.0 257.9 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_11" />
-    <path id="room_6_12" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 260.9 L 482.0 260.9 L 482.0 300.2 L 374.0 300.2 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_12" />
-    <path id="room_6_13" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 303.2 L 482.0 303.2 L 482.0 342.4 L 374.0 342.4 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_13" />
-    <path id="room_6_14" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 345.4 L 482.0 345.4 L 482.0 384.6 L 374.0 384.6 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_14" />
-    <path id="room_6_15" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 387.6 L 482.0 387.6 L 482.0 426.8 L 374.0 426.8 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_15" />
-    <path id="room_6_16" class="room room--tenant g-tech cat-tech store-polygon" d="M 374.0 429.8 L 482.0 429.8 L 482.0 469.1 L 374.0 469.1 Z" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.2" fillRule="evenodd" data-id="store_6_16" />
-    <path id="room_6_17" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 472.1 L 482.0 472.1 L 482.0 511.3 L 374.0 511.3 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_17" />
-    <path id="room_6_18" class="room room--tenant g-food cat-food store-polygon" d="M 374.0 514.3 L 482.0 514.3 L 482.0 553.5 L 374.0 553.5 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_18" />
-    <path id="room_6_19" class="room room--tenant g-entertainment cat-entertainment store-polygon" d="M 72.0 56.0 L 193.3 56.0 L 193.3 136.0 L 72.0 136.0 Z" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.2" fillRule="evenodd" data-id="store_6_19" />
-    <path id="room_6_20" class="room room--tenant g-food cat-food store-polygon" d="M 197.3 56.0 L 318.7 56.0 L 318.7 136.0 L 197.3 136.0 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_20" />
-    <path id="room_6_21" class="room room--tenant g-food cat-food store-polygon" d="M 322.7 56.0 L 444.0 56.0 L 444.0 136.0 L 322.7 136.0 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_21" />
-    <path id="room_6_22" class="room room--tenant g-food cat-food store-polygon" d="M 72.0 594.0 L 193.3 594.0 L 193.3 674.0 L 72.0 674.0 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_22" />
-    <path id="room_6_23" class="room room--tenant g-food cat-food store-polygon" d="M 197.3 594.0 L 318.7 594.0 L 318.7 674.0 L 197.3 674.0 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_23" />
-    <path id="room_6_24" class="room room--tenant g-food cat-food store-polygon" d="M 322.7 594.0 L 444.0 594.0 L 444.0 674.0 L 322.7 674.0 Z" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2" fillRule="evenodd" data-id="store_6_24" />
-  </g>
-
-  <!-- 4. SABİT DİKEY İKONLAR (Asansör, Yürüyen Merdiven, Girişler) -->
-  <g id="FloorIcons" class="pointer-events-none">
-    <!-- Güney Panoramik Cam Asansörler -->
-    <g transform="translate(258, 535)" class="portal-svg portal-elevator" opacity="0.95">
-      <rect x="-14" y="-12" width="28" height="24" rx="6" fill="#0284c7" stroke="#38bdf8" stroke-width="1.8"/>
-      <path d="M-6 -4 L0 -10 L6 -4 M-6 4 L0 10 L6 4" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Merkez Geçiş Köprüsü (Skybridge) -->
+    <rect x="675" y="375" width="50" height="130" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <line x1="700" y1="380" x2="700" y2="500" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 3"/>
+        
+  
+    <!-- Batı Yürüyen Merdiven Grubu -->
+    <g transform="translate(265, 420)">
+      <rect width="45" height="38" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+      <text x="22" y="24" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
+      <text x="22" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
     </g>
-
-    <!-- Kuzey Servis Asansörü -->
-    <g transform="translate(210, 155)" class="portal-svg portal-elevator" opacity="0.9">
-      <rect x="-11" y="-10" width="22" height="20" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
-      <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="900">AS</text>
+    
+    <!-- Doğu Yürüyen Merdiven Grubu -->
+    <g transform="translate(1010, 420)">
+      <rect width="45" height="38" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+      <text x="22" y="24" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
+      <text x="22" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
     </g>
-
-    <!-- Güney Yürüyen Merdivenler -->
-    <g transform="translate(220, 520)" class="portal-svg portal-escalator" opacity="0.95">
-      <rect x="-13" y="-11" width="26" height="22" rx="5" fill="#10b981" stroke="#34d399" stroke-width="1.5"/>
-      <path d="M-7 4 L-2 4 L3 -4 L7 -4" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- Panoramik Cam Asansörler -->
+    <g transform="translate(565, 420)">
+      <rect width="28" height="38" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+      <text x="14" y="24" fill="#0284c7" font-size="12" text-anchor="middle">🛗</text>
+      <text x="14" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">ASANSÖR</text>
     </g>
+    
 
-    <!-- Kuzey Yürüyen Merdivenler -->
-    <g transform="translate(258, 200)" class="portal-svg portal-escalator" opacity="0.95">
-      <rect x="-13" y="-11" width="26" height="22" rx="5" fill="#10b981" stroke="#34d399" stroke-width="1.5"/>
-      <path d="M-7 -4 L-2 -4 L3 4 L7 4" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- ================= MAĞAZALAR ================= -->
+  <g id="stores-layer">
+    
+    <g class="store-polygon" data-id="store_6_1" id="room_6_1" data-name="Arby's">
+      <rect x="220.0" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="260.0" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Arby's
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_2" id="room_6_2" data-name="Burger King">
+      <rect x="295.4" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="335.4" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Burger King
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_3" id="room_6_3" data-name="Bursa Kebap Evi">
+      <rect x="370.7" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="410.7" y="229.0"
+            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Bursa Kebap Evi
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_4" id="room_6_4" data-name="D&R">
+      <rect x="446.1" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="486.1" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        D&R
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_5" id="room_6_5" data-name="Doyuyo">
+      <rect x="521.4" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="561.4" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Doyuyo
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_6" id="room_6_6" data-name="Dürümle">
+      <rect x="596.8" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="636.8" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Dürümle
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_7" id="room_6_7" data-name="Fitcity">
+      <rect x="672.2" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="712.2" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Fitcity
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_8" id="room_6_8" data-name="Gloria Jeans Coffees">
+      <rect x="747.5" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="787.5" y="229.0"
+            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Gloria Jeans Coffees
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_9" id="room_6_9" data-name="Green Salads">
+      <rect x="822.9" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="862.9" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Green Salads
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_10" id="room_6_10" data-name="GurmeBurger Kasap">
+      <rect x="898.3" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="938.3" y="229.0"
+            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        GurmeBurger Kasap
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_11" id="room_6_11" data-name="Günaydın">
+      <rect x="973.6" y="140.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1013.6" y="229.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Günaydın
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_12" id="room_6_12" data-name="HD İskender">
+      <rect x="275.1" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="315.1" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        HD İskender
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_13" id="room_6_13" data-name="KFC">
+      <rect x="359.9" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="399.9" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        KFC
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_14" id="room_6_14" data-name="Köfteci Ramiz">
+      <rect x="444.7" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="484.7" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Köfteci Ramiz
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_15" id="room_6_15" data-name="Makarnam">
+      <rect x="529.5" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="569.5" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Makarnam
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_16" id="room_6_16" data-name="Mediamarkt">
+      <rect x="614.2" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="654.2" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Mediamarkt
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_17" id="room_6_17" data-name="Molasera">
+      <rect x="699.0" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="739.0" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Molasera
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_18" id="room_6_18" data-name="Özsüt">
+      <rect x="783.8" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="823.8" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Özsüt
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_19" id="room_6_19" data-name="Paribu Cineverse">
+      <rect x="868.6" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="908.6" y="649.0"
+            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Paribu Cineverse
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_20" id="room_6_20" data-name="Pidem">
+      <rect x="953.4" y="560.0" width="80.0" height="170.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="993.4" y="649.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Pidem
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_21" id="room_6_21" data-name="Popeyes">
+      <rect x="100.0" y="520.0" width="110.0" height="140.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="155.0" y="594.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Popeyes
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_22" id="room_6_22" data-name="Tavuk Dünyası">
+      <rect x="100.0" y="200.0" width="110.0" height="140.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="155.0" y="274.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Tavuk Dünyası
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_23" id="room_6_23" data-name="Terra Pizza">
+      <rect x="1090.0" y="360.0" width="120.0" height="140.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1150.0" y="434.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Terra Pizza
+      </text>
+    </g>
+    <g class="store-polygon" data-id="store_6_24" id="room_6_24" data-name="Usta Dönerci">
+      <rect x="1090.0" y="520.0" width="120.0" height="140.0" rx="6"
+            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1150.0" y="594.0"
+            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+        Usta Dönerci
+      </text>
     </g>
   </g>
 </svg>

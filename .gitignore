@@ -9,6 +9,10 @@ Thumbs.db
 *.tmp
 __pycache__/
 
+# Screenshots
+screenshot_*.png
+
 # Firebase cache
 .firebase/
 .firebaserc
+
