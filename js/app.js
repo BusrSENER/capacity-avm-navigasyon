@@ -1,6 +1,7 @@
 /**
  * İstanbul Bakırköy Capacity AVM - Ana Uygulama Kontrolcüsü (App State Manager)
- * UI Etkileşimleri, Arama, Kategori Filtreleme, Navigasyon & Kupon Yönetimi
+ * 3 Sütunlu Mağaza Kartları, POI Detay Paneli, Hızlı İhtiyaçlar, Rota Planlama & Alışveriş Sepeti Simülasyonu
+ * İlham & Mimari: cevahir-rehber.web.app
  */
 
 let mallData = null;
@@ -8,11 +9,13 @@ let mallMap = null;
 let navEngine = null;
 let cartSimulator = null;
 
-let selectedStore = null;
-let startStore = null;
-let targetStore = null;
-let activeRoute = null;
-let navMode = 'escalator'; // 'escalator' | 'elevator' | 'both'
+let selectedStartStore = null;
+let selectedTargetStore = null;
+let activeRouteMode = 'escalator'; // 'escalator' | 'elevator'
+let currentFloor = 4; // Zemin Kat varsayılan başlangıç
+let filterTab = 'this_floor'; // 'this_floor' | 'all_floors'
+let activeCategory = 'all';
+let searchQuery = '';
 
 // Toast Notification Engine
 function showToast(message, type = 'info') {
@@ -20,14 +23,14 @@ function showToast(message, type = 'info') {
   if (!container) return;
 
   const toast = document.createElement('div');
-  const typeColors = {
-    info: 'border-cyan-500/40 bg-slate-900/90 text-cyan-300',
-    success: 'border-emerald-500/40 bg-slate-900/90 text-emerald-300',
-    warning: 'border-amber-500/40 bg-slate-900/90 text-amber-300',
-    error: 'border-rose-500/40 bg-slate-900/90 text-rose-300'
+  const typeStyles = {
+    info: 'border-cyan-500/40 bg-white/95 dark:bg-slate-900/90 text-cyan-700 dark:text-cyan-300',
+    success: 'border-emerald-500/40 bg-white/95 dark:bg-slate-900/90 text-emerald-700 dark:text-emerald-300',
+    warning: 'border-amber-500/40 bg-white/95 dark:bg-slate-900/90 text-amber-700 dark:text-amber-300',
+    error: 'border-rose-500/40 bg-white/95 dark:bg-slate-900/90 text-rose-700 dark:text-rose-300'
   };
 
-  toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-2xl backdrop-blur-md text-xs sm:text-sm font-semibold transition-all duration-300 transform translate-y-4 opacity-0 ${typeColors[type] || typeColors.info}`;
+  toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-xl backdrop-blur-md text-xs sm:text-sm font-semibold transition-all duration-300 transform translate-y-4 opacity-0 ${typeStyles[type] || typeStyles.info}`;
   toast.innerHTML = `
     <span class="shrink-0 text-base">ℹ️</span>
     <span class="flex-1">${message}</span>
@@ -49,7 +52,7 @@ function showToast(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const resp = await fetch('public/mall_data.json');
-    if (!resp.ok) throw new Error('mall_data.json fetch failed');
+    if (!resp.ok) throw new Error('mall_data.json fetch failed: ' + resp.status);
     mallData = await resp.json();
 
     initApp();
@@ -63,16 +66,18 @@ function initApp() {
   navEngine = new NavigationEngine(mallData);
 
   mallMap = new MallMap('map-canvas-container', mallData, (store) => {
-    openStoreDetailModal(store);
+    selectStore(store);
   });
 
   cartSimulator = new CartSimulator(
     mallMap,
-    (progress, currentNode) => {
-      updateSimProgressBar(progress);
+    (progress, stepIndex) => {
+      const progressBar = document.getElementById('sim-progress-bar');
+      if (progressBar) progressBar.style.width = `${progress * 100}%`;
     },
     (newFloor) => {
-      highlightActiveFloorBtn(newFloor);
+      currentFloor = newFloor;
+      updateFloorUI(newFloor);
     },
     () => {
       showToast('🎉 Hedefe ulaştınız! Keyifli alışverişler dileriz.', 'success');
@@ -80,28 +85,93 @@ function initApp() {
     }
   );
 
+  setupTheme();
   setupUIEventListeners();
   setupSearchEngine();
-  setupTheme();
-  highlightActiveFloorBtn(mallMap.currentFloor);
+  setupAmenityPills();
+  setupTabs();
 
-  // Başlangıçta tüm mağazalar listesini sol panele doldur
-  renderStoreSearchResults(filterStoresByCategory('all'));
+  updateFloorUI(currentFloor);
+  renderSidebarStoreGrid();
 
   if (window.lucide) {
     lucide.createIcons();
   }
 }
 
+// 1. Tema Yönetimi (Varsayılan Aydınlık Mimari Mod)
+function setupTheme() {
+  const btn = document.getElementById('theme-toggle-btn');
+  const icon = document.getElementById('theme-icon');
 
+  const savedTheme = localStorage.getItem('capacity_theme_v2');
+  const isDark = savedTheme === 'dark'; // Varsayılan aydınlık mimari mod
+
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+    if (icon) icon.setAttribute('data-lucide', 'sun');
+  } else {
+    document.documentElement.classList.remove('dark');
+    if (icon) icon.setAttribute('data-lucide', 'moon');
+  }
+
+  btn?.addEventListener('click', () => {
+    const currentlyDark = document.documentElement.classList.contains('dark');
+    if (currentlyDark) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('capacity_theme_v2', 'light');
+      if (icon) icon.setAttribute('data-lucide', 'moon');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('capacity_theme_v2', 'dark');
+      if (icon) icon.setAttribute('data-lucide', 'sun');
+    }
+    if (window.lucide) lucide.createIcons();
+  });
+}
+
+// 2. Kat Değişimi & UI Güncellemesi
+function updateFloorUI(floorNum) {
+  currentFloor = floorNum;
+  const flInfo = mallData?.floors[floorNum];
+
+  // Başlık Kartı
+  const titleEl = document.getElementById('current-floor-title');
+  const subEl = document.getElementById('current-floor-sub');
+  if (titleEl && flInfo) titleEl.textContent = flInfo.label;
+  if (subEl && flInfo) subEl.textContent = flInfo.subtitle;
+
+  // Tab etiketindeki kat adı
+  const thisFloorNumSpan = document.getElementById('this-floor-num');
+  if (thisFloorNumSpan && flInfo) {
+    thisFloorNumSpan.textContent = floorNum === 4 ? 'Zemin' : (flInfo.label.split(' ')[0] || floorNum);
+  }
+
+  // Dikey Kat Seçici Butonları
+  document.querySelectorAll('.floor-pill').forEach(btn => {
+    const f = parseInt(btn.getAttribute('data-floor'), 10);
+    if (f === floorNum) {
+      btn.classList.add('active', 'bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900', 'shadow-md');
+      btn.classList.remove('text-slate-600', 'dark:text-slate-300');
+    } else {
+      btn.classList.remove('active', 'bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900', 'shadow-md');
+      btn.classList.add('text-slate-600', 'dark:text-slate-300');
+    }
+  });
+
+  if (filterTab === 'this_floor') {
+    renderSidebarStoreGrid();
+  }
+}
+
+// 3. UI Dinleyicileri
 function setupUIEventListeners() {
-  // Kat Değiştirme Butonları
-  const floorButtons = document.querySelectorAll('.floor-btn');
-  floorButtons.forEach(btn => {
+  // Kat Seçici Butonları
+  document.querySelectorAll('.floor-pill').forEach(btn => {
     btn.addEventListener('click', () => {
       const fl = parseInt(btn.getAttribute('data-floor'), 10);
       mallMap.loadFloor(fl);
-      highlightActiveFloorBtn(fl);
+      updateFloorUI(fl);
     });
   });
 
@@ -109,41 +179,18 @@ function setupUIEventListeners() {
   const catPills = document.querySelectorAll('.cat-pill');
   catPills.forEach(pill => {
     pill.addEventListener('click', () => {
-      catPills.forEach(p => p.classList.remove('active', 'bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900'));
+      catPills.forEach(p => {
+        p.classList.remove('active', 'bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900');
+        p.classList.add('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
+      });
+      pill.classList.remove('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
       pill.classList.add('active', 'bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900');
 
-      const cat = pill.getAttribute('data-category');
-      mallMap.setCategoryFilter(cat);
-      renderStoreSearchResults(filterStoresByCategory(cat));
+      activeCategory = pill.getAttribute('data-category');
+      mallMap.setCategoryFilter(activeCategory);
+      renderSidebarStoreGrid();
     });
   });
-
-  // Harita Görünüm Seçici (Öne Çıkanlar / Tümü)
-  const displayModeToggle = document.getElementById('display-mode-select');
-  if (displayModeToggle) {
-    displayModeToggle.addEventListener('change', (e) => {
-      mallMap.setDisplayMode(e.target.value);
-    });
-  }
-
-  // Navigasyon Tercih Modu (Merdiven / Asansör)
-  const modeRadios = document.querySelectorAll('input[name="nav-mode"]');
-  modeRadios.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      navMode = e.target.value;
-      if (startStore && targetStore) {
-        calculateAndDisplayRoute();
-      }
-    });
-  });
-
-  // GPS / Giriş Seçim Butonu
-  const gpsBtn = document.getElementById('gps-quick-btn');
-  if (gpsBtn) {
-    gpsBtn.addEventListener('click', () => {
-      openEntranceModal();
-    });
-  }
 
   // Zoom & Reset Butonları
   document.getElementById('zoom-in-btn')?.addEventListener('click', () => {
@@ -160,338 +207,445 @@ function setupUIEventListeners() {
     mallMap.resetView();
   });
 
-  // Simülatör Oynat / Durdur Butonları
-  document.getElementById('sim-play-btn')?.addEventListener('click', () => {
-    if (!activeRoute) {
-      showToast('Lütfen önce bir rota oluşturun.', 'warning');
-      return;
+  // Rota Kontrolleri
+  document.getElementById('route-swap-btn')?.addEventListener('click', () => {
+    if (selectedStartStore && selectedTargetStore) {
+      const temp = selectedStartStore;
+      selectedStartStore = selectedTargetStore;
+      selectedTargetStore = temp;
+      calculateAndDisplayRoute();
     }
-    if (cartSimulator.isPlaying) {
-      cartSimulator.pause();
-      document.getElementById('sim-play-icon').setAttribute('data-lucide', 'play');
-    } else {
-      cartSimulator.play();
-      document.getElementById('sim-play-icon').setAttribute('data-lucide', 'pause');
-    }
-    if (window.lucide) lucide.createIcons();
   });
 
-  document.getElementById('sim-stop-btn')?.addEventListener('click', () => {
-    cartSimulator.stop();
-    resetSimControls();
-  });
-
-  document.getElementById('sim-speed-select')?.addEventListener('change', (e) => {
-    cartSimulator.setSpeed(e.target.value);
-  });
-
-  // Rota Temizle Butonu
   document.getElementById('clear-route-btn')?.addEventListener('click', () => {
     clearCurrentRoute();
   });
 
-  // Modal Kapatma
-  document.getElementById('store-modal-close')?.addEventListener('click', () => {
-    closeStoreDetailModal();
-  });
-  document.getElementById('store-modal-backdrop')?.addEventListener('click', () => {
-    closeStoreDetailModal();
-  });
-  document.getElementById('entrance-modal-close')?.addEventListener('click', () => {
-    closeEntranceModal();
-  });
-}
+  // Merdiven / Asansör Mod Seçimi
+  const btnEscalator = document.getElementById('mode-escalator');
+  const btnElevator = document.getElementById('mode-elevator');
 
-function highlightActiveFloorBtn(floorNum) {
-  const floorButtons = document.querySelectorAll('.floor-btn');
-  floorButtons.forEach(btn => {
-    const f = parseInt(btn.getAttribute('data-floor'), 10);
-    if (f === floorNum) {
-      btn.classList.add('bg-red-600', 'text-white', 'shadow-md', 'scale-105');
-      btn.classList.remove('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
+  btnEscalator?.addEventListener('click', () => {
+    activeRouteMode = 'escalator';
+    btnEscalator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
+    btnElevator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
+    if (selectedStartStore && selectedTargetStore) calculateAndDisplayRoute();
+  });
+
+  btnElevator?.addEventListener('click', () => {
+    activeRouteMode = 'elevator';
+    btnElevator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
+    btnEscalator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
+    if (selectedStartStore && selectedTargetStore) calculateAndDisplayRoute();
+  });
+
+  // Simülatör Olayları
+  const simPlayBtn = document.getElementById('sim-play-btn');
+  simPlayBtn?.addEventListener('click', () => {
+    if (!cartSimulator.isPlaying) {
+      cartSimulator.start();
+      document.getElementById('sim-play-text').textContent = 'Duraklat';
+      if (window.lucide) lucide.createIcons();
     } else {
-      btn.classList.remove('bg-red-600', 'text-white', 'shadow-md', 'scale-105');
-      btn.classList.add('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
+      cartSimulator.pause();
+      document.getElementById('sim-play-text').textContent = 'Devam Et';
     }
   });
 
-  // Alt bilgi etiketini güncelle
-  const floorTitle = document.getElementById('current-floor-title');
-  const floorSub = document.getElementById('current-floor-sub');
-  const flInfo = mallData?.floors[floorNum];
-  if (floorTitle && flInfo) floorTitle.textContent = flInfo.label;
-  if (floorSub && flInfo) floorSub.textContent = flInfo.subtitle;
+  document.getElementById('sim-reset-btn')?.addEventListener('click', () => {
+    cartSimulator.stop();
+    resetSimControls();
+    if (selectedStartStore) {
+      mallMap.loadFloor(selectedStartStore.floor).then(() => {
+        updateFloorUI(selectedStartStore.floor);
+        mallMap.flyTo(selectedStartStore.cx, selectedStartStore.cy, 1.4);
+      });
+    }
+  });
+
+  // Hız Butonları
+  ['1', '2', '4'].forEach(spd => {
+    document.getElementById(`sim-speed-${spd}`)?.addEventListener('click', (e) => {
+      document.querySelectorAll('#sim-controls-panel button[id^="sim-speed-"]').forEach(b => {
+        b.className = 'px-2 py-1 rounded-lg text-slate-600 dark:text-slate-300 font-bold hover:text-slate-900 dark:hover:text-white';
+      });
+      e.target.className = 'px-2 py-1 rounded-lg bg-cyan-600 text-white font-bold';
+      cartSimulator.setSpeed(parseFloat(spd));
+    });
+  });
+
+  // GPS Butonu
+  document.getElementById('gps-quick-btn')?.addEventListener('click', () => {
+    openEntranceModal();
+  });
+
+  document.getElementById('entrance-modal-close')?.addEventListener('click', () => {
+    closeEntranceModal();
+  });
+
+  // POI Geri Butonu
+  document.getElementById('poi-back-btn')?.addEventListener('click', () => {
+    closePoiDetail();
+  });
+
+  // POI Aksiyon Butonları
+  document.getElementById('poi-route-btn')?.addEventListener('click', () => {
+    if (selectedTargetStore) {
+      if (!selectedStartStore) {
+        // Otomatik olarak Fişekhane Cad. Ana Girişini başlangıç yap
+        const fisekhaneEnt = mallData.entrances.find(e => e.id === 'ent_fisekhane') || mallData.entrances[0];
+        selectedStartStore = fisekhaneEnt;
+      }
+      calculateAndDisplayRoute();
+    }
+  });
+
+  document.getElementById('poi-start-btn')?.addEventListener('click', () => {
+    if (selectedTargetStore) {
+      selectedStartStore = selectedTargetStore;
+      showToast(`📍 Başlangıç noktası "${selectedStartStore.name}" olarak ayarlandı.`, 'info');
+      if (selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
+        calculateAndDisplayRoute();
+      }
+    }
+  });
+
+  document.getElementById('poi-copy-coupon-btn')?.addEventListener('click', () => {
+    const code = document.getElementById('poi-coupon-code')?.textContent;
+    if (code) {
+      navigator.clipboard.writeText(code).then(() => {
+        showToast(`🎉 "${code}" kupon kodu kopyalandı!`, 'success');
+      });
+    }
+  });
 }
 
-// Arama & Otomatik Tamamlama
+// 4. Arama Motoru
 function setupSearchEngine() {
   const searchInput = document.getElementById('search-input');
   const clearBtn = document.getElementById('search-clear-btn');
-  const searchResults = document.getElementById('search-results-list');
 
   let debounceTimer = null;
 
   searchInput?.addEventListener('input', (e) => {
     clearTimeout(debounceTimer);
-    const query = e.target.value.trim().toLowerCase();
+    searchQuery = e.target.value.trim();
 
-    if (query.length > 0) {
+    if (searchQuery.length > 0) {
       clearBtn?.classList.remove('hidden');
     } else {
       clearBtn?.classList.add('hidden');
-      renderStoreSearchResults([]);
-      return;
     }
 
     debounceTimer = setTimeout(() => {
-      const allStores = getAllStoresList();
-      const filtered = allStores.filter(s => 
-        s.name.toLowerCase().includes(query) || 
-        (s.category_name && s.category_name.toLowerCase().includes(query))
-      );
-      renderStoreSearchResults(filtered);
+      closePoiDetail();
+      renderSidebarStoreGrid();
     }, 180);
   });
 
   clearBtn?.addEventListener('click', () => {
     searchInput.value = '';
+    searchQuery = '';
     clearBtn.classList.add('hidden');
-    renderStoreSearchResults([]);
+    renderSidebarStoreGrid();
   });
 }
 
-function getAllStoresList() {
-  const list = [];
-  if (!mallData) return list;
-  for (let fl = 1; fl <= 6; fl++) {
-    const fStores = mallData.floors[fl]?.stores || [];
-    fStores.forEach(s => list.push(s));
-  }
-  return list;
-}
+// 5. Hızlı İhtiyaç Çipleri (Amenities)
+function setupAmenityPills() {
+  document.querySelectorAll('.amenity-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const amenityKind = pill.getAttribute('data-amenity');
+      const floorAmenities = mallData.floors[currentFloor]?.amenities || [];
+      let found = floorAmenities.find(a => a.kind === amenityKind);
 
-function filterStoresByCategory(cat) {
-  const all = getAllStoresList();
-  if (cat === 'all') return all.slice(0, 30);
-  return all.filter(s => s.category === cat);
-}
+      if (!found) {
+        // Başka katlarda ara
+        for (let fl = 1; fl <= 6; fl++) {
+          const ams = mallData.floors[fl]?.amenities || [];
+          found = ams.find(a => a.kind === amenityKind);
+          if (found) {
+            mallMap.loadFloor(fl).then(() => {
+              updateFloorUI(fl);
+              selectStore(found);
+            });
+            return;
+          }
+        }
+      }
 
-function renderStoreSearchResults(stores) {
-  const container = document.getElementById('search-results-list');
-  if (!container) return;
-
-  if (stores.length === 0) {
-    container.innerHTML = `
-      <div class="text-center py-8 text-slate-400">
-        <i data-lucide="store" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
-        <p class="text-xs">Aramanızla eşleşen mağaza bulunamadı.</p>
-      </div>
-    `;
-    if (window.lucide) lucide.createIcons();
-    return;
-  }
-
-  container.innerHTML = stores.slice(0, 40).map(s => `
-    <div class="store-list-item flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/80 cursor-pointer transition-colors border border-transparent hover:border-slate-200/80 dark:hover:border-slate-700" data-store-id="${s.id}">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 shrink-0">
-          ${getStoreLogo(s, 38)}
-        </div>
-        <div>
-          <h4 class="text-xs font-bold text-slate-900 dark:text-white">${s.name}</h4>
-          <p class="text-[11px] text-slate-400">${s.floor_name || s.floor + '. Kat'} &bull; ${s.category_name || s.category}</p>
-        </div>
-      </div>
-      <button class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors shadow-xs" title="Rotaya Ekle">
-        <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
-      </button>
-    </div>
-  `).join('');
-
-  if (window.lucide) lucide.createIcons();
-
-  container.querySelectorAll('.store-list-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const sId = item.getAttribute('data-store-id');
-      const store = getAllStoresList().find(s => s.id === sId);
-      if (store) {
-        mallMap.loadFloor(store.floor).then(() => {
-          highlightActiveFloorBtn(store.floor);
-          mallMap.flyTo(store.cx, store.cy, 1.4);
-          openStoreDetailModal(store);
-        });
+      if (found) {
+        selectStore(found);
+      } else {
+        showToast('Bu katta aranan servis noktası bulunamadı.', 'warning');
       }
     });
   });
 }
 
-// Mağaza Detay Modalı & Kupon
-function openStoreDetailModal(store) {
-  selectedStore = store;
-  const modal = document.getElementById('store-detail-modal');
-  if (!modal) return;
+// 6. Segmented Tabs: Bu Katta vs Tüm Katlar
+function setupTabs() {
+  const tabThis = document.getElementById('tab-this-floor');
+  const tabAll = document.getElementById('tab-all-floors');
 
-  document.getElementById('modal-store-name').textContent = store.name;
-  document.getElementById('modal-store-floor').textContent = `${store.floor_name || store.floor + '. Kat'} ${store.unit ? '· No: ' + store.unit : ''}`;
-  document.getElementById('modal-store-category').textContent = store.category_name || store.category;
-  document.getElementById('modal-store-phone').textContent = store.phone || '0212 559 0000';
-  document.getElementById('modal-store-logo').innerHTML = getStoreLogo(store, 56);
+  tabThis?.addEventListener('click', () => {
+    filterTab = 'this_floor';
+    tabThis.className = 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition-all text-center';
+    tabAll.className = 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all text-center';
+    renderSidebarStoreGrid();
+  });
 
-  // Kampanya / Kupon Gösterimi
-  const campBox = document.getElementById('modal-campaign-box');
-  if (store.campaign && store.campaign.active) {
-    campBox.classList.remove('hidden');
-    document.getElementById('modal-camp-title').textContent = store.campaign.title;
-    document.getElementById('modal-camp-discount').textContent = store.campaign.discount;
-    document.getElementById('modal-camp-code').textContent = store.campaign.code;
-    document.getElementById('modal-camp-badge').textContent = store.campaign.badge;
+  tabAll?.addEventListener('click', () => {
+    filterTab = 'all_floors';
+    tabAll.className = 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition-all text-center';
+    tabThis.className = 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all text-center';
+    renderSidebarStoreGrid();
+  });
+}
+
+// 7. Sol Panel 3-Sütunlu Mağaza Kartları Grid'i
+function getAllStores() {
+  const stores = [];
+  if (!mallData) return stores;
+  for (let fl = 1; fl <= 6; fl++) {
+    (mallData.floors[fl]?.stores || []).forEach(s => stores.push(s));
+  }
+  return stores;
+}
+
+function renderSidebarStoreGrid() {
+  const grid = document.getElementById('sidebar-store-grid');
+  if (!grid) return;
+
+  let list = [];
+  if (filterTab === 'this_floor') {
+    list = mallData.floors[currentFloor]?.stores || [];
   } else {
-    campBox.classList.add('hidden');
+    list = getAllStores();
   }
 
-  // "Buraya Git" Butonu
-  const routeToBtn = document.getElementById('modal-route-to-btn');
-  routeToBtn.onclick = () => {
-    setRouteTarget(store);
-    closeStoreDetailModal();
-  };
-
-  // "Buradan Başla" Butonu
-  const routeFromBtn = document.getElementById('modal-route-from-btn');
-  routeFromBtn.onclick = () => {
-    setRouteStart(store);
-    closeStoreDetailModal();
-  };
-
-  modal.classList.remove('hidden');
-}
-
-function closeStoreDetailModal() {
-  document.getElementById('store-detail-modal')?.classList.add('hidden');
-}
-
-// Kupon Kopyalama
-window.copyStoreCoupon = function() {
-  const code = document.getElementById('modal-camp-code')?.textContent;
-  if (code) {
-    navigator.clipboard.writeText(code).then(() => {
-      showToast(`🎁 Kupon Kodu (${code}) kopyalandı! Kasada kullanabilirsiniz.`, 'success');
-    });
+  // Kategori Filtresi
+  if (activeCategory && activeCategory !== 'all') {
+    list = list.filter(s => s.category === activeCategory);
   }
-};
 
-// Navigasyon Rota Hesaplama
-function setRouteTarget(store) {
-  targetStore = store;
-  mallMap.activeTargetStore = store;
-  document.getElementById('nav-target-name').textContent = store.name;
-
-  if (!startStore) {
-    // Varsayılan olarak Fişekhane Caddesi Ana Girişi'ni seç
-    const defaultEntrance = mallData.entrances.find(e => e.id === 'entrance_east_main') || mallData.entrances[0];
-    setRouteStart(defaultEntrance);
-  } else {
-    calculateAndDisplayRoute();
+  // Arama Filtresi
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase().trim();
+    list = list.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      (s.category_name && s.category_name.toLowerCase().includes(q))
+    );
   }
-}
 
-function setRouteStart(store) {
-  startStore = store;
-  mallMap.activeStartStore = store;
-  document.getElementById('nav-start-name').textContent = store.name;
+  // Alfabetik sırala
+  list.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
 
-  if (targetStore) {
-    calculateAndDisplayRoute();
-  }
-}
-
-function calculateAndDisplayRoute() {
-  if (!startStore || !targetStore) return;
-
-  const startNodeId = startStore.nav_node || startStore.doors?.[0];
-  const targetNodeId = targetStore.nav_node || targetStore.doors?.[0];
-
-  const result = navEngine.findRoute(startNodeId, targetNodeId, navMode);
-
-  if (!result) {
-    showToast('Bu iki nokta arasında uygun bir rota bulunamadı.', 'error');
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="col-span-3 py-12 text-center text-slate-400">
+        <div class="text-3xl mb-2">🔍</div>
+        <div class="text-xs font-semibold text-slate-700 dark:text-slate-300">Mağaza bulunamadı</div>
+        <div class="text-[11px] text-slate-400 mt-1">Farklı bir arama veya kategori deneyebilirsiniz.</div>
+      </div>
+    `;
     return;
   }
 
-  activeRoute = result;
-  mallMap.renderRoute(result);
-  cartSimulator.setRoute(result);
+  grid.innerHTML = list.map(store => {
+    const logoHtml = getStoreLogo(store, 34);
+    const isSelected = selectedTargetStore && selectedTargetStore.id === store.id;
 
-  // Rota Panelini Doldur
-  document.getElementById('nav-panel')?.classList.remove('hidden');
-  document.getElementById('route-total-meters').textContent = `${result.totalDistance} m`;
-  document.getElementById('route-est-time').textContent = `~${result.estimatedMinutes} dk`;
+    return `
+      <div class="store-card ${isSelected ? 'is-active' : ''}" data-store-id="${store.id}" data-floor="${store.floor}">
+        <div class="store-card__logo">
+          ${logoHtml}
+        </div>
+        <div class="store-card__name">${store.name}</div>
+        <div class="store-card__floor">${store.floor_name || store.floor + '. Kat'}</div>
+      </div>
+    `;
+  }).join('');
 
-  if (result.fallbackUsed) {
-    showToast('Seçilen modda yol bulunamadı, yürüyen merdiven ve asansör hibrit kullanıldı.', 'warning');
-  } else {
-    showToast(`✅ En hızlı rota oluşturuldu (${result.totalDistance} m, ~${result.estimatedMinutes} dk)`, 'success');
-  }
-
-  renderTurnInstructions(result.instructions);
-
-  // Başlangıç katına odaklan
-  if (mallMap.currentFloor !== startStore.floor) {
-    mallMap.loadFloor(startStore.floor).then(() => {
-      highlightActiveFloorBtn(startStore.floor);
-      mallMap.flyTo(startStore.cx, startStore.cy, 1.25);
+  grid.querySelectorAll('.store-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const sId = card.getAttribute('data-store-id');
+      const store = getAllStores().find(s => s.id === sId);
+      if (store) {
+        selectStore(store);
+      }
     });
-  } else {
-    mallMap.flyTo(startStore.cx, startStore.cy, 1.25);
-  }
+  });
 }
 
-function renderTurnInstructions(instructions) {
-  const container = document.getElementById('route-instructions-list');
-  if (!container) return;
+// 8. Mağaza Seçimi & POI Detayı
+function selectStore(store) {
+  selectedTargetStore = store;
 
-  container.innerHTML = instructions.map(ins => `
-    <div class="flex items-start gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-xs">
-      <div class="w-6 h-6 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">
-        ${ins.step}
+  // Kartlardaki aktif sınıfı
+  document.querySelectorAll('.store-card').forEach(c => {
+    if (c.getAttribute('data-store-id') === store.id) {
+      c.classList.add('is-active');
+    } else {
+      c.classList.remove('is-active');
+    }
+  });
+
+  // Farklı kattaysa kata geç
+  if (mallMap.currentFloor !== store.floor) {
+    mallMap.loadFloor(store.floor).then(() => {
+      updateFloorUI(store.floor);
+      mallMap.flyTo(store.cx, store.cy, 1.45);
+      mallMap.highlightStore(store.id, true);
+    });
+  } else {
+    mallMap.flyTo(store.cx, store.cy, 1.45);
+    mallMap.highlightStore(store.id, true);
+  }
+
+  // POI Detay Paneli
+  renderPoiDetail(store);
+}
+
+function renderPoiDetail(store) {
+  const poiPanel = document.getElementById('sidebar-poi-detail');
+  const storeGrid = document.getElementById('sidebar-store-grid');
+  const tabsContainer = document.getElementById('sidebar-tabs-container');
+
+  if (!poiPanel) return;
+
+  // Görünürlük
+  storeGrid?.classList.add('hidden');
+  tabsContainer?.classList.add('hidden');
+  poiPanel.classList.remove('hidden');
+
+  // Bilgileri Doldur
+  const logoEl = document.getElementById('poi-logo');
+  if (logoEl) logoEl.innerHTML = getStoreLogo(store, 44);
+
+  const nameEl = document.getElementById('poi-name');
+  if (nameEl) nameEl.textContent = store.name;
+
+  const catEl = document.getElementById('poi-category');
+  if (catEl) catEl.textContent = store.category_name || store.category;
+
+  const flBadge = document.getElementById('poi-floor-badge');
+  if (flBadge) flBadge.textContent = store.floor_name || store.floor + '. Kat';
+
+  const unitEl = document.getElementById('poi-unit-no');
+  if (unitEl) unitEl.textContent = `Kapı No: ${store.unit || 'Z-12'}`;
+
+  const phoneEl = document.getElementById('poi-phone');
+  if (phoneEl) phoneEl.textContent = store.phone || '0212 559 0000';
+
+  // Kampanya
+  const camp = store.campaign || {
+    title: 'Capacity Sezon İndirimi',
+    discount: '%40 İndirim',
+    code: 'CAPACITY40',
+    badge: '🔥 Fırsat'
+  };
+
+  const campBadge = document.getElementById('poi-campaign-badge');
+  if (campBadge) campBadge.textContent = camp.badge || '%40 İndirim';
+
+  const campText = document.getElementById('poi-campaign-text');
+  if (campText) campText.textContent = camp.title;
+
+  const couponCode = document.getElementById('poi-coupon-code');
+  if (couponCode) couponCode.textContent = camp.code;
+}
+
+function closePoiDetail() {
+  const poiPanel = document.getElementById('sidebar-poi-detail');
+  const storeGrid = document.getElementById('sidebar-store-grid');
+  const tabsContainer = document.getElementById('sidebar-tabs-container');
+
+  poiPanel?.classList.add('hidden');
+  storeGrid?.classList.remove('hidden');
+  tabsContainer?.classList.remove('hidden');
+}
+
+// 9. Rota Hesaplama ve Görüntüleme
+function calculateAndDisplayRoute() {
+  if (!selectedStartStore || !selectedTargetStore) return;
+
+  const result = navEngine.findRoute(
+    selectedStartStore.nav_node,
+    selectedTargetStore.nav_node,
+    activeRouteMode
+  );
+
+  if (!result || !result.path || !result.path.length) {
+    showToast('Bu iki nokta arasında uygun yol bulunamadı.', 'error');
+    return;
+  }
+
+  // Rota Kartını Göster
+  const routeCard = document.getElementById('route-info-card');
+  routeCard?.classList.remove('hidden');
+
+  document.getElementById('route-start-label').textContent = selectedStartStore.name;
+  document.getElementById('route-target-label').textContent = selectedTargetStore.name;
+  document.getElementById('route-floors').textContent = `${selectedStartStore.floor_name || selectedStartStore.floor + '. Kat'} → ${selectedTargetStore.floor_name || selectedTargetStore.floor + '. Kat'}`;
+
+  document.getElementById('route-distance').textContent = `${result.totalDistance} m`;
+  document.getElementById('route-time').textContent = `~${result.estimatedMinutes} dk`;
+
+  // Adım Adım Talimatlar
+  const stepsContainer = document.getElementById('route-steps-container');
+  if (stepsContainer && result.instructions) {
+    stepsContainer.innerHTML = result.instructions.map(ins => `
+      <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+        <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
+        <div>
+          <div class="font-bold text-slate-800 dark:text-slate-200">${ins.text}</div>
+          <div class="text-[10px] text-slate-400">${mallData.floors[ins.floor]?.label || ins.floor + '. Kat'}</div>
+        </div>
       </div>
-      <div class="flex-1">
-        <p class="font-semibold text-slate-800 dark:text-slate-200">${ins.text}</p>
-        <span class="text-[10px] text-slate-400">${mallData.floors[ins.floor]?.label || ins.floor + '. Kat'}</span>
-      </div>
-    </div>
-  `).join('');
+    `).join('');
+  }
+
+  // Haritada Rota Çiz
+  mallMap.activeStartStore = selectedStartStore;
+  mallMap.activeTargetStore = selectedTargetStore;
+  mallMap.renderRoute(result);
+  mallMap.updateActiveStorePolygons();
+
+  // Simülatöre Rota Ver
+  cartSimulator.setRoute(result);
+
+  // Başlangıç Katına Odaklan
+  if (mallMap.currentFloor !== selectedStartStore.floor) {
+    mallMap.loadFloor(selectedStartStore.floor).then(() => {
+      updateFloorUI(selectedStartStore.floor);
+      mallMap.flyTo(selectedStartStore.cx, selectedStartStore.cy, 1.4);
+    });
+  } else {
+    mallMap.flyTo(selectedStartStore.cx, selectedStartStore.cy, 1.4);
+  }
+
+  showToast(`✅ Rota oluşturuldu (${result.totalDistance} m, ~${result.estimatedMinutes} dk)`, 'success');
 }
 
 function clearCurrentRoute() {
-  startStore = null;
-  targetStore = null;
-  activeRoute = null;
-  mallMap.activeStartStore = null;
-  mallMap.activeTargetStore = null;
+  selectedStartStore = null;
+  selectedTargetStore = null;
   mallMap.clearRoute();
   cartSimulator.stop();
 
-  document.getElementById('nav-start-name').textContent = 'Başlangıç Noktası Seçin';
-  document.getElementById('nav-target-name').textContent = 'Hedef Noktası Seçin';
-  document.getElementById('nav-panel')?.classList.add('hidden');
+  document.getElementById('route-info-card')?.classList.add('hidden');
   resetSimControls();
 }
 
-// Simülatör İlerleme Çubuğu ve Kontroller
-function updateSimProgressBar(pct) {
-  const bar = document.getElementById('sim-progress-bar');
-  if (bar) bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
-}
-
 function resetSimControls() {
-  updateSimProgressBar(0);
-  const icon = document.getElementById('sim-play-icon');
-  if (icon) icon.setAttribute('data-lucide', 'play');
-  if (window.lucide) lucide.createIcons();
+  const progressBar = document.getElementById('sim-progress-bar');
+  if (progressBar) progressBar.style.width = '0%';
+  const playText = document.getElementById('sim-play-text');
+  if (playText) playText.textContent = 'Sepeti Başlat';
 }
 
-// Giriş Noktası Seçim Modalı
+// 10. Giriş Noktası Seçim Modalı (GPS)
 function openEntranceModal() {
   const modal = document.getElementById('entrance-modal');
   if (!modal) return;
@@ -515,9 +669,12 @@ function openEntranceModal() {
       const eid = el.getAttribute('data-ent-id');
       const entrance = mallData.entrances.find(e => e.id === eid);
       if (entrance) {
-        setRouteStart(entrance);
+        selectedStartStore = entrance;
         closeEntranceModal();
         showToast(`📍 Başlangıç noktası "${entrance.name}" olarak ayarlandı.`, 'info');
+        if (selectedTargetStore) {
+          calculateAndDisplayRoute();
+        }
       }
     });
   });
@@ -527,36 +684,4 @@ function openEntranceModal() {
 
 function closeEntranceModal() {
   document.getElementById('entrance-modal')?.classList.add('hidden');
-}
-
-// Gece / Gündüz Modu
-function setupTheme() {
-  const btn = document.getElementById('theme-toggle-btn');
-  const icon = document.getElementById('theme-icon');
-
-  // Varsayılan olarak Aydınlık (Light) Mimari Mod!
-  const savedTheme = localStorage.getItem('capacity_theme');
-  const isDark = savedTheme === 'dark'; // Açık mod her zaman varsayılan
-
-  if (isDark) {
-    document.documentElement.classList.add('dark');
-    if (icon) icon.setAttribute('data-lucide', 'sun');
-  } else {
-    document.documentElement.classList.remove('dark');
-    if (icon) icon.setAttribute('data-lucide', 'moon');
-  }
-
-  btn?.addEventListener('click', () => {
-    const currentlyDark = document.documentElement.classList.contains('dark');
-    if (currentlyDark) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('capacity_theme', 'light');
-      if (icon) icon.setAttribute('data-lucide', 'moon');
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('capacity_theme', 'dark');
-      if (icon) icon.setAttribute('data-lucide', 'sun');
-    }
-    if (window.lucide) lucide.createIcons();
-  });
 }

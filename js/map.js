@@ -1,6 +1,7 @@
 /**
  * İstanbul Bakırköy Capacity AVM - İnteraktif Vektörel Harita Motoru
- * SVG Pan/Zoom, Mağaza Poligonları, 4-Katmanlı Neon Rota Shader'ı & Marka Rozetleri
+ * SVG Pan/Zoom, Mağaza Poligonları, 4-Katmanlı Neon Rota Shader'ı & Logo Rozetleri
+ * İlham: cevahir-rehber.web.app
  */
 
 class MallMap {
@@ -20,7 +21,7 @@ class MallMap {
 
     // Pan & Zoom State
     this.scale = 1.0;
-    this.minScale = 0.5;
+    this.minScale = 0.55;
     this.maxScale = 4.0;
     this.panX = 0;
     this.panY = 0;
@@ -110,6 +111,17 @@ class MallMap {
 
       if (storeData) {
         poly.style.cursor = 'pointer';
+
+        poly.addEventListener('mouseenter', () => {
+          this.highlightStore(storeData.id, true);
+        });
+
+        poly.addEventListener('mouseleave', () => {
+          if (!this.activeTargetStore || this.activeTargetStore.id !== storeData.id) {
+            this.highlightStore(storeData.id, false);
+          }
+        });
+
         poly.addEventListener('click', (e) => {
           e.stopPropagation();
           if (this.onStoreClick) {
@@ -118,6 +130,21 @@ class MallMap {
         });
       }
     });
+  }
+
+  highlightStore(storeId, isHighlighted) {
+    const poly = this.svgLayer.querySelector(`[data-id="${storeId}"], #${storeId}`);
+    if (!poly) return;
+
+    if (isHighlighted) {
+      poly.classList.add('store-highlight');
+      poly.style.stroke = '#0284c7';
+      poly.style.strokeWidth = '2.8px';
+    } else {
+      poly.classList.remove('store-highlight');
+      poly.style.stroke = '';
+      poly.style.strokeWidth = '';
+    }
   }
 
   renderBrandMarkers(floorNum) {
@@ -129,7 +156,7 @@ class MallMap {
 
     const fragment = document.createDocumentFragment();
 
-    // 1. Mağazalar: Sıralama & Çakışma Önleme (Spatial Collision Avoidance)
+    // 1. Mağazalar: Sıralama & Akıllı Çakışma Önleme (Spatial Collision Avoidance)
     let stores = floorInfo.stores || [];
     if (this.activeCategoryFilter && this.activeCategoryFilter !== 'all') {
       stores = stores.filter(s => s.category === this.activeCategoryFilter);
@@ -147,7 +174,7 @@ class MallMap {
     });
 
     const placedPositions = [];
-    const minDistance = isZoomed ? 24 : (showAll ? 32 : 42);
+    const minDistance = isZoomed ? 20 : (showAll ? 28 : 36);
 
     sortedStores.forEach(store => {
       const isTarget = this.activeTargetStore && this.activeTargetStore.id === store.id;
@@ -167,33 +194,38 @@ class MallMap {
       placedPositions.push({ x: store.cx, y: store.cy });
 
       const marker = document.createElement('div');
-      marker.className = `brand-marker-wrapper ${isAnchor ? 'is-anchor' : 'is-regular'} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
+      marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : 'is-secondary'} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
       marker.style.left = `${store.cx}px`;
       marker.style.top = `${store.cy}px`;
-      marker.style.position = 'absolute';
-      marker.style.pointerEvents = 'auto';
       marker.setAttribute('data-store-id', store.id);
       marker.title = `${store.name} (${store.floor_name || store.floor + '. Kat'})`;
 
-      const badgeSize = isTarget || isStart ? 44 : (isAnchor ? 38 : 30);
-      const logoHtml = getStoreLogo(store, badgeSize);
+      const logoHtml = getStoreLogo(store, isAnchor ? 32 : 26);
 
       marker.innerHTML = `
-        <div class="brand-marker flex flex-col items-center cursor-pointer transition-transform hover:scale-115 group">
-          <div class="marker-logo-box shadow-md rounded-2xl p-0.5">
-            ${logoHtml}
-          </div>
-          ${isAnchor || isTarget || isStart ? `
-            <span class="marker-name-label text-[9px] font-extrabold text-slate-800 dark:text-slate-200 bg-white/95 dark:bg-slate-900/90 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none group-hover:scale-105 transition-all">
-              ${store.name}
-            </span>
-          ` : `
-            <span class="marker-name-label hidden group-hover:block text-[9px] font-bold text-slate-800 dark:text-slate-200 bg-white/95 dark:bg-slate-900/95 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
-              ${store.name}
-            </span>
-          `}
+        <div class="logo-tile">
+          ${logoHtml}
         </div>
+        ${isTarget || isStart ? `
+          <span class="marker-name-label text-[10px] font-black text-white bg-red-600 px-2 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
+            ${store.name}
+          </span>
+        ` : `
+          <span class="marker-name-label hidden group-hover:block text-[9px] font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-1.5 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
+            ${store.name}
+          </span>
+        `}
       `;
+
+      marker.addEventListener('mouseenter', () => {
+        this.highlightStore(store.id, true);
+      });
+
+      marker.addEventListener('mouseleave', () => {
+        if (!this.activeTargetStore || this.activeTargetStore.id !== store.id) {
+          this.highlightStore(store.id, false);
+        }
+      });
 
       marker.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -205,26 +237,32 @@ class MallMap {
       fragment.appendChild(marker);
     });
 
-    // 2. Servis Noktaları (Sade, dairesel, taşmayan rozetler)
-    const amenities = (floorInfo.amenities || []).filter(a => a.kind !== 'fountain');
+    // 2. Servis Noktaları (Amenities) - cevahir-rehber.web.app Temiz Dairesel İkonları
+    const amenities = floorInfo.amenities || [];
+    const AMENITY_ICONS = {
+      wc: '🚻',
+      atm: '💳',
+      info: '🛡️',
+      entrance: '🚪',
+      carpark: '🅿️',
+      prayer: '🕌',
+      baby: '🍼',
+      taxi: '🚕',
+      valet: '🚘'
+    };
+
     amenities.forEach(am => {
       const amMarker = document.createElement('div');
       amMarker.className = `amenity-marker-wrapper kind-${am.kind}`;
       amMarker.style.left = `${am.cx}px`;
       amMarker.style.top = `${am.cy}px`;
-      amMarker.style.position = 'absolute';
-      amMarker.style.pointerEvents = 'auto';
       amMarker.title = am.name;
 
-      let iconHtml = getStoreLogo(am, 28);
+      const iconChar = AMENITY_ICONS[am.kind] || 'ℹ️';
+
       amMarker.innerHTML = `
-        <div class="amenity-marker flex flex-col items-center cursor-pointer transition-transform hover:scale-115 group">
-          <div class="marker-amenity-box shadow-md rounded-full p-0.5 border border-cyan-500/40 bg-white dark:bg-slate-900/90">
-            ${iconHtml}
-          </div>
-          <span class="hidden group-hover:block text-[8px] font-bold text-cyan-700 dark:text-cyan-300 bg-white/95 dark:bg-slate-950/95 px-1.5 py-0.5 rounded-full shadow-xs border border-cyan-500/30 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
-            ${am.name}
-          </span>
+        <div class="amenity-icon-circle" title="${am.name}">
+          <span>${iconChar}</span>
         </div>
       `;
 
@@ -241,166 +279,109 @@ class MallMap {
     this.markersLayer.appendChild(fragment);
   }
 
-
   /**
-   * 4-Katmanlı Neon Rota Çizim Pipeline'ı
+   * 4-Katmanlı Rota Çizim Pipeline'ı
    */
   renderRoute(routeData) {
     if (routeData !== undefined) {
       this.activeRoute = routeData;
     }
     if (!this.routeSvg) return;
-
     this.routeSvg.innerHTML = '';
-    if (!this.activeRoute || !this.activeRoute.segmentsByFloor) return;
 
-    const currentSegments = this.activeRoute.segmentsByFloor[this.currentFloor] || [];
-    if (currentSegments.length < 2) {
-      this.renderFloorHopButtons();
-      return;
-    }
+    if (!this.activeRoute || !this.activeRoute.segments) return;
 
-    const pointsStr = currentSegments.map(p => `${p.x},${p.y}`).join(' ');
+    // Mevcut kattaki segmentleri bul
+    const currentSegments = this.activeRoute.segments.filter(s => s.floor === this.currentFloor);
+    if (!currentSegments.length) return;
 
-    // 1. Ambient Glow (Geniş zemin aydınlatması)
-    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    glow.setAttribute('points', pointsStr);
-    glow.setAttribute('class', 'route__glow');
-    this.routeSvg.appendChild(glow);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'route-group');
 
-    // 2. Route Casing (Kontrast sınırı)
-    const casing = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    casing.setAttribute('points', pointsStr);
-    casing.setAttribute('class', 'route__case');
-    this.routeSvg.appendChild(casing);
+    currentSegments.forEach(seg => {
+      if (!seg.points || seg.points.length < 2) return;
 
-    // 3. Neon Core (Canlı neon hattı)
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    line.setAttribute('points', pointsStr);
-    line.setAttribute('class', 'route__line');
-    this.routeSvg.appendChild(line);
-
-    // 4. Flowing Pearl Dash (Akan inci noktaları)
-    const flow = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    flow.setAttribute('points', pointsStr);
-    flow.setAttribute('class', 'route__flow');
-    this.routeSvg.appendChild(flow);
-
-    // Başlangıç ve Bitiş Pimleri
-    const startPt = currentSegments[0];
-    const endPt = currentSegments[currentSegments.length - 1];
-
-    if (this.activeRoute.pathNodes[0].id === startPt.id) {
-      this.drawRoutePin(startPt.x, startPt.y, '#10b981', 'Başlangıç');
-    }
-    if (this.activeRoute.pathNodes[this.activeRoute.pathNodes.length - 1].id === endPt.id) {
-      this.drawRoutePin(endPt.x, endPt.y, '#ef4444', 'Hedef');
-    }
-
-    this.renderFloorHopButtons();
-  }
-
-  drawRoutePin(cx, cy, color, label) {
-    const pinGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    pinGroup.setAttribute('transform', `translate(${cx}, ${cy})`);
-
-    pinGroup.innerHTML = `
-      <circle r="8" fill="${color}" opacity="0.3" class="animate-ping"/>
-      <circle r="6" fill="${color}" stroke="#ffffff" stroke-width="2"/>
-    `;
-    this.routeSvg.appendChild(pinGroup);
-  }
-
-  /**
-   * Rota diğer katlara geçiyorsa kullanıcı için kat atlama ("Hop") butonları basar
-   */
-  renderFloorHopButtons() {
-    if (!this.activeRoute || !this.markersLayer) return;
-
-    // Önceki hop butonlarını temizle
-    const oldHops = this.markersLayer.querySelectorAll('.floor-hop-btn');
-    oldHops.forEach(h => h.remove());
-
-    const path = this.activeRoute.pathNodes || [];
-    for (let i = 0; i < path.length - 1; i++) {
-      const u = path[i];
-      const v = path[i + 1];
-
-      if (u.floor === this.currentFloor && v.floor !== this.currentFloor) {
-        const hopEl = document.createElement('div');
-        hopEl.className = 'floor-hop-btn absolute z-30 pointer-events-auto -translate-x-1/2 -translate-y-1/2';
-        hopEl.style.left = `${u.x}px`;
-        hopEl.style.top = `${u.y - 30}px`;
-
-        const isElevator = v.edgeType === 'elevator';
-        const targetLabel = this.mallData.floors[v.floor]?.label || `${v.floor}. Kat`;
-
-        hopEl.innerHTML = `
-          <button class="px-3 py-1.5 rounded-full bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-xl flex items-center gap-1.5 hover:scale-105 transition-transform border border-white/30 animate-bounce">
-            <span>${isElevator ? '🛗' : '⚡'}</span>
-            <span>${targetLabel}'a Geç</span>
-          </button>
-        `;
-
-        hopEl.querySelector('button').addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.loadFloor(v.floor).then(() => {
-            const floorBtn = document.querySelector(`.floor-btn[data-floor="${v.floor}"]`);
-            if (floorBtn) floorBtn.click();
-            this.flyTo(v.x, v.y, 1.3);
-          });
-        });
-
-        this.markersLayer.appendChild(hopEl);
+      let d = `M ${seg.points[0].x} ${seg.points[0].y}`;
+      for (let i = 1; i < seg.points.length; i++) {
+        d += ` L ${seg.points[i].x} ${seg.points[i].y}`;
       }
-    }
-  }
 
-  updateActiveStorePolygons() {
-    if (!this.svgLayer) return;
-    const storePolys = this.svgLayer.querySelectorAll('.store-polygon');
-    storePolys.forEach(p => p.classList.remove('store-active', 'store-start', 'store-target'));
+      // Katman 1: Ambient Glow (Işıltı)
+      const glowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      glowPath.setAttribute('d', d);
+      glowPath.setAttribute('class', 'route__glow');
+      g.appendChild(glowPath);
 
-    if (this.activeStartStore) {
-      const startEl = this.svgLayer.querySelector(`[data-id="${this.activeStartStore.id}"], #${this.activeStartStore.room_id}`);
-      if (startEl) startEl.classList.add('store-start');
-    }
+      // Katman 2: White Casing (Koruyucu Kontrast Kenar)
+      const casePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      casePath.setAttribute('d', d);
+      casePath.setAttribute('class', 'route__case');
+      g.appendChild(casePath);
 
-    if (this.activeTargetStore) {
-      const targetEl = this.svgLayer.querySelector(`[data-id="${this.activeTargetStore.id}"], #${this.activeTargetStore.room_id}`);
-      if (targetEl) targetEl.classList.add('store-target', 'store-active');
-    }
+      // Katman 3: Main Line (Mavi Çekirdek Hat)
+      const linePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      linePath.setAttribute('d', d);
+      linePath.setAttribute('class', 'route__line');
+      g.appendChild(linePath);
+
+      // Katman 4: Flowing Dash (Hareketli Akış Noktaları)
+      const flowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      flowPath.setAttribute('d', d);
+      flowPath.setAttribute('class', 'route__flow');
+      g.appendChild(flowPath);
+    });
+
+    this.routeSvg.appendChild(g);
   }
 
   clearRoute() {
     this.activeRoute = null;
-    this.renderRoute();
+    if (this.routeSvg) this.routeSvg.innerHTML = '';
+    this.updateActiveStorePolygons();
+    this.renderBrandMarkers(this.currentFloor);
   }
 
-  flyTo(x, y, targetScale = 1.3, duration = 650) {
-    const containerW = this.container.clientWidth;
-    const containerH = this.container.clientHeight;
+  updateActiveStorePolygons() {
+    if (!this.svgLayer) return;
+    const allPolys = this.svgLayer.querySelectorAll('.store-polygon');
+    allPolys.forEach(p => {
+      p.classList.remove('store-active', 'store-target', 'store-start');
+    });
 
-    const startPanX = this.panX;
-    const startPanY = this.panY;
+    if (this.activeStartStore && this.activeStartStore.floor === this.currentFloor) {
+      const p = this.svgLayer.querySelector(`[data-id="${this.activeStartStore.id}"], #${this.activeStartStore.room_id}`);
+      if (p) p.classList.add('store-start');
+    }
+
+    if (this.activeTargetStore && this.activeTargetStore.floor === this.currentFloor) {
+      const p = this.svgLayer.querySelector(`[data-id="${this.activeTargetStore.id}"], #${this.activeTargetStore.room_id}`);
+      if (p) p.classList.add('store-target', 'store-active');
+    }
+  }
+
+  flyTo(x, y, targetScale = 1.35, duration = 400) {
+    const rect = this.container.getBoundingClientRect();
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+
+    const startX = this.panX;
+    const startY = this.panY;
     const startScale = this.scale;
 
     const endScale = Math.min(this.maxScale, Math.max(this.minScale, targetScale));
-    const endPanX = containerW / 2 - x * endScale;
-    const endPanY = containerH / 2 - y * endScale;
+    const endX = cx - x * endScale;
+    const endY = cy - y * endScale;
 
     const startTime = performance.now();
 
-    const animate = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = progress < 0.5 
-        ? 4 * progress * progress * progress 
-        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const ease = 0.5 - Math.cos(progress * Math.PI) / 2; // ease-in-out
 
-      this.panX = startPanX + (endPanX - startPanX) * ease;
-      this.panY = startPanY + (endPanY - startPanY) * ease;
       this.scale = startScale + (endScale - startScale) * ease;
+      this.panX = startX + (endX - startX) * ease;
+      this.panY = startY + (endY - startY) * ease;
 
       this.applyTransform();
 
@@ -412,45 +393,28 @@ class MallMap {
     requestAnimationFrame(animate);
   }
 
-  smoothPanTo(x, y) {
-    const containerW = this.container.clientWidth;
-    const containerH = this.container.clientHeight;
-    const targetPanX = containerW / 2 - x * this.scale;
-    const targetPanY = containerH / 2 - y * this.scale;
-
-    this.panX += (targetPanX - this.panX) * 0.15;
-    this.panY += (targetPanY - this.panY) * 0.15;
-    this.applyTransform();
-  }
-
   resetView() {
-    const containerW = this.container.clientWidth;
-    const containerH = this.container.clientHeight;
-
-    const scaleX = (containerW - 40) / this.vbWidth;
-    const scaleY = (containerH - 40) / this.vbHeight;
-    this.scale = Math.min(scaleX, scaleY, 1.15);
-
-    this.panX = (containerW - this.vbWidth * this.scale) / 2;
-    this.panY = (containerH - this.vbHeight * this.scale) / 2;
-
+    const rect = this.container.getBoundingClientRect();
+    const scaleX = rect.width / this.vbWidth;
+    const scaleY = rect.height / this.vbHeight;
+    this.scale = Math.min(scaleX, scaleY) * 0.94;
+    this.panX = (rect.width - this.vbWidth * this.scale) / 2;
+    this.panY = (rect.height - this.vbHeight * this.scale) / 2;
     this.applyTransform();
   }
 
   applyTransform() {
-    if (this.viewport) {
-      this.viewport.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.scale})`;
-    }
+    if (!this.viewport) return;
+    this.viewport.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.scale})`;
   }
 
   setupEventListeners() {
-    // Pan Dragging
+    // Mouse Drag Pan
     this.container.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return;
       this.isDragging = true;
       this.startX = e.clientX - this.panX;
       this.startY = e.clientY - this.panY;
-      this.container.style.cursor = 'grabbing';
     });
 
     window.addEventListener('mousemove', (e) => {
@@ -462,17 +426,53 @@ class MallMap {
 
     window.addEventListener('mouseup', () => {
       this.isDragging = false;
-      this.container.style.cursor = 'grab';
     });
 
-    // Mouse Wheel Zoom
+    // Touch Support
+    let lastTouchDist = 0;
+    this.container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        this.isDragging = true;
+        this.startX = e.touches[0].clientX - this.panX;
+        this.startY = e.touches[0].clientY - this.panY;
+      } else if (e.touches.length === 2) {
+        this.isDragging = false;
+        lastTouchDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (this.isDragging && e.touches.length === 1) {
+        this.panX = e.touches[0].clientX - this.startX;
+        this.panY = e.touches[0].clientY - this.startY;
+        this.applyTransform();
+      } else if (e.touches.length === 2) {
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = dist / lastTouchDist;
+        this.scale = Math.min(this.maxScale, Math.max(this.minScale, this.scale * factor));
+        lastTouchDist = dist;
+        this.applyTransform();
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      this.isDragging = false;
+    });
+
+    // Wheel Zoom
     this.container.addEventListener('wheel', (e) => {
       e.preventDefault();
       const rect = this.container.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
 
-      const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.87;
       const newScale = Math.min(this.maxScale, Math.max(this.minScale, this.scale * zoomFactor));
 
       this.panX = mouseX - (mouseX - this.panX) * (newScale / this.scale);
@@ -484,7 +484,7 @@ class MallMap {
 
     // Window Resize
     window.addEventListener('resize', () => {
-      this.applyTransform();
+      this.resetView();
     });
   }
 
@@ -493,8 +493,8 @@ class MallMap {
     this.renderBrandMarkers(this.currentFloor);
   }
 
-  setCategoryFilter(cat) {
-    this.activeCategoryFilter = cat;
+  setCategoryFilter(category) {
+    this.activeCategoryFilter = category;
     this.renderBrandMarkers(this.currentFloor);
   }
 }
