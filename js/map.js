@@ -393,6 +393,35 @@ class MallMap {
     requestAnimationFrame(animate);
   }
 
+  /**
+   * Haritayı verilen (x, y) SVG koordinatına doğru yumuşak şekilde kaydırır.
+   * Simülasyon döngüsünde (lerp = true) 60 FPS'te titremesiz yumuşak kamera takibi sağlar.
+   * @param {number} x - SVG dünya X koordinatı
+   * @param {number} y - SVG dünya Y koordinatı
+   * @param {boolean} lerp - Sürekli kare animasyonlarında kademeli yaklaşım (varsayılan true)
+   */
+  smoothPanTo(x, y, lerp = true) {
+    if (!this.container) return;
+    const rect = this.container.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    const targetPanX = (rect.width / 2) - (x * this.scale);
+    const targetPanY = (rect.height / 2) - (y * this.scale);
+
+    if (lerp) {
+      this.panX += (targetPanX - this.panX) * 0.14;
+      this.panY += (targetPanY - this.panY) * 0.14;
+    } else {
+      this.panX = targetPanX;
+      this.panY = targetPanY;
+    }
+    this.applyTransform();
+  }
+
+  panTo(x, y) {
+    this.smoothPanTo(x, y, false);
+  }
+
   resetView() {
     const rect = this.container.getBoundingClientRect();
     const scaleX = rect.width / this.vbWidth;

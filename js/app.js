@@ -73,7 +73,10 @@ function initApp() {
     mallMap,
     (progress, stepIndex) => {
       const progressBar = document.getElementById('sim-progress-bar');
-      if (progressBar) progressBar.style.width = `${progress * 100}%`;
+      if (progressBar) {
+        const pct = Math.min(100, Math.max(0, progress <= 1 ? progress * 100 : progress));
+        progressBar.style.width = `${pct}%`;
+      }
     },
     (newFloor) => {
       currentFloor = newFloor;

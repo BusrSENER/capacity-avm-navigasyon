@@ -201,8 +201,12 @@ class CartSimulator {
 
       this.updateCartPosition(curX, curY, angle, curFrom.floor);
 
-      if (this.followCamera && this.map.currentFloor === curFrom.floor) {
-        this.map.smoothPanTo(curX, curY);
+      if (this.followCamera && this.map && this.map.currentFloor === curFrom.floor) {
+        if (typeof this.map.smoothPanTo === 'function') {
+          this.map.smoothPanTo(curX, curY);
+        } else if (typeof this.map.panTo === 'function') {
+          this.map.panTo(curX, curY);
+        }
       }
     }
 
