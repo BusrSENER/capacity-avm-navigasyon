@@ -207,11 +207,11 @@ function highlightActiveFloorBtn(floorNum) {
   floorButtons.forEach(btn => {
     const f = parseInt(btn.getAttribute('data-floor'), 10);
     if (f === floorNum) {
-      btn.classList.add('bg-red-600', 'text-white', 'shadow-lg', 'scale-105');
-      btn.classList.remove('bg-white', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
+      btn.classList.add('bg-red-600', 'text-white', 'shadow-md', 'scale-105');
+      btn.classList.remove('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
     } else {
-      btn.classList.remove('bg-red-600', 'text-white', 'shadow-lg', 'scale-105');
-      btn.classList.add('bg-white', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
+      btn.classList.remove('bg-red-600', 'text-white', 'shadow-md', 'scale-105');
+      btn.classList.add('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
     }
   });
 
@@ -534,8 +534,9 @@ function setupTheme() {
   const btn = document.getElementById('theme-toggle-btn');
   const icon = document.getElementById('theme-icon');
 
-  const isDark = localStorage.getItem('capacity_theme') === 'dark' || 
-    (!localStorage.getItem('capacity_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  // Varsayılan olarak Aydınlık (Light) Mimari Mod!
+  const savedTheme = localStorage.getItem('capacity_theme');
+  const isDark = savedTheme === 'dark'; // Açık mod her zaman varsayılan
 
   if (isDark) {
     document.documentElement.classList.add('dark');

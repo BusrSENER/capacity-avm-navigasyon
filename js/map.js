@@ -184,11 +184,11 @@ class MallMap {
             ${logoHtml}
           </div>
           ${isAnchor || isTarget || isStart ? `
-            <span class="marker-name-label text-[9px] font-extrabold text-slate-200 bg-slate-900/90 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-700 whitespace-nowrap mt-1 pointer-events-none group-hover:scale-105 transition-all">
+            <span class="marker-name-label text-[9px] font-extrabold text-slate-800 dark:text-slate-200 bg-white/95 dark:bg-slate-900/90 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none group-hover:scale-105 transition-all">
               ${store.name}
             </span>
           ` : `
-            <span class="marker-name-label hidden group-hover:block text-[9px] font-bold text-slate-200 bg-slate-900/95 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
+            <span class="marker-name-label hidden group-hover:block text-[9px] font-bold text-slate-800 dark:text-slate-200 bg-white/95 dark:bg-slate-900/95 px-1.5 py-0.5 rounded-full shadow-xs border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
               ${store.name}
             </span>
           `}
@@ -219,10 +219,10 @@ class MallMap {
       let iconHtml = getStoreLogo(am, 28);
       amMarker.innerHTML = `
         <div class="amenity-marker flex flex-col items-center cursor-pointer transition-transform hover:scale-115 group">
-          <div class="marker-amenity-box shadow-md rounded-full p-0.5 border border-cyan-400/40 bg-slate-900/90">
+          <div class="marker-amenity-box shadow-md rounded-full p-0.5 border border-cyan-500/40 bg-white dark:bg-slate-900/90">
             ${iconHtml}
           </div>
-          <span class="hidden group-hover:block text-[8px] font-bold text-cyan-300 bg-slate-950/95 px-1.5 py-0.5 rounded-full shadow-xs border border-cyan-500/30 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
+          <span class="hidden group-hover:block text-[8px] font-bold text-cyan-700 dark:text-cyan-300 bg-white/95 dark:bg-slate-950/95 px-1.5 py-0.5 rounded-full shadow-xs border border-cyan-500/30 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
             ${am.name}
           </span>
         </div>
