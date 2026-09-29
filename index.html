@@ -100,9 +100,9 @@
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-        <button id="gps-quick-btn" class="h-10 px-2.5 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 flex items-center gap-1 text-xs font-bold transition-all shrink-0 shadow-sm" title="Mevcut Konumum (Giriş / GPS)">
-          <i data-lucide="crosshair" class="w-3.5 h-3.5 text-cyan-500"></i>
-          <span class="text-[11px]">GPS</span>
+        <button id="start-location-btn" class="h-10 px-2.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 text-xs font-bold transition-all shrink-0 shadow-sm" title="Başlangıç Konumunuzu Seçin (Kapılar / Danışma)">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+          <span id="start-badge-text" class="text-[11px] font-bold">Konumum</span>
         </button>
       </div>
 
@@ -399,21 +399,21 @@
     </main>
   </div>
 
-  <!-- GİRİŞ NOKTASI SEÇİM MODALI (GPS) -->
+  <!-- BAŞLANGIÇ NOKTASI SEÇİM MODALI -->
   <div id="entrance-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onclick="closeEntranceModal()"></div>
     <div class="relative w-full max-w-sm rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-5 shadow-2xl z-10 space-y-3">
       <div class="flex items-center justify-between pb-1">
         <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <i data-lucide="door-open" class="w-4 h-4 text-cyan-500"></i>
-          <span>Giriş Kapısı Seçin</span>
+          <i data-lucide="map-pin" class="w-4 h-4 text-emerald-500"></i>
+          <span>Başlangıç Konumunuzu Seçin</span>
         </h3>
         <button id="entrance-modal-close" class="text-slate-400 hover:text-slate-700 dark:hover:text-white">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <p class="text-xs text-slate-500 dark:text-slate-400">AVM'ye girdiğiniz kapıyı seçerek anlık rota oluşturun:</p>
-      <div id="entrance-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+      <p class="text-xs text-slate-500 dark:text-slate-400">AVM'ye girdiğiniz kapıyı, danışmayı veya bulunduğunuz noktayı seçin:</p>
+      <div id="entrance-list" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
     </div>
   </div>
 

@@ -97,6 +97,12 @@ function initApp() {
   updateFloorUI(currentFloor);
   renderSidebarStoreGrid();
 
+  // Varsayılan Başlangıç Noktası (Fişekhane Caddesi Ana Girişi)
+  if (!selectedStartStore && mallData.entrances && mallData.entrances.length > 0) {
+    selectedStartStore = mallData.entrances.find(e => e.id === 'ent_fisekhane') || mallData.entrances[0];
+    updateStartBadgeUI(selectedStartStore.name);
+  }
+
   if (window.lucide) {
     lucide.createIcons();
   }
@@ -277,8 +283,14 @@ function setupUIEventListeners() {
     });
   });
 
-  // GPS Butonu
-  document.getElementById('gps-quick-btn')?.addEventListener('click', () => {
+  // Başlangıç Konumu Seçim Butonu
+  const startLocBtn = document.getElementById('start-location-btn') || document.getElementById('gps-quick-btn');
+  startLocBtn?.addEventListener('click', () => {
+    openEntranceModal();
+  });
+
+  // Rota kartı üzerindeki başlangıç etiketine tıklanırsa da başlangıç seçim modalını aç
+  document.getElementById('route-start-label')?.addEventListener('click', () => {
     openEntranceModal();
   });
 
@@ -298,6 +310,7 @@ function setupUIEventListeners() {
         // Otomatik olarak Fişekhane Cad. Ana Girişini başlangıç yap
         const fisekhaneEnt = mallData.entrances.find(e => e.id === 'ent_fisekhane') || mallData.entrances[0];
         selectedStartStore = fisekhaneEnt;
+        updateStartBadgeUI(selectedStartStore.name);
       }
       calculateAndDisplayRoute();
     }
@@ -306,7 +319,20 @@ function setupUIEventListeners() {
   document.getElementById('poi-start-btn')?.addEventListener('click', () => {
     if (selectedTargetStore) {
       selectedStartStore = selectedTargetStore;
+      updateStartBadgeUI(selectedStartStore.name);
+      mallMap.activeStartStore = selectedStartStore;
+      mallMap.updateActiveStorePolygons();
       showToast(`📍 Başlangıç noktası "${selectedStartStore.name}" olarak ayarlandı.`, 'info');
+
+      const startBtn = document.getElementById('poi-start-btn');
+      if (startBtn) {
+        startBtn.innerHTML = `
+          <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span class="text-emerald-600 dark:text-emerald-400 font-bold">Başlangıç Olarak Seçildi</span>
+        `;
+        if (window.lucide) lucide.createIcons();
+      }
+
       if (selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
         calculateAndDisplayRoute();
       }
@@ -649,35 +675,126 @@ function resetSimControls() {
   if (playText) playText.textContent = 'Sepeti Başlat';
 }
 
-// 10. Giriş Noktası Seçim Modalı (GPS)
+// 10. Başlangıç Konumu Rozetini Güncelle
+function updateStartBadgeUI(name) {
+  const badge = document.getElementById('start-badge-text');
+  if (badge && name) {
+    let shortName = name
+      .replace(' (Cadde)', '')
+      .replace(' (Meydan)', '')
+      .replace(' Caddesi Ana Giriş', ' Girişi')
+      .replace(' Tarafı Batı Giriş', ' Girişi');
+    badge.textContent = shortName;
+    badge.parentElement?.setAttribute('title', `Başlangıç Konumu: ${name}`);
+  }
+}
+
+// 11. Başlangıç Noktası Seçim Modalı
 function openEntranceModal() {
   const modal = document.getElementById('entrance-modal');
   if (!modal) return;
 
   const listContainer = document.getElementById('entrance-list');
-  listContainer.innerHTML = (mallData.entrances || []).map(ent => `
-    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition-colors" data-ent-id="${ent.id}">
-      <div class="flex items-center gap-3">
-        <span class="text-xl">🚪</span>
-        <div>
-          <h4 class="text-xs font-bold text-slate-900 dark:text-white">${ent.name}</h4>
-          <p class="text-[11px] text-slate-400">${ent.floor_name || ent.floor + '. Kat'}</p>
-        </div>
-      </div>
-      <button class="px-3 py-1 rounded-full bg-red-600 text-white font-bold text-xs">Seç</button>
-    </div>
-  `).join('');
+  if (!listContainer) return;
 
-  listContainer.querySelectorAll('[data-ent-id]').forEach(el => {
+  const startingLocations = [
+    // 1. Giriş Kapıları
+    ...(mallData.entrances || []).map(ent => ({
+      id: ent.id,
+      name: ent.name,
+      floor: ent.floor,
+      floor_name: ent.floor_name || (ent.floor === 4 ? 'Zemin Kat' : ent.floor + '. Kat'),
+      nav_node: ent.nav_node,
+      cx: ent.cx,
+      cy: ent.cy,
+      iconEmoji: '🚪',
+      badge: 'Ana Kapı',
+      badgeClass: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
+    })),
+    // 2. Danışma
+    {
+      id: 'start_danisma',
+      name: 'Ana Danışma & Misafir Hizmetleri',
+      floor: 4,
+      floor_name: 'Zemin Kat (Atrium)',
+      nav_node: 'n_info_4',
+      cx: 258,
+      cy: 185,
+      iconEmoji: 'ℹ️',
+      badge: 'Danışma',
+      badgeClass: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300'
+    },
+    // 3. Müzikli Gösteri Havuzu
+    {
+      id: 'start_havuz',
+      name: 'Müzikli Gösteri Havuzu (Etkinlik Alanı)',
+      floor: 4,
+      floor_name: 'Zemin Kat (Merkez)',
+      nav_node: 'bridge_4_m',
+      cx: 258,
+      cy: 365,
+      iconEmoji: '🌊',
+      badge: 'Buluşma Noktası',
+      badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
+    }
+  ];
+
+  listContainer.innerHTML = startingLocations.map(loc => {
+    const isSelected = selectedStartStore && (selectedStartStore.id === loc.id || selectedStartStore.name === loc.name);
+    return `
+      <div 
+        class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${
+          isSelected 
+            ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-500 shadow-sm' 
+            : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-700/80'
+        }" 
+        data-loc-id="${loc.id}"
+      >
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+          <span class="text-xl shrink-0">${loc.iconEmoji}</span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">${loc.name}</h4>
+              <span class="text-[9px] px-1.5 py-0.5 rounded-md font-bold ${loc.badgeClass}">${loc.badge}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5">${loc.floor_name}</p>
+          </div>
+        </div>
+        <button class="ml-2 px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
+          isSelected 
+            ? 'bg-emerald-600 text-white' 
+            : 'bg-slate-200 dark:bg-slate-700 hover:bg-emerald-600 hover:text-white text-slate-700 dark:text-slate-200'
+        }">
+          ${isSelected ? '✓ Seçili' : 'Başla'}
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  listContainer.querySelectorAll('[data-loc-id]').forEach(el => {
     el.addEventListener('click', () => {
-      const eid = el.getAttribute('data-ent-id');
-      const entrance = mallData.entrances.find(e => e.id === eid);
-      if (entrance) {
-        selectedStartStore = entrance;
+      const locId = el.getAttribute('data-loc-id');
+      const chosen = startingLocations.find(l => l.id === locId);
+      if (chosen) {
+        selectedStartStore = chosen;
+        updateStartBadgeUI(chosen.name);
+        mallMap.activeStartStore = selectedStartStore;
+        mallMap.updateActiveStorePolygons();
         closeEntranceModal();
-        showToast(`📍 Başlangıç noktası "${entrance.name}" olarak ayarlandı.`, 'info');
-        if (selectedTargetStore) {
+        showToast(`📍 Başlangıç noktası "${chosen.name}" olarak ayarlandı.`, 'info');
+
+        if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
           calculateAndDisplayRoute();
+        } else {
+          // Başlangıç katına odaklan
+          if (mallMap.currentFloor !== chosen.floor) {
+            mallMap.loadFloor(chosen.floor).then(() => {
+              updateFloorUI(chosen.floor);
+              mallMap.flyTo(chosen.cx, chosen.cy, 1.4);
+            });
+          } else {
+            mallMap.flyTo(chosen.cx, chosen.cy, 1.4);
+          }
         }
       }
     });

@@ -172,6 +172,18 @@ class NavigationEngine {
       segmentsByFloor[pNode.floor].push(pNode);
     }
 
+    // Kat bazlı kesintisiz segment dizisi (aynı kattaki ardışık noktalar zinciri)
+    const segments = [];
+    let curSeg = null;
+    for (let i = 0; i < pathNodes.length; i++) {
+      const pNode = pathNodes[i];
+      if (!curSeg || curSeg.floor !== pNode.floor) {
+        curSeg = { floor: pNode.floor, points: [] };
+        segments.push(curSeg);
+      }
+      curSeg.points.push({ x: pNode.x, y: pNode.y, id: pNode.id, edgeType: pNode.edgeType });
+    }
+
     // Metre ve süre hesabı
     const totalMeters = Math.round(totalDist * this.mPerUnit);
     const estimatedMinutes = Math.max(1, Math.ceil(totalMeters / 60)); // ~1 m/s = 60 m/dk
@@ -184,6 +196,8 @@ class NavigationEngine {
       totalUnits: Math.round(totalDist),
       estimatedMinutes,
       pathNodes,
+      path: pathNodes,
+      segments,
       segmentsByFloor,
       instructions,
       mode

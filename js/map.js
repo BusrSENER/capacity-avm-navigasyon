@@ -286,13 +286,35 @@ class MallMap {
     if (routeData !== undefined) {
       this.activeRoute = routeData;
     }
+    if (!this.routeSvg) {
+      this.routeSvg = document.getElementById('route-svg');
+    }
     if (!this.routeSvg) return;
     this.routeSvg.innerHTML = '';
 
-    if (!this.activeRoute || !this.activeRoute.segments) return;
+    if (!this.activeRoute) return;
 
-    // Mevcut kattaki segmentleri bul
-    const currentSegments = this.activeRoute.segments.filter(s => s.floor === this.currentFloor);
+    // 1. Mevcut kattaki segmentleri güvenli çıkar (segments, pathNodes veya segmentsByFloor)
+    let currentSegments = [];
+    if (this.activeRoute.segments && Array.isArray(this.activeRoute.segments)) {
+      currentSegments = this.activeRoute.segments.filter(s => s.floor === this.currentFloor);
+    } else if (this.activeRoute.pathNodes && Array.isArray(this.activeRoute.pathNodes)) {
+      let cur = null;
+      for (const n of this.activeRoute.pathNodes) {
+        if (n.floor === this.currentFloor) {
+          if (!cur) {
+            cur = { floor: this.currentFloor, points: [] };
+            currentSegments.push(cur);
+          }
+          cur.points.push({ x: n.x, y: n.y, id: n.id });
+        } else {
+          cur = null;
+        }
+      }
+    } else if (this.activeRoute.segmentsByFloor && this.activeRoute.segmentsByFloor[this.currentFloor]) {
+      currentSegments = [{ floor: this.currentFloor, points: this.activeRoute.segmentsByFloor[this.currentFloor] }];
+    }
+
     if (!currentSegments.length) return;
 
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -306,30 +328,90 @@ class MallMap {
         d += ` L ${seg.points[i].x} ${seg.points[i].y}`;
       }
 
-      // Katman 1: Ambient Glow (Işıltı)
+      // Katman 1: Ambient Glow (Dış Işıltı)
       const glowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       glowPath.setAttribute('d', d);
       glowPath.setAttribute('class', 'route__glow');
+      glowPath.setAttribute('fill', 'none');
+      glowPath.setAttribute('stroke', '#38bdf8');
+      glowPath.setAttribute('stroke-width', '16');
+      glowPath.setAttribute('stroke-linecap', 'round');
+      glowPath.setAttribute('stroke-linejoin', 'round');
+      glowPath.setAttribute('opacity', '0.45');
+      glowPath.setAttribute('style', 'filter: blur(3px);');
       g.appendChild(glowPath);
 
-      // Katman 2: White Casing (Koruyucu Kontrast Kenar)
+      // Katman 2: White Casing (Net Kontrast Beyaz Çerçeve)
       const casePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       casePath.setAttribute('d', d);
       casePath.setAttribute('class', 'route__case');
+      casePath.setAttribute('fill', 'none');
+      casePath.setAttribute('stroke', '#ffffff');
+      casePath.setAttribute('stroke-width', '9');
+      casePath.setAttribute('stroke-linecap', 'round');
+      casePath.setAttribute('stroke-linejoin', 'round');
       g.appendChild(casePath);
 
-      // Katman 3: Main Line (Mavi Çekirdek Hat)
+      // Katman 3: Main Line (Canlı Çekirdek Hat)
       const linePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       linePath.setAttribute('d', d);
       linePath.setAttribute('class', 'route__line');
+      linePath.setAttribute('fill', 'none');
+      linePath.setAttribute('stroke', '#0284c7');
+      linePath.setAttribute('stroke-width', '5');
+      linePath.setAttribute('stroke-linecap', 'round');
+      linePath.setAttribute('stroke-linejoin', 'round');
       g.appendChild(linePath);
 
       // Katman 4: Flowing Dash (Hareketli Akış Noktaları)
       const flowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       flowPath.setAttribute('d', d);
       flowPath.setAttribute('class', 'route__flow');
+      flowPath.setAttribute('fill', 'none');
+      flowPath.setAttribute('stroke', '#ffffff');
+      flowPath.setAttribute('stroke-width', '2.4');
+      flowPath.setAttribute('stroke-dasharray', '5 13');
+      flowPath.setAttribute('stroke-linecap', 'round');
+      flowPath.setAttribute('stroke-linejoin', 'round');
       g.appendChild(flowPath);
     });
+
+    // 2. Başlangıç ve Hedef Noktaları İçin Animasyonlu SVG İmleri
+    const allPath = this.activeRoute.pathNodes || [];
+    if (allPath.length > 0) {
+      const firstNode = allPath[0];
+      const lastNode = allPath[allPath.length - 1];
+
+      // Eğer başlangıç noktası bu kattaysa: Yeşil Başlangıç İmi
+      if (firstNode.floor === this.currentFloor) {
+        const startG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        startG.setAttribute('class', 'route-start-pin');
+        startG.innerHTML = `
+          <circle cx="${firstNode.x}" cy="${firstNode.y}" r="12" fill="#10b981" opacity="0.3">
+            <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.45;0.1;0.45" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="${firstNode.x}" cy="${firstNode.y}" r="6.5" fill="#10b981" stroke="#ffffff" stroke-width="2.5" />
+          <circle cx="${firstNode.x}" cy="${firstNode.y}" r="2" fill="#ffffff" />
+        `;
+        g.appendChild(startG);
+      }
+
+      // Eğer hedef nokta bu kattaysa: Kırmızı Hedef İmi
+      if (lastNode.floor === this.currentFloor) {
+        const endG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        endG.setAttribute('class', 'route-end-pin');
+        endG.innerHTML = `
+          <circle cx="${lastNode.x}" cy="${lastNode.y}" r="14" fill="#ef4444" opacity="0.35">
+            <animate attributeName="r" values="9;18;9" dur="1.8s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.5;0.12;0.5" dur="1.8s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="${lastNode.x}" cy="${lastNode.y}" r="7" fill="#ef4444" stroke="#ffffff" stroke-width="2.5" />
+          <circle cx="${lastNode.x}" cy="${lastNode.y}" r="2.5" fill="#ffffff" />
+        `;
+        g.appendChild(endG);
+      }
+    }
 
     this.routeSvg.appendChild(g);
   }
