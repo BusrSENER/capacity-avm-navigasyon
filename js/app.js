@@ -576,10 +576,11 @@ function calculateAndDisplayRoute() {
     activeRouteMode
   );
 
-  if (!result || !result.path || !result.path.length) {
+  if (!result || !result.pathNodes || !result.pathNodes.length) {
     showToast('Bu iki nokta arasında uygun yol bulunamadı.', 'error');
     return;
   }
+  result.path = result.pathNodes;
 
   // Rota Kartını Göster
   const routeCard = document.getElementById('route-info-card');
