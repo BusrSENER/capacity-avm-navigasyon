@@ -1,0 +1,252 @@
+/**
+ * İstanbul Bakırköy Capacity AVM - Stil Sayfası (CSS)
+ * Modern Noir, 4-Pass Neon Glow Rota Shader, Alışveriş Sepeti Fiziği & Glassmorphism UI
+ */
+
+:root {
+  --capacity-red: #c41230;
+  --capacity-ruby: #991b1b;
+  --capacity-gold: #eab308;
+  --capacity-cyan: #06b6d4;
+  --capacity-dark-bg: #090d16;
+  --capacity-card-bg: rgba(15, 23, 42, 0.82);
+}
+
+/* 1. SCROLLBAR VE SEÇİM */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 2. 4-KATMANLI NEON ROTA SHADER'I */
+.route__glow {
+  fill: none;
+  stroke: #06b6d4;
+  stroke-width: 22px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: blur(4px);
+  opacity: 0.28;
+}
+
+.route__case {
+  fill: none;
+  stroke: #090d16;
+  stroke-width: 10px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.route__line {
+  fill: none;
+  stroke: #06b6d4;
+  stroke-width: 5.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.route__flow {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 4 14;
+  animation: routeFlow 1.2s linear infinite;
+}
+
+@keyframes routeFlow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -18px;
+  }
+}
+
+/* 3. ALIŞVERİŞ SEPETİ SİMÜLATÖRÜ VE ANİMASYONLARI */
+.cart-avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 45;
+  transition: transform 0.05s linear;
+  will-change: transform;
+}
+
+.cart-beacon {
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 2px solid #06b6d4;
+  background: rgba(6, 182, 212, 0.15);
+  animation: beaconPulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes beaconPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.cart-rotator-wrapper {
+  transform-origin: 0 0;
+  transition: transform 0.12s ease-out;
+  will-change: transform;
+}
+
+.cart__shadow {
+  fill: rgba(0, 0, 0, 0.45);
+}
+
+.rolling .cart__wheel-hub {
+  animation: spinWheel 0.4s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes spinWheel {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 4. MAĞAZA POLİGONLARI VE KATEGORİ RENKLERİ */
+.store-polygon {
+  stroke: #334155;
+  stroke-width: 1.2px;
+  transition: fill 0.2s, stroke 0.2s, stroke-width 0.2s;
+  cursor: pointer;
+}
+
+.store-polygon:hover {
+  stroke: #38bdf8 !important;
+  stroke-width: 2.2px !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4));
+}
+
+.store-polygon.store-active,
+.store-polygon.store-target {
+  stroke: #ef4444 !important;
+  stroke-width: 2.8px !important;
+  fill: rgba(239, 68, 68, 0.25) !important;
+  animation: targetPulse 1.5s ease-in-out infinite alternate;
+}
+
+.store-polygon.store-start {
+  stroke: #10b981 !important;
+  stroke-width: 2.8px !important;
+  fill: rgba(16, 185, 129, 0.25) !important;
+}
+
+@keyframes targetPulse {
+  0% {
+    stroke-width: 2.4px;
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.3));
+  }
+  100% {
+    stroke-width: 3.5px;
+    filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.7));
+  }
+}
+
+/* Kategori Bazlı Poligon Dolguları */
+.g-fashion { fill: #1e293b; }
+.g-shoes { fill: #2a201c; }
+.g-sports { fill: #172554; }
+.g-food { fill: #2d1810; }
+.g-cosmetics { fill: #2d1222; }
+.g-tech { fill: #1e1b4b; }
+.g-home { fill: #062e24; }
+.g-entertainment { fill: #241442; }
+.g-service { fill: #132738; }
+.g-atm { fill: #064e3b; }
+
+/* 5. MARKA ROZETLERİ (MARKERS LAYER) */
+.brand-marker-wrapper {
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.brand-marker-wrapper:hover {
+  z-index: 40;
+}
+
+.marker-logo-box {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dark .marker-logo-box {
+  background: #0f172a;
+  border-color: rgba(51, 65, 85, 0.9);
+}
+
+.marker-logo-box:hover {
+  transform: scale(1.15);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.brand-marker-wrapper.is-target .marker-logo-box {
+  border: 2px solid #ef4444;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.7);
+  animation: markerBounce 1s infinite alternate;
+}
+
+.brand-marker-wrapper.is-start .marker-logo-box {
+  border: 2px solid #10b981;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.7);
+}
+
+@keyframes markerBounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+/* 6. GLASSMORPHISM VE KART STİLLERİ */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+}
+
+/* 7. KAT GEÇİŞ HOP BUTONU */
+.floor-hop-btn button {
+  box-shadow: 0 8px 24px rgba(196, 18, 48, 0.4);
+}

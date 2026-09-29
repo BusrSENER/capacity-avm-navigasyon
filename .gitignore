@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+.npm
+
+# OS & Temp
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+__pycache__/
+
+# Firebase cache
+.firebase/
+.firebaserc
