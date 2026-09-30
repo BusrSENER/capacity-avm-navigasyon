@@ -334,6 +334,19 @@
       <!-- İnteraktif SVG Harita Konteyneri -->
       <div id="map-canvas-container" class="w-full h-full relative overflow-hidden select-none cursor-grab active:cursor-grabbing"></div>
 
+      <!-- Kuzey Pusulası (Compass) Butonu - Harita döndüğünde açıyı gösterir, tıklandığında 0° (Kuzey) sıfırlar -->
+      <button id="btn-compass" class="absolute right-16 top-4 z-30 w-9 h-9 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-[0_8px_25px_rgba(0,0,0,0.08)] border border-slate-200/80 dark:border-slate-800 flex items-center justify-center transition-all hover:scale-105 active:scale-95 group" title="Kuzeyi Göster / Sıfırla (0°)">
+        <div id="compass-needle" class="w-5 h-5 flex items-center justify-center transition-transform duration-100 ease-out" style="transform: rotate(0deg);">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" class="drop-shadow-xs">
+            <polygon points="12,2 16,12 12,9" fill="#ef4444" />
+            <polygon points="12,2 8,12 12,9" fill="#dc2626" />
+            <polygon points="12,22 16,12 12,15" fill="#94a3b8" />
+            <polygon points="12,22 8,12 12,15" fill="#cbd5e1" />
+            <circle cx="12" cy="12" r="2.2" fill="#ffffff" stroke="#64748b" stroke-width="1" />
+          </svg>
+        </div>
+      </button>
+
       <!-- Sağ Dikey Kat Seçici Bar (KAT: 2, 1, Z, B1, B2, B3) - Sağ Üstte Konumlandırıldı -->
       <div class="floors-pill-bar absolute right-4 top-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md py-2 px-1.5 rounded-full shadow-[0_10px_35px_rgba(0,0,0,0.08)] border border-slate-200/80 dark:border-slate-800 flex flex-col items-center gap-1.5">
         <span class="text-[9px] font-black tracking-wider text-slate-400 uppercase py-0.5">KAT</span>
@@ -344,6 +357,12 @@
         <button class="floor-pill w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-floor="2" title="2. Bodrum Kat: Vale &amp; Oto Detailing">B2</button>
         <button class="floor-pill w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-floor="1" title="3. Bodrum Kat: Hizmet &amp; Otopark">B3</button>
       </div>
+
+      <!-- Yüzen [ 🎯 Sepete Dön ] Butonu (Serbest Kamera Modunda Çıkar) -->
+      <button id="btn-recenter-cart" class="fixed sm:absolute right-4 bottom-24 sm:bottom-28 z-40 hidden flex items-center gap-2 px-3.5 py-2 rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md border border-white/20 dark:border-slate-800 transition-all duration-300 hover:scale-105 active:scale-95">
+        <span class="text-sm">🎯</span>
+        <span>Sepete Dön</span>
+      </button>
 
       <!-- Sağ Orta Zoom Kontrolleri (+, -, merkezle) - Dikey Eksenin Ortasında Çakışmasız Konum -->
       <div class="zoom-bar absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-1.5 rounded-2xl shadow-[0_10px_35px_rgba(0,0,0,0.08)] border border-slate-200/80 dark:border-slate-800 flex flex-col items-center gap-1">

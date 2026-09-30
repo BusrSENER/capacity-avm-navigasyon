@@ -18,6 +18,10 @@ class CartSimulator {
     this.isPlaying = false;
     this.speed = 1.0; // 1x, 2x, 4x
     this.followCamera = true;
+    this.autoFollow = true; // Serbest kamera etkileşiminde kullanıcı haritayı kaydırdığında false olur
+    this.currentX = 0;
+    this.currentY = 0;
+    this.currentFloor = 0;
     this.animFrameId = null;
     this.lastTime = 0;
     this.facingX = 1; // 1: right, -1: left
@@ -116,6 +120,9 @@ class CartSimulator {
       this.subProgress = 0;
     }
     this.isPlaying = true;
+    this.autoFollow = true;
+    const btn = document.getElementById('btn-recenter-cart');
+    if (btn) btn.classList.add('hidden');
     this.lastTime = performance.now();
     this.show();
     if (this.cartMascotEl) this.cartMascotEl.classList.add('rolling');
@@ -136,6 +143,9 @@ class CartSimulator {
     this.pause();
     this.currentIndex = 0;
     this.subProgress = 0;
+    this.autoFollow = true;
+    const btn = document.getElementById('btn-recenter-cart');
+    if (btn) btn.classList.add('hidden');
     this.hide();
   }
 
@@ -191,6 +201,10 @@ class CartSimulator {
       const curX = curFrom.x + (curTo.x - curFrom.x) * this.subProgress;
       const curY = curFrom.y + (curTo.y - curFrom.y) * this.subProgress;
 
+      this.currentX = curX;
+      this.currentY = curY;
+      this.currentFloor = curFrom.floor;
+
       const dx = curTo.x - curFrom.x;
       const dy = curTo.y - curFrom.y;
       let angle = Math.atan2(dy, dx) * (180 / Math.PI);
@@ -201,7 +215,7 @@ class CartSimulator {
 
       this.updateCartPosition(curX, curY, angle, curFrom.floor);
 
-      if (this.followCamera && this.map && this.map.currentFloor === curFrom.floor) {
+      if (this.autoFollow && this.followCamera && this.map && this.map.currentFloor === curFrom.floor) {
         if (typeof this.map.smoothPanTo === 'function') {
           this.map.smoothPanTo(curX, curY);
         } else if (typeof this.map.panTo === 'function') {
@@ -279,8 +293,26 @@ class CartSimulator {
     this.pause();
     this.currentIndex = this.pathNodes.length - 1;
     this.subProgress = 0;
+    this.autoFollow = true;
+    const btn = document.getElementById('btn-recenter-cart');
+    if (btn) btn.classList.add('hidden');
     if (this.onProgress) this.onProgress(100, this.pathNodes[this.currentIndex]);
     if (this.onComplete) this.onComplete();
+  }
+
+  recenter() {
+    this.autoFollow = true;
+    const btn = document.getElementById('btn-recenter-cart');
+    if (btn) btn.classList.add('hidden');
+    if (this.map && this.currentX !== undefined && this.currentY !== undefined) {
+      if (this.currentFloor !== undefined && this.map.currentFloor !== this.currentFloor) {
+        this.map.loadFloor(this.currentFloor).then(() => {
+          this.map.flyTo(this.currentX, this.currentY, 1.45, 350);
+        });
+      } else {
+        this.map.flyTo(this.currentX, this.currentY, 1.45, 350);
+      }
+    }
   }
 
   show() {

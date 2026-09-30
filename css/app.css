@@ -372,7 +372,8 @@ html.dark .store-card__name {
 /* 6. MARKA LOGO ROZETLERİ (MARKERS LAYER - cevahir-rehber.web.app Şıklığı) */
 .logo-tile-marker {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotate(var(--billboard-rot, 0deg));
+  transform-origin: center center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -391,12 +392,12 @@ html.dark .store-card__name {
 }
 
 .logo-tile-marker:hover {
-  transform: translate(-50%, -50%) scale(1.22);
+  transform: translate(-50%, -50%) scale(1.22) rotate(var(--billboard-rot, 0deg));
   z-index: 60 !important;
 }
 
 .logo-tile-marker.is-active {
-  transform: translate(-50%, -50%) scale(1.25);
+  transform: translate(-50%, -50%) scale(1.25) rotate(var(--billboard-rot, 0deg));
   z-index: 65 !important;
 }
 
@@ -458,7 +459,8 @@ html.dark .logo-tile-marker.is-anchor .logo-tile {
 /* Servis İkonu Rozetleri */
 .amenity-marker-wrapper {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotate(var(--billboard-rot, 0deg));
+  transform-origin: center center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -469,8 +471,45 @@ html.dark .logo-tile-marker.is-anchor .logo-tile {
 }
 
 .amenity-marker-wrapper:hover {
-  transform: translate(-50%, -50%) scale(1.2);
+  transform: translate(-50%, -50%) scale(1.2) rotate(var(--billboard-rot, 0deg));
   z-index: 60 !important;
+}
+
+/* Level of Detail (LoD) Kuralları */
+/* Genel planda (scale < 1.8x): Küçük ikincil mağaza etiketlerini gizle, ana çekim merkezleri açık */
+.lod-low .marker-name-secondary {
+  display: none !important;
+}
+.lod-low .logo-tile-marker:hover .marker-name-secondary {
+  display: block !important;
+}
+.lod-low .marker-name-anchor,
+.lod-low .marker-name-pinned {
+  display: block !important;
+}
+
+/* Derin yakınlaşmada (scale >= 1.8x): Tüm mağaza isimleri net görünür */
+.lod-high .marker-name-secondary,
+.lod-high .marker-name-anchor,
+.lod-high .marker-name-pinned {
+  display: block !important;
+}
+
+/* Kuzey Pusulası (Compass) Buton İnce Ayarları */
+#btn-compass {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+#btn-compass:hover {
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.25);
+}
+
+/* Yüzen [ 🎯 Sepete Dön ] Butonu Animasyonu */
+#btn-recenter-cart {
+  animation: floatCartRecenter 2.2s ease-in-out infinite alternate;
+}
+@keyframes floatCartRecenter {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px); }
 }
 
 .amenity-icon-circle {

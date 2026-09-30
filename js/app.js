@@ -136,6 +136,15 @@ function initApp() {
   window.mallMap = mallMap;
   window.navEngine = navEngine;
 
+  // Kullanıcı haritayı kaydırdığında simülasyon serbest kameraya geçer
+  mallMap.onUserPan = () => {
+    if (cartSimulator && cartSimulator.isPlaying && cartSimulator.autoFollow) {
+      cartSimulator.autoFollow = false;
+      const recenterBtn = document.getElementById('btn-recenter-cart');
+      if (recenterBtn) recenterBtn.classList.remove('hidden');
+    }
+  };
+
   cartSimulator = new CartSimulator(
     mallMap,
     (progress, stepIndex) => {
@@ -158,6 +167,7 @@ function initApp() {
       resetSimControls();
     }
   );
+  window.cartSimulator = cartSimulator;
 
   setupTheme();
   setupUIEventListeners();
@@ -281,6 +291,18 @@ function setupUIEventListeners() {
 
   document.getElementById('zoom-reset-btn')?.addEventListener('click', () => {
     mallMap.resetView();
+  });
+
+  // Kuzey Pusulası (Compass): Tıklandığında harita rotasyonunu yumuşakça 0 dereceye (Kuzey yukarı) sıfırlar
+  document.getElementById('btn-compass')?.addEventListener('click', () => {
+    mallMap.resetRotation();
+  });
+
+  // Simülasyonda Sepete Yeniden Odaklan (Recenter Cart)
+  document.getElementById('btn-recenter-cart')?.addEventListener('click', () => {
+    if (cartSimulator) {
+      cartSimulator.recenter();
+    }
   });
 
   // Rota Kontrolleri & Değiştirme (Swap) Butonları
@@ -1073,10 +1095,15 @@ function clearCurrentRoute() {
   // Mağaza kartlarındaki aktif sınıfını kaldır
   document.querySelectorAll('.store-card').forEach(c => c.classList.remove('is-active'));
 
+  document.getElementById('btn-recenter-cart')?.classList.add('hidden');
+  if (cartSimulator) cartSimulator.autoFollow = true;
+
   resetSimControls();
 }
 
 function resetSimControls() {
+  document.getElementById('btn-recenter-cart')?.classList.add('hidden');
+  if (cartSimulator) cartSimulator.autoFollow = true;
   const progressBar = document.getElementById('sim-progress-bar');
   if (progressBar) progressBar.style.width = '0%';
   const playText = document.getElementById('sim-play-text');
