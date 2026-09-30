@@ -275,7 +275,7 @@ class MallMap {
     this.markersLayer = document.getElementById('markers-layer');
     this.avatarLayer = document.getElementById('avatar-layer');
 
-    this.loadFloor(this.currentFloor).then(() => {
+    this.initialLoadPromise = this.loadFloor(this.currentFloor).then(() => {
       setTimeout(() => this.resetView(), 60);
     });
   }
@@ -428,11 +428,11 @@ class MallMap {
           ${logoHtml}
         </div>
         ${isTarget || isStart ? `
-          <span class="marker-name-label marker-name-pinned text-[10px] font-black text-white ${isStart ? 'bg-emerald-600 ring-2 ring-emerald-400' : 'bg-red-600 ring-2 ring-red-400'} px-2 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
+          <span class="marker-name-label marker-name-pinned text-sm font-black text-white ${isStart ? 'bg-emerald-600 ring-2 ring-emerald-400' : 'bg-red-600 ring-2 ring-red-400'} px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
             ${isStart ? '📍 Başlangıç: ' : '🎯 Hedef: '}${store.name}
           </span>
         ` : `
-          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} text-[9px] font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-1.5 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
+          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} text-sm font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
             ${store.name}
           </span>
         `}
@@ -471,7 +471,7 @@ class MallMap {
           <div class="logo-tile">
             <span class="text-base font-bold text-emerald-600">📍</span>
           </div>
-          <span class="marker-name-label text-[10px] font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
+          <span class="marker-name-label text-sm font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
             📍 Başlangıç: ${this.activeStartStore.name}
           </span>
         `;

@@ -41,9 +41,10 @@ class NavigationEngine {
    * @param {string} startNodeId 
    * @param {string} targetNodeId 
    * @param {string} mode - 'escalator' | 'elevator' | 'both'
-   * @returns {Object} { totalDistance, estimatedMinutes, pathNodes, segmentsByFloor, instructions, mode, fallbackUsed }
+   * @param {string} pathFilter - 'wide' | 'short'
+   * @returns {Object} { totalDistance, estimatedMinutes, pathNodes, segmentsByFloor, instructions, mode, pathFilter, fallbackUsed }
    */
-  findRoute(startNodeId, targetNodeId, mode = 'escalator') {
+  findRoute(startNodeId, targetNodeId, mode = 'escalator', pathFilter = 'wide') {
     if (!startNodeId || !targetNodeId) {
       return null;
     }
@@ -78,25 +79,38 @@ class NavigationEngine {
           floor: nodeData.floor,
           text: 'Şu anda hedefin yanındasınız.'
         }],
-        mode
+        mode,
+        pathFilter
       };
     }
 
-    // 1. Seçilen mod ile dene
-    let result = this._runDijkstra(startNodeId, targetNodeId, mode);
+    // 1. Seçilen mod ve yol filtresi (wide / short) ile dene
+    let result = this._runDijkstra(startNodeId, targetNodeId, mode, pathFilter);
 
-    // 2. Eğer tekil modla rota bulunamazsa kullanıcıyı yolda bırakmamak için otomatik olarak 'both' fallback
+    // 2. Eğer geniş yol filtresiyle rota bulunamazsa 'short' (tüm yollar) ile fallback yap
+    if (!result && pathFilter === 'wide') {
+      result = this._runDijkstra(startNodeId, targetNodeId, mode, 'short');
+    }
+
+    // 3. Eğer tekil modla rota bulunamazsa kullanıcıyı yolda bırakmamak için otomatik olarak 'both' fallback
     if (!result && mode !== 'both') {
-      result = this._runDijkstra(startNodeId, targetNodeId, 'both');
+      result = this._runDijkstra(startNodeId, targetNodeId, 'both', pathFilter);
+      if (!result && pathFilter === 'wide') {
+        result = this._runDijkstra(startNodeId, targetNodeId, 'both', 'short');
+      }
       if (result) {
         result.fallbackUsed = true;
       }
     }
 
+    if (result) {
+      result.pathFilter = pathFilter;
+    }
+
     return result;
   }
 
-  _runDijkstra(startNodeId, targetNodeId, mode) {
+  _runDijkstra(startNodeId, targetNodeId, mode, pathFilter = 'wide') {
     const dist = {};
     const prev = {};
     const pq = new PriorityQueue();
@@ -110,6 +124,10 @@ class NavigationEngine {
         ? ['elevator'] 
         : ['escalator', 'stairs', 'elevator'];
 
+    const startFloor = this.nodes[startNodeId]?.floor;
+    const targetFloor = this.nodes[targetNodeId]?.floor;
+    const isSameFloorRoute = startFloor !== undefined && targetFloor !== undefined && startFloor === targetFloor;
+
     while (!pq.isEmpty()) {
       const { val: u, priority: currentDist } = pq.dequeue();
 
@@ -122,14 +140,29 @@ class NavigationEngine {
       const neighbors = this.adj[u] || [];
       for (const edge of neighbors) {
         const v = edge.to;
-        const edgeType = edge.type || 'walk';
+        const edgeType = edge.type || 'main';
 
-        // Mod filtreleme: Dikey kenarlarda yürüyen merdiven vs asansör kuralı
-        if (edgeType !== 'walk' && !allowedTransfers.includes(edgeType)) {
+        // Rota Filtreleme: "Geniş Yol" (wide) seçildiğinde "narrow" etiketli yolları ağdan geçici olarak çıkar
+        if (pathFilter === 'wide' && edgeType === 'narrow') {
           continue;
         }
 
-        const alt = currentDist + edge.dist;
+        // Mod filtreleme: Dikey kenarlarda yürüyen merdiven vs asansör kuralı
+        const isTransfer = edge.portalKind || edgeType === 'escalator' || edgeType === 'elevator' || edgeType === 'stairs';
+        if (isTransfer) {
+          const transferType = edge.portalKind || edgeType;
+          if (!allowedTransfers.includes(transferType)) {
+            continue;
+          }
+        }
+
+        // Dikey geçiş cezası (Gerçek dünya modeli: bekleme ve binme süresi).
+        // Başlangıç ve hedef aynı kattaysa gereksiz alt/üst kata inip çıkmayı engeller.
+        const transferPenalty = isTransfer ? 200 : 0;
+        const sameFloorPenalty = (isTransfer && isSameFloorRoute) ? 600 : 0;
+        const edgeWeight = edge.dist + transferPenalty + sameFloorPenalty;
+
+        const alt = currentDist + edgeWeight;
         if (dist[v] === undefined || alt < dist[v]) {
           dist[v] = alt;
           prev[v] = { from: u, edge };
@@ -150,9 +183,13 @@ class NavigationEngine {
       curr = prev[curr] ? prev[curr].from : null;
     }
 
+    let actualPhysicalDist = 0;
     const pathNodes = pathNodeIds.map((nid, idx) => {
       const nodeData = this.nodes[nid];
       const prevEdge = idx > 0 ? prev[nid]?.edge : null;
+      if (prevEdge && prevEdge.dist) {
+        actualPhysicalDist += prevEdge.dist;
+      }
       return {
         id: nid,
         floor: nodeData.floor,
@@ -162,6 +199,8 @@ class NavigationEngine {
         portalKind: prevEdge ? prevEdge.portalKind : null
       };
     });
+
+    const finalDist = actualPhysicalDist > 0 ? actualPhysicalDist : totalDist;
 
     // Kat bazlı segmentlere böl
     const segmentsByFloor = {};
@@ -185,7 +224,7 @@ class NavigationEngine {
     }
 
     // Metre ve süre hesabı
-    const totalMeters = Math.round(totalDist * this.mPerUnit);
+    const totalMeters = Math.round(finalDist * this.mPerUnit);
     const estimatedMinutes = Math.max(1, Math.ceil(totalMeters / 60)); // ~1 m/s = 60 m/dk
 
     // Doğal dil Türkçe yönlendirme talimatları

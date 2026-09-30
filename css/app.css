@@ -877,3 +877,72 @@ html.dark .search-autocomplete-item:hover {
   background-color: rgba(99, 102, 241, 0.16);
 }
 
+/* ========================================================
+   ERİŞİLEBİLİRLİK (A11y) OPTİMİZASYONU & METİN BOYUTLARI
+   ======================================================== */
+
+/* 1. Dokunma Alanları (Touch Targets - Apple HIG & WCAG Standardı >= 44x44px) */
+.floor-pill,
+#btn-compass,
+#zoom-in-btn,
+#zoom-out-btn,
+#zoom-reset-btn,
+#btn-swap-locations,
+#theme-toggle-btn,
+#btn-sheet-toggle,
+#btn-hud-swap,
+#btn-hud-speed,
+#btn-hud-steps-toggle,
+#btn-hud-sim-play,
+#btn-hud-finish,
+#btn-peek-close,
+#btn-peek-start,
+#btn-peek-target,
+#chip-path-wide,
+#chip-path-short,
+#clear-route-btn,
+#entrance-modal-close {
+  min-height: 44px !important;
+  min-width: 44px !important;
+}
+
+/* 2. Yürürken Rahat Okunabilir Tipografi (14px - 16px Bandı) */
+.marker-name-label {
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.01em !important;
+}
+
+#current-floor-title {
+  font-size: 16px !important;
+}
+
+#current-floor-sub {
+  font-size: 14px !important;
+}
+
+#peek-store-name {
+  font-size: 16px !important;
+}
+
+#peek-landmark-text {
+  font-size: 14px !important;
+}
+
+/* 3. Rota Koridor Tercih Çipleri (Geniş Yol vs Kısa Yol) */
+#route-path-chips button {
+  user-select: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#route-path-chips button:hover {
+  filter: brightness(1.05);
+}
+
+/* 4. Açılış Ekranı (Splash Screen) */
+#splash-screen {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+

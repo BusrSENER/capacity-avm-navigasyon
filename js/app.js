@@ -18,6 +18,8 @@ let currentFloor = 4; // Zemin Kat varsayılan başlangıç
 let filterTab = 'this_floor'; // 'this_floor' | 'all_floors'
 let activeCategory = 'all';
 let searchQuery = '';
+let currentPathPreference = 'wide'; // 'wide' (Geniş Yol) | 'short' (Kısa Yol)
+window.currentPathPreference = currentPathPreference;
 
 // Simülasyon Hız Kontrolü (1x ➔ 2x ➔ 4x)
 let currentSimSpeed = 1.0;
@@ -144,6 +146,59 @@ function showToast(message, type = 'info') {
   }, 3200);
 }
 
+// Açılış Ekranı (Splash Screen - Pulse Radar): 0ms Yapay Gecikmesiz Doğal Fade-Out
+function hideSplashScreen() {
+  const splash = document.getElementById('splash-screen');
+  if (splash && !splash.classList.contains('pointer-events-none')) {
+    splash.classList.add('opacity-0', 'pointer-events-none');
+    setTimeout(() => {
+      splash.remove();
+    }, 550);
+  }
+}
+window.hideSplashScreen = hideSplashScreen;
+
+// Rota Koridor Tercihi ([🛣️ Geniş Yol] vs [✂️ Kısa Yol])
+function setPathPreference(pref) {
+  currentPathPreference = pref;
+  window.currentPathPreference = pref;
+  const chipWide = document.getElementById('chip-path-wide');
+  const chipShort = document.getElementById('chip-path-short');
+
+  const activeClasses = ['border-indigo-600', 'bg-indigo-600', 'text-white', 'shadow-xs'];
+  const inactiveClasses = ['border-slate-200', 'dark:border-slate-700', 'bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'hover:bg-slate-200', 'dark:hover:bg-slate-700'];
+
+  if (pref === 'wide') {
+    chipWide?.classList.remove(...inactiveClasses);
+    chipWide?.classList.add(...activeClasses);
+    chipShort?.classList.remove(...activeClasses);
+    chipShort?.classList.add(...inactiveClasses);
+  } else {
+    chipShort?.classList.remove(...inactiveClasses);
+    chipShort?.classList.add(...activeClasses);
+    chipWide?.classList.remove(...activeClasses);
+    chipWide?.classList.add(...inactiveClasses);
+  }
+
+  if (selectedStartStore && selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
+    calculateAndDisplayRoute();
+    showToast(pref === 'wide' ? '🛣️ Geniş yol rotası uygulandı' : '✂️ Kısa yol rotası uygulandı', 'info');
+  }
+}
+window.setPathPreference = setPathPreference;
+
+function setupPathPreferenceChips() {
+  document.getElementById('chip-path-wide')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setPathPreference('wide');
+  });
+  document.getElementById('chip-path-short')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setPathPreference('short');
+  });
+}
+window.setupPathPreferenceChips = setupPathPreferenceChips;
+
 // Uygulamayı Başlat
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -209,6 +264,7 @@ function initApp() {
   setupSearchEngine();
   setupAmenityPills();
   setupTabs();
+  setupPathPreferenceChips();
 
   // Dikey geçiş tercihini varsayılan olarak 'escalator' (yürüyen merdiven) olarak sabitle
   setRoutePreference('escalator');
@@ -222,6 +278,17 @@ function initApp() {
 
   if (window.lucide) {
     lucide.createIcons();
+  }
+
+  // Harita SVG ve JSON render edildiği anda açılış ekranını yapay gecikmesiz (0ms) kapat
+  if (mallMap && mallMap.initialLoadPromise) {
+    mallMap.initialLoadPromise.then(() => {
+      hideSplashScreen();
+    }).catch(() => {
+      hideSplashScreen();
+    });
+  } else {
+    hideSplashScreen();
   }
 }
 
@@ -1555,7 +1622,8 @@ function calculateAndDisplayRoute() {
   const result = navEngine.findRoute(
     selectedStartStore.nav_node,
     selectedTargetStore.nav_node,
-    activeRouteMode
+    activeRouteMode,
+    currentPathPreference
   );
 
   if (!result || !result.pathNodes || !result.pathNodes.length) {
@@ -1583,6 +1651,12 @@ function calculateAndDisplayRoute() {
   // 1. Dinamik Üst Başlık Kartı: 1. Satır: Hedef • Kat, 2. Satır: Mesafe • Süre
   lastCalculatedRoute = result;
   updateHeaderNavSummary(selectedTargetStore, result);
+
+  // Koridor Tercih Çiplerini [🛣️ Geniş Yol] ve [✂️ Kısa Yol] Göster
+  const pathChips = document.getElementById('route-path-chips');
+  if (pathChips) {
+    pathChips.classList.remove('hidden');
+  }
 
   // 2. Minimal 64px HUD Navigasyon Çubuğunu Göster
   const hudBar = document.getElementById('nav-hud-bar');
@@ -1684,6 +1758,9 @@ function clearCurrentRoute() {
   if (hudStepsDrawer) {
     hudStepsDrawer.classList.add('hidden');
   }
+
+  // Koridor Tercih Çiplerini Gizle
+  document.getElementById('route-path-chips')?.classList.add('hidden');
 
   // Inputları ve temizleme butonlarını sıfırla
   const startInput = document.getElementById('input-start-loc');
