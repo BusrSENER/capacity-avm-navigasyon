@@ -62,10 +62,19 @@ function collapseBottomSheet() {
   if (sheetHint) sheetHint.textContent = 'Mağazalar & Rota';
 }
 
-// Toast Notification Engine
+// Toast Notification Engine (Tekil Kuyruk & Yığılma Önleyici)
+let activeToastTimeout = null;
+
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
   if (!container) return;
+
+  // Mevcut zamanlayıcıyı ve DOM'daki eski bildirimleri derhal temizle
+  if (activeToastTimeout) {
+    clearTimeout(activeToastTimeout);
+    activeToastTimeout = null;
+  }
+  container.innerHTML = '';
 
   const toast = document.createElement('div');
   const typeStyles = {
@@ -75,9 +84,16 @@ function showToast(message, type = 'info') {
     error: 'border-rose-500/40 bg-white/95 dark:bg-slate-900/90 text-rose-700 dark:text-rose-300'
   };
 
+  const icons = {
+    info: 'ℹ️',
+    success: '✅',
+    warning: '⚠️',
+    error: '🚨'
+  };
+
   toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-xl backdrop-blur-md text-xs sm:text-sm font-semibold transition-all duration-300 transform translate-y-4 opacity-0 ${typeStyles[type] || typeStyles.info}`;
   toast.innerHTML = `
-    <span class="shrink-0 text-base">ℹ️</span>
+    <span class="shrink-0 text-base">${icons[type] || 'ℹ️'}</span>
     <span class="flex-1">${message}</span>
   `;
 
@@ -87,10 +103,13 @@ function showToast(message, type = 'info') {
     toast.classList.remove('translate-y-4', 'opacity-0');
   });
 
-  setTimeout(() => {
+  activeToastTimeout = setTimeout(() => {
     toast.classList.add('translate-y-4', 'opacity-0');
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+    setTimeout(() => {
+      toast.remove();
+      if (activeToastTimeout) activeToastTimeout = null;
+    }, 300);
+  }, 3200);
 }
 
 // Uygulamayı Başlat
@@ -1084,7 +1103,7 @@ function openEntranceModal() {
 
   const startingLocations = [
     // 1. Giriş Kapıları
-    ...(mallData.entrances || []).map(ent => ({
+    ...(mallData.entrances || []).filter(e => e.id !== 'ent_danisma' && e.id !== 'ent_havuz').map(ent => ({
       id: ent.id,
       name: ent.name,
       floor: ent.floor,
@@ -1115,9 +1134,9 @@ function openEntranceModal() {
       name: 'Müzikli Gösteri Havuzu (Etkinlik Alanı)',
       floor: 4,
       floor_name: 'Zemin Kat (Merkez)',
-      nav_node: 'bridge_4_m',
-      cx: 258,
-      cy: 365,
+      nav_node: 'c_4_m_700',
+      cx: 700.0,
+      cy: 440.0,
       iconEmoji: '🌊',
       badge: 'Buluşma Noktası',
       badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'

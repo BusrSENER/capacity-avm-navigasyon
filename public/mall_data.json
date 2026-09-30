@@ -52,6 +52,17 @@
       "cy": 425.0,
       "nav_node": "n_ent_carpark",
       "kind": "carpark"
+    },
+    {
+      "id": "ent_havuz",
+      "name": "Müzikli Gösteri Havuzu (Etkinlik Alanı)",
+      "short_name": "Müzikli Havuz",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 700.0,
+      "cy": 440.0,
+      "nav_node": "c_4_m_700",
+      "kind": "fountain"
     }
   ],
   "amenities": [
