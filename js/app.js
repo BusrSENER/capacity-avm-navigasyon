@@ -164,6 +164,9 @@ function initApp() {
   mallMap = new MallMap('map-canvas-container', mallData, (store) => {
     selectStore(store);
   });
+  mallMap.onMapClick = () => {
+    closePoiPeekCard();
+  };
   window.mallMap = mallMap;
   window.navEngine = navEngine;
 
@@ -202,6 +205,7 @@ function initApp() {
 
   setupTheme();
   setupUIEventListeners();
+  setupPeekCardEvents();
   setupSearchEngine();
   setupAmenityPills();
   setupTabs();
@@ -566,22 +570,163 @@ function setActiveFocusSlot(slot) {
 }
 window.setActiveFocusSlot = setActiveFocusSlot;
 
+function getAllMallStores() {
+  const list = [];
+  if (!mallData || !mallData.floors) return list;
+  Object.values(mallData.floors).forEach(fl => {
+    (fl.stores || []).forEach(s => list.push(s));
+  });
+  return list;
+}
+
+function normalizeSearchStr(str) {
+  if (!str) return '';
+  let s = str.trim();
+  s = s.replace(/İ/g, 'i').replace(/I/g, 'ı').replace(/ı/g, 'i').toLowerCase();
+  s = s.replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u');
+  s = s.replace(/[\'\"&.,/\\()\-–—+!?:;]/g, ' ');
+  return s.replace(/\s+/g, ' ').trim();
+}
+
+function handleStoreSelectedFromSearch(store, targetSlot) {
+  if (!store) return;
+  const slot = targetSlot || activeFocusSlot || 'target';
+
+  // 1. Autocomplete listesini kapat
+  const autoList = document.getElementById('search-autocomplete-list');
+  if (autoList) {
+    autoList.classList.add('hidden');
+    autoList.innerHTML = '';
+  }
+
+  // 2. Girdileri ata
+  if (slot === 'start') {
+    setStartLocation(store);
+  } else {
+    setTargetLocation(store);
+  }
+
+  // 3. Arama katmanını kapat (mobilde alt çekmece genişletilmişse kapat)
+  if (window.innerWidth <= 768 && isBottomSheetExpanded) {
+    collapseBottomSheet();
+  }
+
+  // 4. Farklı kattaysa kata geç (switchFloor) ve kamerayı mağazanın merkezine (cx, cy) kaydırıp zoomla
+  if (mallMap.currentFloor !== store.floor) {
+    mallMap.loadFloor(store.floor).then(() => {
+      updateFloorUI(store.floor);
+      mallMap.flyTo(store.cx, store.cy, 1.45);
+      mallMap.highlightStore(store.id, true);
+    });
+  } else {
+    mallMap.flyTo(store.cx, store.cy, 1.45);
+    mallMap.highlightStore(store.id, true);
+  }
+
+  // 5. Altta yalnızca 130px'lik mini kartı (Peek Mode) bırak (rota başlamadıysa)
+  if (!mallMap.activeRoute) {
+    showPoiPeekCard(store);
+  }
+}
+
 function setupSearchEngine() {
   const startInput = document.getElementById('input-start-loc');
   const clearStartBtn = document.getElementById('btn-clear-start');
   const targetInput = document.getElementById('input-target-loc');
   const clearTargetBtn = document.getElementById('btn-clear-target');
+  const autoList = document.getElementById('search-autocomplete-list');
 
   let debounceTimer = null;
 
-  // 1. [ 📍 Nereden? ] Girdisi (Görsel Odak + Modal)
+  function renderAutocomplete(query, targetSlot) {
+    if (!autoList) return;
+    const q = normalizeSearchStr(query);
+    if (!q || q.length === 0) {
+      autoList.classList.add('hidden');
+      autoList.innerHTML = '';
+      return;
+    }
+
+    const allStores = getAllMallStores();
+    const matches = allStores.filter(s => {
+      const nameNorm = normalizeSearchStr(s.name);
+      const catNorm = normalizeSearchStr(s.category_name || s.category || '');
+      const floorNorm = normalizeSearchStr(s.floor_name || '');
+      const unitNorm = (s.unit || '').toLowerCase();
+      return nameNorm.includes(q) || catNorm.includes(q) || floorNorm.includes(q) || unitNorm.includes(q);
+    });
+
+    if (matches.length === 0) {
+      autoList.innerHTML = `<div class="p-3 text-center text-xs text-slate-400">Sonuç bulunamadı ("${query}")</div>`;
+      autoList.classList.remove('hidden');
+      return;
+    }
+
+    autoList.innerHTML = matches.slice(0, 16).map(s => {
+      const landmark = getStoreLandmark(s);
+      const wing = landmark.includes('•') ? landmark.split('•')[1].trim() : (s.floor_name || '');
+      return `
+        <div class="search-autocomplete-item p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between gap-2 transition-colors active:bg-slate-200 dark:active:bg-slate-700 select-none" data-store-id="${s.id}">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 p-1">
+              ${getStoreLogo(s, 20)}
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">${s.name}</span>
+              <span class="text-[10px] text-slate-400 dark:text-slate-400 truncate">${s.category_name || s.category || 'Mağaza'}</span>
+            </div>
+          </div>
+          <div class="flex flex-col items-end shrink-0 gap-0.5">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60">${s.floor_name || s.floor + '. Kat'}</span>
+            <span class="text-[9px] font-medium text-slate-400 dark:text-slate-400">${wing}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    autoList.classList.remove('hidden');
+
+    autoList.querySelectorAll('.search-autocomplete-item').forEach(itemEl => {
+      itemEl.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const storeId = itemEl.getAttribute('data-store-id');
+        const st = allStores.find(x => x.id === storeId);
+        if (st) {
+          handleStoreSelectedFromSearch(st, targetSlot);
+        }
+      });
+    });
+  }
+
+  // 1. [ 📍 Nereden? ] Girdisi
   startInput?.addEventListener('focus', () => {
     setActiveFocusSlot('start');
+    if (startInput.value.trim().length > 0) {
+      renderAutocomplete(startInput.value.trim(), 'start');
+    }
   });
 
   startInput?.addEventListener('click', () => {
     setActiveFocusSlot('start');
-    openEntranceModal();
+    if (!startInput.value || startInput.value.trim().length === 0) {
+      openEntranceModal();
+    } else {
+      renderAutocomplete(startInput.value.trim(), 'start');
+    }
+  });
+
+  startInput?.addEventListener('input', (e) => {
+    setActiveFocusSlot('start');
+    const val = e.target.value.trim();
+    if (val.length > 0) {
+      clearStartBtn?.classList.remove('hidden');
+    } else {
+      clearStartBtn?.classList.add('hidden');
+    }
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      renderAutocomplete(val, 'start');
+    }, 120);
   });
 
   clearStartBtn?.addEventListener('click', (e) => {
@@ -595,40 +740,44 @@ function setupSearchEngine() {
     if (mallMap.activeRoute) {
       clearCurrentRoute();
     }
+    autoList?.classList.add('hidden');
     setActiveFocusSlot('start');
     startInput?.focus();
   });
 
-  // 2. [ 🎯 Nereye? ] Girdisi (Görsel Odak + Canlı Arama)
+  // 2. [ 🎯 Nereye? ] Girdisi
   targetInput?.addEventListener('focus', () => {
     setActiveFocusSlot('target');
-    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
-      expandBottomSheet();
+    if (targetInput.value.trim().length > 0) {
+      renderAutocomplete(targetInput.value.trim(), 'target');
     }
   });
 
   targetInput?.addEventListener('click', () => {
     setActiveFocusSlot('target');
+    if (targetInput.value.trim().length > 0) {
+      renderAutocomplete(targetInput.value.trim(), 'target');
+    }
   });
 
   targetInput?.addEventListener('input', (e) => {
     setActiveFocusSlot('target');
-    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
-      expandBottomSheet();
-    }
-    clearTimeout(debounceTimer);
-    searchQuery = e.target.value.trim();
+    const val = e.target.value.trim();
+    searchQuery = val;
 
-    if (searchQuery.length > 0) {
+    if (val.length > 0) {
       clearTargetBtn?.classList.remove('hidden');
     } else {
       clearTargetBtn?.classList.add('hidden');
     }
 
+    clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
+      renderAutocomplete(val, 'target');
+      // Arka plan listesini de güncelle
       closePoiDetail();
       renderSidebarStoreGrid();
-    }, 180);
+    }, 120);
   });
 
   clearTargetBtn?.addEventListener('click', (e) => {
@@ -642,10 +791,18 @@ function setupSearchEngine() {
     if (mallMap.activeRoute) {
       clearCurrentRoute();
     }
+    autoList?.classList.add('hidden');
     closePoiDetail();
     renderSidebarStoreGrid();
     setActiveFocusSlot('target');
     targetInput?.focus();
+  });
+
+  // Dışarı tıklandığında açılır listeyi kapat
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#dual-search-container') && !e.target.closest('#search-autocomplete-list')) {
+      autoList?.classList.add('hidden');
+    }
   });
 }
 
@@ -888,6 +1045,149 @@ function setTargetLocation(store) {
   }
 }
 
+function getStoreLandmark(store) {
+  if (!store) return '';
+  const floorName = store.floor_name || (store.floor ? `${store.floor}. Kat` : '');
+
+  let zone = '';
+  const cx = store.cx || 700;
+  const cy = store.cy || 425;
+
+  if (store.floor === 4) { // Zemin Kat
+    if (Math.hypot(cx - 700, cy - 425) < 140) {
+      zone = 'Müzikli Havuz Yanı';
+    } else if (cx > 1050) {
+      zone = 'Fişekhane Girişi Yanı';
+    } else if (cy < 250) {
+      zone = 'Carousel Girişi Yanı';
+    } else if (cx < 550) {
+      zone = 'Ataköy Kanadı';
+    } else {
+      zone = 'Merkez Atrium';
+    }
+  } else if (store.floor === 6) { // 2. Kat
+    if (cy < 350 && cx < 600) {
+      zone = 'Paribu Cineverse Yanı';
+    } else if (cy > 450) {
+      zone = 'Food Court & Teras';
+    } else if (cx > 900) {
+      zone = 'Teras Kanadı';
+    } else {
+      zone = 'Restoranlar Meydanı';
+    }
+  } else if (store.floor === 5) { // 1. Kat
+    if (cx < 550) {
+      zone = 'Ataköy Kanadı';
+    } else if (cx > 900) {
+      zone = 'Fişekhane Kanadı';
+    } else {
+      zone = 'Galeri Boşluğu Çevresi';
+    }
+  } else if (store.floor === 3) { // 1. Bodrum
+    if (cx < 600) {
+      zone = 'Spor & Gençlik Alanı';
+    } else if (cx > 900) {
+      zone = 'Migros & Hipermarket';
+    } else {
+      zone = 'Merkez Meydan';
+    }
+  } else if (store.floor === 1) { // 3. Bodrum
+    zone = 'Lostra & Hizmet Alanı';
+  } else if (store.floor === 2) { // 2. Bodrum
+    zone = 'Otopark & Vale Noktası';
+  } else {
+    zone = cx < 700 ? 'Ataköy Kanadı' : 'Fişekhane Kanadı';
+  }
+
+  return `${floorName} • ${zone}`;
+}
+window.getStoreLandmark = getStoreLandmark;
+
+let currentPeekStore = null;
+
+function showPoiPeekCard(store) {
+  if (!store) return;
+  currentPeekStore = store;
+
+  const peekCard = document.getElementById('poi-peek-card');
+  if (!peekCard) return;
+
+  const nameEl = document.getElementById('peek-store-name');
+  const catEl = document.getElementById('peek-category-badge');
+  const landmarkEl = document.getElementById('peek-landmark-text');
+  const btnStart = document.getElementById('btn-peek-start');
+  const btnTarget = document.getElementById('btn-peek-target');
+
+  if (nameEl) nameEl.textContent = store.name;
+  if (catEl) catEl.textContent = store.category_name || store.category || 'Mağaza';
+  if (landmarkEl) landmarkEl.textContent = getStoreLandmark(store);
+
+  // Dinamik Buton Önceliği (Durum Makinesi):
+  // Eğer activeFocusSlot === 'start' veya başlangıç noktası henüz seçilmemişse:
+  // [📍 Buradan Başla] birincil buton, [🎯 Hedef Yap] ikincil buton.
+  // Aksi halde [🎯 Hedef Yap] birincil buton, [📍 Buradan Başla] ikincil buton.
+  const prioritizeStart = (activeFocusSlot === 'start') || (!selectedStartStore && activeFocusSlot !== 'target');
+
+  if (btnStart && btnTarget) {
+    if (prioritizeStart) {
+      btnStart.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30';
+      btnTarget.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700';
+    } else {
+      btnTarget.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-red-600 hover:bg-red-700 text-white shadow-red-600/30';
+      btnStart.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700';
+    }
+  }
+
+  // Mobilde alt çekmece genişletilmişse kapat
+  if (window.innerWidth <= 768 && isBottomSheetExpanded) {
+    collapseBottomSheet();
+  }
+
+  document.body.classList.add('has-peek-card');
+  peekCard.classList.remove('hidden');
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+window.showPoiPeekCard = showPoiPeekCard;
+
+function closePoiPeekCard() {
+  document.body.classList.remove('has-peek-card');
+  const peekCard = document.getElementById('poi-peek-card');
+  if (peekCard) {
+    peekCard.classList.add('hidden');
+  }
+  if (currentPeekStore) {
+    mallMap.highlightStore(currentPeekStore.id, false);
+    currentPeekStore = null;
+  }
+}
+window.closePoiPeekCard = closePoiPeekCard;
+
+function setupPeekCardEvents() {
+  document.getElementById('btn-peek-start')?.addEventListener('click', () => {
+    if (currentPeekStore) {
+      const store = currentPeekStore;
+      setStartLocation(store);
+      closePoiPeekCard();
+    }
+  });
+
+  document.getElementById('btn-peek-target')?.addEventListener('click', () => {
+    if (currentPeekStore) {
+      const store = currentPeekStore;
+      setTargetLocation(store);
+      closePoiPeekCard();
+    }
+  });
+
+  document.getElementById('btn-peek-close')?.addEventListener('click', () => {
+    closePoiPeekCard();
+  });
+}
+window.setupPeekCardEvents = setupPeekCardEvents;
+
 function selectStore(store) {
   if (!store) return;
 
@@ -904,13 +1204,12 @@ function selectStore(store) {
     mallMap.highlightStore(store.id, true);
   }
 
-  // POI Detay Panelini Aç ve Dinamik Butonları Göster
+  // POI Detay Panelini Güncelle (masaüstü için)
   renderPoiDetail(store);
 
-  // Mobilde alt çekmeceyi açarak butonları görünür kıl
-  if (window.innerWidth <= 768) {
-    expandBottomSheet();
-  }
+  // Mobilde ekranın %85'ini kaplayan alt çekmece KESİNLİKLE açılmaz!
+  // Bunun yerine ekranın altında ~130px kompakt bilgi kartı (Peek Mode) gösterilir:
+  showPoiPeekCard(store);
 }
 
 function swapLocations() {
@@ -969,6 +1268,7 @@ function swapLocations() {
     if (mallMap.activeRoute) {
       mallMap.clearRoute();
       document.body.classList.remove('has-active-route');
+      document.getElementById('floating-view-toggle')?.classList.remove('hidden');
       const hudBar = document.getElementById('nav-hud-bar');
       if (hudBar) {
         hudBar.classList.remove('is-active');
@@ -1003,6 +1303,7 @@ function swapLocations() {
     if (mallMap.activeRoute) {
       mallMap.clearRoute();
       document.body.classList.remove('has-active-route');
+      document.getElementById('floating-view-toggle')?.classList.remove('hidden');
       const hudBar = document.getElementById('nav-hud-bar');
       if (hudBar) {
         hudBar.classList.remove('is-active');
@@ -1302,6 +1603,8 @@ function calculateAndDisplayRoute() {
     collapseBottomSheet();
   }
   document.body.classList.add('has-active-route');
+  document.getElementById('floating-view-toggle')?.classList.add('hidden');
+  closePoiPeekCard(); // Rota başlayınca peek card gizlenir, tekil 64px HUD kalır
 
   // ROTA ÖNİZLEME (MANUEL BAŞLATMA):
   // Sepet başlangıç noktasına yerleştirilir ve durdurulur; ASLA otomatik başlatılmaz!
@@ -1329,6 +1632,7 @@ function clearCurrentRoute() {
   mallMap.clearRoute();
   cartSimulator.stop();
   document.body.classList.remove('has-active-route');
+  document.getElementById('floating-view-toggle')?.classList.remove('hidden');
 
   // Minimal 64px HUD'ı Gizle
   const hudBar = document.getElementById('nav-hud-bar');

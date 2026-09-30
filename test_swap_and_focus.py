@@ -76,7 +76,12 @@ async def test_swap_and_focus():
         await page.wait_for_timeout(300)
         await page.locator(".store-polygon[data-id='store_4_2']").first.click(force=True)
         await page.wait_for_timeout(500)
-        await page.locator("#poi-start-btn").click()
+        # Peek card açıldı, [📍 Buradan Başla] butonuna bas
+        peek_start = page.locator("#btn-peek-start")
+        if await peek_start.is_visible():
+            await peek_start.click()
+        else:
+            await page.locator("#poi-start-btn").click()
         await page.wait_for_timeout(400)
 
         start_val = await start_input.input_value()
@@ -132,9 +137,17 @@ async def test_swap_and_focus():
         print("Setting target to Zara...")
         await target_input.fill("Zara")
         await page.wait_for_timeout(400)
-        await page.locator(".store-card:has-text('Zara')").first.click()
-        await page.wait_for_timeout(400)
-        await page.locator("#poi-action-buttons button").nth(0).click() # [🎯 Hedef Yap]
+        auto_item = page.locator("#search-autocomplete-list .search-autocomplete-item:has-text('Zara')")
+        if await auto_item.count() > 0 and await auto_item.first.is_visible():
+            await auto_item.first.click()
+            await page.wait_for_timeout(400)
+            peek_target = page.locator("#btn-peek-target")
+            if await peek_target.is_visible():
+                await peek_target.click()
+        else:
+            await page.locator(".store-card:has-text('Zara')").first.click()
+            await page.wait_for_timeout(400)
+            await page.locator("#poi-action-buttons button").nth(0).click()
         await page.wait_for_timeout(800)
 
         # Rota oluştu mu?

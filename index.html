@@ -113,9 +113,8 @@
               <input 
                 id="input-start-loc" 
                 type="text" 
-                readonly 
-                placeholder="📍 Nereden? (Giriş / Danışma)" 
-                class="w-full pl-2.5 pr-6 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 cursor-pointer transition-all truncate shadow-inner"
+                placeholder="📍 Nereden? (Giriş / Mağaza)" 
+                class="w-full pl-2.5 pr-6 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 cursor-text transition-all truncate shadow-inner"
               >
               <button id="btn-clear-start" class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden" title="Başlangıcı Temizle">
                 <i data-lucide="x" class="w-3 h-3"></i>
@@ -141,6 +140,11 @@
           <button id="btn-swap-locations" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 shrink-0 transition-all active:scale-95 shadow-sm" title="Başlangıç ve Hedefi Değiştir (⇄)">
             <i data-lucide="arrow-up-down" class="w-3.5 h-3.5"></i>
           </button>
+        </div>
+
+        <!-- Global Arama & Autocomplete Dropdown Listesi (Tüm AVM 173 Mağaza) -->
+        <div class="relative w-full">
+          <div id="search-autocomplete-list" class="hidden absolute top-0 left-0 right-0 max-h-60 sm:max-h-72 overflow-y-auto bg-white/98 dark:bg-slate-900/98 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 divide-y divide-slate-100 dark:divide-slate-800"></div>
         </div>
 
         <!-- Rota Tercih Sekmeleri: [ 🚶 Yürüyen Merdiven ] ve [ 🛗 Asansör / Bebek Arabası ] -->
@@ -480,6 +484,34 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- 1. KOMPAKT MAĞAZA KARTI (PEEK MODE - 130px) -->
+  <div id="poi-peek-card" class="hidden fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 sm:w-96 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-3 flex flex-col gap-2 transition-all duration-200 animate-in fade-in slide-in-from-bottom-3 select-none">
+    <!-- Üst Satır: Sol Bilgi + Sağ Kapat Butonu -->
+    <div class="flex items-start justify-between gap-2 min-w-0">
+      <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <h4 id="peek-store-name" class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Mağaza Adı</h4>
+          <span id="peek-category-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300 shrink-0">Moda</span>
+        </div>
+        <div id="peek-landmark-text" class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate">Zemin Kat • Müzikli Havuz Yanı</div>
+      </div>
+      <button id="btn-peek-close" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Kapat">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <!-- Alt Satır: Yan yana [📍 Buradan Başla] ve [🎯 Hedef Yap] Butonları -->
+    <div id="peek-action-buttons" class="grid grid-cols-2 gap-2 pt-0.5">
+      <button id="btn-peek-start" class="py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30">
+        <span>📍</span>
+        <span class="truncate">Buradan Başla</span>
+      </button>
+      <button id="btn-peek-target" class="py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+        <span>🎯</span>
+        <span class="truncate">Hedef Yap</span>
+      </button>
+    </div>
   </div>
 
   <!-- MİNİMAL HUD (NAVİGASYON ÇUBUĞU) - 64px İnce Yönlendirme Çubuğu -->

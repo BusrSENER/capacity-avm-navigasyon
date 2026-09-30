@@ -30,6 +30,7 @@ class MallMap {
     this.startX = 0;
     this.startY = 0;
     this.onUserPan = null; // Simülasyonda kullanıcı dokunduğunda serbest kamera tetikleyicisi
+    this.onMapClick = null; // Haritanın boş zeminine tıklandığında tetiklenen geri çağırma
 
     // ViewBox dimensions (1400x850 Gerçek Chapman Taylor Mimari Düzlemi)
     this.vbWidth = this.mallData.meta?.width || 1400;
@@ -311,6 +312,12 @@ class MallMap {
   }
 
   attachStoreInteractivity(svgEl, floorNum) {
+    // Haritanın boş zeminine (koridorlar, atrium vb.) tıklandığında seçimi temizle ve kartı kapat
+    svgEl.addEventListener('click', (e) => {
+      if (e.target.closest('.store-polygon') || e.target.closest('.logo-tile-marker') || e.target.closest('.amenity-marker')) return;
+      if (this.onMapClick) this.onMapClick();
+    });
+
     const storePolys = svgEl.querySelectorAll('.store-polygon');
     const floorInfo = this.mallData.floors[floorNum];
     const storeMap = new Map();
@@ -822,6 +829,42 @@ class MallMap {
 
   setupEventListeners() {
     this.container.style.touchAction = 'none';
+
+    // Haritanın boş zeminine dokunulduğunu (tap/click) tespit etme
+    let mapClickStart = { x: 0, y: 0 };
+    let mapClickMoved = false;
+
+    this.container.addEventListener('pointerdown', (e) => {
+      mapClickStart = { x: e.clientX, y: e.clientY };
+      mapClickMoved = false;
+    });
+
+    this.container.addEventListener('pointermove', (e) => {
+      if (Math.hypot(e.clientX - mapClickStart.x, e.clientY - mapClickStart.y) > 8) {
+        mapClickMoved = true;
+      }
+    });
+
+    this.container.addEventListener('pointerup', (e) => {
+      if (mapClickMoved) return; // Kullanıcı haritayı kaydırdı/zoomladı
+      // Eğer tıklanan eleman mağaza, logo, servis ikonu veya bilgi kartıysa harita tıkı sayma
+      if (e.target.closest('.store-polygon') || e.target.closest('.logo-tile-marker') || e.target.closest('.amenity-marker') || e.target.closest('#poi-peek-card')) {
+        return;
+      }
+      if (this.onMapClick) {
+        this.onMapClick();
+      }
+    });
+
+    this.container.addEventListener('click', (e) => {
+      if (mapClickMoved) return;
+      if (e.target.closest('.store-polygon') || e.target.closest('.logo-tile-marker') || e.target.closest('.amenity-marker') || e.target.closest('#poi-peek-card')) {
+        return;
+      }
+      if (this.onMapClick) {
+        this.onMapClick();
+      }
+    });
 
     // Mouse Drag Pan
     this.container.addEventListener('mousedown', (e) => {

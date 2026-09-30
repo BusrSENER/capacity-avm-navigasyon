@@ -696,17 +696,9 @@ body.has-active-route #route-panel {
     bottom: calc(75vh + 12px) !important;
   }
 
-  /* Rota Aktifken Yüzen Liste/Harita Butonu (HUD'ın hemen üzerinde yer alır, kullanıcı dilediğinde açıp kapatabilir) */
+  /* Rota Aktifken Yüzen Liste Butonunu Gizle (HUD & Footer Çakışmasını Temizleme) */
   body.has-active-route #floating-view-toggle {
-    bottom: 76px !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transform: scale(1) !important;
-    z-index: 55 !important;
-  }
-
-  body.has-active-route #sidebar-panel.is-expanded ~ #floating-view-toggle {
-    bottom: calc(75vh + 12px) !important;
+    display: none !important;
   }
 
   /* 4. Minimal 64px HUD Navigasyon Çubuğu */
@@ -832,5 +824,45 @@ html.dark .active-focus-ring {
   100% {
     box-shadow: 0 0 0 3px #6366f1, 0 0 16px rgba(99, 102, 241, 0.65);
   }
+}
+
+/* ========================================================
+   KOMPAKT MAĞAZA KARTI (PEEK MODE - 130px)
+   ======================================================== */
+#poi-peek-card {
+  max-height: 135px;
+  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 768px) {
+  #poi-peek-card {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 14px !important;
+    width: auto !important;
+    max-height: 130px !important;
+    z-index: 55 !important;
+  }
+
+  /* Kompakt Bilgi Kartı (Peek Mode) açıkken alt çekmece haritayı engellememek için aşağı iner */
+  body.has-peek-card #sidebar-panel:not(.is-expanded) {
+    transform: translateY(100%) !important;
+    pointer-events: none !important;
+  }
+}
+
+/* ========================================================
+   GLOBAL ARAMA & AUTOCOMPLETE DROPDOWN
+   ======================================================== */
+#search-autocomplete-list {
+  box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.search-autocomplete-item:hover {
+  background-color: rgba(99, 102, 241, 0.08);
+}
+
+html.dark .search-autocomplete-item:hover {
+  background-color: rgba(99, 102, 241, 0.16);
 }
 
