@@ -46,6 +46,16 @@ Bu belge, **İstanbul Bakırköy Capacity AVM Akıllı İç Mekân Navigasyon & 
 * Navigasyon çizgisi parlak mavi (`#2563eb`), 4px kalınlığında, animasyonlu kesikli çizgi (`stroke-dasharray: 8 6`, `animation: routeDashFlow 1s linear infinite`) olarak render edilir. Altında 7px saf beyaz kontrast kenar bulunur.
 * Alışveriş sepeti maskotu (`#avatar-layer`, `z-index: 60`) bu çizgi üzerinde 60 FPS akışla hareket eder.
 
+### 2.4. Mobil Katman Mimarisi & Bottom Sheet Standardı (@media <= 768px)
+* **Tam Ekran Arka Plan Haritası:** Harita alanı (`#main-map-area`) mobilde sabit tam ekran (`width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 10`) çalışır.
+* **Alt Çekmece (Bottom Sheet):** Sol panel (`#sidebar-panel`), mobilde alttan açılan bir alt çekmeceye dönüştürülür:
+  * **Peek Modu (Varsayılan):** Görünür yükseklik ~130px'dir (`transform: translateY(calc(75vh - 130px))`). Yalnızca tutamaç, arama çubuğu ve 3 hızlı giriş kapısı (Fişekhane, Carousel, Danışma) görünür; harita arka planda tam aktiftir.
+  * **Genişletilmiş Mod (Expanded):** Ekranın en fazla %75'ini kaplar (`max-height: 75vh; transform: translateY(0)`). Haritayı tamamen örtmez.
+  * **Tutamaç (Drag Handle Pill):** Yukarı ve aşağı çekme jestlerini (swipe up/down) ve tıklamayla tek tıkla açılıp kapanmayı destekler.
+* **Yüzen Eylem Butonu (Floating View Toggle):** Sağ altta `#floating-view-toggle` butonu yer alır. Çekmece kapalıyken `📋 Liste`, açıkken `🗺️ Harita` göstererek tek dokunuşla görünüm geçişi sağlar.
+* **Otomatik Küçülme:** Rota hesaplandığında çekmece otomatik olarak peek moduna iner ve rota kartı (`#route-panel`) çekmecenin üzerinde belirerek rotayı net odaklar.
+* **Dokunmatik Etkileşim:** Harita üzerinde iki parmakla dokunulan merkez noktasına odaklı akıcı yakınlaşma (pinch-to-zoom) ve tek parmakla serbest kaydırma (touch pan) `touch-action: none` ile işletim sistemi jestleriyle çakışmadan çalışır.
+
 ---
 
 ## 3. Tasarım Sistemi (Daylight Aesthetic)

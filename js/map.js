@@ -442,10 +442,10 @@ class MallMap {
     }
   }
 
-  flyTo(x, y, targetScale = 1.35, duration = 400) {
+  flyTo(x, y, targetScale = 1.35, duration = 400, offsetY = 0) {
     const rect = this.container.getBoundingClientRect();
     const cx = rect.width / 2;
-    const cy = rect.height / 2;
+    const cy = (rect.height / 2) - offsetY;
 
     const startX = this.panX;
     const startY = this.panY;
@@ -477,6 +477,40 @@ class MallMap {
   }
 
   /**
+   * Rotanın geçerli kattaki parçalarını ekranın görünür alanına ortalayarak kadrajlar.
+   */
+  fitRoute(routeData, duration = 420) {
+    if (!routeData || !routeData.pathNodes || !routeData.pathNodes.length) return;
+    const currentFloorNodes = routeData.pathNodes.filter(n => n.floor === this.currentFloor);
+    if (!currentFloorNodes.length) return;
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    currentFloorNodes.forEach(n => {
+      if (n.x < minX) minX = n.x;
+      if (n.x > maxX) maxX = n.x;
+      if (n.y < minY) minY = n.y;
+      if (n.y > maxY) maxY = n.y;
+    });
+
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    const spanX = Math.max(160, maxX - minX);
+    const spanY = Math.max(160, maxY - minY);
+
+    const rect = this.container.getBoundingClientRect();
+    const isMobile = window.innerWidth <= 768;
+    const availWidth = rect.width * (isMobile ? 0.78 : 0.65);
+    const availHeight = rect.height * (isMobile ? 0.44 : 0.62);
+
+    const fitScale = Math.min(this.maxScale, Math.max(this.minScale, Math.min(availWidth / spanX, availHeight / spanY)));
+    const targetScale = Math.min(fitScale, isMobile ? 1.25 : 1.4);
+
+    // Mobilde alt çekmece ve rota kartı nedeniyle merkezi yukarı kaydır
+    const offsetY = isMobile ? Math.min(110, rect.height * 0.16) : 0;
+    this.flyTo(midX, midY, targetScale, duration, offsetY);
+  }
+
+  /**
    * Haritayı verilen (x, y) SVG koordinatına doğru yumuşak şekilde kaydırır.
    * Simülasyon döngüsünde (lerp = true) 60 FPS'te titremesiz yumuşak kamera takibi sağlar.
    * @param {number} x - SVG dünya X koordinatı
@@ -488,8 +522,11 @@ class MallMap {
     const rect = this.container.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
 
+    const isMobile = window.innerWidth <= 768;
+    const offsetY = isMobile ? Math.min(80, rect.height * 0.12) : 0;
+
     const targetPanX = (rect.width / 2) - (x * this.scale);
-    const targetPanY = (rect.height / 2) - (y * this.scale);
+    const targetPanY = ((rect.height / 2) - offsetY) - (y * this.scale);
 
     if (lerp) {
       this.panX += (targetPanX - this.panX) * 0.14;
@@ -509,9 +546,11 @@ class MallMap {
     const rect = this.container.getBoundingClientRect();
     const scaleX = rect.width / this.vbWidth;
     const scaleY = rect.height / this.vbHeight;
-    this.scale = Math.min(scaleX, scaleY) * 0.94;
+    const isMobile = window.innerWidth <= 768;
+    this.scale = Math.min(scaleX, scaleY) * (isMobile ? 0.90 : 0.94);
     this.panX = (rect.width - this.vbWidth * this.scale) / 2;
-    this.panY = (rect.height - this.vbHeight * this.scale) / 2;
+    const mobileOffset = isMobile ? -35 : 0;
+    this.panY = ((rect.height - this.vbHeight * this.scale) / 2) + mobileOffset;
     this.applyTransform();
   }
 
@@ -521,6 +560,8 @@ class MallMap {
   }
 
   setupEventListeners() {
+    this.container.style.touchAction = 'none';
+
     // Mouse Drag Pan
     this.container.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return;
@@ -540,8 +581,9 @@ class MallMap {
       this.isDragging = false;
     });
 
-    // Touch Support
+    // Dokunmatik Etkileşim: Akıcı Touch Pan & Odaklı Pinch-to-Zoom
     let lastTouchDist = 0;
+
     this.container.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         this.isDragging = true;
@@ -554,27 +596,47 @@ class MallMap {
           e.touches[0].clientY - e.touches[1].clientY
         );
       }
-    }, { passive: true });
+    }, { passive: false });
 
     window.addEventListener('touchmove', (e) => {
       if (this.isDragging && e.touches.length === 1) {
         this.panX = e.touches[0].clientX - this.startX;
         this.panY = e.touches[0].clientY - this.startY;
         this.applyTransform();
-      } else if (e.touches.length === 2) {
+      } else if (e.touches.length === 2 && lastTouchDist > 0) {
         const dist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
-        const factor = dist / lastTouchDist;
-        this.scale = Math.min(this.maxScale, Math.max(this.minScale, this.scale * factor));
-        lastTouchDist = dist;
-        this.applyTransform();
-      }
-    }, { passive: true });
 
-    window.addEventListener('touchend', () => {
-      this.isDragging = false;
+        if (dist > 0) {
+          const factor = dist / lastTouchDist;
+          const newScale = Math.min(this.maxScale, Math.max(this.minScale, this.scale * factor));
+
+          // Dokunulan iki parmağın merkez noktasına doğru yakınlaşma (Pinch-to-zoom focus)
+          const rect = this.container.getBoundingClientRect();
+          const midX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - rect.left;
+          const midY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - rect.top;
+
+          this.panX = midX - (midX - this.panX) * (newScale / this.scale);
+          this.panY = midY - (midY - this.panY) * (newScale / this.scale);
+          this.scale = newScale;
+          lastTouchDist = dist;
+          this.applyTransform();
+        }
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', (e) => {
+      if (e.touches.length === 1) {
+        // İki parmaktan tek parmağa geçildiğinde kesintisiz kaydırmaya devam et
+        this.isDragging = true;
+        this.startX = e.touches[0].clientX - this.panX;
+        this.startY = e.touches[0].clientY - this.panY;
+      } else if (e.touches.length === 0) {
+        this.isDragging = false;
+        lastTouchDist = 0;
+      }
     });
 
     // Wheel Zoom

@@ -17,6 +17,51 @@ let filterTab = 'this_floor'; // 'this_floor' | 'all_floors'
 let activeCategory = 'all';
 let searchQuery = '';
 
+// Mobil Bottom Sheet (Alt Çekmece) Durum Yöneticisi
+let isBottomSheetExpanded = false;
+
+function toggleBottomSheet() {
+  if (isBottomSheetExpanded) {
+    collapseBottomSheet();
+  } else {
+    expandBottomSheet();
+  }
+}
+
+function expandBottomSheet() {
+  const panel = document.getElementById('sidebar-panel');
+  const toggleIcon = document.getElementById('floating-toggle-icon');
+  const toggleText = document.getElementById('floating-toggle-text');
+  const sheetToggleIcon = document.getElementById('sheet-toggle-icon');
+  const sheetHint = document.getElementById('bottom-sheet-hint');
+
+  if (!panel) return;
+  panel.classList.add('is-expanded');
+  isBottomSheetExpanded = true;
+
+  if (toggleIcon) toggleIcon.textContent = '🗺️';
+  if (toggleText) toggleText.textContent = 'Harita';
+  if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(180deg)';
+  if (sheetHint) sheetHint.textContent = 'Haritaya Dön';
+}
+
+function collapseBottomSheet() {
+  const panel = document.getElementById('sidebar-panel');
+  const toggleIcon = document.getElementById('floating-toggle-icon');
+  const toggleText = document.getElementById('floating-toggle-text');
+  const sheetToggleIcon = document.getElementById('sheet-toggle-icon');
+  const sheetHint = document.getElementById('bottom-sheet-hint');
+
+  if (!panel) return;
+  panel.classList.remove('is-expanded');
+  isBottomSheetExpanded = false;
+
+  if (toggleIcon) toggleIcon.textContent = '📋';
+  if (toggleText) toggleText.textContent = 'Liste';
+  if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(0deg)';
+  if (sheetHint) sheetHint.textContent = 'Mağazalar & Rota';
+}
+
 // Toast Notification Engine
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
@@ -382,6 +427,49 @@ function setupUIEventListeners() {
       });
     }
   });
+
+  // Mobil Bottom Sheet & Yüzen Buton (Floating View Toggle) Etkileşimleri
+  const handleBar = document.getElementById('bottom-sheet-handle-bar');
+  const btnSheetToggle = document.getElementById('btn-sheet-toggle');
+  const floatingToggle = document.getElementById('floating-view-toggle');
+
+  handleBar?.addEventListener('click', (e) => {
+    if (e.target.closest('#btn-sheet-toggle')) return;
+    toggleBottomSheet();
+  });
+
+  btnSheetToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleBottomSheet();
+  });
+
+  floatingToggle?.addEventListener('click', () => {
+    toggleBottomSheet();
+  });
+
+  // Tutamaç üzerinde dokunmatik yukarı/aşağı çekme (drag gesture)
+  let sheetTouchStartY = 0;
+  handleBar?.addEventListener('touchstart', (e) => {
+    sheetTouchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  handleBar?.addEventListener('touchend', (e) => {
+    const sheetTouchEndY = e.changedTouches[0].clientY;
+    const diff = sheetTouchEndY - sheetTouchStartY;
+    if (diff < -28) {
+      expandBottomSheet();
+    } else if (diff > 28) {
+      collapseBottomSheet();
+    }
+  }, { passive: true });
+
+  // Haritaya tıklandığında açık olan alt çekmeceyi küçült
+  const mapCanvas = document.getElementById('map-canvas-container');
+  mapCanvas?.addEventListener('click', () => {
+    if (window.innerWidth <= 768 && isBottomSheetExpanded) {
+      collapseBottomSheet();
+    }
+  });
 }
 
 // 4. Arama Motoru
@@ -391,7 +479,16 @@ function setupSearchEngine() {
 
   let debounceTimer = null;
 
+  searchInput?.addEventListener('focus', () => {
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
+    }
+  });
+
   searchInput?.addEventListener('input', (e) => {
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
+    }
     clearTimeout(debounceTimer);
     searchQuery = e.target.value.trim();
 
@@ -677,17 +774,23 @@ function calculateAndDisplayRoute() {
   mallMap.renderRoute(result);
   mallMap.updateActiveStorePolygons();
 
+  // Mobilde Alt Çekmeceyi Otomatik Küçült ve Rota Modunu Aktif Et
+  if (window.innerWidth <= 768) {
+    collapseBottomSheet();
+  }
+  document.body.classList.add('has-active-route');
+
   // Simülatöre Rota Ver
   cartSimulator.setRoute(result);
 
-  // Başlangıç Katına Odaklan
+  // Başlangıç Katına Odaklan ve Rotayı Kadrajla
   if (mallMap.currentFloor !== selectedStartStore.floor) {
     mallMap.loadFloor(selectedStartStore.floor).then(() => {
       updateFloorUI(selectedStartStore.floor);
-      mallMap.flyTo(selectedStartStore.cx, selectedStartStore.cy, 1.4);
+      mallMap.fitRoute(result);
     });
   } else {
-    mallMap.flyTo(selectedStartStore.cx, selectedStartStore.cy, 1.4);
+    mallMap.fitRoute(result);
   }
 
   showToast(`✅ Rota oluşturuldu (${result.totalDistance} m, ~${result.estimatedMinutes} dk)`, 'success');
@@ -698,6 +801,7 @@ function clearCurrentRoute() {
   selectedTargetStore = null;
   mallMap.clearRoute();
   cartSimulator.stop();
+  document.body.classList.remove('has-active-route');
 
   document.getElementById('route-info-card')?.classList.add('hidden');
   resetSimControls();

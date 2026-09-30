@@ -49,13 +49,25 @@
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
   <!-- Ana Uygulama Düzeni: Sol Panel + Sağ Harita Alanı -->
-  <div class="flex h-screen w-screen overflow-hidden p-2.5 sm:p-3 gap-3">
+  <div id="app-root-layout" class="flex h-screen w-screen overflow-hidden p-2.5 sm:p-3 gap-3">
 
-    <!-- SOL PANEL: CAPACITY REHBER (cevahir-rehber.web.app mimarisinde) -->
+    <!-- SOL PANEL / MOBİL BOTTOM SHEET: CAPACITY REHBER (cevahir-rehber.web.app mimarisinde) -->
     <aside id="sidebar-panel" class="w-[350px] lg:w-[380px] h-full flex flex-col bg-white dark:bg-slate-900 rounded-[26px] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 p-4 z-40 shrink-0 transition-colors duration-200">
       
+      <!-- Mobil Bottom Sheet Tutamacı & Hızlı Eylem Çubuğu (Drag Handle Pill + Chevron Toggle) -->
+      <div id="bottom-sheet-handle-bar" class="w-full flex items-center justify-between pb-1.5 pt-0.5 cursor-pointer md:hidden shrink-0 select-none touch-none">
+        <div class="w-7"></div>
+        <div class="flex flex-col items-center gap-1">
+          <div class="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+          <span id="bottom-sheet-hint" class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Mağazalar &amp; Rota</span>
+        </div>
+        <button id="btn-sheet-toggle" class="w-7 h-7 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900" title="Genişlet / Kapat">
+          <i data-lucide="chevron-up" id="sheet-toggle-icon" class="w-4 h-4 transition-transform duration-300"></i>
+        </button>
+      </div>
+
       <!-- Üst Başlık: Resmi Capacity Logosu, Başlık, TR | EN, Gece Modu Butonu -->
-      <div class="flex items-center justify-between pb-2.5 shrink-0">
+      <div id="sidebar-header-row" class="flex items-center justify-between pb-2.5 shrink-0">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-md shadow-red-500/20 shrink-0 bg-gradient-to-br from-red-600 to-red-900 p-1 flex items-center justify-center">
             <img src="public/favicon.svg" alt="Capacity Logo" class="w-full h-full object-contain">
@@ -273,7 +285,7 @@
     </aside>
 
     <!-- SAĞ HARİTA ALANI (VIEWPORT) -->
-    <main class="flex-1 relative h-full rounded-[26px] overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
+    <main id="main-map-area" class="flex-1 relative h-full rounded-[26px] overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
       
       <!-- Sol Üst Yüzen Kat Başlığı Bannerı (cevahir-rehber.web.app birebir) -->
       <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all">
@@ -412,6 +424,12 @@
       </div>
     </main>
   </div>
+
+  <!-- Mobil Yüzen Eylem Butonu (Floating View Toggle: Harita / Liste) -->
+  <button id="floating-view-toggle" class="fixed right-4 bottom-38 z-50 md:hidden flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md border border-white/20 dark:border-slate-800 transition-all duration-300 active:scale-95" title="Görünümü Değiştir">
+    <span id="floating-toggle-icon" class="text-sm">📋</span>
+    <span id="floating-toggle-text">Liste</span>
+  </button>
 
   <!-- BAŞLANGIÇ NOKTASI SEÇİM MODALI -->
   <div id="entrance-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
