@@ -13,10 +13,41 @@ let selectedStartStore = null;
 let selectedTargetStore = null;
 let activePoiStore = null;
 let activeRouteMode = 'escalator'; // 'escalator' | 'elevator'
+window.activeRouteMode = activeRouteMode;
 let currentFloor = 4; // Zemin Kat varsayılan başlangıç
 let filterTab = 'this_floor'; // 'this_floor' | 'all_floors'
 let activeCategory = 'all';
 let searchQuery = '';
+
+// Simülasyon Hız Kontrolü (1x ➔ 2x ➔ 4x)
+let currentSimSpeed = 1.0;
+const simSpeedSteps = [1.0, 2.0, 4.0];
+
+function cycleSimSpeed() {
+  const currentIndex = simSpeedSteps.indexOf(currentSimSpeed);
+  const nextIndex = (currentIndex + 1) % simSpeedSteps.length;
+  currentSimSpeed = simSpeedSteps[nextIndex];
+
+  if (cartSimulator) {
+    cartSimulator.setSpeed(currentSimSpeed);
+  }
+
+  const hudSpeedText = document.getElementById('hud-speed-text');
+  if (hudSpeedText) {
+    hudSpeedText.textContent = `${currentSimSpeed}x`;
+  }
+
+  // Desktop kontrol panelindeki hız butonlarını da senkronize et
+  document.querySelectorAll('#sim-controls-panel button[id^="sim-speed-"]').forEach(b => {
+    b.className = 'px-2 py-1 rounded-lg text-slate-600 dark:text-slate-300 font-bold hover:text-slate-900 dark:hover:text-white';
+  });
+  const deskSpeedBtn = document.getElementById(`sim-speed-${currentSimSpeed}`);
+  if (deskSpeedBtn) {
+    deskSpeedBtn.className = 'px-2 py-1 rounded-lg bg-cyan-600 text-white font-bold';
+  }
+
+  showToast(`⚡ Simülasyon hızı: ${currentSimSpeed}x`, 'info');
+}
 
 // Mobil Bottom Sheet (Alt Çekmece) Durum Yöneticisi
 let isBottomSheetExpanded = false;
@@ -174,6 +205,9 @@ function initApp() {
   setupSearchEngine();
   setupAmenityPills();
   setupTabs();
+
+  // Dikey geçiş tercihini varsayılan olarak 'escalator' (yürüyen merdiven) olarak sabitle
+  setRoutePreference('escalator');
 
   updateFloorUI(currentFloor);
   renderSidebarStoreGrid();
@@ -360,6 +394,12 @@ function setupUIEventListeners() {
     toggleCartSimulation();
   });
 
+  // Minimal HUD Simülasyon Hız Kontrolü (1x ➔ 2x ➔ 4x ➔ 1x)
+  document.getElementById('btn-hud-speed')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    cycleSimSpeed();
+  });
+
   document.getElementById('sim-reset-btn')?.addEventListener('click', () => {
     cartSimulator.stop();
     resetSimControls();
@@ -422,20 +462,26 @@ function setupUIEventListeners() {
     closePoiDetail();
   });
 
-  // POI Aksiyon Butonları
-  document.getElementById('poi-route-btn')?.addEventListener('click', () => {
-    const store = activePoiStore || selectedTargetStore;
-    if (store) {
-      closePoiDetail();
-      setTargetLocation(store);
-    }
-  });
+  // Dinamik POI Aksiyon Butonları (Delegasyon ile her render'da kesintisiz çalışır)
+  const poiActionContainer = document.getElementById('poi-action-buttons');
+  poiActionContainer?.addEventListener('click', (e) => {
+    const startBtn = e.target.closest('#poi-start-btn, [data-action="start"]');
+    const targetBtn = e.target.closest('#poi-route-btn, [data-action="target"]');
+    const clearStartBtn = e.target.closest('[data-action="clear-start"]');
 
-  document.getElementById('poi-start-btn')?.addEventListener('click', () => {
-    const store = activePoiStore || selectedTargetStore;
-    if (store) {
-      closePoiDetail();
-      setStartLocation(store);
+    if (startBtn && activePoiStore) {
+      setStartLocation(activePoiStore);
+    } else if (targetBtn && activePoiStore) {
+      setTargetLocation(activePoiStore);
+    } else if (clearStartBtn && activePoiStore) {
+      selectedStartStore = null;
+      updateStartBadgeUI('');
+      mallMap.activeStartStore = null;
+      mallMap.updateActiveStorePolygons();
+      mallMap.renderBrandMarkers(mallMap.currentFloor);
+      if (mallMap.activeRoute) clearCurrentRoute();
+      renderPoiActionButtons(activePoiStore);
+      showToast('Başlangıç noktası kaldırıldı.', 'info');
     }
   });
 
@@ -734,6 +780,10 @@ function setStartLocation(loc) {
       mallMap.flyTo(loc.cx, loc.cy, 1.35);
     }
   }
+
+  if (activePoiStore) {
+    renderPoiActionButtons(activePoiStore);
+  }
 }
 
 function setTargetLocation(store) {
@@ -786,10 +836,35 @@ function setTargetLocation(store) {
   } else if (!selectedStartStore) {
     showToast(`🎯 Hedef: ${store.name}. Lütfen başlangıç noktanızı seçin (Giriş veya Mağaza).`, 'info');
   }
+
+  if (activePoiStore) {
+    renderPoiActionButtons(activePoiStore);
+  }
 }
 
 function selectStore(store) {
-  setTargetLocation(store);
+  if (!store) return;
+
+  // Farklı kattaysa kata geç ve mağazayı haritada vurgula
+  mallMap.highlightStore(store.id, true);
+  if (mallMap.currentFloor !== store.floor) {
+    mallMap.loadFloor(store.floor).then(() => {
+      updateFloorUI(store.floor);
+      mallMap.flyTo(store.cx, store.cy, 1.45);
+      mallMap.highlightStore(store.id, true);
+    });
+  } else {
+    mallMap.flyTo(store.cx, store.cy, 1.45);
+    mallMap.highlightStore(store.id, true);
+  }
+
+  // POI Detay Panelini Aç ve Dinamik Butonları Göster
+  renderPoiDetail(store);
+
+  // Mobilde alt çekmeceyi açarak butonları görünür kıl
+  if (window.innerWidth <= 768) {
+    expandBottomSheet();
+  }
 }
 
 function swapLocations() {
@@ -830,6 +905,7 @@ function swapLocations() {
 
 function setRoutePreference(mode) {
   activeRouteMode = mode;
+  window.activeRouteMode = mode;
   const tabEscalator = document.getElementById('tab-pref-escalator');
   const tabElevator = document.getElementById('tab-pref-elevator');
 
@@ -930,6 +1006,67 @@ function renderPoiDetail(store) {
 
   const couponCode = document.getElementById('poi-coupon-code');
   if (couponCode) couponCode.textContent = camp.code;
+
+  // Dinamik Butonları Durum Yönetimine Göre Render Et
+  renderPoiActionButtons(store);
+}
+
+function renderPoiActionButtons(store) {
+  const container = document.getElementById('poi-action-buttons');
+  if (!container || !store) return;
+
+  const isStart = selectedStartStore && selectedStartStore.id === store.id;
+  const isTarget = selectedTargetStore && selectedTargetStore.id === store.id;
+
+  if (isStart) {
+    container.innerHTML = `
+      <div class="w-full py-2.5 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs">
+        <i data-lucide="map-pin" class="w-4 h-4 text-emerald-500"></i>
+        <span>Mevcut Başlangıç Noktanız</span>
+      </div>
+      <button data-action="clear-start" class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:text-red-500 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
+        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        <span>Başlangıcı Kaldır</span>
+      </button>
+    `;
+  } else if (isTarget) {
+    container.innerHTML = `
+      <div class="w-full py-2.5 px-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-500/40 text-red-700 dark:text-red-300 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs">
+        <i data-lucide="navigation" class="w-4 h-4 text-red-500"></i>
+        <span>Mevcut Hedef Mağazanız</span>
+      </div>
+      <button id="poi-start-btn" data-action="start" class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
+        <span>📍 Burayı Başlangıç Yap</span>
+      </button>
+    `;
+  } else if (!selectedStartStore) {
+    // 1. Durum: [📍 Nereden?] boşsa ➔ [📍 Buradan Başla] (öncelikli) ve [🎯 Hedef Yap]
+    container.innerHTML = `
+      <button id="poi-start-btn" data-action="start" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
+        <i data-lucide="map-pin" class="w-4 h-4"></i>
+        <span>📍 Buradan Başla</span>
+      </button>
+      <button id="poi-route-btn" data-action="target" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
+        <i data-lucide="navigation" class="w-3.5 h-3.5 text-red-500"></i>
+        <span>🎯 Hedef Yap</span>
+      </button>
+    `;
+  } else {
+    // 2. Durum: [📍 Nereden?] doluysa ➔ [🎯 Hedef Yap] (öncelikli) ve [📍 Başlangıcı Değiştir]
+    container.innerHTML = `
+      <button id="poi-route-btn" data-action="target" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
+        <i data-lucide="navigation" class="w-4 h-4"></i>
+        <span>🎯 Hedef Yap</span>
+      </button>
+      <button id="poi-start-btn" data-action="start" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
+        <span>📍 Başlangıcı Değiştir</span>
+      </button>
+    `;
+  }
+
+  if (window.lucide) lucide.createIcons();
 }
 
 function closePoiDetail() {
@@ -995,7 +1132,7 @@ function calculateAndDisplayRoute() {
   if (hudDist) hudDist.textContent = `${result.totalDistance} m`;
   if (hudTm) hudTm.textContent = `~${result.estimatedMinutes} dk`;
   if (hudRouteName) hudRouteName.textContent = `${selectedStartStore.name} → ${selectedTargetStore.name}`;
-  if (hudSimText) hudSimText.textContent = 'Sepeti Başlat';
+  if (hudSimText) hudSimText.textContent = 'Simülasyonu Başlat';
   if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
 
   // Adım Adım Detay Listesi (Çekmece)
@@ -1040,8 +1177,11 @@ function calculateAndDisplayRoute() {
   }
   document.body.classList.add('has-active-route');
 
-  // Simülatöre Rota Ver
+  // ROTA ÖNİZLEME (MANUEL BAŞLATMA):
+  // Sepet başlangıç noktasına yerleştirilir ve durdurulur; ASLA otomatik başlatılmaz!
   cartSimulator.setRoute(result);
+  cartSimulator.stop();
+  resetSimControls();
 
   // Başlangıç Katına Odaklan ve Rotayı Kadrajla
   if (mallMap.currentFloor !== selectedStartStore.floor) {
@@ -1054,7 +1194,7 @@ function calculateAndDisplayRoute() {
   }
 
   if (window.lucide) lucide.createIcons();
-  showToast(`Rota oluşturuldu (${result.totalDistance} m, ~${result.estimatedMinutes} dk)`, 'success');
+  showToast(`Rota hazır (${result.totalDistance} m, ~${result.estimatedMinutes} dk). Başlat'a basarak simülasyonu başlatabilirsiniz.`, 'success');
 }
 
 function clearCurrentRoute() {
@@ -1098,6 +1238,12 @@ function clearCurrentRoute() {
   document.getElementById('btn-recenter-cart')?.classList.add('hidden');
   if (cartSimulator) cartSimulator.autoFollow = true;
 
+  currentSimSpeed = 1.0;
+  if (cartSimulator) cartSimulator.setSpeed(1.0);
+  const hudSpeedText = document.getElementById('hud-speed-text');
+  if (hudSpeedText) hudSpeedText.textContent = '1x';
+  if (activePoiStore) renderPoiActionButtons(activePoiStore);
+
   resetSimControls();
 }
 
@@ -1107,9 +1253,9 @@ function resetSimControls() {
   const progressBar = document.getElementById('sim-progress-bar');
   if (progressBar) progressBar.style.width = '0%';
   const playText = document.getElementById('sim-play-text');
-  if (playText) playText.textContent = 'Sepeti Başlat';
+  if (playText) playText.textContent = 'Simülasyonu Başlat';
   const hudSimText = document.getElementById('hud-sim-text');
-  if (hudSimText) hudSimText.textContent = 'Sepeti Başlat';
+  if (hudSimText) hudSimText.textContent = 'Simülasyonu Başlat';
   const hudSimIcon = document.getElementById('hud-sim-icon');
   if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
   const hudPct = document.getElementById('hud-progress-pct');

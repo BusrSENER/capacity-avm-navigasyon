@@ -105,10 +105,10 @@ class NavigationEngine {
     pq.enqueue(startNodeId, 0);
 
     const allowedTransfers = mode === 'escalator' 
-      ? ['stairs'] 
+      ? ['escalator', 'stairs'] 
       : mode === 'elevator' 
         ? ['elevator'] 
-        : ['stairs', 'elevator'];
+        : ['escalator', 'stairs', 'elevator'];
 
     while (!pq.isEmpty()) {
       const { val: u, priority: currentDist } = pq.dequeue();

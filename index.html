@@ -283,6 +283,18 @@
             </div>
           </div>
 
+          <!-- Aksiyon Butonları (Dinamik State: Buradan Başla / Hedef Yap / Başlangıcı Değiştir) - Hemen Üstte -->
+          <div id="poi-action-buttons" class="flex flex-col gap-2 pt-1">
+            <button id="poi-route-btn" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-bold shadow-md shadow-red-600/30 hover:from-red-500 hover:to-red-600 flex items-center justify-center gap-2 transition-all">
+              <i data-lucide="navigation" class="w-4 h-4"></i>
+              <span>🎯 Hedef Yap</span>
+            </button>
+            <button id="poi-start-btn" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
+              <span>📍 Buradan Başla</span>
+            </button>
+          </div>
+
           <!-- Kampanya / İndirim Alanı -->
           <div id="poi-campaign-card" class="p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-red-500/10 border border-amber-500/30 flex flex-col gap-1.5">
             <div class="flex items-center justify-between">
@@ -296,18 +308,6 @@
               <span id="poi-coupon-code" class="text-[11px] font-mono font-bold text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/60 px-2 py-0.5 rounded border border-amber-300/40">CAPACITY30</span>
               <button id="poi-copy-coupon-btn" class="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 hover:underline">Kodu Kopyala</button>
             </div>
-          </div>
-
-          <!-- Aksiyon Butonları -->
-          <div class="flex flex-col gap-2 pt-1">
-            <button id="poi-route-btn" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-bold shadow-md shadow-red-600/30 hover:from-red-500 hover:to-red-600 flex items-center justify-center gap-2 transition-all">
-              <i data-lucide="navigation" class="w-4 h-4"></i>
-              <span>Buraya Yol Tarifi Al</span>
-            </button>
-            <button id="poi-start-btn" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
-              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
-              <span>Başlangıç Noktası Yap</span>
-            </button>
           </div>
         </div>
       </div>
@@ -454,7 +454,7 @@
             <div class="flex items-center justify-between gap-2">
               <button id="sim-play-btn" class="flex-1 py-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm">
                 <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-                <span id="sim-play-text">Sepeti Başlat</span>
+                <span id="sim-play-text">Simülasyonu Başlat</span>
               </button>
               <button id="sim-reset-btn" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition-all" title="Başa Sar">
                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
@@ -503,18 +503,24 @@
       </div>
     </div>
 
-    <!-- Sağ Alan: [ Detay ] + [ ▶ Sepeti Başlat / ⏸ Duraklat ] + [ ✖ Rotayı Bitir ] -->
+    <!-- Sağ Alan: [ ⚡ 1x ] + [ Detay ] + [ ▶ Simülasyonu Başlat / ⏸ Duraklat ] + [ ✖ Rotayı Bitir ] -->
     <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <!-- Döngüsel Hız Değiştirme Butonu (1x ➔ 2x ➔ 4x) -->
+      <button id="btn-hud-speed" class="h-9 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 font-extrabold text-xs flex items-center gap-1 transition-all active:scale-95" title="Simülasyon Hızı (1x ➔ 2x ➔ 4x)">
+        <span class="text-xs">⚡</span>
+        <span id="hud-speed-text">1x</span>
+      </button>
+
       <!-- Adım Adım Detay Aç/Kapa Butonu -->
       <button id="btn-hud-steps-toggle" class="h-9 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition-all" title="Adım Adım Yol Tarifini Göster/Gizle">
         <i data-lucide="list" class="w-3.5 h-3.5"></i>
         <span class="text-[11px] font-bold">Detay</span>
       </button>
 
-      <!-- [ ▶ Sepeti Başlat / ⏸ Duraklat ] -->
+      <!-- [ ▶ Simülasyonu Başlat / ⏸ Duraklat ] -->
       <button id="btn-hud-sim-play" class="h-9 px-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-cyan-500/25 active:scale-95">
         <i data-lucide="play" id="hud-sim-icon" class="w-3.5 h-3.5 fill-current"></i>
-        <span id="hud-sim-text">Sepeti Başlat</span>
+        <span id="hud-sim-text">Simülasyonu Başlat</span>
       </button>
 
       <!-- [ ✖ Rotayı Bitir ] -->

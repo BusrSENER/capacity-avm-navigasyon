@@ -696,10 +696,17 @@ body.has-active-route #route-panel {
     bottom: calc(75vh + 12px) !important;
   }
 
+  /* Rota Aktifken Yüzen Liste/Harita Butonu (HUD'ın hemen üzerinde yer alır, kullanıcı dilediğinde açıp kapatabilir) */
   body.has-active-route #floating-view-toggle {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transform: scale(0.8) !important;
+    bottom: 76px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: scale(1) !important;
+    z-index: 55 !important;
+  }
+
+  body.has-active-route #sidebar-panel.is-expanded ~ #floating-view-toggle {
+    bottom: calc(75vh + 12px) !important;
   }
 
   /* 4. Minimal 64px HUD Navigasyon Çubuğu */
@@ -720,10 +727,16 @@ body.has-active-route #route-panel {
     display: none !important;
   }
 
-  /* Rota Aktifken Alt Çekmeceyi Tamamen Ekran Dışına İt */
-  body.has-active-route #sidebar-panel {
+  /* Rota Aktifken Alt Çekmece: Kullanıcı dilediğinde açıp kapatabilir */
+  body.has-active-route #sidebar-panel:not(.is-expanded) {
     transform: translateY(100%) !important;
     pointer-events: none !important;
+  }
+
+  body.has-active-route #sidebar-panel.is-expanded {
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
+    z-index: 55 !important;
   }
 
   /* 5. Kat Başlığı & Dikey Kat Seçici & Zoom Butonları (Çakışmasız) */
