@@ -49,12 +49,36 @@ Bu belge, **İstanbul Bakırköy Capacity AVM Akıllı İç Mekân Navigasyon & 
 ### 2.4. Mobil Katman Mimarisi & Bottom Sheet Standardı (@media <= 768px)
 * **Tam Ekran Arka Plan Haritası:** Harita alanı (`#main-map-area`) mobilde sabit tam ekran (`width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 10`) çalışır.
 * **Alt Çekmece (Bottom Sheet):** Sol panel (`#sidebar-panel`), mobilde alttan açılan bir alt çekmeceye dönüştürülür:
-  * **Peek Modu (Varsayılan):** Görünür yükseklik ~130px'dir (`transform: translateY(calc(75vh - 130px))`). Yalnızca tutamaç, arama çubuğu ve 3 hızlı giriş kapısı (Fişekhane, Carousel, Danışma) görünür; harita arka planda tam aktiftir.
+  * **Peek Modu (Varsayılan):** Görünür yükseklik ~170px'dir (`transform: translateY(calc(75vh - 170px))`). Tutamaç, çift arama kutusu (Nereden / Nereye), yürüyen merdiven/asansör tercih sekmeleri ve 3 hızlı giriş kapısı (Fişekhane, Carousel, Danışma) doğrudan görünür; harita arka planda > %80 oranında tam aktiftir.
   * **Genişletilmiş Mod (Expanded):** Ekranın en fazla %75'ini kaplar (`max-height: 75vh; transform: translateY(0)`). Haritayı tamamen örtmez.
   * **Tutamaç (Drag Handle Pill):** Yukarı ve aşağı çekme jestlerini (swipe up/down) ve tıklamayla tek tıkla açılıp kapanmayı destekler.
-* **Yüzen Eylem Butonu (Floating View Toggle):** Sağ altta `#floating-view-toggle` butonu yer alır. Çekmece kapalıyken `📋 Liste`, açıkken `🗺️ Harita` göstererek tek dokunuşla görünüm geçişi sağlar.
-* **Otomatik Küçülme:** Rota hesaplandığında çekmece otomatik olarak peek moduna iner ve rota kartı (`#route-panel`) çekmecenin üzerinde belirerek rotayı net odaklar.
-* **Dokunmatik Etkileşim:** Harita üzerinde iki parmakla dokunulan merkez noktasına odaklı akıcı yakınlaşma (pinch-to-zoom) ve tek parmakla serbest kaydırma (touch pan) `touch-action: none` ile işletim sistemi jestleriyle çakışmadan çalışır.
+* **Yüzen Eylem Butonu (Floating View Toggle):** Sağ altta `#floating-view-toggle` (`bottom: 185px; right: 14px`) yer alır. Çekmece kapalıyken `📋 Liste`, açıkken `🗺️ Harita` göstererek tek dokunuşla görünüm geçişi sağlar.
+* **Çakışmasız UI Konumlandırması (Zero-Collision UI Stacking):**
+  * Üst Sağ: Kat seçici hap barı (`top: 10px; right: 10px; z-index: 35`).
+  * Orta Sağ: Yakınlaştırma kontrolleri (`top: 50%; right: 10px; transform: translateY(-50%); z-index: 35`).
+  * Alt Sağ: Yüzen buton (`bottom: 185px; right: 14px; z-index: 48`).
+  * Alt Zemin: Minimal 64px HUD çubuğu (`bottom: 0; height: 64px; z-index: 50`).
+  * Butonlar arasında her ekran çözünürlüğünde minimum 100px mesafe korunur, üst üste binme kesinlikle engellenmiştir.
+
+### 2.5. Google Maps Standardı Çift Girdi & Rota Tercih Kuralları
+1. **[ 📍 Nereden? ] (Başlangıç Noktası):**
+   * Varsayılan olarak boştur (`selectedStartStore = null`).
+   * Tıklandığında başlangıç seçim modalını (`#entrance-modal`) açarak Fişekhane, Carousel, Danışma veya mağazaların seçilmesini sağlar.
+2. **[ 🎯 Nereye? ] (Hedef Mağaza / Servis):**
+   * Hedef mağaza veya hizmet arama alanıdır.
+   * Yazıldığında veya mağaza tıklandığında hedef belirlenir.
+3. **[ ⇄ ] (Swap Butonu):**
+   * Başlangıç ve hedef noktalarını tek dokunuşla yer değiştirir.
+4. **Kesin Rota Çizilme Kuralı (Strict Guard):**
+   * Başlangıç ve hedef noktalarının **her ikisi de seçilmeden ASLA otomatik rota çizilmez**. Noktalardan biri boşken harita sadece seçilen noktaya odaklanır ve diğer noktanın seçilmesini ister.
+5. **Dikey Geçiş Tercih Sekmeleri:**
+   * `[ 🚶 Yürüyen Merdiven ]` (`activeRouteMode = 'escalator'`): Dijkstra aramasında yürüyen merdiven ve sabit merdiven kenarlarını filtreler.
+   * `[ 🛗 Asansör / Bebek Arabası ]` (`activeRouteMode = 'elevator'`): Panoramik asansör düğümlerini filtreleyerek engelsiz ve bebek arabalı güzergâh oluşturur.
+
+### 2.6. Minimal 64px HUD Navigasyon Çubuğu & Durum Ayrımı
+* **Hantal Kartın Gizlenmesi:** Rota çizildiğinde ekranı kapatan büyük kart gizlenir (`body.has-active-route #route-panel { display: none !important; }`), mobil alt çekmece ekran dışına itilir.
+* **64px Minimal Yönlendirme Çubuğu (`#nav-hud-bar`):** Ekranın en altına sabitlenir; metre/dakika özeti, güzergâh ismi, `[ 📋 Detay ]`, `[ ▶ Sepeti Başlat / ⏸ Duraklat ]` ve `[ ✖ Rotayı Bitir ]` butonlarını barındırır.
+* **Durum Ayrımı & Kalıcılık Kuralı:** Kullanıcı `[ 📋 Detay ]` ile açılan adım adım talimatlar çekmecesini kapatsa dahi **rota haritadan ASLA silinmez**. Rota yalnızca kullanıcı açıkça `[ ✖ Rotayı Bitir ]` butonuna bastığında veya noktaları temizlediğinde haritadan kaldırılır.
 
 ---
 

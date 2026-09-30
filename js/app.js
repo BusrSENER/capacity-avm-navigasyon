@@ -118,9 +118,13 @@ function initApp() {
     mallMap,
     (progress, stepIndex) => {
       const progressBar = document.getElementById('sim-progress-bar');
+      const pct = Math.min(100, Math.max(0, progress <= 1 ? progress * 100 : progress));
       if (progressBar) {
-        const pct = Math.min(100, Math.max(0, progress <= 1 ? progress * 100 : progress));
         progressBar.style.width = `${pct}%`;
+      }
+      const hudPct = document.getElementById('hud-progress-pct');
+      if (hudPct) {
+        hudPct.textContent = `(%${Math.round(pct)})`;
       }
     },
     (newFloor) => {
@@ -142,11 +146,9 @@ function initApp() {
   updateFloorUI(currentFloor);
   renderSidebarStoreGrid();
 
-  // Varsayılan Başlangıç Noktası (Fişekhane Caddesi Ana Girişi)
-  if (!selectedStartStore && mallData.entrances && mallData.entrances.length > 0) {
-    selectedStartStore = mallData.entrances.find(e => e.id === 'ent_fisekhane') || mallData.entrances[0];
-    updateStartBadgeUI(selectedStartStore.name);
-  }
+  // Başlangıç ve hedef noktaları varsayılan olarak boştur (Google Maps standardı)
+  selectedStartStore = null;
+  selectedTargetStore = null;
 
   if (window.lucide) {
     lucide.createIcons();
@@ -261,49 +263,59 @@ function setupUIEventListeners() {
     mallMap.resetView();
   });
 
-  // Rota Kontrolleri
+  // Rota Kontrolleri & Değiştirme (Swap) Butonları
+  document.getElementById('btn-swap-locations')?.addEventListener('click', () => {
+    swapLocations();
+  });
+
   document.getElementById('route-swap-btn')?.addEventListener('click', () => {
-    if (selectedStartStore && selectedTargetStore) {
-      const temp = selectedStartStore;
-      selectedStartStore = selectedTargetStore;
-      selectedTargetStore = temp;
-      calculateAndDisplayRoute();
-    }
+    swapLocations();
   });
 
   document.getElementById('clear-route-btn')?.addEventListener('click', () => {
     clearCurrentRoute();
   });
 
-  // Merdiven / Asansör Mod Seçimi
-  const btnEscalator = document.getElementById('mode-escalator');
-  const btnElevator = document.getElementById('mode-elevator');
-
-  btnEscalator?.addEventListener('click', () => {
-    activeRouteMode = 'escalator';
-    btnEscalator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
-    btnElevator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
-    if (selectedStartStore && selectedTargetStore) calculateAndDisplayRoute();
+  document.getElementById('btn-hud-finish')?.addEventListener('click', () => {
+    clearCurrentRoute();
   });
 
-  btnElevator?.addEventListener('click', () => {
-    activeRouteMode = 'elevator';
-    btnElevator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
-    btnEscalator.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
-    if (selectedStartStore && selectedTargetStore) calculateAndDisplayRoute();
+  // Merdiven / Asansör Rota Tercih Sekmeleri
+  document.getElementById('tab-pref-escalator')?.addEventListener('click', () => {
+    setRoutePreference('escalator');
   });
 
-  // Simülatör Olayları
-  const simPlayBtn = document.getElementById('sim-play-btn');
-  simPlayBtn?.addEventListener('click', () => {
-    if (!cartSimulator.isPlaying) {
-      cartSimulator.start();
-      document.getElementById('sim-play-text').textContent = 'Duraklat';
-      if (window.lucide) lucide.createIcons();
-    } else {
-      cartSimulator.pause();
-      document.getElementById('sim-play-text').textContent = 'Devam Et';
-    }
+  document.getElementById('tab-pref-elevator')?.addEventListener('click', () => {
+    setRoutePreference('elevator');
+  });
+
+  document.getElementById('mode-escalator')?.addEventListener('click', () => {
+    setRoutePreference('escalator');
+  });
+
+  document.getElementById('mode-elevator')?.addEventListener('click', () => {
+    setRoutePreference('elevator');
+  });
+
+  // Minimal 64px HUD Adım Adım Detay Çekmecesi Kontrolleri
+  document.getElementById('btn-hud-steps-toggle')?.addEventListener('click', () => {
+    const drawer = document.getElementById('hud-steps-drawer');
+    drawer?.classList.toggle('hidden');
+  });
+
+  document.getElementById('btn-hud-steps-close')?.addEventListener('click', () => {
+    const drawer = document.getElementById('hud-steps-drawer');
+    drawer?.classList.add('hidden');
+    // Rota haritadan ASLA silinmez; yalnızca detay çekmecesi kapanır!
+  });
+
+  // Simülatör Olayları (Hem büyük panel hem de 64px HUD için senkron)
+  document.getElementById('sim-play-btn')?.addEventListener('click', () => {
+    toggleCartSimulation();
+  });
+
+  document.getElementById('btn-hud-sim-play')?.addEventListener('click', () => {
+    toggleCartSimulation();
   });
 
   document.getElementById('sim-reset-btn')?.addEventListener('click', () => {
@@ -328,7 +340,11 @@ function setupUIEventListeners() {
     });
   });
 
-  // Başlangıç Konumu Seçim Butonu
+  // Başlangıç Konumu Seçim Butonları
+  document.getElementById('input-start-loc')?.addEventListener('click', () => {
+    openEntranceModal();
+  });
+
   const startLocBtn = document.getElementById('start-location-btn') || document.getElementById('gps-quick-btn');
   startLocBtn?.addEventListener('click', () => {
     openEntranceModal();
@@ -345,26 +361,7 @@ function setupUIEventListeners() {
     document.getElementById(btnId)?.addEventListener('click', () => {
       const ent = mallData.entrances.find(e => e.id === entId);
       if (ent) {
-        selectedStartStore = ent;
-        updateStartBadgeUI(ent.name);
-
-        mallMap.activeStartStore = selectedStartStore;
-        mallMap.updateActiveStorePolygons();
-        showToast(`📍 Başlangıç: ${ent.name}`, 'info');
-
-        if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
-          calculateAndDisplayRoute();
-        } else {
-          // Zemin kata ve noktaya odaklan
-          if (mallMap.currentFloor !== ent.floor) {
-            mallMap.loadFloor(ent.floor).then(() => {
-              updateFloorUI(ent.floor);
-              mallMap.flyTo(ent.cx, ent.cy, 1.35);
-            });
-          } else {
-            mallMap.flyTo(ent.cx, ent.cy, 1.35);
-          }
-        }
+        setStartLocation(ent);
       }
     });
   });
@@ -387,35 +384,20 @@ function setupUIEventListeners() {
   document.getElementById('poi-route-btn')?.addEventListener('click', () => {
     if (selectedTargetStore) {
       if (!selectedStartStore) {
-        // Otomatik olarak Fişekhane Cad. Ana Girişini başlangıç yap
-        const fisekhaneEnt = mallData.entrances.find(e => e.id === 'ent_fisekhane') || mallData.entrances[0];
-        selectedStartStore = fisekhaneEnt;
-        updateStartBadgeUI(selectedStartStore.name);
+        showToast('📍 Lütfen bir başlangıç noktası (Giriş kapısı veya Danışma) seçin.', 'info');
+        openEntranceModal();
+      } else {
+        calculateAndDisplayRoute();
       }
-      calculateAndDisplayRoute();
     }
   });
 
   document.getElementById('poi-start-btn')?.addEventListener('click', () => {
     if (selectedTargetStore) {
-      selectedStartStore = selectedTargetStore;
-      updateStartBadgeUI(selectedStartStore.name);
-      mallMap.activeStartStore = selectedStartStore;
-      mallMap.updateActiveStorePolygons();
-      showToast(`📍 Başlangıç noktası "${selectedStartStore.name}" olarak ayarlandı.`, 'info');
-
-      const startBtn = document.getElementById('poi-start-btn');
-      if (startBtn) {
-        startBtn.innerHTML = `
-          <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
-          <span class="text-emerald-600 dark:text-emerald-400 font-bold">Başlangıç Olarak Seçildi</span>
-        `;
-        if (window.lucide) lucide.createIcons();
-      }
-
-      if (selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
-        calculateAndDisplayRoute();
-      }
+      const startLoc = selectedTargetStore;
+      setStartLocation(startLoc);
+      closePoiDetail();
+      showToast(`📍 Başlangıç "${startLoc.name}" olarak ayarlandı. Lütfen hedef mağazanızı seçin.`, 'info');
     }
   });
 
@@ -472,20 +454,41 @@ function setupUIEventListeners() {
   });
 }
 
-// 4. Arama Motoru
+// 4. Çift Girdi Arama & Rota Motoru (Google Maps Standardı)
 function setupSearchEngine() {
-  const searchInput = document.getElementById('search-input');
-  const clearBtn = document.getElementById('search-clear-btn');
+  const startInput = document.getElementById('input-start-loc');
+  const clearStartBtn = document.getElementById('btn-clear-start');
+  const targetInput = document.getElementById('input-target-loc');
+  const clearTargetBtn = document.getElementById('btn-clear-target');
 
   let debounceTimer = null;
 
-  searchInput?.addEventListener('focus', () => {
+  // 1. [ 📍 Nereden? ] Girdisi
+  startInput?.addEventListener('click', () => {
+    openEntranceModal();
+  });
+
+  clearStartBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectedStartStore = null;
+    if (startInput) startInput.value = '';
+    clearStartBtn.classList.add('hidden');
+    updateStartBadgeUI('');
+    mallMap.activeStartStore = null;
+    mallMap.updateActiveStorePolygons();
+    if (mallMap.activeRoute) {
+      clearCurrentRoute();
+    }
+  });
+
+  // 2. [ 🎯 Nereye? ] Girdisi
+  targetInput?.addEventListener('focus', () => {
     if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
       expandBottomSheet();
     }
   });
 
-  searchInput?.addEventListener('input', (e) => {
+  targetInput?.addEventListener('input', (e) => {
     if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
       expandBottomSheet();
     }
@@ -493,9 +496,9 @@ function setupSearchEngine() {
     searchQuery = e.target.value.trim();
 
     if (searchQuery.length > 0) {
-      clearBtn?.classList.remove('hidden');
+      clearTargetBtn?.classList.remove('hidden');
     } else {
-      clearBtn?.classList.add('hidden');
+      clearTargetBtn?.classList.add('hidden');
     }
 
     debounceTimer = setTimeout(() => {
@@ -504,10 +507,18 @@ function setupSearchEngine() {
     }, 180);
   });
 
-  clearBtn?.addEventListener('click', () => {
-    searchInput.value = '';
+  clearTargetBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (targetInput) targetInput.value = '';
     searchQuery = '';
-    clearBtn.classList.add('hidden');
+    clearTargetBtn.classList.add('hidden');
+    selectedTargetStore = null;
+    mallMap.activeTargetStore = null;
+    mallMap.updateActiveStorePolygons();
+    if (mallMap.activeRoute) {
+      clearCurrentRoute();
+    }
+    closePoiDetail();
     renderSidebarStoreGrid();
   });
 }
@@ -639,9 +650,40 @@ function renderSidebarStoreGrid() {
   });
 }
 
-// 8. Mağaza Seçimi & POI Detayı
-function selectStore(store) {
+// 8. Mağaza Seçimi & Konum Yönetimi (Google Maps Çift Girdi Mimarisi)
+function setStartLocation(loc) {
+  if (!loc) return;
+  selectedStartStore = loc;
+
+  updateStartBadgeUI(loc.name);
+  mallMap.activeStartStore = selectedStartStore;
+  mallMap.updateActiveStorePolygons();
+  showToast(`📍 Başlangıç: ${loc.name}`, 'info');
+
+  // KESİN KURAL: İki nokta da seçilmeden rota hesaplanmaz
+  if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
+    calculateAndDisplayRoute();
+  } else {
+    // Başlangıç katına ve koordinatına odaklan
+    if (mallMap.currentFloor !== loc.floor) {
+      mallMap.loadFloor(loc.floor).then(() => {
+        updateFloorUI(loc.floor);
+        mallMap.flyTo(loc.cx, loc.cy, 1.35);
+      });
+    } else {
+      mallMap.flyTo(loc.cx, loc.cy, 1.35);
+    }
+  }
+}
+
+function setTargetLocation(store) {
+  if (!store) return;
   selectedTargetStore = store;
+
+  const targetInput = document.getElementById('input-target-loc');
+  if (targetInput) targetInput.value = store.name;
+  const clearTargetBtn = document.getElementById('btn-clear-target');
+  if (clearTargetBtn) clearTargetBtn.classList.remove('hidden');
 
   // Kartlardaki aktif sınıfı
   document.querySelectorAll('.store-card').forEach(c => {
@@ -652,7 +694,10 @@ function selectStore(store) {
     }
   });
 
-  // Farklı kattaysa kata geç
+  mallMap.activeTargetStore = selectedTargetStore;
+  mallMap.updateActiveStorePolygons();
+
+  // Farklı kattaysa kata geç ve mağazayı vurgula
   if (mallMap.currentFloor !== store.floor) {
     mallMap.loadFloor(store.floor).then(() => {
       updateFloorUI(store.floor);
@@ -666,6 +711,107 @@ function selectStore(store) {
 
   // POI Detay Paneli
   renderPoiDetail(store);
+
+  // KESİN KURAL: İki alan da seçilmeden ASLA otomatik rota çizilmez
+  if (selectedStartStore && selectedStartStore.id !== selectedTargetStore.id) {
+    calculateAndDisplayRoute();
+  } else if (!selectedStartStore) {
+    showToast(`🎯 Hedef: ${store.name}. Lütfen başlangıç noktanızı seçin (Giriş veya Danışma).`, 'info');
+  }
+}
+
+function selectStore(store) {
+  setTargetLocation(store);
+}
+
+function swapLocations() {
+  const temp = selectedStartStore;
+  selectedStartStore = selectedTargetStore;
+  selectedTargetStore = temp;
+
+  const startInput = document.getElementById('input-start-loc');
+  const targetInput = document.getElementById('input-target-loc');
+  const clearStartBtn = document.getElementById('btn-clear-start');
+  const clearTargetBtn = document.getElementById('btn-clear-target');
+
+  if (startInput) startInput.value = selectedStartStore ? selectedStartStore.name : '';
+  if (targetInput) targetInput.value = selectedTargetStore ? selectedTargetStore.name : '';
+
+  if (clearStartBtn) {
+    if (selectedStartStore) clearStartBtn.classList.remove('hidden');
+    else clearStartBtn.classList.add('hidden');
+  }
+  if (clearTargetBtn) {
+    if (selectedTargetStore) clearTargetBtn.classList.remove('hidden');
+    else clearTargetBtn.classList.add('hidden');
+  }
+
+  if (selectedStartStore) updateStartBadgeUI(selectedStartStore.name);
+  else updateStartBadgeUI('');
+
+  mallMap.activeStartStore = selectedStartStore;
+  mallMap.activeTargetStore = selectedTargetStore;
+  mallMap.updateActiveStorePolygons();
+
+  if (selectedStartStore && selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
+    calculateAndDisplayRoute();
+  } else if (mallMap.activeRoute) {
+    clearCurrentRoute();
+  }
+}
+
+function setRoutePreference(mode) {
+  activeRouteMode = mode;
+  const tabEscalator = document.getElementById('tab-pref-escalator');
+  const tabElevator = document.getElementById('tab-pref-elevator');
+
+  const activeStyle = 'flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border border-red-600 bg-red-600 text-white shadow-xs';
+  const inactiveStyle = 'flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+
+  if (mode === 'escalator') {
+    if (tabEscalator) tabEscalator.className = activeStyle;
+    if (tabElevator) tabElevator.className = inactiveStyle;
+  } else {
+    if (tabElevator) tabElevator.className = activeStyle;
+    if (tabEscalator) tabEscalator.className = inactiveStyle;
+  }
+
+  const btnEsc = document.getElementById('mode-escalator');
+  const btnEle = document.getElementById('mode-elevator');
+  if (btnEsc && btnEle) {
+    if (mode === 'escalator') {
+      btnEsc.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
+      btnEle.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
+    } else {
+      btnEle.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
+      btnEsc.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
+    }
+  }
+
+  if (selectedStartStore && selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
+    calculateAndDisplayRoute();
+  }
+}
+
+function toggleCartSimulation() {
+  if (!cartSimulator.isPlaying) {
+    cartSimulator.start();
+    const playText = document.getElementById('sim-play-text');
+    if (playText) playText.textContent = 'Duraklat';
+    const hudSimText = document.getElementById('hud-sim-text');
+    if (hudSimText) hudSimText.textContent = 'Duraklat';
+    const hudSimIcon = document.getElementById('hud-sim-icon');
+    if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'pause');
+  } else {
+    cartSimulator.pause();
+    const playText = document.getElementById('sim-play-text');
+    if (playText) playText.textContent = 'Devam Et';
+    const hudSimText = document.getElementById('hud-sim-text');
+    if (hudSimText) hudSimText.textContent = 'Devam Et';
+    const hudSimIcon = document.getElementById('hud-sim-icon');
+    if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
+  }
+  if (window.lucide) lucide.createIcons();
 }
 
 function renderPoiDetail(store) {
@@ -730,6 +876,10 @@ function closePoiDetail() {
 // 9. Rota Hesaplama ve Görüntüleme
 function calculateAndDisplayRoute() {
   if (!selectedStartStore || !selectedTargetStore) return;
+  if (selectedStartStore.id === selectedTargetStore.id) {
+    showToast('Başlangıç ve hedef noktaları aynı olamaz.', 'warning');
+    return;
+  }
 
   const result = navEngine.findRoute(
     selectedStartStore.nav_node,
@@ -743,18 +893,58 @@ function calculateAndDisplayRoute() {
   }
   result.path = result.pathNodes;
 
-  // Rota Kartını Göster
+  // 1. Rota Kartını Doldur
   const routeCard = document.getElementById('route-info-card');
   routeCard?.classList.remove('hidden');
 
-  document.getElementById('route-start-label').textContent = selectedStartStore.name;
-  document.getElementById('route-target-label').textContent = selectedTargetStore.name;
-  document.getElementById('route-floors').textContent = `${selectedStartStore.floor_name || selectedStartStore.floor + '. Kat'} → ${selectedTargetStore.floor_name || selectedTargetStore.floor + '. Kat'}`;
+  const startLbl = document.getElementById('route-start-label');
+  const targetLbl = document.getElementById('route-target-label');
+  const routeFloors = document.getElementById('route-floors');
+  const routeDistance = document.getElementById('route-distance');
+  const routeTime = document.getElementById('route-time');
 
-  document.getElementById('route-distance').textContent = `${result.totalDistance} m`;
-  document.getElementById('route-time').textContent = `~${result.estimatedMinutes} dk`;
+  if (startLbl) startLbl.textContent = selectedStartStore.name;
+  if (targetLbl) targetLbl.textContent = selectedTargetStore.name;
+  if (routeFloors) routeFloors.textContent = `${selectedStartStore.floor_name || selectedStartStore.floor + '. Kat'} → ${selectedTargetStore.floor_name || selectedTargetStore.floor + '. Kat'}`;
+  if (routeDistance) routeDistance.textContent = `${result.totalDistance} m`;
+  if (routeTime) routeTime.textContent = `~${result.estimatedMinutes} dk`;
 
-  // Adım Adım Talimatlar
+  // 2. Minimal 64px HUD Navigasyon Çubuğunu Doldur ve Göster
+  const hudBar = document.getElementById('nav-hud-bar');
+  if (hudBar) {
+    hudBar.classList.add('is-active');
+    hudBar.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+  }
+
+  const hudDist = document.getElementById('hud-distance');
+  const hudTm = document.getElementById('hud-time');
+  const hudRouteName = document.getElementById('hud-route-name');
+  const hudSimText = document.getElementById('hud-sim-text');
+  const hudSimIcon = document.getElementById('hud-sim-icon');
+
+  if (hudDist) hudDist.textContent = `${result.totalDistance} m`;
+  if (hudTm) hudTm.textContent = `~${result.estimatedMinutes} dk`;
+  if (hudRouteName) hudRouteName.textContent = `${selectedStartStore.name} → ${selectedTargetStore.name}`;
+  if (hudSimText) hudSimText.textContent = 'Sepeti Başlat';
+  if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
+
+  // Adım Adım Detay Listesi (Çekmece)
+  const hudStepsList = document.getElementById('hud-steps-list');
+  const hudStepsCount = document.getElementById('hud-steps-count');
+  if (hudStepsCount) hudStepsCount.textContent = `${result.instructions?.length || 0} Adım`;
+  if (hudStepsList && result.instructions) {
+    hudStepsList.innerHTML = result.instructions.map(ins => `
+      <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+        <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
+        <div>
+          <div class="font-bold text-slate-800 dark:text-slate-200">${ins.text}</div>
+          <div class="text-[10px] text-slate-400">${mallData.floors[ins.floor]?.label || ins.floor + '. Kat'}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Adım Adım Talimatlar (Mevcut Rota Kartı İçin)
   const stepsContainer = document.getElementById('route-steps-container');
   if (stepsContainer && result.instructions) {
     stepsContainer.innerHTML = result.instructions.map(ins => `
@@ -793,6 +983,7 @@ function calculateAndDisplayRoute() {
     mallMap.fitRoute(result);
   }
 
+  if (window.lucide) lucide.createIcons();
   showToast(`✅ Rota oluşturuldu (${result.totalDistance} m, ~${result.estimatedMinutes} dk)`, 'success');
 }
 
@@ -803,7 +994,37 @@ function clearCurrentRoute() {
   cartSimulator.stop();
   document.body.classList.remove('has-active-route');
 
+  // Minimal 64px HUD'ı Gizle
+  const hudBar = document.getElementById('nav-hud-bar');
+  if (hudBar) {
+    hudBar.classList.remove('is-active');
+    hudBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+  }
+
+  // Adım Adım Detay Çekmecesini Gizle
+  const hudStepsDrawer = document.getElementById('hud-steps-drawer');
+  if (hudStepsDrawer) {
+    hudStepsDrawer.classList.add('hidden');
+  }
+
+  // Inputları ve temizleme butonlarını sıfırla
+  const startInput = document.getElementById('input-start-loc');
+  const targetInput = document.getElementById('input-target-loc');
+  if (startInput) startInput.value = '';
+  if (targetInput) targetInput.value = '';
+
+  document.getElementById('btn-clear-start')?.classList.add('hidden');
+  document.getElementById('btn-clear-target')?.classList.add('hidden');
   document.getElementById('route-info-card')?.classList.add('hidden');
+
+  // Hızlı Başlangıç Çiplerini Sıfırla
+  document.querySelectorAll('.quick-start-chip').forEach(b => {
+    b.className = 'quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700';
+  });
+
+  // Mağaza kartlarındaki aktif sınıfını kaldır
+  document.querySelectorAll('.store-card').forEach(c => c.classList.remove('is-active'));
+
   resetSimControls();
 }
 
@@ -812,22 +1033,25 @@ function resetSimControls() {
   if (progressBar) progressBar.style.width = '0%';
   const playText = document.getElementById('sim-play-text');
   if (playText) playText.textContent = 'Sepeti Başlat';
+  const hudSimText = document.getElementById('hud-sim-text');
+  if (hudSimText) hudSimText.textContent = 'Sepeti Başlat';
+  const hudSimIcon = document.getElementById('hud-sim-icon');
+  if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
+  const hudPct = document.getElementById('hud-progress-pct');
+  if (hudPct) hudPct.textContent = '(%0)';
+  if (window.lucide) lucide.createIcons();
 }
 
 // 10. Başlangıç Konumu Rozetini ve Hızlı Butonları Güncelle
 function updateStartBadgeUI(name) {
+  const startInput = document.getElementById('input-start-loc');
+  const clearStartBtn = document.getElementById('btn-clear-start');
   const badge = document.getElementById('start-badge-text');
-  if (badge && name) {
-    let shortName = name
-      .replace(' (Cadde)', '')
-      .replace(' (Meydan)', '')
-      .replace(' (Kuzey)', '')
-      .replace(' (Info Desk)', '')
-      .replace(' Caddesi Ana Giriş', ' Girişi')
-      .replace(' Tarafı Batı Giriş', ' Girişi')
-      .replace(' Ana Giriş', '');
-    badge.textContent = shortName;
-    badge.parentElement?.setAttribute('title', `Başlangıç Konumu: ${name}`);
+
+  if (name) {
+    if (startInput) startInput.value = name;
+    if (clearStartBtn) clearStartBtn.classList.remove('hidden');
+    if (badge) badge.textContent = name;
 
     // 3 Hızlı Başlangıç Çipini Senkronize Et
     document.querySelectorAll('.quick-start-chip').forEach(b => {
@@ -839,6 +1063,13 @@ function updateStartBadgeUI(name) {
       } else {
         b.className = 'quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700';
       }
+    });
+  } else {
+    if (startInput) startInput.value = '';
+    if (clearStartBtn) clearStartBtn.classList.add('hidden');
+    if (badge) badge.textContent = '';
+    document.querySelectorAll('.quick-start-chip').forEach(b => {
+      b.className = 'quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700';
     });
   }
 }
@@ -871,9 +1102,9 @@ function openEntranceModal() {
       name: 'Ana Danışma & Misafir Hizmetleri',
       floor: 4,
       floor_name: 'Zemin Kat (Atrium)',
-      nav_node: 'n_info_4',
-      cx: 258,
-      cy: 185,
+      nav_node: 'n_danisma',
+      cx: 1085,
+      cy: 425,
       iconEmoji: 'ℹ️',
       badge: 'Danışma',
       badgeClass: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300'
@@ -930,26 +1161,8 @@ function openEntranceModal() {
       const locId = el.getAttribute('data-loc-id');
       const chosen = startingLocations.find(l => l.id === locId);
       if (chosen) {
-        selectedStartStore = chosen;
-        updateStartBadgeUI(chosen.name);
-        mallMap.activeStartStore = selectedStartStore;
-        mallMap.updateActiveStorePolygons();
         closeEntranceModal();
-        showToast(`📍 Başlangıç noktası "${chosen.name}" olarak ayarlandı.`, 'info');
-
-        if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
-          calculateAndDisplayRoute();
-        } else {
-          // Başlangıç katına odaklan
-          if (mallMap.currentFloor !== chosen.floor) {
-            mallMap.loadFloor(chosen.floor).then(() => {
-              updateFloorUI(chosen.floor);
-              mallMap.flyTo(chosen.cx, chosen.cy, 1.4);
-            });
-          } else {
-            mallMap.flyTo(chosen.cx, chosen.cy, 1.4);
-          }
-        }
+        setStartLocation(chosen);
       }
     });
   });
