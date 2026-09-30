@@ -256,16 +256,34 @@ function setupTheme() {
   });
 }
 
+let lastCalculatedRoute = null;
+
+// 1.1 Dinamik Üst Başlık (Header Card): Rota Özeti (1. Satır: Hedef • Kat, 2. Satır: Mesafe • Süre)
+function updateHeaderNavSummary(targetStore, routeResult) {
+  const titleEl = document.getElementById('current-floor-title');
+  const subEl = document.getElementById('current-floor-sub');
+  if (!titleEl || !subEl || !targetStore || !routeResult) return;
+  const flInfo = mallData?.floors[targetStore.floor];
+  const floorLabel = flInfo ? flInfo.label : (targetStore.floor + '. Kat');
+  titleEl.textContent = `${targetStore.name} • ${floorLabel}`;
+  subEl.textContent = `${routeResult.totalDistance} m • ~${routeResult.estimatedMinutes} dk`;
+}
+window.updateHeaderNavSummary = updateHeaderNavSummary;
+
 // 2. Kat Değişimi & UI Güncellemesi
 function updateFloorUI(floorNum) {
   currentFloor = floorNum;
   const flInfo = mallData?.floors[floorNum];
 
-  // Başlık Kartı
+  // Başlık Kartı: Rota aktifse dinamik rota özetini koru, değilse varsayılan kat etiketini göster
   const titleEl = document.getElementById('current-floor-title');
   const subEl = document.getElementById('current-floor-sub');
-  if (titleEl && flInfo) titleEl.textContent = flInfo.label;
-  if (subEl && flInfo) subEl.textContent = flInfo.subtitle;
+  if (mallMap && mallMap.activeRoute && selectedTargetStore && lastCalculatedRoute) {
+    updateHeaderNavSummary(selectedTargetStore, lastCalculatedRoute);
+  } else {
+    if (titleEl && flInfo) titleEl.textContent = flInfo.label;
+    if (subEl && flInfo) subEl.textContent = flInfo.subtitle;
+  }
 
   // Tab etiketindeki kat adı
   const thisFloorNumSpan = document.getElementById('this-floor-num');
@@ -1145,12 +1163,26 @@ function showPoiPeekCard(store) {
 
   document.body.classList.add('has-peek-card');
   peekCard.classList.remove('hidden');
+  updateFloatingToggleVisibility();
 
   if (window.lucide) {
     lucide.createIcons();
   }
 }
 window.showPoiPeekCard = showPoiPeekCard;
+
+function updateFloatingToggleVisibility() {
+  const toggle = document.getElementById('floating-view-toggle');
+  if (!toggle) return;
+  const isRoute = document.body.classList.contains('has-active-route');
+  const isPeek = document.body.classList.contains('has-peek-card');
+  if (isRoute || isPeek) {
+    toggle.classList.add('hidden');
+  } else {
+    toggle.classList.remove('hidden');
+  }
+}
+window.updateFloatingToggleVisibility = updateFloatingToggleVisibility;
 
 function closePoiPeekCard() {
   document.body.classList.remove('has-peek-card');
@@ -1162,6 +1194,7 @@ function closePoiPeekCard() {
     mallMap.highlightStore(currentPeekStore.id, false);
     currentPeekStore = null;
   }
+  updateFloatingToggleVisibility();
 }
 window.closePoiPeekCard = closePoiPeekCard;
 
@@ -1267,8 +1300,10 @@ function swapLocations() {
 
     if (mallMap.activeRoute) {
       mallMap.clearRoute();
+      lastCalculatedRoute = null;
       document.body.classList.remove('has-active-route');
-      document.getElementById('floating-view-toggle')?.classList.remove('hidden');
+      updateFloatingToggleVisibility();
+      updateFloorUI(mallMap.currentFloor || currentFloor);
       const hudBar = document.getElementById('nav-hud-bar');
       if (hudBar) {
         hudBar.classList.remove('is-active');
@@ -1302,8 +1337,10 @@ function swapLocations() {
 
     if (mallMap.activeRoute) {
       mallMap.clearRoute();
+      lastCalculatedRoute = null;
       document.body.classList.remove('has-active-route');
-      document.getElementById('floating-view-toggle')?.classList.remove('hidden');
+      updateFloatingToggleVisibility();
+      updateFloorUI(mallMap.currentFloor || currentFloor);
       const hudBar = document.getElementById('nav-hud-bar');
       if (hudBar) {
         hudBar.classList.remove('is-active');
@@ -1376,9 +1413,9 @@ function toggleCartSimulation() {
   } else {
     cartSimulator.pause();
     const playText = document.getElementById('sim-play-text');
-    if (playText) playText.textContent = 'Devam Et';
+    if (playText) playText.textContent = 'Başlat';
     const hudSimText = document.getElementById('hud-sim-text');
-    if (hudSimText) hudSimText.textContent = 'Devam Et';
+    if (hudSimText) hudSimText.textContent = 'Başlat';
     const hudSimIcon = document.getElementById('hud-sim-icon');
     if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
   }
@@ -1543,23 +1580,20 @@ function calculateAndDisplayRoute() {
   if (routeDistance) routeDistance.textContent = `${result.totalDistance} m`;
   if (routeTime) routeTime.textContent = `~${result.estimatedMinutes} dk`;
 
-  // 2. Minimal 64px HUD Navigasyon Çubuğunu Doldur ve Göster
+  // 1. Dinamik Üst Başlık Kartı: 1. Satır: Hedef • Kat, 2. Satır: Mesafe • Süre
+  lastCalculatedRoute = result;
+  updateHeaderNavSummary(selectedTargetStore, result);
+
+  // 2. Minimal 64px HUD Navigasyon Çubuğunu Göster
   const hudBar = document.getElementById('nav-hud-bar');
   if (hudBar) {
     hudBar.classList.add('is-active');
     hudBar.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
   }
 
-  const hudDist = document.getElementById('hud-distance');
-  const hudTm = document.getElementById('hud-time');
-  const hudRouteName = document.getElementById('hud-route-name');
   const hudSimText = document.getElementById('hud-sim-text');
   const hudSimIcon = document.getElementById('hud-sim-icon');
-
-  if (hudDist) hudDist.textContent = `${result.totalDistance} m`;
-  if (hudTm) hudTm.textContent = `~${result.estimatedMinutes} dk`;
-  if (hudRouteName) hudRouteName.textContent = `${selectedStartStore.name} → ${selectedTargetStore.name}`;
-  if (hudSimText) hudSimText.textContent = 'Simülasyonu Başlat';
+  if (hudSimText) hudSimText.textContent = 'Başlat';
   if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
 
   // Adım Adım Detay Listesi (Çekmece)
@@ -1603,7 +1637,7 @@ function calculateAndDisplayRoute() {
     collapseBottomSheet();
   }
   document.body.classList.add('has-active-route');
-  document.getElementById('floating-view-toggle')?.classList.add('hidden');
+  updateFloatingToggleVisibility();
   closePoiPeekCard(); // Rota başlayınca peek card gizlenir, tekil 64px HUD kalır
 
   // ROTA ÖNİZLEME (MANUEL BAŞLATMA):
@@ -1629,10 +1663,14 @@ function calculateAndDisplayRoute() {
 function clearCurrentRoute() {
   selectedStartStore = null;
   selectedTargetStore = null;
+  lastCalculatedRoute = null;
   mallMap.clearRoute();
   cartSimulator.stop();
   document.body.classList.remove('has-active-route');
-  document.getElementById('floating-view-toggle')?.classList.remove('hidden');
+  updateFloatingToggleVisibility();
+
+  // Header Kartını Varsayılan Kat Görünümüne Sıfırla
+  updateFloorUI(mallMap.currentFloor || currentFloor);
 
   // Minimal 64px HUD'ı Gizle
   const hudBar = document.getElementById('nav-hud-bar');
@@ -1686,7 +1724,7 @@ function resetSimControls() {
   const playText = document.getElementById('sim-play-text');
   if (playText) playText.textContent = 'Simülasyonu Başlat';
   const hudSimText = document.getElementById('hud-sim-text');
-  if (hudSimText) hudSimText.textContent = 'Simülasyonu Başlat';
+  if (hudSimText) hudSimText.textContent = 'Başlat';
   const hudSimIcon = document.getElementById('hud-sim-icon');
   if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
   const hudPct = document.getElementById('hud-progress-pct');

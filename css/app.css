@@ -564,6 +564,8 @@ html.dark .glass-panel {
   height: 64px !important;
   z-index: 50 !important;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
 }
 
 #nav-hud-bar.is-active {
@@ -696,8 +698,15 @@ body.has-active-route #route-panel {
     bottom: calc(75vh + 12px) !important;
   }
 
-  /* Rota Aktifken Yüzen Liste Butonunu Gizle (HUD & Footer Çakışmasını Temizleme) */
-  body.has-active-route #floating-view-toggle {
+  /* Rota Aktifken veya Peek Kartı Açıkken Yüzen Liste Butonunu Gizle */
+  body.has-active-route #floating-view-toggle,
+  body.has-peek-card #floating-view-toggle {
+    display: none !important;
+  }
+
+  /* Rota Aktifken veya Peek Kartı Açıkken Alt Pusula Göstergesini Gizle */
+  body.has-active-route #map-cardinal-compass,
+  body.has-peek-card #map-cardinal-compass {
     display: none !important;
   }
 
@@ -706,6 +715,8 @@ body.has-active-route #route-panel {
     height: 64px !important;
     z-index: 50 !important;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
   }
 
   #nav-hud-bar.is-active {

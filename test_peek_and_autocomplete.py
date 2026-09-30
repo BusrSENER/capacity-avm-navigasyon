@@ -120,17 +120,24 @@ async def run_peek_and_autocomplete_tests():
         assert peek_now, "Expected #poi-peek-card to open on store click"
         assert box_now['height'] <= 150, f"Expected height <= 150px, got {box_now['height']}"
 
-        # =====================================================================
-        # TEST 3: HUD & FOOTER ÇAKIŞMASINI TEMİZLEME
-        # =====================================================================
-        print("\n--- TEST 3: HUD & Footer Çakışmasını Temizleme ---")
+        # Peek kart açıkken yüzen liste butonunun GİZLENDİĞİNİ doğrula (Requirement 3)
         floating_toggle = page.locator("#floating-view-toggle")
-        
-        # Rota öncesi yüzen buton görünür olmalı
-        toggle_visible_before = await floating_toggle.is_visible()
-        print(f"Floating view toggle visible before route: {toggle_visible_before}")
-        assert toggle_visible_before, "Expected #floating-view-toggle to be visible before route"
+        toggle_hidden_peek = await floating_toggle.is_hidden()
+        print(f"Floating view toggle hidden while peek card is open: {toggle_hidden_peek}")
+        assert toggle_hidden_peek, "Expected #floating-view-toggle to be HIDDEN when peek card is open!"
 
+        # Peek kart kapatıldığında yüzen liste butonunun GERİ GELDİĞİNİ doğrula
+        await page.locator("#btn-peek-close").click()
+        await page.wait_for_timeout(300)
+        toggle_restored_peek = await floating_toggle.is_visible()
+        print(f"Floating view toggle restored after peek card closed: {toggle_restored_peek}")
+        assert toggle_restored_peek, "Expected #floating-view-toggle to be restored after peek card is closed"
+
+        # =====================================================================
+        # TEST 3: HUD & FOOTER ÇAKIŞMASINI TEMİZLEME & DİNAMİK HEADER
+        # =====================================================================
+        print("\n--- TEST 3: HUD & Footer Çakışmasını Temizleme & Dinamik Header ---")
+        
         # Vakko ➔ Zara rotası oluştur
         print("Setting up route: Vakko (Floor 4) -> Zara (Floor 5)...")
         await page.evaluate("""() => {
@@ -142,22 +149,91 @@ async def run_peek_and_autocomplete_tests():
         }""")
         await page.wait_for_timeout(800)
 
-        # Rota başlayınca HUD bar aktifleşmeli, yüzen buton gizlenmeli!
+        # 3.1: Dinamik Üst Başlık (Header Card) Doğrulaması (Requirement 1)
+        header_title = (await page.locator("#current-floor-title").text_content()).strip()
+        header_sub = (await page.locator("#current-floor-sub").text_content()).strip()
+        print(f"Header Title (Nav Summary): '{header_title}'")
+        print(f"Header Subtitle (Distance/Time): '{header_sub}'")
+        assert "Zara" in header_title, f"Expected Zara in header title, got '{header_title}'"
+        assert "1. Kat" in header_title or "Kat" in header_title, f"Expected floor info in header title, got '{header_title}'"
+        assert "m" in header_sub and "dk" in header_sub, f"Expected distance/time in header subtitle, got '{header_sub}'"
+
+        # 3.2: HUD Bar Görünürlüğü ve Taşma (Overflow) / Hayalet Yazı Kontrolü (Requirement 2)
         hud_bar = page.locator("#nav-hud-bar")
         hud_active = await hud_bar.is_visible()
-        toggle_hidden = await floating_toggle.is_hidden()
-        print(f"HUD Bar visible: {hud_active}, Floating Toggle hidden: {toggle_hidden}")
+        print(f"HUD Bar visible: {hud_active}")
         assert hud_active, "Expected #nav-hud-bar to be visible"
+
+        # DOM'da eski hayalet metinlerin (#hud-distance, #hud-time, #hud-route-name) tamamen kaldırıldığını doğrula
+        hud_dist_count = await page.locator("#hud-distance").count()
+        hud_time_count = await page.locator("#hud-time").count()
+        hud_name_count = await page.locator("#hud-route-name").count()
+        print(f"Ghost text counts in DOM: distance={hud_dist_count}, time={hud_time_count}, name={hud_name_count}")
+        assert hud_dist_count == 0, "Expected #hud-distance to be completely removed from DOM"
+        assert hud_time_count == 0, "Expected #hud-time to be completely removed from DOM"
+        assert hud_name_count == 0, "Expected #hud-route-name to be completely removed from DOM"
+
+        # HUD Yatay Taşma (Overflow) Kontrolü (scrollWidth <= clientWidth)
+        overflow_check = await page.evaluate("""() => {
+            const bar = document.getElementById('nav-hud-bar');
+            const inner = bar.firstElementChild;
+            return {
+                barScrollWidth: bar.scrollWidth,
+                barClientWidth: bar.clientWidth,
+                innerScrollWidth: inner ? inner.scrollWidth : 0,
+                innerClientWidth: inner ? inner.clientWidth : 0,
+                hasBarOverflow: bar.scrollWidth > bar.clientWidth,
+                hasInnerOverflow: inner ? (inner.scrollWidth > inner.clientWidth) : false
+            };
+        }""")
+        print(f"HUD Overflow metrics on 390px viewport: {overflow_check}")
+        assert not overflow_check['hasBarOverflow'], f"HUD Bar has horizontal overflow: {overflow_check}"
+        assert not overflow_check['hasInnerOverflow'], f"HUD Inner container has horizontal overflow: {overflow_check}"
+
+        # Yan yana 5 kontrolün varlığını doğrula:
+        assert await page.locator("#btn-hud-swap").is_visible(), "Expected #btn-hud-swap to be visible"
+        assert await page.locator("#btn-hud-speed").is_visible(), "Expected #btn-hud-speed to be visible"
+        assert await page.locator("#btn-hud-steps-toggle").is_visible(), "Expected #btn-hud-steps-toggle to be visible"
+        assert await page.locator("#btn-hud-sim-play").is_visible(), "Expected #btn-hud-sim-play to be visible"
+        assert await page.locator("#btn-hud-finish").is_visible(), "Expected #btn-hud-finish to be visible"
+
+        # Simülasyon başlat / duraklat metin geçişi
+        sim_btn_text_initial = (await page.locator("#hud-sim-text").text_content()).strip()
+        print(f"Sim button text initial: '{sim_btn_text_initial}'")
+        assert "Başlat" in sim_btn_text_initial, f"Expected 'Başlat', got '{sim_btn_text_initial}'"
+
+        await page.locator("#btn-hud-sim-play").click()
+        await page.wait_for_timeout(200)
+        sim_btn_text_playing = (await page.locator("#hud-sim-text").text_content()).strip()
+        print(f"Sim button text while playing: '{sim_btn_text_playing}'")
+        assert "Duraklat" in sim_btn_text_playing, f"Expected 'Duraklat', got '{sim_btn_text_playing}'"
+
+        await page.locator("#btn-hud-sim-play").click()
+        await page.wait_for_timeout(200)
+        sim_btn_text_paused = (await page.locator("#hud-sim-text").text_content()).strip()
+        print(f"Sim button text while paused: '{sim_btn_text_paused}'")
+        assert "Başlat" in sim_btn_text_paused, f"Expected 'Başlat', got '{sim_btn_text_paused}'"
+
+        # 3.3: Rota sırasında yüzen [📋 Liste] butonunun gizlendiğini doğrula
+        toggle_hidden = await floating_toggle.is_hidden()
+        print(f"Floating Toggle hidden during route: {toggle_hidden}")
         assert toggle_hidden, "Expected #floating-view-toggle to be HIDDEN during active route!"
 
         # Ekran görüntüsü al
         await page.screenshot(path="screenshot_hud_no_floating_clutter.png")
         print("Screenshot saved: screenshot_hud_no_floating_clutter.png")
 
-        # Rotayı bitirince yüzen buton geri gelmeli
+        # 3.4: Rotayı bitirince başlığın ve yüzen butonun geri yüklenmesi (Requirement 1 & 3)
         print("Finishing route via HUD Finish button...")
         await page.locator("#btn-hud-finish").click()
         await page.wait_for_timeout(500)
+
+        header_title_after = (await page.locator("#current-floor-title").text_content()).strip()
+        header_sub_after = (await page.locator("#current-floor-sub").text_content()).strip()
+        print(f"Header Title after route finished: '{header_title_after}'")
+        print(f"Header Subtitle after route finished: '{header_sub_after}'")
+        assert "Zemin" in header_title_after or "Kat" in header_title_after, f"Expected default floor title, got '{header_title_after}'"
+        assert "blue" not in header_title_after.lower() and "zara" not in header_title_after.lower(), "Expected store name removed from header after finish"
 
         toggle_visible_after = await floating_toggle.is_visible()
         hud_hidden_after = await hud_bar.is_hidden()

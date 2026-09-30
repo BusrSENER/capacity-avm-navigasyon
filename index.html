@@ -330,9 +330,9 @@
     <main id="main-map-area" class="flex-1 relative h-full rounded-[26px] overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
       
       <!-- Sol Üst Yüzen Kat Başlığı Bannerı (cevahir-rehber.web.app birebir) -->
-      <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all">
-        <h2 id="current-floor-title" class="text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight">Zemin Kat</h2>
-        <p id="current-floor-sub" class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
+      <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all max-w-[calc(100vw-65px)]">
+        <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
+        <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
       </div>
 
       <!-- İnteraktif SVG Harita Konteyneri -->
@@ -477,7 +477,7 @@
       </div>
 
       <!-- Alt Pusula / Yön Göstergesi -->
-      <div class="absolute bottom-4 left-4 z-20 pointer-events-none">
+      <div id="map-cardinal-compass" class="absolute bottom-4 left-4 z-20 pointer-events-none transition-opacity">
         <div class="glass-panel px-3 py-1.5 rounded-xl shadow-md border border-slate-200/90 dark:border-slate-700/60 flex items-center gap-2 text-[10px] text-slate-600 dark:text-slate-300 font-semibold">
           <i data-lucide="compass" class="w-4 h-4 text-red-500 animate-spin" style="animation-duration: 12s;"></i>
           <span>Kuzey: Carousel &bull; Doğu: Fişekhane Cad.</span>
@@ -515,55 +515,35 @@
   </div>
 
   <!-- MİNİMAL HUD (NAVİGASYON ÇUBUĞU) - 64px İnce Yönlendirme Çubuğu -->
-  <div id="nav-hud-bar" class="fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-8px_30px_rgba(0,0,0,0.14)] z-50 flex items-center justify-between px-3 sm:px-6 transition-all duration-300 translate-y-full opacity-0 pointer-events-none">
-    
-    <!-- Sol Alan: İkon + Metre/Dakika Özeti + Güzergâh -->
-    <div class="flex items-center gap-2.5 min-w-0 flex-1">
-      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500/15 to-cyan-500/15 border border-blue-500/30 text-blue-600 dark:text-cyan-400 flex items-center justify-center text-lg shrink-0 font-bold shadow-xs">
-        🛒
-      </div>
-      <div class="flex flex-col min-w-0">
-        <div class="flex items-center gap-2">
-          <span id="hud-distance" class="text-xs sm:text-sm font-extrabold font-heading text-slate-900 dark:text-white leading-none">0 m</span>
-          <span class="text-slate-300 dark:text-slate-600 font-bold leading-none">&bull;</span>
-          <span id="hud-time" class="text-xs sm:text-sm font-bold text-cyan-600 dark:text-cyan-400 leading-none">~0 dk</span>
-          <span id="hud-progress-pct" class="text-[10px] font-mono font-semibold text-slate-400 hidden sm:inline">(%0)</span>
-        </div>
-        <div id="hud-route-name" class="text-[10.5px] text-slate-500 dark:text-slate-400 truncate max-w-[150px] sm:max-w-[260px] font-medium mt-0.5">
-          Başlangıç &rarr; Hedef
-        </div>
-      </div>
-    </div>
-
-    <!-- Sağ Alan: [ ⇄ ] + [ ⚡ 1x ] + [ Detay ] + [ ▶ Simülasyonu Başlat / ⏸ Duraklat ] + [ ✖ Rotayı Bitir ] -->
-    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-      <!-- Rota Yönü Değiştirme Butonu (⇄) -->
-      <button id="btn-hud-swap" class="h-9 w-9 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all active:scale-95" title="Rotayı Tersine Çevir (⇄)">
-        <i data-lucide="arrow-up-down" class="w-3.5 h-3.5"></i>
+  <div id="nav-hud-bar" class="fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-8px_30px_rgba(0,0,0,0.14)] z-50 flex items-center justify-between px-3 sm:px-6 transition-all duration-300 translate-y-full opacity-0 pointer-events-none flex-nowrap overflow-hidden">
+    <!-- Yan Yana Sadece 5 Kontrol: [⇅] + [⚡ 1x] + [📋 Detay] + [▶ Başlat / ⏸ Duraklat] + [✖] -->
+    <div class="w-full flex items-center justify-between gap-1.5 sm:gap-2 flex-nowrap overflow-hidden max-w-lg mx-auto">
+      <!-- 1. Takas İkonu [ ⇅ ] -->
+      <button id="btn-hud-swap" class="h-10 w-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Tersine Çevir (⇄)">
+        <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
       </button>
 
-      <!-- Döngüsel Hız Değiştirme Butonu (1x ➔ 2x ➔ 4x) -->
-      <button id="btn-hud-speed" class="h-9 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 font-extrabold text-xs flex items-center gap-1 transition-all active:scale-95" title="Simülasyon Hızı (1x ➔ 2x ➔ 4x)">
+      <!-- 2. Hız [ ⚡ 1x ] -->
+      <button id="btn-hud-speed" class="h-10 px-2 sm:px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 font-extrabold text-xs flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Simülasyon Hızı (1x ➔ 2x ➔ 4x)">
         <span class="text-xs">⚡</span>
         <span id="hud-speed-text">1x</span>
       </button>
 
-      <!-- Adım Adım Detay Aç/Kapa Butonu -->
-      <button id="btn-hud-steps-toggle" class="h-9 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition-all" title="Adım Adım Yol Tarifini Göster/Gizle">
+      <!-- 3. Çekmece Tetikleyici [ 📋 Detay ] -->
+      <button id="btn-hud-steps-toggle" class="h-10 px-2 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Adım Adım Yol Tarifini Göster/Gizle">
         <i data-lucide="list" class="w-3.5 h-3.5"></i>
-        <span class="text-[11px] font-bold">Detay</span>
+        <span class="text-xs font-bold">Detay</span>
       </button>
 
-      <!-- [ ▶ Simülasyonu Başlat / ⏸ Duraklat ] -->
-      <button id="btn-hud-sim-play" class="h-9 px-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-cyan-500/25 active:scale-95">
-        <i data-lucide="play" id="hud-sim-icon" class="w-3.5 h-3.5 fill-current"></i>
-        <span id="hud-sim-text">Simülasyonu Başlat</span>
+      <!-- 4. Ana Buton [ ▶ Başlat / ⏸ Duraklat ] -->
+      <button id="btn-hud-sim-play" class="flex-1 min-w-0 h-10 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-cyan-500/25 active:scale-95 shrink">
+        <i data-lucide="play" id="hud-sim-icon" class="w-3.5 h-3.5 fill-current shrink-0"></i>
+        <span id="hud-sim-text" class="truncate font-extrabold">Başlat</span>
       </button>
 
-      <!-- [ ✖ Rotayı Bitir ] -->
-      <button id="btn-hud-finish" class="h-9 px-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold flex items-center gap-1 transition-all active:scale-95" title="Rotayı Bitir">
+      <!-- 5. Rotayı İptal Etme Kompakt İkon [ ✖ ] -->
+      <button id="btn-hud-finish" class="h-10 w-10 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Bitir">
         <i data-lucide="x" class="w-4 h-4"></i>
-        <span class="hidden sm:inline text-[11px]">Bitir</span>
       </button>
     </div>
   </div>

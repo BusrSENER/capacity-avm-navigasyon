@@ -198,16 +198,16 @@ async def test_swap_and_focus():
         assert cart_floor == 5, f"Expected cart to be on Zara's floor (Floor 5), got {cart_floor}"
         print("✓ Verified: Cart mascot reset to beginning of new route at Zara (Floor 5).")
 
-        # D) Rota önizleme modunda mı? HUD [▶ Simülasyonu Başlat] gösteriyor mu?
+        # D) Rota önizleme modunda mı? HUD [▶ Başlat] gösteriyor mu?
         hud_btn_text = (await page.locator("#hud-sim-text").text_content()).strip()
         print(f"HUD Sim button text after swap: '{hud_btn_text}'")
-        assert hud_btn_text == "Simülasyonu Başlat", f"Expected 'Simülasyonu Başlat', got '{hud_btn_text}'"
-        print("✓ Verified: HUD button reset to 'Simülasyonu Başlat' in preview mode.")
+        assert "Başlat" in hud_btn_text, f"Expected 'Başlat' in HUD button text, got '{hud_btn_text}'"
+        print("✓ Verified: HUD button reset to 'Başlat' in preview mode.")
 
-        # E) HUD güzergâh başlığı tersine döndü mü?
-        hud_route_name = (await page.locator("#hud-route-name").text_content()).strip()
-        print(f"HUD Route Name: '{hud_route_name}'")
-        assert "Zara" in hud_route_name and "Avva" in hud_route_name, f"Expected Zara -> Avva in route name, got '{hud_route_name}'"
+        # E) Dinamik üst başlık tersine döndü mü (yeni hedef Avva gösteriliyor mu)?
+        header_title = (await page.locator("#current-floor-title").text_content()).strip()
+        print(f"Header Title after swap: '{header_title}'")
+        assert "Avva" in header_title, f"Expected Avva in header title after swap, got '{header_title}'"
 
         await page.screenshot(path="screenshot_swap_during_simulation_stopped_at_new_start.png")
 
