@@ -215,6 +215,19 @@ svg .store-polygon text,
   filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.35));
 }
 
+.store-polygon.store-selected,
+.store-polygon.store-highlight,
+.store-polygon.store-selected > rect,
+.store-polygon.store-selected > polygon,
+.store-polygon.store-selected > path,
+.store-polygon.store-highlight > rect,
+.store-polygon.store-highlight > polygon,
+.store-polygon.store-highlight > path {
+  stroke: #0284c7 !important;
+  stroke-width: 2.8px !important;
+  filter: drop-shadow(0 2px 10px rgba(2, 132, 199, 0.45));
+}
+
 .store-polygon.store-active,
 .store-polygon.store-target {
   stroke: #ef4444 !important;
@@ -272,6 +285,19 @@ html.dark .store-polygon:hover {
   stroke: #38bdf8 !important;
   stroke-width: 2.5px !important;
   filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+}
+
+html.dark .store-polygon.store-selected,
+html.dark .store-polygon.store-highlight,
+html.dark .store-polygon.store-selected > rect,
+html.dark .store-polygon.store-selected > polygon,
+html.dark .store-polygon.store-selected > path,
+html.dark .store-polygon.store-highlight > rect,
+html.dark .store-polygon.store-highlight > polygon,
+html.dark .store-polygon.store-highlight > path {
+  stroke: #38bdf8 !important;
+  stroke-width: 2.8px !important;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.6));
 }
 
 html.dark .store-polygon.store-active,
@@ -928,11 +954,21 @@ html.dark .search-autocomplete-item:hover {
   min-width: 44px !important;
 }
 
-/* 2. Yürürken Rahat Okunabilir Tipografi (14px - 16px Bandı) */
+/* 2. Yürürken Rahat Okunabilir Tipografi (14px - 16px Bandı) & Rozet Tıklama Geçirgenliği */
 .marker-name-label {
   font-size: 14px !important;
   line-height: 1.25 !important;
   letter-spacing: -0.01em !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.marker-name-anchor,
+.marker-name-secondary,
+.marker-name-pinned,
+.logo-tile {
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }
 
 #current-floor-title {

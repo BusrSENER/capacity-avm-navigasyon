@@ -1258,7 +1258,7 @@ function closePoiPeekCard() {
     peekCard.classList.add('hidden');
   }
   if (currentPeekStore) {
-    mallMap.highlightStore(currentPeekStore.id, false);
+    if (mallMap) mallMap.setSelectedStore(null);
     currentPeekStore = null;
   }
   updateFloatingToggleVisibility();
@@ -1291,20 +1291,22 @@ window.setupPeekCardEvents = setupPeekCardEvents;
 function selectStore(store) {
   if (!store) return;
 
-  // Farklı kattaysa kata geç ve mağazayı haritada vurgula
-  mallMap.highlightStore(store.id, true);
+  // Haritada seçili mağazayı ve kalıcı seçim vurgusunu (highlight / active stroke) ayarla
+  mallMap.setSelectedStore(store);
+
+  // Farklı kattaysa kata geç ve mağazaya odaklan
   if (mallMap.currentFloor !== store.floor) {
     mallMap.loadFloor(store.floor).then(() => {
       updateFloorUI(store.floor);
       mallMap.flyTo(store.cx, store.cy, 1.45);
-      mallMap.highlightStore(store.id, true);
+      mallMap.setSelectedStore(store);
     });
   } else {
     mallMap.flyTo(store.cx, store.cy, 1.45);
-    mallMap.highlightStore(store.id, true);
+    mallMap.setSelectedStore(store);
   }
 
-  // POI Detay Panelini Güncelle (masaüstü için)
+  // POI Detay Panelini Güncelle (Masaüstü genişliğinde #sidebar-poi-detail görünür kılınır)
   renderPoiDetail(store);
 
   // Mobilde ekranın %85'ini kaplayan alt çekmece KESİNLİKLE açılmaz!
@@ -1611,6 +1613,10 @@ function closePoiDetail() {
   poiPanel?.classList.add('hidden');
   storeGrid?.classList.remove('hidden');
   tabsContainer?.classList.remove('hidden');
+
+  if (mallMap) {
+    mallMap.setSelectedStore(null);
+  }
 }
 
 // 9. Rota Hesaplama ve Görüntüleme

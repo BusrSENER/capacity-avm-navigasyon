@@ -14,6 +14,7 @@ class MallMap {
     this.activeRoute = null;
     this.activeStartStore = null;
     this.activeTargetStore = null;
+    this.selectedStore = null; // Seçili mağaza (kalıcı seçim ve vurgu)
 
     // Görünüm Modu ('anchor' = Öne Çıkanlar, 'all' = Tüm Mağazalar)
     this.displayMode = 'anchor';
@@ -344,7 +345,9 @@ class MallMap {
         });
 
         poly.addEventListener('mouseleave', () => {
-          if (!this.activeTargetStore || this.activeTargetStore.id !== storeData.id) {
+          const isTarget = this.activeTargetStore && this.activeTargetStore.id === storeData.id;
+          const isSelected = this.selectedStore && this.selectedStore.id === storeData.id;
+          if (!isTarget && !isSelected) {
             this.highlightStore(storeData.id, false);
           }
         });
@@ -359,18 +362,64 @@ class MallMap {
     });
   }
 
+  /**
+   * Mağaza ID veya verisine göre SVG poligon elemanını güvenle bulur
+   */
+  getStorePolygon(storeOrId) {
+    if (!this.svgLayer || !storeOrId) return null;
+    const id = typeof storeOrId === 'string' ? storeOrId : (storeOrId.id || storeOrId.room_id);
+    const roomId = typeof storeOrId === 'object' ? storeOrId.room_id : null;
+    const selectors = [`[data-id="${id}"]`, `#${id}`];
+    if (roomId) selectors.push(`[data-id="${roomId}"]`, `#${roomId}`);
+    return this.svgLayer.querySelector(selectors.join(', '));
+  }
+
+  /**
+   * Aktif seçilen mağazayı (POI) ayarlar ve haritada kalıcı seçim vurgusu ekler
+   */
+  setSelectedStore(store) {
+    // Önceki seçili poligonun vurgusunu temizle
+    if (this.selectedStore && (!store || this.selectedStore.id !== store.id)) {
+      const prevPoly = this.getStorePolygon(this.selectedStore);
+      if (prevPoly) {
+        prevPoly.classList.remove('store-selected');
+        this.highlightStore(this.selectedStore.id, false);
+      }
+    }
+
+    this.selectedStore = store;
+
+    if (store && store.floor === this.currentFloor) {
+      const poly = this.getStorePolygon(store);
+      if (poly) {
+        poly.classList.add('store-selected');
+        this.highlightStore(store.id, true);
+      }
+    }
+  }
+
   highlightStore(storeId, isHighlighted) {
-    const poly = this.svgLayer.querySelector(`[data-id="${storeId}"], #${storeId}`);
+    const poly = this.getStorePolygon(storeId);
     if (!poly) return;
+
+    const child = poly.querySelector('rect, polygon, path');
 
     if (isHighlighted) {
       poly.classList.add('store-highlight');
       poly.style.stroke = '#0284c7';
       poly.style.strokeWidth = '2.8px';
+      if (child) {
+        child.style.stroke = '#0284c7';
+        child.style.strokeWidth = '2.8px';
+      }
     } else {
       poly.classList.remove('store-highlight');
       poly.style.stroke = '';
       poly.style.strokeWidth = '';
+      if (child) {
+        child.style.stroke = '';
+        child.style.strokeWidth = '';
+      }
     }
   }
 
@@ -434,11 +483,11 @@ class MallMap {
           ${logoHtml}
         </div>
         ${isTarget || isStart ? `
-          <span class="marker-name-label marker-name-pinned text-sm font-black text-white ${isStart ? 'bg-emerald-600 ring-2 ring-emerald-400' : 'bg-red-600 ring-2 ring-red-400'} px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
+          <span class="marker-name-label marker-name-pinned text-sm font-black text-white ${isStart ? 'bg-emerald-600 ring-2 ring-emerald-400' : 'bg-red-600 ring-2 ring-red-400'} px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
             ${isStart ? '📍 Başlangıç: ' : '🎯 Hedef: '}${store.name}
           </span>
         ` : `
-          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} text-sm font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
+          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} text-sm font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 cursor-pointer absolute top-full z-40">
             ${store.name}
           </span>
         `}
@@ -449,7 +498,9 @@ class MallMap {
       });
 
       marker.addEventListener('mouseleave', () => {
-        if (!this.activeTargetStore || this.activeTargetStore.id !== store.id) {
+        const isTarget = this.activeTargetStore && this.activeTargetStore.id === store.id;
+        const isSelected = this.selectedStore && this.selectedStore.id === store.id;
+        if (!isTarget && !isSelected) {
           this.highlightStore(store.id, false);
         }
       });
@@ -460,6 +511,26 @@ class MallMap {
           this.onStoreClick(store);
         }
       });
+
+      const label = marker.querySelector('.marker-name-label');
+      if (label) {
+        label.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (this.onStoreClick) {
+            this.onStoreClick(store);
+          }
+        });
+      }
+
+      const tile = marker.querySelector('.logo-tile');
+      if (tile) {
+        tile.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (this.onStoreClick) {
+            this.onStoreClick(store);
+          }
+        });
+      }
 
       fragment.appendChild(marker);
     });
@@ -477,7 +548,7 @@ class MallMap {
           <div class="logo-tile">
             <span class="text-base font-bold text-emerald-600">📍</span>
           </div>
-          <span class="marker-name-label text-sm font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
+          <span class="marker-name-label text-sm font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
             📍 Başlangıç: ${this.activeStartStore.name}
           </span>
         `;
@@ -676,16 +747,30 @@ class MallMap {
     if (!this.svgLayer) return;
     const allPolys = this.svgLayer.querySelectorAll('.store-polygon');
     allPolys.forEach(p => {
-      p.classList.remove('store-active', 'store-target', 'store-start');
+      p.classList.remove('store-active', 'store-target', 'store-start', 'store-selected');
     });
 
+    if (this.selectedStore && this.selectedStore.floor === this.currentFloor) {
+      const p = this.getStorePolygon(this.selectedStore);
+      if (p) {
+        p.classList.add('store-selected', 'store-highlight');
+        p.style.stroke = '#0284c7';
+        p.style.strokeWidth = '2.8px';
+        const child = p.querySelector('rect, polygon, path');
+        if (child) {
+          child.style.stroke = '#0284c7';
+          child.style.strokeWidth = '2.8px';
+        }
+      }
+    }
+
     if (this.activeStartStore && this.activeStartStore.floor === this.currentFloor) {
-      const p = this.svgLayer.querySelector(`[data-id="${this.activeStartStore.id}"], #${this.activeStartStore.room_id}`);
+      const p = this.getStorePolygon(this.activeStartStore);
       if (p) p.classList.add('store-start');
     }
 
     if (this.activeTargetStore && this.activeTargetStore.floor === this.currentFloor) {
-      const p = this.svgLayer.querySelector(`[data-id="${this.activeTargetStore.id}"], #${this.activeTargetStore.room_id}`);
+      const p = this.getStorePolygon(this.activeTargetStore);
       if (p) p.classList.add('store-target', 'store-active');
     }
   }
