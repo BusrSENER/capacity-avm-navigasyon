@@ -11,6 +11,7 @@ let cartSimulator = null;
 
 let selectedStartStore = null;
 let selectedTargetStore = null;
+let activePoiStore = null;
 let activeRouteMode = 'escalator'; // 'escalator' | 'elevator'
 let currentFloor = 4; // Zemin Kat varsayılan başlangıç
 let filterTab = 'this_floor'; // 'this_floor' | 'all_floors'
@@ -132,6 +133,8 @@ function initApp() {
   mallMap = new MallMap('map-canvas-container', mallData, (store) => {
     selectStore(store);
   });
+  window.mallMap = mallMap;
+  window.navEngine = navEngine;
 
   cartSimulator = new CartSimulator(
     mallMap,
@@ -269,13 +272,11 @@ function setupUIEventListeners() {
 
   // Zoom & Reset Butonları
   document.getElementById('zoom-in-btn')?.addEventListener('click', () => {
-    mallMap.scale = Math.min(mallMap.maxScale, mallMap.scale * 1.25);
-    mallMap.applyTransform();
+    mallMap.zoomIn();
   });
 
   document.getElementById('zoom-out-btn')?.addEventListener('click', () => {
-    mallMap.scale = Math.max(mallMap.minScale, mallMap.scale * 0.8);
-    mallMap.applyTransform();
+    mallMap.zoomOut();
   });
 
   document.getElementById('zoom-reset-btn')?.addEventListener('click', () => {
@@ -401,22 +402,18 @@ function setupUIEventListeners() {
 
   // POI Aksiyon Butonları
   document.getElementById('poi-route-btn')?.addEventListener('click', () => {
-    if (selectedTargetStore) {
-      if (!selectedStartStore) {
-        showToast('📍 Lütfen bir başlangıç noktası (Giriş kapısı veya Danışma) seçin.', 'info');
-        openEntranceModal();
-      } else {
-        calculateAndDisplayRoute();
-      }
+    const store = activePoiStore || selectedTargetStore;
+    if (store) {
+      closePoiDetail();
+      setTargetLocation(store);
     }
   });
 
   document.getElementById('poi-start-btn')?.addEventListener('click', () => {
-    if (selectedTargetStore) {
-      const startLoc = selectedTargetStore;
-      setStartLocation(startLoc);
+    const store = activePoiStore || selectedTargetStore;
+    if (store) {
       closePoiDetail();
-      showToast(`📍 Başlangıç "${startLoc.name}" olarak ayarlandı. Lütfen hedef mağazanızı seçin.`, 'info');
+      setStartLocation(store);
     }
   });
 
@@ -609,7 +606,10 @@ function renderSidebarStoreGrid() {
   if (!grid) return;
 
   let list = [];
-  if (filterTab === 'this_floor') {
+  // Arama yapılıyorsa kullanıcının aradığı mağaza tüm AVM genelinde bulunur
+  if (searchQuery.trim().length > 0) {
+    list = getAllStores();
+  } else if (filterTab === 'this_floor') {
     list = mallData.floors[currentFloor]?.stores || [];
   } else {
     list = getAllStores();
@@ -620,12 +620,14 @@ function renderSidebarStoreGrid() {
     list = list.filter(s => s.category === activeCategory);
   }
 
-  // Arama Filtresi
+  // Arama Filtresi (Türkçe karakter duyarsız)
   if (searchQuery.trim()) {
-    const q = searchQuery.toLowerCase().trim();
+    const q = normalizeTr(searchQuery);
     list = list.filter(s =>
-      s.name.toLowerCase().includes(q) ||
-      (s.category_name && s.category_name.toLowerCase().includes(q))
+      normalizeTr(s.name).includes(q) ||
+      normalizeTr(s.category_name || '').includes(q) ||
+      normalizeTr(s.floor_name || '').includes(q) ||
+      normalizeTr(s.unit || '').includes(q)
     );
   }
 
@@ -676,13 +678,30 @@ function setStartLocation(loc) {
 
   updateStartBadgeUI(loc.name);
   mallMap.activeStartStore = selectedStartStore;
-  mallMap.updateActiveStorePolygons();
-  showToast(`📍 Başlangıç: ${loc.name}`, 'info');
 
-  // KESİN KURAL: İki nokta da seçilmeden rota hesaplanmaz
+  // Eğer hedef daha önce aynı mağaza olarak seçilmişse hedefi sıfırla ki kullanıcı yeni hedef seçebilsin
+  if (selectedTargetStore && selectedTargetStore.id === selectedStartStore.id) {
+    selectedTargetStore = null;
+    const targetInput = document.getElementById('input-target-loc');
+    if (targetInput) targetInput.value = '';
+    document.getElementById('btn-clear-target')?.classList.add('hidden');
+    mallMap.activeTargetStore = null;
+    if (mallMap.activeRoute) {
+      clearCurrentRoute();
+      selectedStartStore = loc;
+      updateStartBadgeUI(loc.name);
+      mallMap.activeStartStore = selectedStartStore;
+    }
+  }
+
+  mallMap.updateActiveStorePolygons();
+  mallMap.renderBrandMarkers(mallMap.currentFloor);
+
+  // KESİN KURAL: Hedef zaten seçiliyse rota otomatik hesaplansın; değilse hedef seçimi beklensin
   if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
     calculateAndDisplayRoute();
   } else {
+    showToast(`📍 Başlangıç: "${loc.name}". Lütfen hedef mağazanızı seçin.`, 'info');
     // Başlangıç katına ve koordinatına odaklan
     if (mallMap.currentFloor !== loc.floor) {
       mallMap.loadFloor(loc.floor).then(() => {
@@ -704,6 +723,13 @@ function setTargetLocation(store) {
   const clearTargetBtn = document.getElementById('btn-clear-target');
   if (clearTargetBtn) clearTargetBtn.classList.remove('hidden');
 
+  // Eğer başlangıç daha önce aynı mağaza olarak seçilmişse başlangıcı temizle
+  if (selectedStartStore && selectedStartStore.id === selectedTargetStore.id) {
+    selectedStartStore = null;
+    updateStartBadgeUI('');
+    mallMap.activeStartStore = null;
+  }
+
   // Kartlardaki aktif sınıfı
   document.querySelectorAll('.store-card').forEach(c => {
     if (c.getAttribute('data-store-id') === store.id) {
@@ -715,6 +741,7 @@ function setTargetLocation(store) {
 
   mallMap.activeTargetStore = selectedTargetStore;
   mallMap.updateActiveStorePolygons();
+  mallMap.renderBrandMarkers(mallMap.currentFloor);
 
   // Farklı kattaysa kata geç ve mağazayı vurgula
   if (mallMap.currentFloor !== store.floor) {
@@ -735,7 +762,7 @@ function setTargetLocation(store) {
   if (selectedStartStore && selectedStartStore.id !== selectedTargetStore.id) {
     calculateAndDisplayRoute();
   } else if (!selectedStartStore) {
-    showToast(`🎯 Hedef: ${store.name}. Lütfen başlangıç noktanızı seçin (Giriş veya Danışma).`, 'info');
+    showToast(`🎯 Hedef: ${store.name}. Lütfen başlangıç noktanızı seçin (Giriş veya Mağaza).`, 'info');
   }
 }
 
@@ -834,6 +861,7 @@ function toggleCartSimulation() {
 }
 
 function renderPoiDetail(store) {
+  activePoiStore = store;
   const poiPanel = document.getElementById('sidebar-poi-detail');
   const storeGrid = document.getElementById('sidebar-store-grid');
   const tabsContainer = document.getElementById('sidebar-tabs-container');
@@ -883,6 +911,7 @@ function renderPoiDetail(store) {
 }
 
 function closePoiDetail() {
+  activePoiStore = null;
   const poiPanel = document.getElementById('sidebar-poi-detail');
   const storeGrid = document.getElementById('sidebar-store-grid');
   const tabsContainer = document.getElementById('sidebar-tabs-container');
@@ -1003,7 +1032,7 @@ function calculateAndDisplayRoute() {
   }
 
   if (window.lucide) lucide.createIcons();
-  showToast(`✅ Rota oluşturuldu (${result.totalDistance} m, ~${result.estimatedMinutes} dk)`, 'success');
+  showToast(`Rota oluşturuldu (${result.totalDistance} m, ~${result.estimatedMinutes} dk)`, 'success');
 }
 
 function clearCurrentRoute() {
@@ -1093,13 +1122,33 @@ function updateStartBadgeUI(name) {
   }
 }
 
-// 11. Başlangıç Noktası Seçim Modalı
+// 11. Başlangıç Noktası Seçim Modalı (Tüm Girişler + Danışma + Havuz + 173 Mağaza)
+function normalizeTr(str) {
+  if (!str) return '';
+  return str
+    .replace(/İ/g, 'i')
+    .replace(/I/g, 'ı')
+    .replace(/Ğ/g, 'ğ')
+    .replace(/Ü/g, 'ü')
+    .replace(/Ş/g, 'ş')
+    .replace(/Ö/g, 'ö')
+    .replace(/Ç/g, 'ç')
+    .toLowerCase()
+    .trim();
+}
+
 function openEntranceModal() {
   const modal = document.getElementById('entrance-modal');
   if (!modal) return;
 
   const listContainer = document.getElementById('entrance-list');
+  const searchInput = document.getElementById('entrance-modal-search');
+  const clearBtn = document.getElementById('entrance-modal-clear');
+  const countEl = document.getElementById('entrance-modal-count');
+
   if (!listContainer) return;
+
+  const allStores = getAllStores();
 
   const startingLocations = [
     // 1. Giriş Kapıları
@@ -1140,55 +1189,153 @@ function openEntranceModal() {
       iconEmoji: '🌊',
       badge: 'Buluşma Noktası',
       badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
-    }
+    },
+    // 4. Tüm Mağazalar (173 Mağaza - Alfabetik Sıralı)
+    ...allStores
+      .filter(s => s.nav_node)
+      .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+      .map(store => ({
+        id: store.id,
+        name: store.name,
+        floor: store.floor,
+        floor_name: store.floor_name || (store.floor === 4 ? 'Zemin Kat' : store.floor + '. Kat'),
+        nav_node: store.nav_node,
+        cx: store.cx,
+        cy: store.cy,
+        category: store.category,
+        category_name: store.category_name || store.category,
+        unit: store.unit,
+        isStore: true,
+        storeObj: store,
+        iconEmoji: '🛍️',
+        badge: store.category_name || 'Mağaza',
+        badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+      }))
   ];
 
-  listContainer.innerHTML = startingLocations.map(loc => {
-    const isSelected = selectedStartStore && (selectedStartStore.id === loc.id || selectedStartStore.name === loc.name);
-    return `
-      <div 
-        class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${
-          isSelected 
-            ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-500 shadow-sm' 
-            : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-700/80'
-        }" 
-        data-loc-id="${loc.id}"
-      >
-        <div class="flex items-center gap-3 min-w-0 flex-1">
-          <span class="text-xl shrink-0">${loc.iconEmoji}</span>
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">${loc.name}</h4>
-              <span class="text-[9px] px-1.5 py-0.5 rounded-md font-bold ${loc.badgeClass}">${loc.badge}</span>
-            </div>
-            <p class="text-[11px] text-slate-400 mt-0.5">${loc.floor_name}</p>
-          </div>
-        </div>
-        <button class="ml-2 px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
-          isSelected 
-            ? 'bg-emerald-600 text-white' 
-            : 'bg-slate-200 dark:bg-slate-700 hover:bg-emerald-600 hover:text-white text-slate-700 dark:text-slate-200'
-        }">
-          ${isSelected ? '✓ Seçili' : 'Başla'}
-        </button>
-      </div>
-    `;
-  }).join('');
+  function renderList(query = '') {
+    const q = normalizeTr(query);
+    const filtered = q
+      ? startingLocations.filter(loc =>
+          normalizeTr(loc.name).includes(q) ||
+          normalizeTr(loc.floor_name).includes(q) ||
+          normalizeTr(loc.badge).includes(q) ||
+          normalizeTr(loc.category_name || '').includes(q) ||
+          normalizeTr(loc.unit || '').includes(q)
+        )
+      : startingLocations;
 
-  listContainer.querySelectorAll('[data-loc-id]').forEach(el => {
-    el.addEventListener('click', () => {
-      const locId = el.getAttribute('data-loc-id');
-      const chosen = startingLocations.find(l => l.id === locId);
-      if (chosen) {
-        closeEntranceModal();
-        setStartLocation(chosen);
+    if (countEl) {
+      if (q) {
+        countEl.textContent = `${filtered.length} sonuç bulundu`;
+        countEl.classList.remove('hidden');
+      } else {
+        countEl.classList.add('hidden');
       }
-    });
-  });
+    }
 
+    if (clearBtn) {
+      if (q.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+    }
+
+    if (!filtered.length) {
+      listContainer.innerHTML = `
+        <div class="text-center py-8 text-slate-400">
+          <div class="text-3xl mb-1.5">🔍</div>
+          <div class="text-xs font-bold text-slate-700 dark:text-slate-200">"${query}" için sonuç bulunamadı</div>
+          <div class="text-[11px] text-slate-400 mt-1">Farklı bir mağaza adı veya kapı deneyebilirsiniz.</div>
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = filtered.map(loc => {
+      const isSelected = selectedStartStore && (selectedStartStore.id === loc.id || selectedStartStore.name === loc.name);
+      const iconHtml = loc.storeObj
+        ? getStoreLogo(loc.storeObj, 24)
+        : `<span class="text-lg leading-none">${loc.iconEmoji}</span>`;
+
+      return `
+        <div 
+          class="flex items-center justify-between p-2.5 rounded-2xl border transition-all cursor-pointer ${
+            isSelected 
+              ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-500 shadow-sm' 
+              : 'bg-slate-50 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-700/80'
+          }" 
+          data-loc-id="${loc.id}"
+        >
+          <div class="flex items-center gap-2.5 min-w-0 flex-1">
+            <div class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden p-1 shadow-xs">
+              ${iconHtml}
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">${loc.name}</h4>
+                <span class="text-[9px] px-1.5 py-0.5 rounded-md font-bold ${loc.badgeClass}">${loc.badge}</span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-0.5">${loc.floor_name}${loc.unit ? ' • ' + loc.unit : ''}</p>
+            </div>
+          </div>
+          <button class="ml-2 px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
+            isSelected 
+              ? 'bg-emerald-600 text-white shadow-xs' 
+              : 'bg-slate-200 dark:bg-slate-700 hover:bg-emerald-600 hover:text-white text-slate-700 dark:text-slate-200'
+          }">
+            ${isSelected ? '✓ Seçili' : 'Başla'}
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    listContainer.querySelectorAll('[data-loc-id]').forEach(el => {
+      el.addEventListener('click', () => {
+        const locId = el.getAttribute('data-loc-id');
+        const chosen = startingLocations.find(l => l.id === locId);
+        if (chosen) {
+          closeEntranceModal();
+          const targetLoc = chosen.storeObj || chosen;
+          setStartLocation(targetLoc);
+        }
+      });
+    });
+  }
+
+  // Arama motoru event listener'ı (Tekil kayıt)
+  if (searchInput && !searchInput.dataset.initialized) {
+    searchInput.dataset.initialized = 'true';
+    searchInput.addEventListener('input', (e) => {
+      renderList(e.target.value);
+    });
+  }
+
+  if (clearBtn && !clearBtn.dataset.initialized) {
+    clearBtn.dataset.initialized = 'true';
+    clearBtn.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      renderList('');
+      searchInput?.focus();
+    });
+  }
+
+  if (searchInput) {
+    searchInput.value = '';
+  }
+
+  renderList('');
   modal.classList.remove('hidden');
+
+  setTimeout(() => {
+    searchInput?.focus();
+  }, 80);
 }
 
 function closeEntranceModal() {
   document.getElementById('entrance-modal')?.classList.add('hidden');
 }
+
+window.openEntranceModal = openEntranceModal;
+window.closeEntranceModal = closeEntranceModal;

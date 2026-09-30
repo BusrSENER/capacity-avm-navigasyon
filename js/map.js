@@ -21,7 +21,7 @@ class MallMap {
 
     // Pan & Zoom State
     this.scale = 1.0;
-    this.minScale = 0.55;
+    this.minScale = 0.25;
     this.maxScale = 4.0;
     this.panX = 0;
     this.panY = 0;
@@ -32,9 +32,149 @@ class MallMap {
     // ViewBox dimensions (1400x850 Gerçek Chapman Taylor Mimari Düzlemi)
     this.vbWidth = this.mallData.meta?.width || 1400;
     this.vbHeight = this.mallData.meta?.height || 850;
+    this.containerWidth = 1400;
+    this.containerHeight = 850;
 
+    this.updateDimensions();
     this.initMap();
     this.setupEventListeners();
+  }
+
+  /**
+   * Mobil ve Masaüstü Konteyner Boyutlarını ve Dinamik minScale Değerini Günceller
+   * Mobilde 1400x850 planının tamamının ekrana rahatça sığmasını sağlar.
+   */
+  updateDimensions() {
+    if (!this.container) return;
+    const rect = this.container.getBoundingClientRect();
+    this.containerWidth = rect.width || window.innerWidth;
+    this.containerHeight = rect.height || window.innerHeight;
+
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      // 1400x850'lik harita planının tamamı mobil ekrana rahatça sığabilecek şekilde dinamik hesapla:
+      // minScale = Math.min(containerWidth / 1400, containerHeight / 850) * 0.85
+      this.minScale = Math.min(this.containerWidth / this.vbWidth, this.containerHeight / this.vbHeight) * 0.85;
+    } else {
+      this.minScale = Math.min(0.55, Math.min(this.containerWidth / this.vbWidth, this.containerHeight / this.vbHeight) * 0.8);
+    }
+    // Emniyet alt sınırı
+    this.minScale = Math.max(0.15, this.minScale);
+  }
+
+  /**
+   * İki parmakla uzaklaştırma (pinch-out) veya kaydırma sırasında haritanın kilitlenmesini
+   * ve titreyip zıplamasını engelleyecek şekilde sınır denetimini (clampToBounds) yumuşatır.
+   */
+  clampToBounds() {
+    if (!this.container) return;
+    this.updateDimensions();
+    const cWidth = this.containerWidth;
+    const cHeight = this.containerHeight;
+    if (!cWidth || !cHeight) return;
+
+    const mapWidth = this.vbWidth * this.scale;
+    const mapHeight = this.vbHeight * this.scale;
+
+    // Yumuşak sınır payı (soft margin buffer) - zıplama ve kilitlenmeyi önler
+    const marginX = Math.max(100, cWidth * 0.28);
+    const marginY = Math.max(100, cHeight * 0.28);
+
+    if (mapWidth <= cWidth) {
+      // Harita ekrandan küçük veya eşitse (uzaklaştırılmış genel plan)
+      const centerX = (cWidth - mapWidth) / 2;
+      this.panX = Math.max(centerX - marginX, Math.min(centerX + marginX, this.panX));
+    } else {
+      // Harita ekrandan büyükse
+      const minPanX = cWidth - mapWidth - marginX;
+      const maxPanX = marginX;
+      this.panX = Math.max(minPanX, Math.min(maxPanX, this.panX));
+    }
+
+    if (mapHeight <= cHeight) {
+      const centerY = (cHeight - mapHeight) / 2;
+      this.panY = Math.max(centerY - marginY, Math.min(centerY + marginY, this.panY));
+    } else {
+      const minPanY = cHeight - mapHeight - marginY;
+      const maxPanY = marginY;
+      this.panY = Math.max(minPanY, Math.min(maxPanY, this.panY));
+    }
+  }
+
+  /**
+   * Dokunma veya sürükleme bırakıldığında haritayı yumuşakça doğal sınırlarına oturtur.
+   */
+  settleBounds(duration = 200) {
+    if (!this.container) return;
+    this.updateDimensions();
+    const mapWidth = this.vbWidth * this.scale;
+    const mapHeight = this.vbHeight * this.scale;
+
+    let targetX = this.panX;
+    let targetY = this.panY;
+
+    if (mapWidth <= this.containerWidth) {
+      targetX = (this.containerWidth - mapWidth) / 2;
+    } else {
+      const minX = this.containerWidth - mapWidth;
+      const maxX = 0;
+      targetX = Math.max(minX, Math.min(maxX, targetX));
+    }
+
+    if (mapHeight <= this.containerHeight) {
+      const isMobile = window.innerWidth <= 768;
+      const mobileOffsetY = isMobile ? -30 : 0;
+      targetY = ((this.containerHeight - mapHeight) / 2) + mobileOffsetY;
+    } else {
+      const minY = this.containerHeight - mapHeight;
+      const maxY = 0;
+      targetY = Math.max(minY, Math.min(maxY, targetY));
+    }
+
+    if (Math.abs(targetX - this.panX) > 1 || Math.abs(targetY - this.panY) > 1) {
+      const startX = this.panX;
+      const startY = this.panY;
+      const startTime = performance.now();
+
+      const animate = (now) => {
+        const elapsed = now - startTime;
+        const p = Math.min(1, elapsed / duration);
+        const ease = 0.5 - Math.cos(p * Math.PI) / 2;
+
+        this.panX = startX + (targetX - startX) * ease;
+        this.panY = startY + (targetY - startY) * ease;
+        this.applyTransform();
+
+        if (p < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      requestAnimationFrame(animate);
+    }
+  }
+
+  zoomIn() {
+    this.updateDimensions();
+    const cx = this.containerWidth / 2;
+    const cy = this.containerHeight / 2;
+    const newScale = Math.min(this.maxScale, this.scale * 1.25);
+    this.panX = cx - (cx - this.panX) * (newScale / this.scale);
+    this.panY = cy - (cy - this.panY) * (newScale / this.scale);
+    this.scale = newScale;
+    this.clampToBounds();
+    this.applyTransform();
+  }
+
+  zoomOut() {
+    this.updateDimensions();
+    const cx = this.containerWidth / 2;
+    const cy = this.containerHeight / 2;
+    const newScale = Math.max(this.minScale, this.scale * 0.8);
+    this.panX = cx - (cx - this.panX) * (newScale / this.scale);
+    this.panY = cy - (cy - this.panY) * (newScale / this.scale);
+    this.scale = newScale;
+    this.clampToBounds();
+    this.applyTransform();
   }
 
   initMap() {
@@ -207,8 +347,8 @@ class MallMap {
           ${logoHtml}
         </div>
         ${isTarget || isStart ? `
-          <span class="marker-name-label text-[10px] font-black text-white bg-red-600 px-2 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
-            ${store.name}
+          <span class="marker-name-label text-[10px] font-black text-white ${isStart ? 'bg-emerald-600 ring-2 ring-emerald-400' : 'bg-red-600 ring-2 ring-red-400'} px-2 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
+            ${isStart ? '📍 Başlangıç: ' : '🎯 Hedef: '}${store.name}
           </span>
         ` : `
           <span class="marker-name-label hidden group-hover:block text-[9px] font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-1.5 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 pointer-events-none absolute top-full z-40">
@@ -236,6 +376,27 @@ class MallMap {
 
       fragment.appendChild(marker);
     });
+
+    // Eğer seçili başlangıç noktası bu kattaysa ve mağaza listesinde yoksa (Kapı, Danışma, Havuz vb.)
+    if (this.activeStartStore && this.activeStartStore.floor === floorNum) {
+      const alreadyHas = sortedStores.some(s => s.id === this.activeStartStore.id);
+      if (!alreadyHas && this.activeStartStore.cx && this.activeStartStore.cy) {
+        const startMarker = document.createElement('div');
+        startMarker.className = 'logo-tile-marker is-start is-active';
+        startMarker.style.left = `${this.activeStartStore.cx}px`;
+        startMarker.style.top = `${this.activeStartStore.cy}px`;
+        startMarker.title = `Başlangıç: ${this.activeStartStore.name}`;
+        startMarker.innerHTML = `
+          <div class="logo-tile">
+            <span class="text-base font-bold text-emerald-600">📍</span>
+          </div>
+          <span class="marker-name-label text-[10px] font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 pointer-events-none animate-pulse">
+            📍 Başlangıç: ${this.activeStartStore.name}
+          </span>
+        `;
+        fragment.appendChild(startMarker);
+      }
+    }
 
     // 2. Servis Noktaları (Amenities) - cevahir-rehber.web.app Temiz Dairesel İkonları
     const amenities = floorInfo.amenities || [];
@@ -543,14 +704,15 @@ class MallMap {
   }
 
   resetView() {
+    this.updateDimensions();
     const rect = this.container.getBoundingClientRect();
-    const scaleX = rect.width / this.vbWidth;
-    const scaleY = rect.height / this.vbHeight;
+    const scaleX = (rect.width || this.containerWidth) / this.vbWidth;
+    const scaleY = (rect.height || this.containerHeight) / this.vbHeight;
     const isMobile = window.innerWidth <= 768;
-    this.scale = Math.min(scaleX, scaleY) * (isMobile ? 0.90 : 0.94);
-    this.panX = (rect.width - this.vbWidth * this.scale) / 2;
+    this.scale = Math.max(this.minScale, Math.min(scaleX, scaleY) * (isMobile ? 0.90 : 0.94));
+    this.panX = ((rect.width || this.containerWidth) - this.vbWidth * this.scale) / 2;
     const mobileOffset = isMobile ? -35 : 0;
-    this.panY = ((rect.height - this.vbHeight * this.scale) / 2) + mobileOffset;
+    this.panY = (((rect.height || this.containerHeight) - this.vbHeight * this.scale) / 2) + mobileOffset;
     this.applyTransform();
   }
 
@@ -565,6 +727,7 @@ class MallMap {
     // Mouse Drag Pan
     this.container.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return;
+      this.updateDimensions();
       this.isDragging = true;
       this.startX = e.clientX - this.panX;
       this.startY = e.clientY - this.panY;
@@ -574,17 +737,22 @@ class MallMap {
       if (!this.isDragging) return;
       this.panX = e.clientX - this.startX;
       this.panY = e.clientY - this.startY;
+      this.clampToBounds();
       this.applyTransform();
     });
 
     window.addEventListener('mouseup', () => {
-      this.isDragging = false;
+      if (this.isDragging) {
+        this.isDragging = false;
+        this.settleBounds();
+      }
     });
 
     // Dokunmatik Etkileşim: Akıcı Touch Pan & Odaklı Pinch-to-Zoom
     let lastTouchDist = 0;
 
     this.container.addEventListener('touchstart', (e) => {
+      this.updateDimensions();
       if (e.touches.length === 1) {
         this.isDragging = true;
         this.startX = e.touches[0].clientX - this.panX;
@@ -602,6 +770,7 @@ class MallMap {
       if (this.isDragging && e.touches.length === 1) {
         this.panX = e.touches[0].clientX - this.startX;
         this.panY = e.touches[0].clientY - this.startY;
+        this.clampToBounds();
         this.applyTransform();
       } else if (e.touches.length === 2 && lastTouchDist > 0) {
         const dist = Math.hypot(
@@ -611,6 +780,7 @@ class MallMap {
 
         if (dist > 0) {
           const factor = dist / lastTouchDist;
+          this.updateDimensions();
           const newScale = Math.min(this.maxScale, Math.max(this.minScale, this.scale * factor));
 
           // Dokunulan iki parmağın merkez noktasına doğru yakınlaşma (Pinch-to-zoom focus)
@@ -622,6 +792,7 @@ class MallMap {
           this.panY = midY - (midY - this.panY) * (newScale / this.scale);
           this.scale = newScale;
           lastTouchDist = dist;
+          this.clampToBounds();
           this.applyTransform();
         }
       }
@@ -636,12 +807,14 @@ class MallMap {
       } else if (e.touches.length === 0) {
         this.isDragging = false;
         lastTouchDist = 0;
+        this.settleBounds();
       }
     });
 
     // Wheel Zoom
     this.container.addEventListener('wheel', (e) => {
       e.preventDefault();
+      this.updateDimensions();
       const rect = this.container.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
@@ -652,7 +825,7 @@ class MallMap {
       this.panX = mouseX - (mouseX - this.panX) * (newScale / this.scale);
       this.panY = mouseY - (mouseY - this.panY) * (newScale / this.scale);
       this.scale = newScale;
-
+      this.clampToBounds();
       this.applyTransform();
     }, { passive: false });
 
