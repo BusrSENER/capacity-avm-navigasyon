@@ -1101,16 +1101,18 @@ function setTargetLocation(store) {
   mallMap.updateActiveStorePolygons();
   mallMap.renderBrandMarkers(mallMap.currentFloor);
 
-  // Farklı kattaysa kata geç ve mağazayı vurgula
-  if (mallMap.currentFloor !== store.floor) {
-    mallMap.loadFloor(store.floor).then(() => {
-      updateFloorUI(store.floor);
+  // Farklı kattaysa kata geç ve mağazayı vurgula (Yalnızca henüz başlangıç seçilmediyse!)
+  if (!selectedStartStore) {
+    if (mallMap.currentFloor !== store.floor) {
+      mallMap.loadFloor(store.floor).then(() => {
+        updateFloorUI(store.floor);
+        mallMap.flyTo(store.cx, store.cy, 1.45);
+        mallMap.highlightStore(store.id, true);
+      });
+    } else {
       mallMap.flyTo(store.cx, store.cy, 1.45);
       mallMap.highlightStore(store.id, true);
-    });
-  } else {
-    mallMap.flyTo(store.cx, store.cy, 1.45);
-    mallMap.highlightStore(store.id, true);
+    }
   }
 
   // POI Detay Paneli
@@ -1729,9 +1731,9 @@ function calculateAndDisplayRoute() {
   resetSimControls();
 
   // Başlangıç Katına Odaklan ve Rotayı Kadrajla
+  updateFloorUI(selectedStartStore.floor);
   if (mallMap.currentFloor !== selectedStartStore.floor) {
     mallMap.loadFloor(selectedStartStore.floor).then(() => {
-      updateFloorUI(selectedStartStore.floor);
       mallMap.fitRoute(result);
     });
   } else {

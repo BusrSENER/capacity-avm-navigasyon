@@ -27,6 +27,8 @@ class CartSimulator {
     this.facingX = 1; // 1: right, -1: left
 
     this.cartEl = null;
+    this.transitionTimer = null;
+    this.transitionFadeTimeout = null;
     this.createCartAvatar();
   }
 
@@ -142,6 +144,11 @@ class CartSimulator {
 
   stop() {
     this.pause();
+    if (this.transitionTimer) {
+      clearTimeout(this.transitionTimer);
+      this.transitionTimer = null;
+    }
+    this.hideFloorTransitionCard(true);
     this.currentIndex = 0;
     this.subProgress = 0;
     this.autoFollow = true;
@@ -256,31 +263,35 @@ class CartSimulator {
   handleFloorTransition(fromNode, toNode) {
     this.pause();
 
-    const isElevator = toNode.edgeType === 'elevator' || toNode.portalKind === 'elevator';
-    const msg = isElevator 
-      ? `⚡ Panoramik Asansör ile ${this.map.mallData.floors[toNode.floor]?.label || toNode.floor + '. Kat'}a geçiliyor...`
-      : `⚡ Yürüyen Merdiven ile ${this.map.mallData.floors[toNode.floor]?.label || toNode.floor + '. Kat'}a geçiliyor...`;
+    // 1. Ekranın merkezinde yarı şeffaf cam (glassmorphism) kat geçiş kartını göster
+    this.showFloorTransitionCard(fromNode, toNode);
 
-    this.showFloorTransitionBanner(msg);
-
-    setTimeout(() => {
+    // 2. Bildirim 750ms süreyle ekranda kalsın, ardından yeni kata geç
+    this.transitionTimer = setTimeout(() => {
       this.currentIndex++;
       this.subProgress = 0;
 
+      // 3. Yeni katın haritası (SVG) yüklenir
       this.map.loadFloor(toNode.floor).then(() => {
+        // Sepet yeni kattaki karşılık gelen kapı/aktarma noktasına yerleşir
         this.updateCartPosition(toNode.x, toNode.y, 0, toNode.floor);
-        this.map.flyTo(toNode.x, toNode.y, 1.35);
 
+        // Kat seçici butonları (Floor Selector) ve UI otomatik olarak yeni kata kaysın
         if (this.onFloorChange) {
           this.onFloorChange(toNode.floor);
         }
 
-        setTimeout(() => {
-          this.hideFloorTransitionBanner();
+        // Harita sert sıfırlanmaz; sepetin belirdiği iniş/çıkış noktasını merkeze alacak şekilde yumuşak pan (kayma) yapar
+        const targetScale = Math.max(this.map.scale, 1.35);
+        this.map.flyTo(toNode.x, toNode.y, targetScale, 450);
+
+        // 4. Sepet yerleştikten sonra (toplam 700-900ms'ye denk gelecek şekilde) yumuşak fade-out ile kaybolsun
+        this.transitionTimer = setTimeout(() => {
+          this.hideFloorTransitionCard();
           this.play();
-        }, 600);
+        }, 150);
       });
-    }, 900);
+    }, 750);
   }
 
   updateCartPosition(x, y, angle, floor) {
@@ -342,20 +353,113 @@ class CartSimulator {
     if (this.cartEl) this.cartEl.classList.add('hidden');
   }
 
-  showFloorTransitionBanner(text) {
-    let banner = document.getElementById('floor-transition-banner');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'floor-transition-banner';
-      banner.className = 'fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-slate-900/90 text-white font-bold text-xs sm:text-sm border border-cyan-400/40 shadow-2xl backdrop-blur-md flex items-center gap-2.5 transition-all';
-      document.body.appendChild(banner);
+  showFloorTransitionCard(fromNode, toNode) {
+    let overlay = document.getElementById('floor-transition-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'floor-transition-overlay';
+      overlay.className = 'fixed inset-0 z-50 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0 scale-95 hidden';
+      overlay.setAttribute('aria-live', 'polite');
+      overlay.innerHTML = `
+        <div id="floor-transition-card" class="backdrop-blur-xl bg-slate-900/85 dark:bg-slate-950/90 text-white border border-white/20 dark:border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] rounded-3xl p-6 sm:p-7 flex flex-col items-center gap-3.5 max-w-[320px] sm:max-w-xs mx-4 text-center ring-1 ring-white/10 transition-all duration-300">
+          <div class="relative flex items-center justify-center">
+            <div class="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full blur-md opacity-60 animate-pulse"></div>
+            <div class="relative w-16 h-16 rounded-2xl bg-white/15 dark:bg-white/10 border border-white/25 flex items-center justify-center text-3xl shadow-inner backdrop-blur-md">
+              <span id="floor-transition-icon">🪜</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5 items-center">
+            <span id="floor-transition-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
+              Yürüyen Merdiven
+            </span>
+            <h3 id="floor-transition-title" class="text-base sm:text-lg font-black tracking-tight text-white leading-snug">
+              Zemin Kata İniyorsunuz...
+            </h3>
+          </div>
+          <div class="flex items-center gap-1.5 pt-1">
+            <div class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" style="animation-delay: 0ms;"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" style="animation-delay: 150ms;"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" style="animation-delay: 300ms;"></div>
+            <span class="text-[11px] font-medium text-slate-300 ml-1.5" id="floor-transition-sub">Harita yükleniyor</span>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
     }
-    banner.innerHTML = `<span class="animate-spin text-cyan-400">⚡</span> ${text}`;
-    banner.style.display = 'flex';
+
+    const isElevator = toNode && (toNode.edgeType === 'elevator' || toNode.portalKind === 'elevator' || (fromNode && (fromNode.edgeType === 'elevator' || fromNode.portalKind === 'elevator')));
+    const isDown = fromNode && toNode ? toNode.floor < fromNode.floor : false;
+    const icon = isElevator ? '🛗' : '🪜';
+    const badgeText = isElevator ? 'Panoramik Asansör' : 'Yürüyen Merdiven';
+    const directionWord = isDown ? 'İniyorsunuz...' : 'Çıkılıyor...';
+
+    const toFloor = toNode ? toNode.floor : 4;
+    let targetLabel = '';
+    if (toFloor === 4) {
+      targetLabel = 'Zemin Kata';
+    } else if (toFloor === 5) {
+      targetLabel = '1. Kata';
+    } else if (toFloor === 6) {
+      targetLabel = '2. Kata';
+    } else if (toFloor === 3) {
+      targetLabel = '1. Bodrum Kata';
+    } else if (toFloor === 2) {
+      targetLabel = '2. Bodrum Kata';
+    } else if (toFloor === 1) {
+      targetLabel = '3. Bodrum Kata';
+    } else {
+      targetLabel = `${toFloor}. Kata`;
+    }
+
+    const titleText = `${icon} ${targetLabel} ${directionWord}`;
+
+    const iconEl = document.getElementById('floor-transition-icon');
+    const badgeEl = document.getElementById('floor-transition-badge');
+    const titleEl = document.getElementById('floor-transition-title');
+
+    if (iconEl) iconEl.textContent = icon;
+    if (badgeEl) badgeEl.textContent = badgeText;
+    if (titleEl) titleEl.textContent = titleText;
+
+    if (this.transitionFadeTimeout) {
+      clearTimeout(this.transitionFadeTimeout);
+      this.transitionFadeTimeout = null;
+    }
+
+    overlay.classList.remove('hidden', 'is-fading-out', 'opacity-0', 'scale-95');
+    overlay.classList.add('is-active', 'opacity-100', 'scale-100');
+  }
+
+  hideFloorTransitionCard(immediate = false) {
+    const overlay = document.getElementById('floor-transition-overlay');
+    if (!overlay) return;
+
+    if (this.transitionFadeTimeout) {
+      clearTimeout(this.transitionFadeTimeout);
+      this.transitionFadeTimeout = null;
+    }
+
+    if (immediate) {
+      overlay.classList.remove('is-active', 'is-fading-out', 'opacity-100', 'scale-100');
+      overlay.classList.add('hidden', 'opacity-0', 'scale-95');
+      return;
+    }
+
+    overlay.classList.remove('is-active', 'opacity-100', 'scale-100');
+    overlay.classList.add('is-fading-out', 'opacity-0', 'scale-95');
+
+    this.transitionFadeTimeout = setTimeout(() => {
+      overlay.classList.remove('is-fading-out');
+      overlay.classList.add('hidden');
+      this.transitionFadeTimeout = null;
+    }, 350);
+  }
+
+  showFloorTransitionBanner(text) {
+    this.showFloorTransitionCard(null, { floor: this.currentFloor });
   }
 
   hideFloorTransitionBanner() {
-    const banner = document.getElementById('floor-transition-banner');
-    if (banner) banner.style.display = 'none';
+    this.hideFloorTransitionCard();
   }
 }
