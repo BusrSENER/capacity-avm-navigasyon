@@ -301,11 +301,24 @@ class MallMap {
         svgEl.style.width = `${this.vbWidth}px`;
         svgEl.style.height = `${this.vbHeight}px`;
 
-        // SVG Harita Zeminindeki Hayalet Mağaza Metinlerini Gizleme (Ghost Text Fix)
-        svgEl.querySelectorAll('.store-polygon text, .svg-store-text').forEach(t => {
-          t.setAttribute('display', 'none');
-          t.style.display = 'none';
-        });
+        // Anchor mağazalar için SVG içi metinleri gizle (üzerlerinde bağımsız HTML rozet/logo bulunduğu için)
+        const floorInfo = this.mallData && this.mallData.floors ? this.mallData.floors[floorNum] : null;
+        if (floorInfo && floorInfo.stores) {
+          floorInfo.stores.forEach(store => {
+            if (store.is_anchor) {
+              const poly = svgEl.querySelector(`[data-id="${store.id}"], #${store.room_id || store.id}`);
+              if (poly) {
+                poly.classList.add('is-anchor');
+                poly.setAttribute('data-is-anchor', 'true');
+                const txt = poly.querySelector('text');
+                if (txt) {
+                  txt.setAttribute('display', 'none');
+                  txt.style.display = 'none';
+                }
+              }
+            }
+          });
+        }
 
         this.attachStoreInteractivity(svgEl, floorNum);
       }

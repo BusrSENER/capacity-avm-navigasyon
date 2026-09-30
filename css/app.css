@@ -185,12 +185,43 @@ html.dark .cart-beacon {
   cursor: pointer;
 }
 
-/* SVG Harita Zeminindeki Hayalet Mağaza Metinlerini Gizleme (Ghost Text Fix) */
-.store-polygon text,
-#svg-layer .store-polygon text,
-#map-svg-element .store-polygon text,
-svg .store-polygon text,
-.svg-store-text {
+/* SVG Harita Zeminindeki Standart Mağaza İsim Metinleri (Net & Okunabilir) */
+.store-polygon text {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  fill: #1e293b !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+  text-anchor: middle !important;
+  dominant-baseline: central !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: fill 0.2s ease;
+}
+
+html.dark .store-polygon text {
+  fill: #f1f5f9 !important;
+}
+
+/* Yalnızca üzerinde büyük bağımsız HTML rozet/logo bulunan Anchor Mağazaların SVG metinlerini gizle */
+.store-polygon.is-anchor text,
+.store-polygon[data-is-anchor="true"] text,
+#room_4_39 text, [data-id="store_4_39"] text,
+#room_4_42 text, [data-id="store_4_42"] text,
+#room_4_23 text, [data-id="store_4_23"] text,
+#room_4_3 text,  [data-id="store_4_3"] text,
+#room_4_24 text, [data-id="store_4_24"] text,
+#room_4_8 text,  [data-id="store_4_8"] text,
+#room_3_28 text, [data-id="store_3_28"] text,
+#room_3_32 text, [data-id="store_3_32"] text,
+#room_5_45 text, [data-id="store_5_45"] text,
+#room_6_4 text,  [data-id="store_6_4"] text,
+#room_6_19 text, [data-id="store_6_19"] text {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
