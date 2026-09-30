@@ -503,8 +503,13 @@
       </div>
     </div>
 
-    <!-- Sağ Alan: [ ⚡ 1x ] + [ Detay ] + [ ▶ Simülasyonu Başlat / ⏸ Duraklat ] + [ ✖ Rotayı Bitir ] -->
+    <!-- Sağ Alan: [ ⇄ ] + [ ⚡ 1x ] + [ Detay ] + [ ▶ Simülasyonu Başlat / ⏸ Duraklat ] + [ ✖ Rotayı Bitir ] -->
     <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <!-- Rota Yönü Değiştirme Butonu (⇄) -->
+      <button id="btn-hud-swap" class="h-9 w-9 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all active:scale-95" title="Rotayı Tersine Çevir (⇄)">
+        <i data-lucide="arrow-up-down" class="w-3.5 h-3.5"></i>
+      </button>
+
       <!-- Döngüsel Hız Değiştirme Butonu (1x ➔ 2x ➔ 4x) -->
       <button id="btn-hud-speed" class="h-9 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 font-extrabold text-xs flex items-center gap-1 transition-all active:scale-95" title="Simülasyon Hızı (1x ➔ 2x ➔ 4x)">
         <span class="text-xs">⚡</span>

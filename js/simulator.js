@@ -95,6 +95,7 @@ class CartSimulator {
 
     if (this.pathNodes.length > 0) {
       const startNode = this.pathNodes[0];
+      this.currentFloor = startNode.floor;
       if (this.map.currentFloor !== startNode.floor) {
         this.map.loadFloor(startNode.floor);
       }
@@ -147,6 +148,24 @@ class CartSimulator {
     const btn = document.getElementById('btn-recenter-cart');
     if (btn) btn.classList.add('hidden');
     this.hide();
+  }
+
+  resetToStart() {
+    this.pause();
+    this.currentIndex = 0;
+    this.subProgress = 0;
+    this.autoFollow = true;
+    const btn = document.getElementById('btn-recenter-cart');
+    if (btn) btn.classList.add('hidden');
+    if (this.pathNodes && this.pathNodes.length > 0) {
+      const startNode = this.pathNodes[0];
+      this.currentFloor = startNode.floor;
+      if (this.map && this.map.currentFloor !== startNode.floor) {
+        this.map.loadFloor(startNode.floor);
+      }
+      this.updateCartPosition(startNode.x, startNode.y, 0, startNode.floor);
+      this.show();
+    }
   }
 
   setSpeed(val) {

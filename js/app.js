@@ -348,6 +348,10 @@ function setupUIEventListeners() {
     swapLocations();
   });
 
+  document.getElementById('btn-hud-swap')?.addEventListener('click', () => {
+    swapLocations();
+  });
+
   document.getElementById('clear-route-btn')?.addEventListener('click', () => {
     clearCurrentRoute();
   });
@@ -538,7 +542,30 @@ function setupUIEventListeners() {
   });
 }
 
-// 4. Çift Girdi Arama & Rota Motoru (Google Maps Standardı)
+// 4. Çift Girdi Arama & Rota Motoru (Google Maps Standardı & Görsel Odak)
+let activeFocusSlot = null; // 'start' | 'target' | null
+
+function setActiveFocusSlot(slot) {
+  activeFocusSlot = slot;
+  window.activeFocusSlot = slot;
+
+  const startInput = document.getElementById('input-start-loc');
+  const targetInput = document.getElementById('input-target-loc');
+  const activeClasses = ['active-focus-ring', 'ring-2', 'ring-indigo-500', 'border-indigo-500'];
+
+  if (slot === 'start') {
+    startInput?.classList.add(...activeClasses);
+    targetInput?.classList.remove(...activeClasses);
+  } else if (slot === 'target') {
+    targetInput?.classList.add(...activeClasses);
+    startInput?.classList.remove(...activeClasses);
+  } else {
+    startInput?.classList.remove(...activeClasses);
+    targetInput?.classList.remove(...activeClasses);
+  }
+}
+window.setActiveFocusSlot = setActiveFocusSlot;
+
 function setupSearchEngine() {
   const startInput = document.getElementById('input-start-loc');
   const clearStartBtn = document.getElementById('btn-clear-start');
@@ -547,8 +574,13 @@ function setupSearchEngine() {
 
   let debounceTimer = null;
 
-  // 1. [ 📍 Nereden? ] Girdisi
+  // 1. [ 📍 Nereden? ] Girdisi (Görsel Odak + Modal)
+  startInput?.addEventListener('focus', () => {
+    setActiveFocusSlot('start');
+  });
+
   startInput?.addEventListener('click', () => {
+    setActiveFocusSlot('start');
     openEntranceModal();
   });
 
@@ -563,16 +595,24 @@ function setupSearchEngine() {
     if (mallMap.activeRoute) {
       clearCurrentRoute();
     }
+    setActiveFocusSlot('start');
+    startInput?.focus();
   });
 
-  // 2. [ 🎯 Nereye? ] Girdisi
+  // 2. [ 🎯 Nereye? ] Girdisi (Görsel Odak + Canlı Arama)
   targetInput?.addEventListener('focus', () => {
+    setActiveFocusSlot('target');
     if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
       expandBottomSheet();
     }
   });
 
+  targetInput?.addEventListener('click', () => {
+    setActiveFocusSlot('target');
+  });
+
   targetInput?.addEventListener('input', (e) => {
+    setActiveFocusSlot('target');
     if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
       expandBottomSheet();
     }
@@ -604,6 +644,8 @@ function setupSearchEngine() {
     }
     closePoiDetail();
     renderSidebarStoreGrid();
+    setActiveFocusSlot('target');
+    targetInput?.focus();
   });
 }
 
@@ -768,7 +810,9 @@ function setStartLocation(loc) {
   // KESİN KURAL: Hedef zaten seçiliyse rota otomatik hesaplansın; değilse hedef seçimi beklensin
   if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
     calculateAndDisplayRoute();
+    setActiveFocusSlot(null);
   } else {
+    setActiveFocusSlot('target');
     showToast(`📍 Başlangıç: "${loc.name}". Lütfen hedef mağazanızı seçin.`, 'info');
     // Başlangıç katına ve koordinatına odaklan
     if (mallMap.currentFloor !== loc.floor) {
@@ -833,7 +877,9 @@ function setTargetLocation(store) {
   // KESİN KURAL: İki alan da seçilmeden ASLA otomatik rota çizilmez
   if (selectedStartStore && selectedStartStore.id !== selectedTargetStore.id) {
     calculateAndDisplayRoute();
+    setActiveFocusSlot(null);
   } else if (!selectedStartStore) {
+    setActiveFocusSlot('start');
     showToast(`🎯 Hedef: ${store.name}. Lütfen başlangıç noktanızı seçin (Giriş veya Mağaza).`, 'info');
   }
 
@@ -868,40 +914,120 @@ function selectStore(store) {
 }
 
 function swapLocations() {
-  const temp = selectedStartStore;
-  selectedStartStore = selectedTargetStore;
-  selectedTargetStore = temp;
-
   const startInput = document.getElementById('input-start-loc');
   const targetInput = document.getElementById('input-target-loc');
   const clearStartBtn = document.getElementById('btn-clear-start');
   const clearTargetBtn = document.getElementById('btn-clear-target');
 
-  if (startInput) startInput.value = selectedStartStore ? selectedStartStore.name : '';
-  if (targetInput) targetInput.value = selectedTargetStore ? selectedTargetStore.name : '';
+  // 1. Durum: Her iki nokta da doluyken [⇅] basılırsa
+  if (selectedStartStore && selectedTargetStore) {
+    // Simülasyon çalışıyorsa derhal durdur (cancelAnimationFrame)
+    if (cartSimulator) {
+      cartSimulator.stop();
+    }
 
-  if (clearStartBtn) {
-    if (selectedStartStore) clearStartBtn.classList.remove('hidden');
-    else clearStartBtn.classList.add('hidden');
-  }
-  if (clearTargetBtn) {
-    if (selectedTargetStore) clearTargetBtn.classList.remove('hidden');
-    else clearTargetBtn.classList.add('hidden');
-  }
+    // Başlangıç ve hedef düğümlerini takas et
+    const temp = selectedStartStore;
+    selectedStartStore = selectedTargetStore;
+    selectedTargetStore = temp;
 
-  if (selectedStartStore) updateStartBadgeUI(selectedStartStore.name);
-  else updateStartBadgeUI('');
+    if (startInput) startInput.value = selectedStartStore.name;
+    if (targetInput) targetInput.value = selectedTargetStore.name;
+    clearStartBtn?.classList.remove('hidden');
+    clearTargetBtn?.classList.remove('hidden');
+    updateStartBadgeUI(selectedStartStore.name);
 
-  mallMap.activeStartStore = selectedStartStore;
-  mallMap.activeTargetStore = selectedTargetStore;
-  mallMap.updateActiveStorePolygons();
+    mallMap.activeStartStore = selectedStartStore;
+    mallMap.activeTargetStore = selectedTargetStore;
+    mallMap.updateActiveStorePolygons();
+    mallMap.renderBrandMarkers(mallMap.currentFloor);
 
-  if (selectedStartStore && selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
+    // Rotayı ters yönde yeniden hesaplayıp önizleme moduna al
     calculateAndDisplayRoute();
-  } else if (mallMap.activeRoute) {
-    clearCurrentRoute();
+    setActiveFocusSlot(null);
+
+    showToast(`⇄ Rota tersine çevrildi: ${selectedStartStore.name} → ${selectedTargetStore.name}`, 'info');
+  }
+  // 2. Durum: Yalnızca [📍 Nereden?] doluyken [⇅] basılırsa
+  else if (selectedStartStore && !selectedTargetStore) {
+    if (cartSimulator) cartSimulator.stop();
+
+    selectedTargetStore = selectedStartStore;
+    selectedStartStore = null;
+
+    if (startInput) startInput.value = '';
+    if (targetInput) targetInput.value = selectedTargetStore.name;
+    clearStartBtn?.classList.add('hidden');
+    clearTargetBtn?.classList.remove('hidden');
+    updateStartBadgeUI('');
+
+    mallMap.activeStartStore = null;
+    mallMap.activeTargetStore = selectedTargetStore;
+    mallMap.updateActiveStorePolygons();
+    mallMap.renderBrandMarkers(mallMap.currentFloor);
+
+    if (mallMap.activeRoute) {
+      mallMap.clearRoute();
+      document.body.classList.remove('has-active-route');
+      const hudBar = document.getElementById('nav-hud-bar');
+      if (hudBar) {
+        hudBar.classList.remove('is-active');
+        hudBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+      }
+    }
+
+    // Dolu kutudaki değer hedefe aktarıldı, eski kutu temizlendi ve odak boşalan kutuya (Nereden?) geçirildi
+    setActiveFocusSlot('start');
+    startInput?.focus();
+
+    showToast(`🎯 Hedef: "${selectedTargetStore.name}". Lütfen başlangıç noktanızı seçin.`, 'info');
+  }
+  // 3. Durum: Yalnızca [🎯 Nereye?] doluyken [⇅] basılırsa
+  else if (!selectedStartStore && selectedTargetStore) {
+    if (cartSimulator) cartSimulator.stop();
+
+    selectedStartStore = selectedTargetStore;
+    selectedTargetStore = null;
+
+    if (startInput) startInput.value = selectedStartStore.name;
+    if (targetInput) targetInput.value = '';
+    clearStartBtn?.classList.remove('hidden');
+    clearTargetBtn?.classList.add('hidden');
+    updateStartBadgeUI(selectedStartStore.name);
+
+    mallMap.activeStartStore = selectedStartStore;
+    mallMap.activeTargetStore = null;
+    mallMap.updateActiveStorePolygons();
+    mallMap.renderBrandMarkers(mallMap.currentFloor);
+
+    if (mallMap.activeRoute) {
+      mallMap.clearRoute();
+      document.body.classList.remove('has-active-route');
+      const hudBar = document.getElementById('nav-hud-bar');
+      if (hudBar) {
+        hudBar.classList.remove('is-active');
+        hudBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+      }
+    }
+
+    // Dolu kutudaki değer başlangıca aktarıldı, eski kutu temizlendi ve odak boşalan kutuya (Nereye?) geçirildi
+    setActiveFocusSlot('target');
+    targetInput?.focus();
+
+    showToast(`📍 Başlangıç: "${selectedStartStore.name}". Lütfen hedef mağazanızı seçin.`, 'info');
+  }
+  // 4. Durum: İkisi de boşken [⇅] basılırsa
+  else {
+    setActiveFocusSlot('start');
+    startInput?.focus();
+    showToast('Lütfen önce bir başlangıç veya hedef konumu seçin.', 'info');
+  }
+
+  if (activePoiStore) {
+    renderPoiActionButtons(activePoiStore);
   }
 }
+window.swapLocations = swapLocations;
 
 function setRoutePreference(mode) {
   activeRouteMode = mode;
@@ -1040,8 +1166,8 @@ function renderPoiActionButtons(store) {
         <span>📍 Burayı Başlangıç Yap</span>
       </button>
     `;
-  } else if (!selectedStartStore) {
-    // 1. Durum: [📍 Nereden?] boşsa ➔ [📍 Buradan Başla] (öncelikli) ve [🎯 Hedef Yap]
+  } else if (!selectedStartStore || activeFocusSlot === 'start') {
+    // 1. Durum: [📍 Nereden?] boşsa veya odak [📍 Nereden?] üzerindeyse ➔ [📍 Buradan Başla] (öncelikli) ve [🎯 Hedef Yap]
     container.innerHTML = `
       <button id="poi-start-btn" data-action="start" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
         <i data-lucide="map-pin" class="w-4 h-4"></i>
@@ -1053,7 +1179,7 @@ function renderPoiActionButtons(store) {
       </button>
     `;
   } else {
-    // 2. Durum: [📍 Nereden?] doluysa ➔ [🎯 Hedef Yap] (öncelikli) ve [📍 Başlangıcı Değiştir]
+    // 2. Durum: [📍 Nereden?] doluysa ve odak hedefteyse ➔ [🎯 Hedef Yap] (öncelikli) ve [📍 Başlangıcı Değiştir]
     container.innerHTML = `
       <button id="poi-route-btn" data-action="target" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
         <i data-lucide="navigation" class="w-4 h-4"></i>
@@ -1180,7 +1306,7 @@ function calculateAndDisplayRoute() {
   // ROTA ÖNİZLEME (MANUEL BAŞLATMA):
   // Sepet başlangıç noktasına yerleştirilir ve durdurulur; ASLA otomatik başlatılmaz!
   cartSimulator.setRoute(result);
-  cartSimulator.stop();
+  cartSimulator.resetToStart();
   resetSimControls();
 
   // Başlangıç Katına Odaklan ve Rotayı Kadrajla
@@ -1245,6 +1371,7 @@ function clearCurrentRoute() {
   if (activePoiStore) renderPoiActionButtons(activePoiStore);
 
   resetSimControls();
+  setActiveFocusSlot(null);
 }
 
 function resetSimControls() {
@@ -1313,6 +1440,7 @@ function normalizeTr(str) {
 function openEntranceModal() {
   const modal = document.getElementById('entrance-modal');
   if (!modal) return;
+  setActiveFocusSlot('start');
 
   const listContainer = document.getElementById('entrance-list');
   const searchInput = document.getElementById('entrance-modal-search');
