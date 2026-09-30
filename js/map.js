@@ -186,67 +186,20 @@ class MallMap {
   }
 
   setRotation(deg) {
-    this.rotation = deg;
+    this.rotation = 0; // Rotasyon kilitli (0° sabit)
     this.applyTransform();
   }
 
   /**
-   * Haritayı verilen ekran koordinatı (screenX, screenY) etrafında döndürür.
-   * Yörüngesel savrulmayı (orbital drift) önlemek için harita merkezini dönüşe göre dengeler.
-   * İki parmak hareketinde ekranın sol üstü yerine doğrudan iki parmağın orta noktasına sabitler.
+   * Rotasyon kesinlikle kilitlidir (0° sabit). Savrulma ve dönme devre dışı bırakılmıştır.
    */
   rotateAroundPoint(angleDiffDeg, screenX, screenY) {
-    if (!angleDiffDeg) return;
-    const cxWorld = this.vbWidth / 2;
-    const cyWorld = this.vbHeight / 2;
-
-    const cxScreen = this.panX + this.scale * cxWorld;
-    const cyScreen = this.panY + this.scale * cyWorld;
-
-    const dx = cxScreen - screenX;
-    const dy = cyScreen - screenY;
-
-    const rad = angleDiffDeg * (Math.PI / 180);
-    const cosA = Math.cos(rad);
-    const sinA = Math.sin(rad);
-
-    const newCxScreen = screenX + (dx * cosA - dy * sinA);
-    const newCyScreen = screenY + (dx * sinA + dy * cosA);
-
-    this.panX = newCxScreen - this.scale * cxWorld;
-    this.panY = newCyScreen - this.scale * cyWorld;
-    this.rotation = (this.rotation + angleDiffDeg) % 360;
+    this.rotation = 0;
   }
 
-  resetRotation(duration = 350) {
-    if (Math.abs(this.rotation) < 0.1) {
-      this.rotation = 0;
-      this.applyTransform();
-      return;
-    }
-    const startRot = this.rotation;
-    let diff = (startRot % 360);
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    const startTime = performance.now();
-
-    const animate = (now) => {
-      const elapsed = now - startTime;
-      const p = Math.min(1, elapsed / duration);
-      const ease = 0.5 - Math.cos(p * Math.PI) / 2;
-
-      this.rotation = diff * (1 - ease);
-      this.applyTransform();
-
-      if (p < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        this.rotation = 0;
-        this.applyTransform();
-      }
-    };
-    requestAnimationFrame(animate);
+  resetRotation(duration = 0) {
+    this.rotation = 0;
+    this.applyTransform();
   }
 
   initMap() {
@@ -455,22 +408,27 @@ class MallMap {
     const isFiltered = this.activeCategoryFilter && this.activeCategoryFilter !== 'all';
     const showAll = this.displayMode === 'all' || isZoomed || isFiltered;
 
-    // Hedef ve Başlangıç en öncelikli, sonra Anchor mağazalar
+    // Hedef ve Başlangıç en öncelikli, sonra Anchor ve Zemin Kat logolu mağazalar
     const sortedStores = [...stores].sort((a, b) => {
-      const aPrio = (this.activeTargetStore?.id === a.id || this.activeStartStore?.id === a.id) ? 3 : (a.is_anchor ? 2 : 1);
-      const bPrio = (this.activeTargetStore?.id === b.id || this.activeStartStore?.id === b.id) ? 3 : (b.is_anchor ? 2 : 1);
-      return bPrio - aPrio;
+      const getPrio = (s) => {
+        if (this.activeTargetStore?.id === s.id || this.activeStartStore?.id === s.id) return 4;
+        if (s.is_anchor) return 3;
+        if (floorNum === 4 && typeof hasBrandLogo === 'function' && hasBrandLogo(s)) return 2;
+        return 1;
+      };
+      return getPrio(b) - getPrio(a);
     });
 
     const placedPositions = [];
-    const minDistance = isZoomed ? 20 : (showAll ? 28 : 36);
+    const minDistance = isZoomed ? 18 : (showAll ? 24 : 26);
 
     sortedStores.forEach(store => {
       const isTarget = this.activeTargetStore && this.activeTargetStore.id === store.id;
       const isStart = this.activeStartStore && this.activeStartStore.id === store.id;
       const isAnchor = !!store.is_anchor;
+      const isZeminLogo = (floorNum === 4 && typeof hasBrandLogo === 'function' && hasBrandLogo(store));
 
-      if (!showAll && !isAnchor && !isTarget && !isStart) {
+      if (!showAll && !isAnchor && !isTarget && !isStart && !isZeminLogo) {
         return;
       }
 
@@ -482,14 +440,18 @@ class MallMap {
 
       placedPositions.push({ x: store.cx, y: store.cy });
 
+      // Uzun mağazalarda (Twist, Faik Sönmez vb. y=560..730) logoyu SVG metninin üstüne orantılı yerleştir
+      const isTallShop = (store.cy > 520 && store.cy < 680 && store.cx > 350 && store.cx < 1050);
+      const offsetY = (isTallShop && !isAnchor) ? -22 : 0;
+
       const marker = document.createElement('div');
-      marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : 'is-secondary'} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
+      marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : (isZeminLogo ? 'is-brand-store' : 'is-secondary')} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
       marker.style.left = `${store.cx}px`;
-      marker.style.top = `${store.cy}px`;
+      marker.style.top = `${store.cy + offsetY}px`;
       marker.setAttribute('data-store-id', store.id);
       marker.title = `${store.name} (${store.floor_name || store.floor + '. Kat'})`;
 
-      const logoHtml = getStoreLogo(store, isAnchor ? 32 : 26);
+      const logoHtml = getStoreLogo(store, isAnchor ? 32 : 28);
 
       marker.innerHTML = `
         <div class="logo-tile">
@@ -998,12 +960,8 @@ class MallMap {
 
     // Dokunmatik Etkileşim: Akıcı Touch Pan, İki Parmakla Odaklı Döndürme & Odaklı Pinch-to-Zoom
     let lastTouchDist = 0;
-    let touchStartAngle = 0;
-    let lastTouchAngle = 0;
-    let hasRotationStarted = false;
     let lastMidX = 0;
     let lastMidY = 0;
-    const ROTATION_DEADZONE_DEG = 8.0; // En az 8° (~0.14 radyan) değişim olmadan döndürme (yalpalama engelleme)
 
     this.container.addEventListener('touchstart', (e) => {
       this.updateDimensions();
@@ -1019,12 +977,6 @@ class MallMap {
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
-        touchStartAngle = Math.atan2(
-          e.touches[1].clientY - e.touches[0].clientY,
-          e.touches[1].clientX - e.touches[0].clientX
-        );
-        lastTouchAngle = touchStartAngle;
-        hasRotationStarted = false;
         lastMidX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - rect.left;
         lastMidY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - rect.top;
       }
@@ -1043,10 +995,6 @@ class MallMap {
         const dist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
-        );
-        const currentAngle = Math.atan2(
-          e.touches[1].clientY - e.touches[0].clientY,
-          e.touches[1].clientX - e.touches[0].clientX
         );
         const midX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - rect.left;
         const midY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - rect.top;
@@ -1069,31 +1017,8 @@ class MallMap {
           this.scale = newScale;
         }
 
-        // 3. İki parmakla döndürme (Rotation Deadzone & Midpoint Rotation)
-        let totalDiff = (currentAngle - touchStartAngle) * (180 / Math.PI);
-        if (totalDiff > 180) totalDiff -= 360;
-        if (totalDiff < -180) totalDiff += 360;
-
-        if (!hasRotationStarted) {
-          if (Math.abs(totalDiff) >= ROTATION_DEADZONE_DEG) {
-            hasRotationStarted = true;
-            // Eşik aşıldığında eşik noktasından itibaren akıcı ve kesintisiz dönüşü başlat
-            const sign = totalDiff > 0 ? 1 : -1;
-            lastTouchAngle = touchStartAngle + sign * (ROTATION_DEADZONE_DEG * Math.PI / 180);
-          }
-        }
-
-        if (hasRotationStarted) {
-          let angleDiff = (currentAngle - lastTouchAngle) * (180 / Math.PI);
-          if (angleDiff > 180) angleDiff -= 360;
-          if (angleDiff < -180) angleDiff += 360;
-
-          if (Math.abs(angleDiff) > 0.05) {
-            // Yörüngesel savrulmayı (drift) engellemek için iki parmağın orta noktası etrafında döndür
-            this.rotateAroundPoint(angleDiff, midX, midY);
-            lastTouchAngle = currentAngle;
-          }
-        }
+        // 3. Rotasyon KESİNLİKLE KİLİTLİ: Açı daima 0° kalır, bina hiçbir zaman dönmez
+        this.rotation = 0;
 
         lastTouchDist = dist;
         lastMidX = midX;
@@ -1109,11 +1034,9 @@ class MallMap {
         this.isDragging = true;
         this.startX = e.touches[0].clientX - this.panX;
         this.startY = e.touches[0].clientY - this.panY;
-        hasRotationStarted = false;
       } else if (e.touches.length === 0) {
         this.isDragging = false;
         lastTouchDist = 0;
-        hasRotationStarted = false;
         this.settleBounds();
       }
     });

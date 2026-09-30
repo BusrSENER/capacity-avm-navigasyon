@@ -493,6 +493,25 @@ html.dark .store-card__name {
   box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25), 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
+.logo-tile-marker.is-brand-store {
+  z-index: 25;
+}
+
+.logo-tile-marker.is-brand-store .logo-tile {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+html.dark .logo-tile-marker.is-brand-store .logo-tile {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+}
+
 .logo-tile-marker:hover .logo-tile {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2), 0 0 0 2px #0284c7;
 }
@@ -979,6 +998,10 @@ html.dark .search-autocomplete-item:hover {
 #btn-peek-target,
 #chip-path-wide,
 #chip-path-short,
+#btn-route-qr,
+#btn-hud-qr,
+#btn-qr-modal-close,
+#btn-qr-copy-url,
 #clear-route-btn,
 #entrance-modal-close {
   min-height: 44px !important;

@@ -276,6 +276,9 @@ function initApp() {
   selectedStartStore = null;
   selectedTargetStore = null;
 
+  // URL Parametreleri ve Kiosk Modu Denetimi (?kiosk=true & ?from=...&to=...)
+  checkUrlParametersAndKiosk();
+
   if (window.lucide) {
     lucide.createIcons();
   }
@@ -284,6 +287,9 @@ function initApp() {
   if (mallMap && mallMap.initialLoadPromise) {
     mallMap.initialLoadPromise.then(() => {
       hideSplashScreen();
+      if (lastCalculatedRoute) {
+        mallMap.fitRoute(lastCalculatedRoute);
+      }
     }).catch(() => {
       hideSplashScreen();
     });
@@ -517,11 +523,19 @@ function setupUIEventListeners() {
 
   // Başlangıç Konumu Seçim Butonları
   document.getElementById('input-start-loc')?.addEventListener('click', () => {
+    if (window.isKioskMode) {
+      showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+      return;
+    }
     openEntranceModal();
   });
 
   const startLocBtn = document.getElementById('start-location-btn') || document.getElementById('gps-quick-btn');
   startLocBtn?.addEventListener('click', () => {
+    if (window.isKioskMode) {
+      showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+      return;
+    }
     openEntranceModal();
   });
 
@@ -534,6 +548,10 @@ function setupUIEventListeners() {
 
   Object.entries(quickStartMap).forEach(([btnId, entId]) => {
     document.getElementById(btnId)?.addEventListener('click', () => {
+      if (window.isKioskMode && entId !== 'ent_danisma') {
+        showToast('Kiosk modunda başlangıç noktası Danışma / Kiosk olarak sabittir.', 'info');
+        return;
+      }
       const ent = mallData.entrances.find(e => e.id === entId);
       if (ent) {
         setStartLocation(ent);
@@ -543,11 +561,41 @@ function setupUIEventListeners() {
 
   // Rota kartı üzerindeki başlangıç etiketine tıklanırsa da başlangıç seçim modalını aç
   document.getElementById('route-start-label')?.addEventListener('click', () => {
+    if (window.isKioskMode) {
+      showToast('Kiosk modunda başlangıç noktası Danışma / Kiosk olarak sabittir.', 'info');
+      return;
+    }
     openEntranceModal();
   });
 
   document.getElementById('entrance-modal-close')?.addEventListener('click', () => {
     closeEntranceModal();
+  });
+
+  // Rotayı Cebine Al (QR Kod) Butonları & Modal Etkileşimleri
+  document.getElementById('btn-route-qr')?.addEventListener('click', () => {
+    openRouteQrModal();
+  });
+
+  document.getElementById('btn-hud-qr')?.addEventListener('click', () => {
+    openRouteQrModal();
+  });
+
+  document.getElementById('btn-qr-modal-close')?.addEventListener('click', () => {
+    closeRouteQrModal();
+  });
+
+  document.getElementById('btn-qr-copy-url')?.addEventListener('click', () => {
+    const input = document.getElementById('qr-url-input');
+    if (input && input.value) {
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast('📋 Rota bağlantısı kopyalandı!', 'success');
+      }).catch(() => {
+        input.select();
+        document.execCommand('copy');
+        showToast('📋 Rota bağlantısı kopyalandı!', 'success');
+      });
+    }
   });
 
   // POI Geri Butonu
@@ -785,6 +833,10 @@ function setupSearchEngine() {
 
   // 1. [ 📍 Nereden? ] Girdisi
   startInput?.addEventListener('focus', () => {
+    if (window.isKioskMode) {
+      targetInput?.focus();
+      return;
+    }
     setActiveFocusSlot('start');
     if (startInput.value.trim().length > 0) {
       renderAutocomplete(startInput.value.trim(), 'start');
@@ -792,6 +844,11 @@ function setupSearchEngine() {
   });
 
   startInput?.addEventListener('click', () => {
+    if (window.isKioskMode) {
+      showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+      targetInput?.focus();
+      return;
+    }
     setActiveFocusSlot('start');
     if (!startInput.value || startInput.value.trim().length === 0) {
       openEntranceModal();
@@ -801,6 +858,9 @@ function setupSearchEngine() {
   });
 
   startInput?.addEventListener('input', (e) => {
+    if (window.isKioskMode) {
+      return;
+    }
     setActiveFocusSlot('start');
     const val = e.target.value.trim();
     if (val.length > 0) {
@@ -816,6 +876,10 @@ function setupSearchEngine() {
 
   clearStartBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (window.isKioskMode) {
+      showToast('Kiosk modunda başlangıç noktası sabittir.', 'info');
+      return;
+    }
     selectedStartStore = null;
     if (startInput) startInput.value = '';
     clearStartBtn.classList.add('hidden');
@@ -1319,6 +1383,10 @@ function selectStore(store) {
 }
 
 function swapLocations() {
+  if (window.isKioskMode) {
+    showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+    return;
+  }
   const startInput = document.getElementById('input-start-loc');
   const targetInput = document.getElementById('input-target-loc');
   const clearStartBtn = document.getElementById('btn-clear-start');
@@ -1745,6 +1813,61 @@ function calculateAndDisplayRoute() {
 }
 
 function clearCurrentRoute() {
+  if (window.isKioskMode) {
+    selectedTargetStore = null;
+    lastCalculatedRoute = null;
+    mallMap.clearRoute();
+    cartSimulator.stop();
+    document.body.classList.remove('has-active-route');
+    updateFloatingToggleVisibility();
+    updateFloorUI(mallMap.currentFloor || currentFloor);
+
+    const hudBar = document.getElementById('nav-hud-bar');
+    if (hudBar) {
+      hudBar.classList.remove('is-active');
+      hudBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+    }
+    const hudStepsDrawer = document.getElementById('hud-steps-drawer');
+    if (hudStepsDrawer) {
+      hudStepsDrawer.classList.add('hidden');
+    }
+    document.getElementById('route-path-chips')?.classList.add('hidden');
+
+    const targetInput = document.getElementById('input-target-loc');
+    if (targetInput) targetInput.value = '';
+    document.getElementById('btn-clear-target')?.classList.add('hidden');
+    document.getElementById('route-info-card')?.classList.add('hidden');
+
+    document.querySelectorAll('.store-card').forEach(c => c.classList.remove('is-active'));
+    document.getElementById('btn-recenter-cart')?.classList.add('hidden');
+    if (cartSimulator) cartSimulator.autoFollow = true;
+
+    currentSimSpeed = 1.0;
+    if (cartSimulator) cartSimulator.setSpeed(1.0);
+    const hudSpeedText = document.getElementById('hud-speed-text');
+    if (hudSpeedText) hudSpeedText.textContent = '1x';
+    if (activePoiStore) renderPoiActionButtons(activePoiStore);
+
+    resetSimControls();
+    setActiveFocusSlot('target');
+
+    const danismaEnt = mallData.entrances.find(e => e.id === 'ent_danisma') || {
+      id: 'ent_danisma',
+      name: '📍 Zemin Kat - Danışma / Kiosk',
+      short_name: 'Danışma / Kiosk',
+      floor: 4,
+      floor_name: 'Zemin Kat',
+      cx: 1085.0,
+      cy: 425.0,
+      nav_node: 'n_danisma'
+    };
+    selectedStartStore = { ...danismaEnt, name: '📍 Zemin Kat - Danışma / Kiosk' };
+    mallMap.activeStartStore = selectedStartStore;
+    mallMap.activeTargetStore = null;
+    mallMap.updateActiveStorePolygons();
+    return;
+  }
+
   selectedStartStore = null;
   selectedTargetStore = null;
   lastCalculatedRoute = null;
@@ -1867,6 +1990,10 @@ function normalizeTr(str) {
 }
 
 function openEntranceModal() {
+  if (window.isKioskMode) {
+    showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+    return;
+  }
   const modal = document.getElementById('entrance-modal');
   if (!modal) return;
   setActiveFocusSlot('start');
@@ -2067,5 +2194,135 @@ function closeEntranceModal() {
   document.getElementById('entrance-modal')?.classList.add('hidden');
 }
 
+// 12. URL Parametreleri (?from=...&to=...) ve Kiosk Modu (?kiosk=true)
+function checkUrlParametersAndKiosk() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isKiosk = urlParams.get('kiosk') === 'true';
+  window.isKioskMode = isKiosk;
+
+  const danismaEnt = (mallData && mallData.entrances) ? mallData.entrances.find(e => e.id === 'ent_danisma') : null;
+  const kioskLocationObj = danismaEnt ? {
+    ...danismaEnt,
+    name: '📍 Zemin Kat - Danışma / Kiosk',
+    short_name: 'Danışma / Kiosk'
+  } : {
+    id: 'ent_danisma',
+    name: '📍 Zemin Kat - Danışma / Kiosk',
+    short_name: 'Danışma / Kiosk',
+    floor: 4,
+    floor_name: 'Zemin Kat',
+    cx: 1085.0,
+    cy: 425.0,
+    nav_node: 'n_danisma'
+  };
+
+  if (isKiosk) {
+    selectedStartStore = kioskLocationObj;
+    updateStartBadgeUI(kioskLocationObj.name);
+    if (mallMap) mallMap.activeStartStore = kioskLocationObj;
+
+    const startInput = document.getElementById('input-start-loc');
+    if (startInput) {
+      startInput.value = kioskLocationObj.name;
+      startInput.readOnly = true;
+      startInput.classList.add('bg-slate-100', 'dark:bg-slate-800', 'cursor-not-allowed');
+      startInput.title = 'Kiosk Modu: Başlangıç konumu Danışma / Kiosk olarak kilitlidir';
+    }
+    const clearStartBtn = document.getElementById('btn-clear-start');
+    if (clearStartBtn) {
+      clearStartBtn.style.display = 'none';
+    }
+    const danismaChip = document.getElementById('btn-quick-danisma');
+    if (danismaChip) {
+      danismaChip.classList.add('ring-2', 'ring-cyan-500', 'font-black');
+    }
+    showToast('🖥️ Kiosk Modu Aktif: Başlangıç noktası Danışma olarak sabitlendi.', 'info');
+  }
+
+  const fromParam = urlParams.get('from');
+  const toParam = urlParams.get('to');
+
+  let resolvedFrom = null;
+  if (fromParam) {
+    if (fromParam === 'kiosk' || fromParam === 'danisma' || fromParam === 'ent_danisma') {
+      resolvedFrom = kioskLocationObj;
+    } else if (fromParam.startsWith('ent_')) {
+      resolvedFrom = mallData.entrances?.find(e => e.id === fromParam);
+    } else {
+      resolvedFrom = getAllStores().find(s => s.id === fromParam || normalizeTr(s.name) === normalizeTr(fromParam));
+    }
+  } else if (isKiosk) {
+    resolvedFrom = kioskLocationObj;
+  }
+
+  let resolvedTo = null;
+  if (toParam) {
+    resolvedTo = getAllStores().find(s => s.id === toParam || normalizeTr(s.name) === normalizeTr(toParam));
+    if (!resolvedTo && mallData.entrances) {
+      resolvedTo = mallData.entrances.find(e => e.id === toParam);
+    }
+  }
+
+  if (resolvedFrom && !isKiosk) {
+    setStartLocation(resolvedFrom);
+  } else if (isKiosk && resolvedFrom) {
+    setStartLocation(kioskLocationObj);
+  }
+
+  if (resolvedTo) {
+    setTargetLocation(resolvedTo);
+  }
+}
+
+// 13. Rotayı Cebine Al (QR Kod) Modalı
+function openRouteQrModal() {
+  const modal = document.getElementById('route-qr-modal');
+  if (!modal) return;
+
+  if (!selectedTargetStore) {
+    showToast('Lütfen önce bir hedef seçip rota oluşturun.', 'warning');
+    return;
+  }
+
+  const fromStoreName = selectedStartStore ? selectedStartStore.name : 'Zemin Kat - Danışma / Kiosk';
+  const toStoreName = selectedTargetStore.name;
+  const fromId = (selectedStartStore && selectedStartStore.id !== 'ent_danisma') ? selectedStartStore.id : 'kiosk';
+  const toId = selectedTargetStore.id;
+
+  const origin = window.location.origin;
+  const pathname = window.location.pathname;
+  const shareUrl = `${origin}${pathname}?from=${encodeURIComponent(fromId)}&to=${encodeURIComponent(toId)}`;
+
+  const fromEl = document.getElementById('qr-modal-from');
+  const toEl = document.getElementById('qr-modal-to');
+  const distEl = document.getElementById('qr-modal-distance');
+  const timeEl = document.getElementById('qr-modal-time');
+  const urlInput = document.getElementById('qr-url-input');
+  const qrContainer = document.getElementById('qr-code-container');
+
+  if (fromEl) fromEl.textContent = fromStoreName;
+  if (toEl) toEl.textContent = toStoreName;
+  if (distEl && lastCalculatedRoute) distEl.textContent = `${lastCalculatedRoute.totalDistance} m`;
+  if (timeEl && lastCalculatedRoute) timeEl.textContent = `~${lastCalculatedRoute.estimatedMinutes} dk`;
+  if (urlInput) urlInput.value = shareUrl;
+
+  if (qrContainer) {
+    if (window.generateQRCodeSvg) {
+      qrContainer.innerHTML = window.generateQRCodeSvg(shareUrl, 200);
+    } else {
+      qrContainer.innerHTML = '<div class="text-xs text-slate-400">QR kod üretilemedi</div>';
+    }
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function closeRouteQrModal() {
+  document.getElementById('route-qr-modal')?.classList.add('hidden');
+}
+
 window.openEntranceModal = openEntranceModal;
 window.closeEntranceModal = closeEntranceModal;
+window.checkUrlParametersAndKiosk = checkUrlParametersAndKiosk;
+window.openRouteQrModal = openRouteQrModal;
+window.closeRouteQrModal = closeRouteQrModal;

@@ -361,15 +361,19 @@
         <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
         <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
 
-        <!-- Rota Aktifken Görünen Koridor Tercih Çipleri: [🛣️ Geniş Yol] ve [✂️ Kısa Yol] -->
-        <div id="route-path-chips" class="hidden flex items-center gap-1.5 pt-2">
-          <button id="chip-path-wide" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white" data-path="wide" title="Geniş ve Ferah Koridorları Tercih Et">
+        <!-- Rota Aktifken Görünen Koridor Tercih Çipleri: [🛣️ Geniş Yol], [✂️ Kısa Yol] ve [📲 Rotayı Cebine Al] -->
+        <div id="route-path-chips" class="hidden flex items-center flex-wrap gap-1.5 pt-2">
+          <button id="chip-path-wide" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white cursor-pointer" data-path="wide" title="Geniş ve Ferah Koridorları Tercih Et">
             <span class="text-sm">🛣️</span>
             <span>Geniş Yol</span>
           </button>
-          <button id="chip-path-short" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700" data-path="short" title="En Kısa Mesafeli Koridorları Tercih Et">
+          <button id="chip-path-short" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-path="short" title="En Kısa Mesafeli Koridorları Tercih Et">
             <span class="text-sm">✂️</span>
             <span>Kısa Yol</span>
+          </button>
+          <button id="btn-route-qr" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white cursor-pointer" title="Rotayı Telefona Aktar">
+            <span class="text-sm">📲</span>
+            <span>Rotayı Cebine Al</span>
           </button>
         </div>
       </div>
@@ -574,13 +578,19 @@
         <span class="text-xs font-bold">Detay</span>
       </button>
 
-      <!-- 4. Ana Buton [ ▶ Başlat / ⏸ Duraklat ] -->
+      <!-- 4. QR Kodu [ 📲 QR ] -->
+      <button id="btn-hud-qr" class="h-11 min-h-[44px] px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-extrabold text-xs flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Rotayı Telefona Aktar (QR)">
+        <span class="text-sm">📲</span>
+        <span class="text-xs font-bold hidden sm:inline">QR</span>
+      </button>
+
+      <!-- 5. Ana Buton [ ▶ Başlat / ⏸ Duraklat ] -->
       <button id="btn-hud-sim-play" class="flex-1 min-w-0 h-11 min-h-[44px] px-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-cyan-500/25 active:scale-95 shrink">
         <i data-lucide="play" id="hud-sim-icon" class="w-4 h-4 fill-current shrink-0"></i>
         <span id="hud-sim-text" class="truncate font-extrabold">Başlat</span>
       </button>
 
-      <!-- 5. Rotayı İptal Etme Kompakt İkon [ ✖ ] -->
+      <!-- 6. Rotayı İptal Etme Kompakt İkon [ ✖ ] -->
       <button id="btn-hud-finish" class="h-11 w-11 min-h-[44px] min-w-[44px] rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Bitir">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
@@ -677,11 +687,72 @@
     </div>
   </div>
 
+  <!-- ROTAYI CEBİNE AL (QR KOD) MODALI -->
+  <div id="route-qr-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onclick="closeRouteQrModal()"></div>
+    <div class="relative w-full max-w-sm rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 shadow-2xl z-10 space-y-4 flex flex-col items-center text-center">
+      <!-- Modal Header -->
+      <div class="w-full flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base">
+            📲
+          </div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Rotayı Cebine Al</h3>
+        </div>
+        <button id="btn-qr-modal-close" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95" title="Kapat">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Description & Route Info -->
+      <div class="w-full space-y-1 text-left bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+        <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+          <span id="qr-modal-from" class="truncate font-semibold text-slate-700 dark:text-slate-300">Zemin Kat Danışma</span>
+        </div>
+        <div class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 pl-3.5">
+          <span>↓</span>
+        </div>
+        <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+          <span id="qr-modal-to" class="truncate font-semibold text-slate-900 dark:text-white">Hedef Mağaza</span>
+        </div>
+        <div id="qr-modal-meta" class="pt-1.5 mt-1 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
+          <span id="qr-modal-distance">-- m</span>
+          <span id="qr-modal-time">~-- dk</span>
+        </div>
+      </div>
+
+      <!-- QR Code Display Box -->
+      <div class="p-3 bg-white rounded-2xl shadow-inner border border-slate-200/80 flex items-center justify-center">
+        <div id="qr-code-container" class="w-[200px] h-[200px] flex items-center justify-center"></div>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+        Telefonunuzun kamerası ile QR kodu okutarak canlı rotayı telefonunuzda açın.
+      </p>
+
+      <!-- URL Copy Input Row -->
+      <div class="w-full flex items-center gap-1.5">
+        <input 
+          id="qr-url-input" 
+          type="text" 
+          readonly 
+          class="flex-1 px-3 py-2 text-[11px] rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 truncate select-all focus:outline-none"
+        />
+        <button id="btn-qr-copy-url" class="px-3 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 transition-all active:scale-95 shadow-sm">
+          Kopyala
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST BİLDİRİM KONTEYNERİ (Mobilde Üstte Dynamic Island tarzı, Masaüstünde Sağ Altta) -->
   <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
 
   <!-- JavaScript Modülleri -->
   <script src="js/logos.js"></script>
+  <script src="js/qrcode.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/simulator.js"></script>
   <script src="js/map.js"></script>
