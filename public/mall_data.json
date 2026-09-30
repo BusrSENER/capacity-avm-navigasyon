@@ -3228,7 +3228,7 @@
           "room_id": "room_4_39",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/efe70be81178.jpg",
           "phone": "0212 661 3319",
-          "is_anchor": false,
+          "is_anchor": true,
           "campaign": {
             "active": true,
             "title": "Capacity Özel İndirimi",

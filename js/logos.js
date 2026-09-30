@@ -44,6 +44,22 @@ const BrandLogos = {
     <text x="50" y="68" font-family="'Times New Roman', serif" font-size="8.5" fill="#d4af37" text-anchor="middle" letter-spacing="1">MASSIMO DUTTI</text>
   </svg>`,
 
+  tommyhilfiger: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#001744"/>
+    <rect x="24" y="38" width="26" height="24" fill="#ffffff"/>
+    <rect x="50" y="38" width="26" height="24" fill="#cc0c2f"/>
+    <text x="50" y="27" font-family="'Times New Roman', serif" font-weight="900" font-size="10.5" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">TOMMY</text>
+    <text x="50" y="80" font-family="'Times New Roman', serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1">HILFIGER</text>
+  </svg>`,
+
+  tommy: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#001744"/>
+    <rect x="24" y="38" width="26" height="24" fill="#ffffff"/>
+    <rect x="50" y="38" width="26" height="24" fill="#cc0c2f"/>
+    <text x="50" y="27" font-family="'Times New Roman', serif" font-weight="900" font-size="10.5" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">TOMMY</text>
+    <text x="50" y="80" font-family="'Times New Roman', serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1">HILFIGER</text>
+  </svg>`,
+
   bershka: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#000000"/>
     <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="16" fill="#f8fafc" text-anchor="middle" letter-spacing="1">BERSHKA</text>

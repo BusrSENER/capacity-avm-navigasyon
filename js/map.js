@@ -300,6 +300,12 @@ class MallMap {
         svgEl.style.width = `${this.vbWidth}px`;
         svgEl.style.height = `${this.vbHeight}px`;
 
+        // SVG Harita Zeminindeki Hayalet Mağaza Metinlerini Gizleme (Ghost Text Fix)
+        svgEl.querySelectorAll('.store-polygon text, .svg-store-text').forEach(t => {
+          t.setAttribute('display', 'none');
+          t.style.display = 'none';
+        });
+
         this.attachStoreInteractivity(svgEl, floorNum);
       }
 

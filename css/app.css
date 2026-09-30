@@ -185,6 +185,18 @@ html.dark .cart-beacon {
   cursor: pointer;
 }
 
+/* SVG Harita Zeminindeki Hayalet Mağaza Metinlerini Gizleme (Ghost Text Fix) */
+.store-polygon text,
+#svg-layer .store-polygon text,
+#map-svg-element .store-polygon text,
+svg .store-polygon text,
+.svg-store-text {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* Light Mode: Temiz, aydınlık, ayırt edici pastel tonlar */
 .g-fashion, .cat-fashion { fill: #fce7f3; stroke: #f472b6; }
 .g-shoes, .cat-shoes { fill: #fef3c7; stroke: #f59e0b; }
@@ -843,6 +855,16 @@ html.dark .active-focus-ring {
 #poi-peek-card {
   max-height: 135px;
   box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+/* Masaüstü Genişliklerinde (#poi-peek-card Kesinlikle Devre Dışı, Sol Sidebar Aktif) */
+@media (min-width: 768px) {
+  #poi-peek-card {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
 }
 
 @media (max-width: 768px) {

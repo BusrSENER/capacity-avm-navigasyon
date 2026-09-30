@@ -708,8 +708,8 @@ function handleStoreSelectedFromSearch(store, targetSlot) {
     mallMap.highlightStore(store.id, true);
   }
 
-  // 5. Altta yalnızca 130px'lik mini kartı (Peek Mode) bırak (rota başlamadıysa)
-  if (!mallMap.activeRoute) {
+  // 5. Altta yalnızca 130px'lik mini kartı (Peek Mode) bırak (rota başlamadıysa ve mobildeyse)
+  if (!mallMap.activeRoute && window.innerWidth < 768) {
     showPoiPeekCard(store);
   }
 }
@@ -1191,7 +1191,7 @@ window.getStoreLandmark = getStoreLandmark;
 let currentPeekStore = null;
 
 function showPoiPeekCard(store) {
-  if (!store) return;
+  if (!store || window.innerWidth >= 768) return;
   currentPeekStore = store;
 
   const peekCard = document.getElementById('poi-peek-card');
@@ -1309,7 +1309,9 @@ function selectStore(store) {
 
   // Mobilde ekranın %85'ini kaplayan alt çekmece KESİNLİKLE açılmaz!
   // Bunun yerine ekranın altında ~130px kompakt bilgi kartı (Peek Mode) gösterilir:
-  showPoiPeekCard(store);
+  if (window.innerWidth < 768) {
+    showPoiPeekCard(store);
+  }
 }
 
 function swapLocations() {
