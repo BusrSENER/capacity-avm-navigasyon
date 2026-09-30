@@ -51,6 +51,14 @@ function cycleSimSpeed() {
   showToast(`⚡ Simülasyon hızı: ${currentSimSpeed}x`, 'info');
 }
 
+// Cihaz ve Ekran Durum Yardımcısı (Mobil Dikey & Mobil Yatay/Landscape)
+function isMobileOrLandscape() {
+  const isPortraitMobile = window.innerWidth < 768;
+  const isLandscapeMobile = window.innerWidth <= 950 && (window.innerHeight < 550 || (window.matchMedia && window.matchMedia('(orientation: landscape)').matches));
+  return isPortraitMobile || isLandscapeMobile;
+}
+window.isMobileOrLandscape = isMobileOrLandscape;
+
 // Mobil Bottom Sheet (Alt Çekmece) Durum Yöneticisi
 let isBottomSheetExpanded = false;
 
@@ -71,12 +79,15 @@ function expandBottomSheet() {
 
   if (!panel) return;
   panel.classList.add('is-expanded');
+  document.body.classList.add('has-sheet-expanded');
   isBottomSheetExpanded = true;
 
   if (toggleIcon) toggleIcon.textContent = '🗺️';
   if (toggleText) toggleText.textContent = 'Harita';
   if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(180deg)';
   if (sheetHint) sheetHint.textContent = 'Haritaya Dön';
+
+  updateFloatingToggleVisibility();
 }
 
 function collapseBottomSheet() {
@@ -88,12 +99,15 @@ function collapseBottomSheet() {
 
   if (!panel) return;
   panel.classList.remove('is-expanded');
+  document.body.classList.remove('has-sheet-expanded');
   isBottomSheetExpanded = false;
 
   if (toggleIcon) toggleIcon.textContent = '📋';
   if (toggleText) toggleText.textContent = 'Liste';
   if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(0deg)';
   if (sheetHint) sheetHint.textContent = 'Mağazalar & Rota';
+
+  updateFloatingToggleVisibility();
 }
 
 // Toast Notification Engine (Tekil Kuyruk & Yığılma Önleyici)
@@ -296,6 +310,17 @@ function initApp() {
   } else {
     hideSplashScreen();
   }
+
+  window.addEventListener('resize', () => {
+    updateFloatingToggleVisibility();
+    if (mallMap) mallMap.handleResize();
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      updateFloatingToggleVisibility();
+      if (mallMap) mallMap.handleResize();
+    }, 150);
+  });
 }
 
 // 1. Tema Yönetimi (Varsayılan Aydınlık Mimari Mod)
@@ -673,7 +698,7 @@ function setupUIEventListeners() {
   // Haritaya tıklandığında açık olan alt çekmeceyi küçült
   const mapCanvas = document.getElementById('map-canvas-container');
   mapCanvas?.addEventListener('click', () => {
-    if (window.innerWidth <= 768 && isBottomSheetExpanded) {
+    if (isMobileOrLandscape() && isBottomSheetExpanded) {
       collapseBottomSheet();
     }
   });
@@ -740,7 +765,7 @@ function handleStoreSelectedFromSearch(store, targetSlot) {
   }
 
   // 3. Arama katmanını kapat (mobilde alt çekmece genişletilmişse kapat)
-  if (window.innerWidth <= 768 && isBottomSheetExpanded) {
+  if (isMobileOrLandscape() && isBottomSheetExpanded) {
     collapseBottomSheet();
   }
 
@@ -757,7 +782,7 @@ function handleStoreSelectedFromSearch(store, targetSlot) {
   }
 
   // 5. Altta yalnızca 130px'lik mini kartı (Peek Mode) bırak (rota başlamadıysa ve mobildeyse)
-  if (!mallMap.activeRoute && window.innerWidth < 768) {
+  if (!mallMap.activeRoute && isMobileOrLandscape()) {
     showPoiPeekCard(store);
   }
 }
@@ -1257,7 +1282,7 @@ window.getStoreLandmark = getStoreLandmark;
 let currentPeekStore = null;
 
 function showPoiPeekCard(store) {
-  if (!store || window.innerWidth >= 768) return;
+  if (!store || !isMobileOrLandscape()) return;
   currentPeekStore = store;
 
   const peekCard = document.getElementById('poi-peek-card');
@@ -1290,7 +1315,7 @@ function showPoiPeekCard(store) {
   }
 
   // Mobilde alt çekmece genişletilmişse kapat
-  if (window.innerWidth <= 768 && isBottomSheetExpanded) {
+  if (isMobileOrLandscape() && isBottomSheetExpanded) {
     collapseBottomSheet();
   }
 
@@ -1309,7 +1334,8 @@ function updateFloatingToggleVisibility() {
   if (!toggle) return;
   const isRoute = document.body.classList.contains('has-active-route');
   const isPeek = document.body.classList.contains('has-peek-card');
-  if (isRoute || isPeek) {
+  const isExpanded = document.body.classList.contains('has-sheet-expanded');
+  if (isRoute || isPeek || isExpanded) {
     toggle.classList.add('hidden');
   } else {
     toggle.classList.remove('hidden');
@@ -1376,8 +1402,8 @@ function selectStore(store) {
   renderPoiDetail(store);
 
   // Mobilde ekranın %85'ini kaplayan alt çekmece KESİNLİKLE açılmaz!
-  // Bunun yerine ekranın altında ~130px kompakt bilgi kartı (Peek Mode) gösterilir:
-  if (window.innerWidth < 768) {
+  // Bunun yerine ekranın altında kompakt bilgi kartı (Peek Mode) gösterilir:
+  if (isMobileOrLandscape()) {
     showPoiPeekCard(store);
   }
 }
@@ -1785,7 +1811,7 @@ function calculateAndDisplayRoute() {
   mallMap.updateActiveStorePolygons();
 
   // Mobilde Alt Çekmeceyi Otomatik Küçült ve Rota Modunu Aktif Et
-  if (window.innerWidth <= 768) {
+  if (isMobileOrLandscape()) {
     collapseBottomSheet();
   }
   document.body.classList.add('has-active-route');
