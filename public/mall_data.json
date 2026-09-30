@@ -165,7 +165,7 @@
           "nav_node": "n_1_door_1",
           "room_id": "room_1_1",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/362e39e7cd7c.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 8505",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -173,7 +173,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY101"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/362e39e7cd7c.jpg"
         },
         {
           "id": "store_1_2",
@@ -194,7 +196,7 @@
           "nav_node": "n_1_door_2",
           "room_id": "room_1_2",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/c8c6358782fd.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0536 327 3432",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -202,7 +204,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY102"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c8c6358782fd.jpg"
         },
         {
           "id": "store_1_3",
@@ -223,7 +227,7 @@
           "nav_node": "n_1_door_3",
           "room_id": "room_1_3",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/20e0bac67224.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0530 282 2420",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -231,7 +235,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY103"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/20e0bac67224.jpg"
         },
         {
           "id": "store_1_4",
@@ -252,7 +258,7 @@
           "nav_node": "n_1_door_4",
           "room_id": "room_1_4",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/ceac8ca1e131.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 1010",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -260,7 +266,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY104"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/ceac8ca1e131.jpg"
         },
         {
           "id": "store_1_5",
@@ -281,7 +289,7 @@
           "nav_node": "n_1_door_5",
           "room_id": "room_1_5",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/453587e42087.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0535 689 5154",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -289,7 +297,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY105"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/453587e42087.jpg"
         },
         {
           "id": "store_1_6",
@@ -310,7 +320,7 @@
           "nav_node": "n_1_door_6",
           "room_id": "room_1_6",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d12b36adad05.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0533 701 8399",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -318,7 +328,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY106"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d12b36adad05.jpg"
         },
         {
           "id": "store_1_7",
@@ -339,7 +351,7 @@
           "nav_node": "n_1_door_7",
           "room_id": "room_1_7",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/89301d55b9a2.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 2833",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -347,7 +359,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY107"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/89301d55b9a2.jpg"
         },
         {
           "id": "store_1_8",
@@ -368,7 +382,7 @@
           "nav_node": "n_1_door_8",
           "room_id": "room_1_8",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/9c924b1a1f4b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0536 645 5237",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -376,7 +390,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY108"
-          }
+          },
+          "category_web": "Elektronik & Beyaz Eşya",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/9c924b1a1f4b.jpg"
         }
       ]
     },
@@ -405,7 +421,7 @@
           "nav_node": "n_2_door_1",
           "room_id": "room_2_1",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/589027cb6851.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 0300",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -413,7 +429,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY201"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/589027cb6851.jpg"
         }
       ]
     },
@@ -442,7 +460,7 @@
           "nav_node": "n_3_door_1",
           "room_id": "room_3_1",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/072fc8cfe52c.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 0720",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -450,7 +468,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY301"
-          }
+          },
+          "category_web": "Spor",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/072fc8cfe52c.jpg"
         },
         {
           "id": "store_3_2",
@@ -471,7 +491,7 @@
           "nav_node": "n_3_door_2",
           "room_id": "room_3_2",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/cd9ea18c5e02.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 5591",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -479,7 +499,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY302"
-          }
+          },
+          "category_web": "Hobi & Oyuncak",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/cd9ea18c5e02.jpg"
         },
         {
           "id": "store_3_3",
@@ -500,7 +522,7 @@
           "nav_node": "n_3_door_3",
           "room_id": "room_3_3",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/c5fa95b5dd41.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 3108",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -508,7 +530,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY303"
-          }
+          },
+          "category_web": "Optik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c5fa95b5dd41.jpg"
         },
         {
           "id": "store_3_4",
@@ -529,7 +553,7 @@
           "nav_node": "n_3_door_4",
           "room_id": "room_3_4",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/89fcd3cd8af3.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0530 393 2142",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -537,7 +561,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY304"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/89fcd3cd8af3.jpg"
         },
         {
           "id": "store_3_5",
@@ -558,7 +584,7 @@
           "nav_node": "n_3_door_5",
           "room_id": "room_3_5",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/719112ad0158.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 9676",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -566,7 +592,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY305"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/719112ad0158.jpg"
         },
         {
           "id": "store_3_6",
@@ -587,7 +615,7 @@
           "nav_node": "n_3_door_6",
           "room_id": "room_3_6",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/7da341a38a08.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 555 5600",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -595,7 +623,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY306"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/7da341a38a08.jpg"
         },
         {
           "id": "store_3_7",
@@ -616,7 +646,7 @@
           "nav_node": "n_3_door_7",
           "room_id": "room_3_7",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d8a6ac926e4a.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0530 404 6760",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -624,7 +654,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY307"
-          }
+          },
+          "category_web": "Çocuk Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d8a6ac926e4a.jpg"
         },
         {
           "id": "store_3_8",
@@ -645,7 +677,7 @@
           "nav_node": "n_3_door_8",
           "room_id": "room_3_8",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/88a44b2f3c70.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 9161",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -653,7 +685,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY308"
-          }
+          },
+          "category_web": "Spor",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/88a44b2f3c70.jpg"
         },
         {
           "id": "store_3_9",
@@ -682,7 +716,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY309"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/4617b9e487cc.jpg"
         },
         {
           "id": "store_3_10",
@@ -703,7 +739,7 @@
           "nav_node": "n_3_door_10",
           "room_id": "room_3_10",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/22f56ab33e03.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 5504",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -711,7 +747,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY310"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/22f56ab33e03.jpg"
         },
         {
           "id": "store_3_11",
@@ -732,7 +770,7 @@
           "nav_node": "n_3_door_11",
           "room_id": "room_3_11",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/5385c0c81eac.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 0007",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -740,7 +778,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY311"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5385c0c81eac.jpg"
         },
         {
           "id": "store_3_12",
@@ -769,7 +809,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY312"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b41664891d7d.jpg"
         },
         {
           "id": "store_3_13",
@@ -790,7 +832,7 @@
           "nav_node": "n_3_door_13",
           "room_id": "room_3_13",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/7a7cbb24fa1e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0536 348 3205",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -798,7 +840,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY313"
-          }
+          },
+          "category_web": "1. Bodrum Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/7a7cbb24fa1e.jpg"
         },
         {
           "id": "store_3_14",
@@ -819,7 +863,7 @@
           "nav_node": "n_3_door_14",
           "room_id": "room_3_14",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/79bfe8d16d8e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 8096",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -827,7 +871,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY314"
-          }
+          },
+          "category_web": "Spor",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/79bfe8d16d8e.jpg"
         },
         {
           "id": "store_3_15",
@@ -848,7 +894,7 @@
           "nav_node": "n_3_door_15",
           "room_id": "room_3_15",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/8d277d7b2573.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 1080",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -856,7 +902,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY315"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/8d277d7b2573.jpg"
         },
         {
           "id": "store_3_16",
@@ -877,7 +925,7 @@
           "nav_node": "n_3_door_16",
           "room_id": "room_3_16",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/c9f8c0333864.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0850 393 1000",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -885,7 +933,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY316"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c9f8c0333864.jpg"
         },
         {
           "id": "store_3_17",
@@ -906,7 +956,7 @@
           "nav_node": "n_3_door_17",
           "room_id": "room_3_17",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/f32198a9049b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 1942",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -914,7 +964,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY317"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/f32198a9049b.jpg"
         },
         {
           "id": "store_3_18",
@@ -935,7 +987,7 @@
           "nav_node": "n_3_door_18",
           "room_id": "room_3_18",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d158d37e6a5d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 5703",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -943,7 +995,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY318"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d158d37e6a5d.jpg"
         },
         {
           "id": "store_3_19",
@@ -964,7 +1018,7 @@
           "nav_node": "n_3_door_19",
           "room_id": "room_3_19",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/8d4aa547a2ff.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0532 130 5140",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -972,7 +1026,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY319"
-          }
+          },
+          "category_web": "Spor",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/8d4aa547a2ff.jpg"
         },
         {
           "id": "store_3_20",
@@ -1001,7 +1057,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY320"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/29a538f94f76.jpg"
         },
         {
           "id": "store_3_21",
@@ -1022,7 +1080,7 @@
           "nav_node": "n_3_door_21",
           "room_id": "room_3_21",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/4fc662a9bb52.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 1020",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1030,7 +1088,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY321"
-          }
+          },
+          "category_web": "Çocuk Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/4fc662a9bb52.jpg"
         },
         {
           "id": "store_3_22",
@@ -1051,7 +1111,7 @@
           "nav_node": "n_3_door_22",
           "room_id": "room_3_22",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/655a15adcba2.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 8008",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1059,7 +1119,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY322"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/655a15adcba2.jpg"
         },
         {
           "id": "store_3_23",
@@ -1080,7 +1142,7 @@
           "nav_node": "n_3_door_23",
           "room_id": "room_3_23",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/500b95ac3323.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0 850 432 0099",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1088,7 +1150,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY323"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/500b95ac3323.jpg"
         },
         {
           "id": "store_3_24",
@@ -1109,7 +1173,7 @@
           "nav_node": "n_3_door_24",
           "room_id": "room_3_24",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/75e744dc2662.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 8934",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1117,7 +1181,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY324"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/75e744dc2662.jpg"
         },
         {
           "id": "store_3_25",
@@ -1138,7 +1204,7 @@
           "nav_node": "n_3_door_25",
           "room_id": "room_3_25",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/f9e3cbc4e22f.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 4538",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1146,7 +1212,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY325"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/f9e3cbc4e22f.jpg"
         },
         {
           "id": "store_3_26",
@@ -1167,7 +1235,7 @@
           "nav_node": "n_3_door_26",
           "room_id": "room_3_26",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d0bfda45a860.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 7397",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1175,7 +1243,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY326"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d0bfda45a860.jpg"
         },
         {
           "id": "store_3_27",
@@ -1196,7 +1266,7 @@
           "nav_node": "n_3_door_27",
           "room_id": "room_3_27",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/fea6266b72ca.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 7746/0531 684 9212",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1204,7 +1274,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY327"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/fea6266b72ca.jpg"
         },
         {
           "id": "store_3_28",
@@ -1225,7 +1297,7 @@
           "nav_node": "n_3_door_28",
           "room_id": "room_3_28",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/2483c4add007.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 572 6127",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -1233,7 +1305,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY328"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/2483c4add007.jpg"
         },
         {
           "id": "store_3_29",
@@ -1254,7 +1328,7 @@
           "nav_node": "n_3_door_29",
           "room_id": "room_3_29",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/8bbdd72c23fa.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 1079",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1262,7 +1336,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY329"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/8bbdd72c23fa.jpg"
         },
         {
           "id": "store_3_30",
@@ -1291,7 +1367,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY330"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/69d9265196cf.jpg"
         },
         {
           "id": "store_3_31",
@@ -1312,7 +1390,7 @@
           "nav_node": "n_3_door_31",
           "room_id": "room_3_31",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/5764db610253.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 510 0711",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1320,7 +1398,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY331"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5764db610253.jpg"
         },
         {
           "id": "store_3_32",
@@ -1341,7 +1421,7 @@
           "nav_node": "n_3_door_32",
           "room_id": "room_3_32",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/9a9e0b27a5c9.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0850 229 8458",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -1349,7 +1429,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY332"
-          }
+          },
+          "category_web": "Süpermarket",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/9a9e0b27a5c9.jpg"
         },
         {
           "id": "store_3_33",
@@ -1370,7 +1452,7 @@
           "nav_node": "n_3_door_33",
           "room_id": "room_3_33",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/dffcf4bb2d98.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 4322",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1378,7 +1460,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY333"
-          }
+          },
+          "category_web": "Spor",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/dffcf4bb2d98.jpg"
         },
         {
           "id": "store_3_34",
@@ -1399,7 +1483,7 @@
           "nav_node": "n_3_door_34",
           "room_id": "room_3_34",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/36bc455bdf5f.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0535 465 6566",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1407,7 +1491,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY334"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/36bc455bdf5f.jpg"
         },
         {
           "id": "store_3_35",
@@ -1436,7 +1522,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY335"
-          }
+          },
+          "category_web": "Çocuk Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/db318064abc8.jpg"
         },
         {
           "id": "store_3_36",
@@ -1465,7 +1553,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY336"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/0b78c0c987c9.jpg"
         },
         {
           "id": "store_3_37",
@@ -1494,7 +1584,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY337"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/f8d6cc7d9254.jpg"
         },
         {
           "id": "store_3_38",
@@ -1515,7 +1607,7 @@
           "nav_node": "n_3_door_38",
           "room_id": "room_3_38",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a4607e730749.jpg",
-          "phone": "0212 559 0000",
+          "phone": "444 97 11 Dahili : 10005",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1523,7 +1615,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY338"
-          }
+          },
+          "category_web": "Elektronik & Beyaz Eşya",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/a4607e730749.jpg"
         },
         {
           "id": "store_3_39",
@@ -1552,7 +1646,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY339"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/341fa088970b.jpg"
         },
         {
           "id": "store_3_40",
@@ -1573,7 +1669,7 @@
           "nav_node": "n_3_door_40",
           "room_id": "room_3_40",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/698ceb7b2438.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 9011/0539 228 9512",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1581,7 +1677,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY340"
-          }
+          },
+          "category_web": "Eğlence",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/698ceb7b2438.jpg"
         },
         {
           "id": "store_3_41",
@@ -1602,7 +1700,7 @@
           "nav_node": "n_3_door_41",
           "room_id": "room_3_41",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/667ffbb6696e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 4289",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1610,7 +1708,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY341"
-          }
+          },
+          "category_web": "1. Bodrum Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/667ffbb6696e.jpg"
         },
         {
           "id": "store_3_42",
@@ -1639,7 +1739,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY342"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/6e945fff14b0.jpg"
         },
         {
           "id": "store_3_43",
@@ -1660,7 +1762,7 @@
           "nav_node": "n_3_door_43",
           "room_id": "room_3_43",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/c7e4394454b7.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 0458",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1668,7 +1770,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY343"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c7e4394454b7.jpg"
         },
         {
           "id": "store_3_44",
@@ -1689,7 +1793,7 @@
           "nav_node": "n_3_door_44",
           "room_id": "room_3_44",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/b16d1cbf6f2c.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 0770",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1697,7 +1801,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY344"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b16d1cbf6f2c.jpg"
         },
         {
           "id": "store_3_45",
@@ -1718,7 +1824,7 @@
           "nav_node": "n_3_door_45",
           "room_id": "room_3_45",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/db4286b215d1.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 909 8901",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1726,7 +1832,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY345"
-          }
+          },
+          "category_web": "Elektronik & Beyaz Eşya",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/db4286b215d1.jpg"
         },
         {
           "id": "store_3_46",
@@ -1747,7 +1855,7 @@
           "nav_node": "n_3_door_46",
           "room_id": "room_3_46",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/553a7f08aa7a.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 0600",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1755,7 +1863,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY346"
-          }
+          },
+          "category_web": "1. Bodrum Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/553a7f08aa7a.jpg"
         },
         {
           "id": "store_3_47",
@@ -1776,7 +1886,7 @@
           "nav_node": "n_3_door_47",
           "room_id": "room_3_47",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/149e60fc6a69.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 6515",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1784,7 +1894,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY347"
-          }
+          },
+          "category_web": "Hobi & Oyuncak",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/149e60fc6a69.jpg"
         },
         {
           "id": "store_3_48",
@@ -1805,7 +1917,7 @@
           "nav_node": "n_3_door_48",
           "room_id": "room_3_48",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/6c76a81d3e9b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0532 624 3548",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1813,7 +1925,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY348"
-          }
+          },
+          "category_web": "Elektronik & Beyaz Eşya",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/6c76a81d3e9b.jpg"
         },
         {
           "id": "store_3_49",
@@ -1842,7 +1956,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY349"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/06cf9fa870c6.jpg"
         },
         {
           "id": "store_3_50",
@@ -1863,7 +1979,7 @@
           "nav_node": "n_3_door_50",
           "room_id": "room_3_50",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/fbd94a660894.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 9505",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1871,7 +1987,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY350"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/fbd94a660894.jpg"
         },
         {
           "id": "store_3_51",
@@ -1900,7 +2018,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY351"
-          }
+          },
+          "category_web": "1. Bodrum Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/cd40d7db654f.jpg"
         }
       ]
     },
@@ -1929,7 +2049,7 @@
           "nav_node": "n_4_door_1",
           "room_id": "room_4_1",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d0e119ab4387.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 1345",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1937,7 +2057,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY401"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d0e119ab4387.jpg"
         },
         {
           "id": "store_4_2",
@@ -1958,7 +2080,7 @@
           "nav_node": "n_4_door_2",
           "room_id": "room_4_2",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/24313069e47c.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 4524",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -1966,7 +2088,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY402"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/24313069e47c.jpg"
         },
         {
           "id": "store_4_3",
@@ -1987,7 +2111,7 @@
           "nav_node": "n_4_door_3",
           "room_id": "room_4_3",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/6877492efa35.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 9071",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -1995,7 +2119,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY403"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/6877492efa35.jpg"
         },
         {
           "id": "store_4_4",
@@ -2016,7 +2142,7 @@
           "nav_node": "n_4_door_4",
           "room_id": "room_4_4",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/4094c10ff76d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 4816",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2024,7 +2150,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY404"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/4094c10ff76d.jpg"
         },
         {
           "id": "store_4_5",
@@ -2045,7 +2173,7 @@
           "nav_node": "n_4_door_5",
           "room_id": "room_4_5",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/94f463312faa.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 2281",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2053,7 +2181,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY405"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/94f463312faa.jpg"
         },
         {
           "id": "store_4_6",
@@ -2074,7 +2204,7 @@
           "nav_node": "n_4_door_6",
           "room_id": "room_4_6",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a90049068e4f.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 1016",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2082,7 +2212,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY406"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/a90049068e4f.jpg"
         },
         {
           "id": "store_4_7",
@@ -2103,7 +2235,7 @@
           "nav_node": "n_4_door_7",
           "room_id": "room_4_7",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/cbf69755f4df.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 5256",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2111,7 +2243,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY407"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/cbf69755f4df.jpg"
         },
         {
           "id": "store_4_8",
@@ -2132,7 +2266,7 @@
           "nav_node": "n_4_door_8",
           "room_id": "room_4_8",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/b238befad959.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 1277",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -2140,7 +2274,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY408"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b238befad959.jpg"
         },
         {
           "id": "store_4_9",
@@ -2161,7 +2297,7 @@
           "nav_node": "n_4_door_9",
           "room_id": "room_4_9",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/4fbb1b6891ac.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 9195",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2169,7 +2305,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY409"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/4fbb1b6891ac.jpg"
         },
         {
           "id": "store_4_10",
@@ -2190,7 +2328,7 @@
           "nav_node": "n_4_door_10",
           "room_id": "room_4_10",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/79b1f600493d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 4253",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2198,7 +2336,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY410"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/79b1f600493d.jpg"
         },
         {
           "id": "store_4_11",
@@ -2219,7 +2359,7 @@
           "nav_node": "n_4_door_11",
           "room_id": "room_4_11",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/90e836c093ad.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 3156",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2227,7 +2367,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY411"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/90e836c093ad.jpg"
         },
         {
           "id": "store_4_12",
@@ -2248,7 +2390,7 @@
           "nav_node": "n_4_door_12",
           "room_id": "room_4_12",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/89d298398dea.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0850 724 0346",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2256,7 +2398,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY412"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/89d298398dea.jpg"
         },
         {
           "id": "store_4_13",
@@ -2277,7 +2421,7 @@
           "nav_node": "n_4_door_13",
           "room_id": "room_4_13",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/77aedcc61728.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 4672",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2285,7 +2429,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY413"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/77aedcc61728.jpg"
         },
         {
           "id": "store_4_14",
@@ -2306,7 +2452,7 @@
           "nav_node": "n_4_door_14",
           "room_id": "room_4_14",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/5effc83c05ca.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 0011",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2314,7 +2460,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY414"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5effc83c05ca.jpg"
         },
         {
           "id": "store_4_15",
@@ -2335,7 +2483,7 @@
           "nav_node": "n_4_door_15",
           "room_id": "room_4_15",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/cabd7c530d93.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 3090",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2343,7 +2491,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY415"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/cabd7c530d93.jpg"
         },
         {
           "id": "store_4_16",
@@ -2364,7 +2514,7 @@
           "nav_node": "n_4_door_16",
           "room_id": "room_4_16",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/40893e27b74e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 7636",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2372,7 +2522,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY416"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/40893e27b74e.jpg"
         },
         {
           "id": "store_4_17",
@@ -2393,7 +2545,7 @@
           "nav_node": "n_4_door_17",
           "room_id": "room_4_17",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/df42bff51da8.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 1766",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2401,7 +2553,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY417"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/df42bff51da8.jpg"
         },
         {
           "id": "store_4_18",
@@ -2422,7 +2576,7 @@
           "nav_node": "n_4_door_18",
           "room_id": "room_4_18",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/c92b0f811e21.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 1220",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2430,7 +2584,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY418"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c92b0f811e21.jpg"
         },
         {
           "id": "store_4_19",
@@ -2451,7 +2607,7 @@
           "nav_node": "n_4_door_19",
           "room_id": "room_4_19",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/8cc763c1ff80.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 6535",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2459,7 +2615,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY419"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/8cc763c1ff80.jpg"
         },
         {
           "id": "store_4_20",
@@ -2488,7 +2646,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY420"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5c105129e899.jpg"
         },
         {
           "id": "store_4_21",
@@ -2509,7 +2669,7 @@
           "nav_node": "n_4_door_21",
           "room_id": "room_4_21",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/763fce91b61d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 2418",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2517,7 +2677,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY421"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/763fce91b61d.jpg"
         },
         {
           "id": "store_4_22",
@@ -2538,7 +2700,7 @@
           "nav_node": "n_4_door_22",
           "room_id": "room_4_22",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/2b6ea9c9165a.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 4001",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2546,7 +2708,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY422"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/2b6ea9c9165a.jpg"
         },
         {
           "id": "store_4_23",
@@ -2567,7 +2731,7 @@
           "nav_node": "n_4_door_23",
           "room_id": "room_4_23",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/de246f4eba8e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 0980",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -2575,7 +2739,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY423"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/de246f4eba8e.jpg"
         },
         {
           "id": "store_4_24",
@@ -2596,7 +2762,7 @@
           "nav_node": "n_4_door_24",
           "room_id": "room_4_24",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/394c82e961d3.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 7525",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -2604,7 +2770,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY424"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/394c82e961d3.jpg"
         },
         {
           "id": "store_4_25",
@@ -2625,7 +2793,7 @@
           "nav_node": "n_4_door_25",
           "room_id": "room_4_25",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/df260105b105.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 0874",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2633,7 +2801,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY425"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/df260105b105.jpg"
         },
         {
           "id": "store_4_26",
@@ -2654,7 +2824,7 @@
           "nav_node": "n_4_door_26",
           "room_id": "room_4_26",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/dace26697e02.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 4510",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2662,7 +2832,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY426"
-          }
+          },
+          "category_web": "Zemin Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/dace26697e02.jpg"
         },
         {
           "id": "store_4_27",
@@ -2683,7 +2855,7 @@
           "nav_node": "n_4_door_27",
           "room_id": "room_4_27",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a778d6b67dc6.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 6646-47",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2691,7 +2863,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY427"
-          }
+          },
+          "category_web": "Ev Tekstil",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/a778d6b67dc6.jpg"
         },
         {
           "id": "store_4_28",
@@ -2712,7 +2886,7 @@
           "nav_node": "n_4_door_28",
           "room_id": "room_4_28",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/375713a0f592.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 7999",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2720,7 +2894,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY428"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/375713a0f592.jpg"
         },
         {
           "id": "store_4_29",
@@ -2741,7 +2917,7 @@
           "nav_node": "n_4_door_29",
           "room_id": "room_4_29",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/9f45d1262211.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 1325",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2749,7 +2925,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY429"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/9f45d1262211.jpg"
         },
         {
           "id": "store_4_30",
@@ -2770,7 +2948,7 @@
           "nav_node": "n_4_door_30",
           "room_id": "room_4_30",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/3a153da4846e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 9926",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2778,7 +2956,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY430"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/3a153da4846e.jpg"
         },
         {
           "id": "store_4_31",
@@ -2799,7 +2979,7 @@
           "nav_node": "n_4_door_31",
           "room_id": "room_4_31",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/ac03e8ba0bbb.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 6046",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2807,7 +2987,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY431"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/ac03e8ba0bbb.jpg"
         },
         {
           "id": "store_4_32",
@@ -2828,7 +3010,7 @@
           "nav_node": "n_4_door_32",
           "room_id": "room_4_32",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/49bf72d053cd.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 9190",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2836,7 +3018,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY432"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/49bf72d053cd.jpg"
         },
         {
           "id": "store_4_33",
@@ -2865,7 +3049,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY433"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/eaf5831c793c.jpg"
         },
         {
           "id": "store_4_34",
@@ -2894,7 +3080,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY434"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c4f43a2f3373.jpg"
         },
         {
           "id": "store_4_35",
@@ -2915,7 +3103,7 @@
           "nav_node": "n_4_door_35",
           "room_id": "room_4_35",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/5cd9bf47b84f.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 1062",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2923,7 +3111,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY435"
-          }
+          },
+          "category_web": "Zemin Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5cd9bf47b84f.jpg"
         },
         {
           "id": "store_4_36",
@@ -2944,7 +3134,7 @@
           "nav_node": "n_4_door_36",
           "room_id": "room_4_36",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/61cd14bd1b73.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 1045-46",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -2952,7 +3142,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY436"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/61cd14bd1b73.jpg"
         },
         {
           "id": "store_4_37",
@@ -2981,7 +3173,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY437"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b36a23eee14f.jpg"
         },
         {
           "id": "store_4_38",
@@ -3010,7 +3204,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY438"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c1007d599b77.jpg"
         },
         {
           "id": "store_4_39",
@@ -3031,7 +3227,7 @@
           "nav_node": "n_4_door_39",
           "room_id": "room_4_39",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/efe70be81178.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 3319",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3039,7 +3235,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY439"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/efe70be81178.jpg"
         },
         {
           "id": "store_4_40",
@@ -3060,7 +3258,7 @@
           "nav_node": "n_4_door_40",
           "room_id": "room_4_40",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/ae94044d941e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 4475",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3068,7 +3266,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY440"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/ae94044d941e.jpg"
         },
         {
           "id": "store_4_41",
@@ -3089,7 +3289,7 @@
           "nav_node": "n_4_door_41",
           "room_id": "room_4_41",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/29c592a3c5f9.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 1763",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3097,7 +3297,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY441"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/29c592a3c5f9.jpg"
         },
         {
           "id": "store_4_42",
@@ -3118,7 +3320,7 @@
           "nav_node": "n_4_door_42",
           "room_id": "room_4_42",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/835fc102869b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 708 6880",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -3126,7 +3328,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY442"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/835fc102869b.jpg"
         },
         {
           "id": "store_4_43",
@@ -3147,7 +3351,7 @@
           "nav_node": "n_4_door_43",
           "room_id": "room_4_43",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/77a9dbab6d4d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 7878",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3155,7 +3359,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY443"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/77a9dbab6d4d.jpg"
         },
         {
           "id": "store_4_44",
@@ -3176,7 +3382,7 @@
           "nav_node": "n_4_door_44",
           "room_id": "room_4_44",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/77d0c69199ea.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 9735",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3184,7 +3390,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY444"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/77d0c69199ea.jpg"
         }
       ]
     },
@@ -3221,7 +3429,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY501"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/06a4d1002f52.jpg"
         },
         {
           "id": "store_5_2",
@@ -3250,7 +3460,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY502"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/65df4040cb60.jpg"
         },
         {
           "id": "store_5_3",
@@ -3271,7 +3483,7 @@
           "nav_node": "n_5_door_3",
           "room_id": "room_5_3",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/64212371cb9c.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 7565",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3279,7 +3491,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY503"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/64212371cb9c.jpg"
         },
         {
           "id": "store_5_4",
@@ -3308,7 +3522,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY504"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/f94e73c5e0c5.jpg"
         },
         {
           "id": "store_5_5",
@@ -3329,7 +3545,7 @@
           "nav_node": "n_5_door_5",
           "room_id": "room_5_5",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/97f47699d169.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 8687",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3337,7 +3553,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY505"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/97f47699d169.jpg"
         },
         {
           "id": "store_5_6",
@@ -3358,7 +3576,7 @@
           "nav_node": "n_5_door_6",
           "room_id": "room_5_6",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/b02b88bc35c7.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 3661",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3366,7 +3584,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY506"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b02b88bc35c7.jpg"
         },
         {
           "id": "store_5_7",
@@ -3387,7 +3607,7 @@
           "nav_node": "n_5_door_7",
           "room_id": "room_5_7",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/b9cff4044739.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 0166",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3395,7 +3615,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY507"
-          }
+          },
+          "category_web": "Elektronik & Beyaz Eşya",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b9cff4044739.jpg"
         },
         {
           "id": "store_5_8",
@@ -3424,7 +3646,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY508"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/887be1fe0191.jpg"
         },
         {
           "id": "store_5_9",
@@ -3445,7 +3669,7 @@
           "nav_node": "n_5_door_9",
           "room_id": "room_5_9",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/6093046d7a5e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 8059",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3453,7 +3677,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY509"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/6093046d7a5e.jpg"
         },
         {
           "id": "store_5_10",
@@ -3474,7 +3700,7 @@
           "nav_node": "n_5_door_10",
           "room_id": "room_5_10",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/8f2ac589d3e7.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0530 548 5285",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3482,7 +3708,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY510"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/8f2ac589d3e7.jpg"
         },
         {
           "id": "store_5_11",
@@ -3503,7 +3731,7 @@
           "nav_node": "n_5_door_11",
           "room_id": "room_5_11",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a9c53143798e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 5762",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3511,7 +3739,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY511"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/a9c53143798e.jpg"
         },
         {
           "id": "store_5_12",
@@ -3532,7 +3762,7 @@
           "nav_node": "n_5_door_12",
           "room_id": "room_5_12",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/aca25bc1bd93.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0533 476 4041",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3540,7 +3770,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY512"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/aca25bc1bd93.jpg"
         },
         {
           "id": "store_5_13",
@@ -3561,7 +3793,7 @@
           "nav_node": "n_5_door_13",
           "room_id": "room_5_13",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/4fd9037c0580.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 3040",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3569,7 +3801,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY513"
-          }
+          },
+          "category_web": "Optik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/4fd9037c0580.jpg"
         },
         {
           "id": "store_5_14",
@@ -3590,7 +3824,7 @@
           "nav_node": "n_5_door_14",
           "room_id": "room_5_14",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/44ea541a54db.jpg",
-          "phone": "0212 559 0000",
+          "phone": "444 6 900",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3598,7 +3832,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY514"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/44ea541a54db.jpg"
         },
         {
           "id": "store_5_15",
@@ -3627,7 +3863,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY515"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/cdcf4db38871.jpg"
         },
         {
           "id": "store_5_16",
@@ -3648,7 +3886,7 @@
           "nav_node": "n_5_door_16",
           "room_id": "room_5_16",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/1c6176bfb48e.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 1045",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3656,7 +3894,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY516"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/1c6176bfb48e.jpg"
         },
         {
           "id": "store_5_17",
@@ -3677,7 +3917,7 @@
           "nav_node": "n_5_door_17",
           "room_id": "room_5_17",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/5f408ba20ad7.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 2013",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3685,7 +3925,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY517"
-          }
+          },
+          "category_web": "1. Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5f408ba20ad7.jpg"
         },
         {
           "id": "store_5_18",
@@ -3706,7 +3948,7 @@
           "nav_node": "n_5_door_18",
           "room_id": "room_5_18",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/f6741d2eb4f0.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 0908",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3714,7 +3956,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY518"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/f6741d2eb4f0.jpg"
         },
         {
           "id": "store_5_19",
@@ -3735,7 +3979,7 @@
           "nav_node": "n_5_door_19",
           "room_id": "room_5_19",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/be9ee71e4ed0.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 5970",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3743,7 +3987,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY519"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/be9ee71e4ed0.jpg"
         },
         {
           "id": "store_5_20",
@@ -3764,7 +4010,7 @@
           "nav_node": "n_5_door_20",
           "room_id": "room_5_20",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/72543215f96c.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 503 8100",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3772,7 +4018,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY520"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/72543215f96c.jpg"
         },
         {
           "id": "store_5_21",
@@ -3793,7 +4041,7 @@
           "nav_node": "n_5_door_21",
           "room_id": "room_5_21",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/dd337b326f4d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0850 420 2063",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3801,7 +4049,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY521"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/dd337b326f4d.jpg"
         },
         {
           "id": "store_5_22",
@@ -3822,7 +4072,7 @@
           "nav_node": "n_5_door_22",
           "room_id": "room_5_22",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/3aa983f68adf.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 0971",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3830,7 +4080,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY522"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/3aa983f68adf.jpg"
         },
         {
           "id": "store_5_23",
@@ -3859,7 +4111,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY523"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/0af5ab6e5492.jpg"
         },
         {
           "id": "store_5_24",
@@ -3880,7 +4134,7 @@
           "nav_node": "n_5_door_24",
           "room_id": "room_5_24",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/37ea9a19a9b2.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 0008",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3888,7 +4142,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY524"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/37ea9a19a9b2.jpg"
         },
         {
           "id": "store_5_25",
@@ -3909,7 +4165,7 @@
           "nav_node": "n_5_door_25",
           "room_id": "room_5_25",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/fed05af3683d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 5630",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3917,7 +4173,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY525"
-          }
+          },
+          "category_web": "Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/fed05af3683d.jpg"
         },
         {
           "id": "store_5_26",
@@ -3938,7 +4196,7 @@
           "nav_node": "n_5_door_26",
           "room_id": "room_5_26",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/218ea86ce076.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 8175/0212 661 8153",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3946,7 +4204,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY526"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/218ea86ce076.jpg"
         },
         {
           "id": "store_5_27",
@@ -3967,7 +4227,7 @@
           "nav_node": "n_5_door_27",
           "room_id": "room_5_27",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/f64919edee3b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 0622",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -3975,7 +4235,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY527"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/f64919edee3b.jpg"
         },
         {
           "id": "store_5_28",
@@ -3996,7 +4258,7 @@
           "nav_node": "n_5_door_28",
           "room_id": "room_5_28",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/1df3fae2a7e5.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0559 379 6091",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4004,7 +4266,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY528"
-          }
+          },
+          "category_web": "Elektronik & Beyaz Eşya",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/1df3fae2a7e5.jpg"
         },
         {
           "id": "store_5_29",
@@ -4025,7 +4289,7 @@
           "nav_node": "n_5_door_29",
           "room_id": "room_5_29",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a6f301b0a57d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 4522",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4033,7 +4297,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY529"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/a6f301b0a57d.jpg"
         },
         {
           "id": "store_5_30",
@@ -4054,7 +4320,7 @@
           "nav_node": "n_5_door_30",
           "room_id": "room_5_30",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/6c1647b33226.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 6424",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4062,7 +4328,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY530"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/6c1647b33226.jpg"
         },
         {
           "id": "store_5_31",
@@ -4083,7 +4351,7 @@
           "nav_node": "n_5_door_31",
           "room_id": "room_5_31",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/409cd68af428.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 3829",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4091,7 +4359,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY531"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/409cd68af428.jpg"
         },
         {
           "id": "store_5_32",
@@ -4112,7 +4382,7 @@
           "nav_node": "n_5_door_32",
           "room_id": "room_5_32",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d3627de5640d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 5737",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4120,7 +4390,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY532"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d3627de5640d.jpg"
         },
         {
           "id": "store_5_33",
@@ -4141,7 +4413,7 @@
           "nav_node": "n_5_door_33",
           "room_id": "room_5_33",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/2a4e4bdb425d.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 4608",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4149,7 +4421,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY533"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/2a4e4bdb425d.jpg"
         },
         {
           "id": "store_5_34",
@@ -4170,7 +4444,7 @@
           "nav_node": "n_5_door_34",
           "room_id": "room_5_34",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/5191fcea9fd8.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 1258",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4178,7 +4452,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY534"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5191fcea9fd8.jpg"
         },
         {
           "id": "store_5_35",
@@ -4199,7 +4475,7 @@
           "nav_node": "n_5_door_35",
           "room_id": "room_5_35",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/9528c12f1d45.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 6155",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4207,7 +4483,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY535"
-          }
+          },
+          "category_web": "1. Kat",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/9528c12f1d45.jpg"
         },
         {
           "id": "store_5_36",
@@ -4228,7 +4506,7 @@
           "nav_node": "n_5_door_36",
           "room_id": "room_5_36",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/25db86216f10.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0537 976 0987",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4236,7 +4514,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY536"
-          }
+          },
+          "category_web": "Ayakkabı & Çanta",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/25db86216f10.jpg"
         },
         {
           "id": "store_5_37",
@@ -4257,7 +4537,7 @@
           "nav_node": "n_5_door_37",
           "room_id": "room_5_37",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/cbaf6c96e9c1.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 7026",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4265,7 +4545,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY537"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/cbaf6c96e9c1.jpg"
         },
         {
           "id": "store_5_38",
@@ -4286,7 +4568,7 @@
           "nav_node": "n_5_door_38",
           "room_id": "room_5_38",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/12916338b9e3.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 6795",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4294,7 +4576,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY538"
-          }
+          },
+          "category_web": "Kadın Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/12916338b9e3.jpg"
         },
         {
           "id": "store_5_39",
@@ -4315,7 +4599,7 @@
           "nav_node": "n_5_door_39",
           "room_id": "room_5_39",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d7ba16dfe6d4.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 3154",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4323,7 +4607,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY539"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d7ba16dfe6d4.jpg"
         },
         {
           "id": "store_5_40",
@@ -4344,7 +4630,7 @@
           "nav_node": "n_5_door_40",
           "room_id": "room_5_40",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/8cd97fc329aa.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 8235",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4352,7 +4638,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY540"
-          }
+          },
+          "category_web": "Optik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/8cd97fc329aa.jpg"
         },
         {
           "id": "store_5_41",
@@ -4373,7 +4661,7 @@
           "nav_node": "n_5_door_41",
           "room_id": "room_5_41",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/f911b714b6fa.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 3332",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4381,7 +4669,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY541"
-          }
+          },
+          "category_web": "Mücevher & Aksesuar",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/f911b714b6fa.jpg"
         },
         {
           "id": "store_5_42",
@@ -4402,7 +4692,7 @@
           "nav_node": "n_5_door_42",
           "room_id": "room_5_42",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/9ad31d4571cb.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0536 785 1616",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4410,7 +4700,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY542"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/9ad31d4571cb.jpg"
         },
         {
           "id": "store_5_43",
@@ -4431,7 +4723,7 @@
           "nav_node": "n_5_door_43",
           "room_id": "room_5_43",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/d7210ba53a23.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 8850",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4439,7 +4731,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY543"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d7210ba53a23.jpg"
         },
         {
           "id": "store_5_44",
@@ -4460,7 +4754,7 @@
           "nav_node": "n_5_door_44",
           "room_id": "room_5_44",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/5e81047307f5.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 0142",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4468,7 +4762,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY544"
-          }
+          },
+          "category_web": "Kozmetik & Güzellik",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/5e81047307f5.jpg"
         },
         {
           "id": "store_5_45",
@@ -4489,7 +4785,7 @@
           "nav_node": "n_5_door_45",
           "room_id": "room_5_45",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/071e0cdd4ef3.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0800 211 9272",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -4497,7 +4793,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY545"
-          }
+          },
+          "category_web": "Kadın & Erkek Giyim",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/071e0cdd4ef3.jpg"
         }
       ]
     },
@@ -4526,7 +4824,7 @@
           "nav_node": "n_6_door_1",
           "room_id": "room_6_1",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/e58130254592.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0530 668 4813",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4534,7 +4832,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY601"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/e58130254592.jpg"
         },
         {
           "id": "store_6_2",
@@ -4555,7 +4855,7 @@
           "nav_node": "n_6_door_2",
           "room_id": "room_6_2",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/0ff7ec8dd19b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "444 54 64",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4563,7 +4863,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY602"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/0ff7ec8dd19b.jpg"
         },
         {
           "id": "store_6_3",
@@ -4584,7 +4886,7 @@
           "nav_node": "n_6_door_3",
           "room_id": "room_6_3",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/49805be57dcc.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 6786",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4592,7 +4894,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY603"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/49805be57dcc.jpg"
         },
         {
           "id": "store_6_4",
@@ -4613,7 +4917,7 @@
           "nav_node": "n_6_door_4",
           "room_id": "room_6_4",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/9b966f6b7cf5.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 9960",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -4621,7 +4925,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY604"
-          }
+          },
+          "category_web": "Hobi & Oyuncak",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/9b966f6b7cf5.jpg"
         },
         {
           "id": "store_6_5",
@@ -4650,7 +4956,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY605"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/d513d8ee76cc.jpg"
         },
         {
           "id": "store_6_6",
@@ -4679,7 +4987,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY606"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/fc6e493f0d91.jpg"
         },
         {
           "id": "store_6_7",
@@ -4700,7 +5010,7 @@
           "nav_node": "n_6_door_7",
           "room_id": "room_6_7",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/c9ab3d6c84e6.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 561 2727",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4708,7 +5018,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY607"
-          }
+          },
+          "category_web": "Hizmet",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/c9ab3d6c84e6.jpg"
         },
         {
           "id": "store_6_8",
@@ -4729,7 +5041,7 @@
           "nav_node": "n_6_door_8",
           "room_id": "room_6_8",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/26804a2d5bf2.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0536 596 5662",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4737,7 +5049,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY608"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/26804a2d5bf2.jpg"
         },
         {
           "id": "store_6_9",
@@ -4758,7 +5072,7 @@
           "nav_node": "n_6_door_9",
           "room_id": "room_6_9",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/ed96771a2193.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 4039",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4766,7 +5080,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY609"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/ed96771a2193.jpg"
         },
         {
           "id": "store_6_10",
@@ -4787,7 +5103,7 @@
           "nav_node": "n_6_door_10",
           "room_id": "room_6_10",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/3221039ac287.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0545 232 4318",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4795,7 +5111,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY610"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/3221039ac287.jpg"
         },
         {
           "id": "store_6_11",
@@ -4816,7 +5134,7 @@
           "nav_node": "n_6_door_11",
           "room_id": "room_6_11",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/1ff8f2486d02.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 6013",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4824,7 +5142,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY611"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/1ff8f2486d02.jpg"
         },
         {
           "id": "store_6_12",
@@ -4845,7 +5165,7 @@
           "nav_node": "n_6_door_12",
           "room_id": "room_6_12",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a0587cbf388b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 1009",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4853,7 +5173,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY612"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/a0587cbf388b.jpg"
         },
         {
           "id": "store_6_13",
@@ -4874,7 +5196,7 @@
           "nav_node": "n_6_door_13",
           "room_id": "room_6_13",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/b546ab3fc449.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0543 181 2053",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4882,7 +5204,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY613"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b546ab3fc449.jpg"
         },
         {
           "id": "store_6_14",
@@ -4903,7 +5227,7 @@
           "nav_node": "n_6_door_14",
           "room_id": "room_6_14",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/af32a1312bad.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 5060",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4911,7 +5235,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY614"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/af32a1312bad.jpg"
         },
         {
           "id": "store_6_15",
@@ -4932,7 +5258,7 @@
           "nav_node": "n_6_door_15",
           "room_id": "room_6_15",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/93668966ad88.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 5867",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4940,7 +5266,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY615"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/93668966ad88.jpg"
         },
         {
           "id": "store_6_16",
@@ -4961,7 +5289,7 @@
           "nav_node": "n_6_door_16",
           "room_id": "room_6_16",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/ec6f88ff6ba0.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0850 222 1500",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4969,7 +5297,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY616"
-          }
+          },
+          "category_web": "Elektronik & Beyaz Eşya",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/ec6f88ff6ba0.jpg"
         },
         {
           "id": "store_6_17",
@@ -4990,7 +5320,7 @@
           "nav_node": "n_6_door_17",
           "room_id": "room_6_17",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a88f70464cef.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 5933",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -4998,7 +5328,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY617"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/a88f70464cef.jpg"
         },
         {
           "id": "store_6_18",
@@ -5019,7 +5351,7 @@
           "nav_node": "n_6_door_18",
           "room_id": "room_6_18",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/781137eeba73.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 661 7474",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -5027,7 +5359,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY618"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/781137eeba73.jpg"
         },
         {
           "id": "store_6_19",
@@ -5048,7 +5382,7 @@
           "nav_node": "n_6_door_19",
           "room_id": "room_6_19",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/bce39d0baba4.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0850 220 0967",
           "is_anchor": true,
           "campaign": {
             "active": true,
@@ -5056,7 +5390,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY619"
-          }
+          },
+          "category_web": "Eğlence",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/bce39d0baba4.jpg"
         },
         {
           "id": "store_6_20",
@@ -5077,7 +5413,7 @@
           "nav_node": "n_6_door_20",
           "room_id": "room_6_20",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/8ea2692f3909.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 560 4402",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -5085,7 +5421,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY620"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/8ea2692f3909.jpg"
         },
         {
           "id": "store_6_21",
@@ -5106,7 +5444,7 @@
           "nav_node": "n_6_door_21",
           "room_id": "room_6_21",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/b639a4d55a1b.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0530 548 3431",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -5114,7 +5452,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY621"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/b639a4d55a1b.jpg"
         },
         {
           "id": "store_6_22",
@@ -5135,7 +5475,7 @@
           "nav_node": "n_6_door_22",
           "room_id": "room_6_22",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/ebe06b129f40.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0212 559 2797",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -5143,7 +5483,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY622"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/ebe06b129f40.jpg"
         },
         {
           "id": "store_6_23",
@@ -5164,7 +5506,7 @@
           "nav_node": "n_6_door_23",
           "room_id": "room_6_23",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/ac323443120c.jpg",
-          "phone": "0212 559 0000",
+          "phone": "0537 954 0871",
           "is_anchor": false,
           "campaign": {
             "active": true,
@@ -5172,7 +5514,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY623"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/ac323443120c.jpg"
         },
         {
           "id": "store_6_24",
@@ -5201,7 +5545,9 @@
             "discount": "%40'a Varan Fırsat",
             "badge": "⏰ Flaş Fırsat",
             "code": "CAPACITY624"
-          }
+          },
+          "category_web": "Yiyecek & İçecek",
+          "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/51f92e68b24c.jpg"
         }
       ]
     }

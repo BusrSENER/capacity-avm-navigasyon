@@ -188,6 +188,34 @@ class MallMap {
     this.applyTransform();
   }
 
+  /**
+   * Haritayı verilen ekran koordinatı (screenX, screenY) etrafında döndürür.
+   * Yörüngesel savrulmayı (orbital drift) önlemek için harita merkezini dönüşe göre dengeler.
+   * İki parmak hareketinde ekranın sol üstü yerine doğrudan iki parmağın orta noktasına sabitler.
+   */
+  rotateAroundPoint(angleDiffDeg, screenX, screenY) {
+    if (!angleDiffDeg) return;
+    const cxWorld = this.vbWidth / 2;
+    const cyWorld = this.vbHeight / 2;
+
+    const cxScreen = this.panX + this.scale * cxWorld;
+    const cyScreen = this.panY + this.scale * cyWorld;
+
+    const dx = cxScreen - screenX;
+    const dy = cyScreen - screenY;
+
+    const rad = angleDiffDeg * (Math.PI / 180);
+    const cosA = Math.cos(rad);
+    const sinA = Math.sin(rad);
+
+    const newCxScreen = screenX + (dx * cosA - dy * sinA);
+    const newCyScreen = screenY + (dx * sinA + dy * cosA);
+
+    this.panX = newCxScreen - this.scale * cxWorld;
+    this.panY = newCyScreen - this.scale * cyWorld;
+    this.rotation = (this.rotation + angleDiffDeg) % 360;
+  }
+
   resetRotation(duration = 350) {
     if (Math.abs(this.rotation) < 0.1) {
       this.rotation = 0;
@@ -821,9 +849,14 @@ class MallMap {
       }
     });
 
-    // Dokunmatik Etkileşim: Akıcı Touch Pan, İki Parmakla Döndürme & Odaklı Pinch-to-Zoom
+    // Dokunmatik Etkileşim: Akıcı Touch Pan, İki Parmakla Odaklı Döndürme & Odaklı Pinch-to-Zoom
     let lastTouchDist = 0;
+    let touchStartAngle = 0;
     let lastTouchAngle = 0;
+    let hasRotationStarted = false;
+    let lastMidX = 0;
+    let lastMidY = 0;
+    const ROTATION_DEADZONE_DEG = 8.0; // En az 8° (~0.14 radyan) değişim olmadan döndürme (yalpalama engelleme)
 
     this.container.addEventListener('touchstart', (e) => {
       this.updateDimensions();
@@ -834,14 +867,19 @@ class MallMap {
         this.startY = e.touches[0].clientY - this.panY;
       } else if (e.touches.length === 2) {
         this.isDragging = false;
+        const rect = this.container.getBoundingClientRect();
         lastTouchDist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
-        lastTouchAngle = Math.atan2(
+        touchStartAngle = Math.atan2(
           e.touches[1].clientY - e.touches[0].clientY,
           e.touches[1].clientX - e.touches[0].clientX
         );
+        lastTouchAngle = touchStartAngle;
+        hasRotationStarted = false;
+        lastMidX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - rect.left;
+        lastMidY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - rect.top;
       }
     }, { passive: false });
 
@@ -854,6 +892,7 @@ class MallMap {
         this.applyTransform();
       } else if (e.touches.length === 2 && lastTouchDist > 0) {
         if (this.onUserPan) this.onUserPan();
+        const rect = this.container.getBoundingClientRect();
         const dist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
@@ -862,35 +901,58 @@ class MallMap {
           e.touches[1].clientY - e.touches[0].clientY,
           e.touches[1].clientX - e.touches[0].clientX
         );
+        const midX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - rect.left;
+        const midY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - rect.top;
 
-        // 1. İki parmakla döndürme (Rotation)
-        let angleDiff = (currentAngle - lastTouchAngle) * (180 / Math.PI);
-        if (angleDiff > 180) angleDiff -= 360;
-        if (angleDiff < -180) angleDiff += 360;
+        // 1. İki parmakla kaydırma (Two-finger pan)
+        const deltaMidX = midX - lastMidX;
+        const deltaMidY = midY - lastMidY;
+        this.panX += deltaMidX;
+        this.panY += deltaMidY;
 
-        if (Math.abs(angleDiff) > 0.35) {
-          this.rotation = (this.rotation + angleDiff) % 360;
-          lastTouchAngle = currentAngle;
-        }
-
-        // 2. Pinch-to-zoom
-        if (dist > 0) {
+        // 2. Pinch-to-zoom (Dokunulan iki parmağın orta noktasına odaklı)
+        if (dist > 0 && lastTouchDist > 0) {
           const factor = dist / lastTouchDist;
           this.updateDimensions();
           const newScale = Math.min(this.maxScale, Math.max(this.minScale, this.scale * factor));
+          const zoomRatio = newScale / this.scale;
 
-          // Dokunulan iki parmağın merkez noktasına doğru yakınlaşma (Pinch-to-zoom focus)
-          const rect = this.container.getBoundingClientRect();
-          const midX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - rect.left;
-          const midY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - rect.top;
-
-          this.panX = midX - (midX - this.panX) * (newScale / this.scale);
-          this.panY = midY - (midY - this.panY) * (newScale / this.scale);
+          this.panX = midX - (midX - this.panX) * zoomRatio;
+          this.panY = midY - (midY - this.panY) * zoomRatio;
           this.scale = newScale;
-          lastTouchDist = dist;
-          this.clampToBounds();
-          this.applyTransform();
         }
+
+        // 3. İki parmakla döndürme (Rotation Deadzone & Midpoint Rotation)
+        let totalDiff = (currentAngle - touchStartAngle) * (180 / Math.PI);
+        if (totalDiff > 180) totalDiff -= 360;
+        if (totalDiff < -180) totalDiff += 360;
+
+        if (!hasRotationStarted) {
+          if (Math.abs(totalDiff) >= ROTATION_DEADZONE_DEG) {
+            hasRotationStarted = true;
+            // Eşik aşıldığında eşik noktasından itibaren akıcı ve kesintisiz dönüşü başlat
+            const sign = totalDiff > 0 ? 1 : -1;
+            lastTouchAngle = touchStartAngle + sign * (ROTATION_DEADZONE_DEG * Math.PI / 180);
+          }
+        }
+
+        if (hasRotationStarted) {
+          let angleDiff = (currentAngle - lastTouchAngle) * (180 / Math.PI);
+          if (angleDiff > 180) angleDiff -= 360;
+          if (angleDiff < -180) angleDiff += 360;
+
+          if (Math.abs(angleDiff) > 0.05) {
+            // Yörüngesel savrulmayı (drift) engellemek için iki parmağın orta noktası etrafında döndür
+            this.rotateAroundPoint(angleDiff, midX, midY);
+            lastTouchAngle = currentAngle;
+          }
+        }
+
+        lastTouchDist = dist;
+        lastMidX = midX;
+        lastMidY = midY;
+        this.clampToBounds();
+        this.applyTransform();
       }
     }, { passive: false });
 
@@ -900,9 +962,11 @@ class MallMap {
         this.isDragging = true;
         this.startX = e.touches[0].clientX - this.panX;
         this.startY = e.touches[0].clientY - this.panY;
+        hasRotationStarted = false;
       } else if (e.touches.length === 0) {
         this.isDragging = false;
         lastTouchDist = 0;
+        hasRotationStarted = false;
         this.settleBounds();
       }
     });
