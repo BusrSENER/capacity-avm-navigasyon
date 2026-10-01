@@ -76,7 +76,7 @@
     
     <g class="store-polygon" data-id="store_6_1" id="room_6_1" data-name="Arby's">
       <rect x="220.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="260.0" y="229.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Arby's
@@ -84,7 +84,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_2" id="room_6_2" data-name="Burger King">
       <rect x="295.4" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="335.4" y="229.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Burger King
@@ -92,7 +92,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_3" id="room_6_3" data-name="Bursa Kebap Evi">
       <rect x="370.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="410.7" y="229.0"
             fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Bursa Kebap Evi
@@ -108,7 +108,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_5" id="room_6_5" data-name="Doyuyo">
       <rect x="521.4" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="561.4" y="229.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Doyuyo
@@ -116,7 +116,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_6" id="room_6_6" data-name="Dürümle">
       <rect x="596.8" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="636.8" y="229.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Dürümle
@@ -132,7 +132,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_8" id="room_6_8" data-name="Gloria Jeans Coffees">
       <rect x="747.5" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="787.5" y="229.0"
             fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Gloria Jeans Coffees
@@ -140,7 +140,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_9" id="room_6_9" data-name="Green Salads">
       <rect x="822.9" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="862.9" y="229.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Green Salads
@@ -148,7 +148,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_10" id="room_6_10" data-name="GurmeBurger Kasap">
       <rect x="898.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="938.3" y="229.0"
             fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         GurmeBurger Kasap
@@ -156,7 +156,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_11" id="room_6_11" data-name="Günaydın">
       <rect x="973.6" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="1013.6" y="229.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Günaydın
@@ -164,7 +164,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_12" id="room_6_12" data-name="HD İskender">
       <rect x="275.1" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="315.1" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         HD İskender
@@ -172,7 +172,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_13" id="room_6_13" data-name="KFC">
       <rect x="359.9" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="399.9" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         KFC
@@ -180,7 +180,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_14" id="room_6_14" data-name="Köfteci Ramiz">
       <rect x="444.7" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="484.7" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Köfteci Ramiz
@@ -188,7 +188,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_15" id="room_6_15" data-name="Makarnam">
       <rect x="529.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="569.5" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Makarnam
@@ -204,7 +204,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_17" id="room_6_17" data-name="Molasera">
       <rect x="699.0" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="739.0" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Molasera
@@ -212,7 +212,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_18" id="room_6_18" data-name="Özsüt">
       <rect x="783.8" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="823.8" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Özsüt
@@ -228,7 +228,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_20" id="room_6_20" data-name="Pidem">
       <rect x="953.4" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="993.4" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Pidem
@@ -236,7 +236,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_21" id="room_6_21" data-name="Popeyes">
       <rect x="100.0" y="520.0" width="110.0" height="140.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="155.0" y="594.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Popeyes
@@ -244,7 +244,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_22" id="room_6_22" data-name="Tavuk Dünyası">
       <rect x="100.0" y="200.0" width="110.0" height="140.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="155.0" y="274.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Tavuk Dünyası
@@ -252,7 +252,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_23" id="room_6_23" data-name="Terra Pizza">
       <rect x="1090.0" y="360.0" width="120.0" height="140.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="1150.0" y="434.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Terra Pizza
@@ -260,7 +260,7 @@
     </g>
     <g class="store-polygon" data-id="store_6_24" id="room_6_24" data-name="Usta Dönerci">
       <rect x="1090.0" y="520.0" width="120.0" height="140.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+            fill="#fff7ed" stroke="#fb923c" stroke-width="1.8" />
       <text class="pointer-events-none select-none" x="1150.0" y="594.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Usta Dönerci

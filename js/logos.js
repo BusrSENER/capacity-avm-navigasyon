@@ -104,6 +104,12 @@ const BrandLogos = {
     <text x="50" y="70" font-family="'Times New Roman', serif" font-weight="700" font-size="13" fill="#ffffff" text-anchor="middle" letter-spacing="1">ATASAY</text>
   </svg>`,
 
+  altinbas: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <circle cx="50" cy="38" r="14" fill="none" stroke="#eab308" stroke-width="2.5"/>
+    <text x="50" y="68" font-family="'Times New Roman', serif" font-weight="700" font-size="11" fill="#eab308" text-anchor="middle" letter-spacing="1">ALTINBAŞ</text>
+  </svg>`,
+
   altınbaş: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#18181b"/>
     <circle cx="50" cy="38" r="14" fill="none" stroke="#eab308" stroke-width="2.5"/>
@@ -203,7 +209,8 @@ const BrandLogos = {
 
   arbys: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#991b1b"/>
-    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">Arby's</text>
+    <path d="M42 22 C42 16, 58 16, 58 22 C58 35, 68 40, 74 46 C68 49, 62 47, 50 47 C38 47, 32 49, 26 46 C32 40, 42 35, 42 22 Z" fill="#ffffff"/>
+    <text x="50" y="74" font-family="'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle">Arby's</text>
   </svg>`,
 
   doyuyo: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -211,9 +218,166 @@ const BrandLogos = {
     <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="15" fill="#ffffff" text-anchor="middle">DOYUYO</text>
   </svg>`,
 
+  durumle: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#15803d"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle">DÜRÜMLE</text>
+  </svg>`,
+
   dürümle: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#15803d"/>
     <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle">DÜRÜMLE</text>
+  </svg>`,
+
+  hdiskender: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#881337"/>
+    <rect x="20" y="20" width="60" height="34" rx="6" fill="#be123c"/>
+    <text x="50" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="22" fill="#ffffff" text-anchor="middle" letter-spacing="1">HD</text>
+    <text x="50" y="74" font-family="'Times New Roman', serif" font-weight="900" font-size="11.5" fill="#fef08a" text-anchor="middle" letter-spacing="1">İSKENDER</text>
+  </svg>`,
+
+  kfc: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <rect x="36" y="12" width="28" height="76" fill="#ffffff"/>
+    <rect x="16" y="32" width="68" height="36" rx="6" fill="#18181b"/>
+    <text x="50" y="58" font-family="'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="22" fill="#ffffff" text-anchor="middle" letter-spacing="2">KFC</text>
+  </svg>`,
+
+  kofteciramiz: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#064e3b"/>
+    <circle cx="50" cy="36" r="15" fill="#047857" stroke="#facc15" stroke-width="1.5"/>
+    <text x="50" y="42" font-family="'Times New Roman', serif" font-weight="900" font-size="16" fill="#facc15" text-anchor="middle">R</text>
+    <text x="50" y="65" font-family="'Times New Roman', serif" font-weight="800" font-size="10.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">KÖFTECİ</text>
+    <text x="50" y="79" font-family="'Times New Roman', serif" font-weight="900" font-size="12" fill="#facc15" text-anchor="middle" letter-spacing="1">RAMİZ</text>
+  </svg>`,
+
+  ramiz: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#064e3b"/>
+    <circle cx="50" cy="36" r="15" fill="#047857" stroke="#facc15" stroke-width="1.5"/>
+    <text x="50" y="42" font-family="'Times New Roman', serif" font-weight="900" font-size="16" fill="#facc15" text-anchor="middle">R</text>
+    <text x="50" y="65" font-family="'Times New Roman', serif" font-weight="800" font-size="10.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">KÖFTECİ</text>
+    <text x="50" y="79" font-family="'Times New Roman', serif" font-weight="900" font-size="12" fill="#facc15" text-anchor="middle" letter-spacing="1">RAMİZ</text>
+  </svg>`,
+
+  popeyes: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#c2410c"/>
+    <circle cx="50" cy="38" r="16" fill="#ea580c" stroke="#fed7aa" stroke-width="2"/>
+    <text x="50" y="45" font-family="'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">P</text>
+    <text x="50" y="72" font-family="'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">POPEYES</text>
+  </svg>`,
+
+  tavukdunyasi: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <circle cx="50" cy="36" r="14" fill="#eab308"/>
+    <path d="M42 36 Q50 28 58 36 Q50 44 42 36" fill="#18181b"/>
+    <text x="50" y="66" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">TAVUK</text>
+    <text x="50" y="80" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="9" fill="#eab308" text-anchor="middle" letter-spacing="1">DÜNYASI</text>
+  </svg>`,
+
+  gunaydin: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#1c1917"/>
+    <circle cx="50" cy="36" r="13" fill="#d97706"/>
+    <path d="M50 16 L50 21 M50 51 L50 56 M30 36 L35 36 M65 36 L70 36" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="50" y="70" font-family="'Times New Roman', serif" font-weight="900" font-size="12" fill="#fef08a" text-anchor="middle" letter-spacing="1">GÜNAYDIN</text>
+    <text x="50" y="82" font-family="sans-serif" font-weight="600" font-size="6.5" fill="#a8a29e" text-anchor="middle" letter-spacing="1.5">KASAP &amp; STEAK</text>
+  </svg>`,
+
+  ozsut: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#1e3a8a"/>
+    <text x="50" y="52" font-family="'Times New Roman', serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="1">ÖZSÜT</text>
+    <text x="50" y="72" font-family="sans-serif" font-weight="600" font-size="7" fill="#93c5fd" text-anchor="middle" letter-spacing="2">MUTLULUK TADINDA</text>
+  </svg>`,
+
+  pidem: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <ellipse cx="50" cy="36" rx="22" ry="10" fill="#f59e0b"/>
+    <text x="50" y="72" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="1">p!dem</text>
+  </svg>`,
+
+  terrapizza: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#991b1b"/>
+    <polygon points="50,20 68,46 32,46" fill="#f59e0b"/>
+    <circle cx="48" cy="34" r="3" fill="#dc2626"/>
+    <circle cx="56" cy="40" r="2.5" fill="#dc2626"/>
+    <text x="50" y="66" font-family="'Arial Black', sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle">TERRA</text>
+    <text x="50" y="80" font-family="'Arial Black', sans-serif" font-weight="800" font-size="11" fill="#facc15" text-anchor="middle">PIZZA</text>
+  </svg>`,
+
+  saloonburger: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#292524"/>
+    <text x="50" y="44" font-family="'Arial Black', sans-serif" font-weight="900" font-size="13" fill="#f97316" text-anchor="middle">SALOON</text>
+    <text x="50" y="66" font-family="'Arial Black', sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle">BURGER</text>
+  </svg>`,
+
+  bursakebapevi: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#7f1d1d"/>
+    <text x="50" y="40" font-family="'Times New Roman', serif" font-weight="900" font-size="13" fill="#fef08a" text-anchor="middle">BURSA</text>
+    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="800" font-size="9" fill="#ffffff" text-anchor="middle">KEBAP EVİ</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="600" font-size="6.5" fill="#fca5a5" text-anchor="middle">GERÇEK İSKENDER</text>
+  </svg>`,
+
+  greensalads: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#14532d"/>
+    <path d="M50 20 C40 26 36 38 42 46 C48 54 50 58 50 60 C50 58 52 54 58 46 C64 38 60 26 50 20 Z" fill="#4ade80"/>
+    <text x="50" y="74" font-family="'Arial Black', sans-serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle">GREEN</text>
+    <text x="50" y="86" font-family="'Arial Black', sans-serif" font-weight="800" font-size="9" fill="#86efac" text-anchor="middle">SALADS</text>
+  </svg>`,
+
+  gurmeburger: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <text x="50" y="46" font-family="'Arial Black', sans-serif" font-weight="900" font-size="11" fill="#f59e0b" text-anchor="middle">GURME</text>
+    <text x="50" y="66" font-family="'Arial Black', sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle">BURGER</text>
+    <text x="50" y="80" font-family="sans-serif" font-weight="700" font-size="7" fill="#94a3b8" text-anchor="middle">KASAP</text>
+  </svg>`,
+
+  gurmeburgerkasap: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <text x="50" y="46" font-family="'Arial Black', sans-serif" font-weight="900" font-size="11" fill="#f59e0b" text-anchor="middle">GURME</text>
+    <text x="50" y="66" font-family="'Arial Black', sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle">BURGER</text>
+    <text x="50" y="80" font-family="sans-serif" font-weight="700" font-size="7" fill="#94a3b8" text-anchor="middle">KASAP</text>
+  </svg>`,
+
+  ustadonerci: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#991b1b"/>
+    <text x="50" y="46" font-family="'Arial Black', sans-serif" font-weight="900" font-size="14" fill="#fef08a" text-anchor="middle">USTA</text>
+    <text x="50" y="68" font-family="'Arial Black', sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle">DÖNERCİ</text>
+  </svg>`,
+
+  makarnam: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#b45309"/>
+    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1">MAKARNAM</text>
+  </svg>`,
+
+  molasera: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#451a03"/>
+    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="800" font-size="13" fill="#fde68a" text-anchor="middle" letter-spacing="1">MOLASERA</text>
+  </svg>`,
+
+  gloriajeans: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#450a0a"/>
+    <circle cx="50" cy="38" r="14" fill="#78350f" stroke="#d97706" stroke-width="1.5"/>
+    <text x="50" y="44" font-family="'Times New Roman', serif" font-weight="900" font-size="13" fill="#fde68a" text-anchor="middle">GJ</text>
+    <text x="50" y="66" font-family="'Times New Roman', serif" font-weight="800" font-size="8.5" fill="#ffffff" text-anchor="middle">GLORIA JEAN'S</text>
+    <text x="50" y="78" font-family="sans-serif" font-weight="600" font-size="7" fill="#fbbf24" text-anchor="middle">COFFEES</text>
+  </svg>`,
+
+  gloriajeanscoffees: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#450a0a"/>
+    <circle cx="50" cy="38" r="14" fill="#78350f" stroke="#d97706" stroke-width="1.5"/>
+    <text x="50" y="44" font-family="'Times New Roman', serif" font-weight="900" font-size="13" fill="#fde68a" text-anchor="middle">GJ</text>
+    <text x="50" y="66" font-family="'Times New Roman', serif" font-weight="800" font-size="8.5" fill="#ffffff" text-anchor="middle">GLORIA JEAN'S</text>
+    <text x="50" y="78" font-family="sans-serif" font-weight="600" font-size="7" fill="#fbbf24" text-anchor="middle">COFFEES</text>
+  </svg>`,
+
+  mediamarkt: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#df0000"/>
+    <text x="50" y="48" font-family="'Arial Black', sans-serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle">Media</text>
+    <text x="50" y="68" font-family="'Arial Black', sans-serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle">Markt</text>
+  </svg>`,
+
+  fitcity: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <path d="M30 40 L45 25 L60 40 L70 30" stroke="#06b6d4" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="50" y="65" font-family="'Arial Black', sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle">FITCITY</text>
   </svg>`,
 
   // --- HİZMET & SERVİS NOKTALARI ---
@@ -459,19 +623,33 @@ function normalizeLogoKey(str) {
 }
 
 /**
+ * Anahtar eşleme: Tam eşleşme veya anlamlı alt dize kontrolü
+ */
+function matchLogoKey(sName, logos) {
+  if (!sName || !logos) return null;
+  if (logos[sName]) return sName;
+
+  for (const k of Object.keys(logos)) {
+    if (k.length <= 3) {
+      if (sName === k) return k;
+    } else {
+      if (sName.includes(k) || (sName.length >= 4 && k.includes(sName))) {
+        return k;
+      }
+    }
+  }
+  return null;
+}
+window.matchLogoKey = matchLogoKey;
+
+/**
  * Mağazanın kurumsal vektörel logosu olup olmadığını kontrol eder
  */
 function hasBrandLogo(store) {
   if (!store || !store.name) return false;
   const sName = normalizeLogoKey(store.name);
   if (!sName) return false;
-
-  for (const k of Object.keys(BrandLogos)) {
-    if (sName.includes(k) || k.includes(sName)) {
-      return true;
-    }
-  }
-  return false;
+  return !!matchLogoKey(sName, BrandLogos);
 }
 window.hasBrandLogo = hasBrandLogo;
 
@@ -483,11 +661,10 @@ function getStoreLogo(store, size = 38) {
   if (!store) return '';
   const sName = normalizeLogoKey(store.name || '');
 
-  // 1. Check exact key or substring in BrandLogos dictionary
-  for (const [k, svg] of Object.entries(BrandLogos)) {
-    if (sName.includes(k) || k.includes(sName)) {
-      return `<div class="store-badge-icon" style="width: ${size}px; height: ${size}px;">${svg}</div>`;
-    }
+  // 1. Check exact key or match in BrandLogos dictionary
+  const matchedKey = matchLogoKey(sName, BrandLogos);
+  if (matchedKey && BrandLogos[matchedKey]) {
+    return `<div class="store-badge-icon" style="width: ${size}px; height: ${size}px;">${BrandLogos[matchedKey]}</div>`;
   }
 
   // 2. If store has an official scraped thumbnail image URL

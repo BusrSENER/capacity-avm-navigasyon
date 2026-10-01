@@ -423,12 +423,12 @@ class MallMap {
     const isFiltered = this.activeCategoryFilter && this.activeCategoryFilter !== 'all';
     const showAll = this.displayMode === 'all' || isZoomed || isFiltered;
 
-    // Hedef ve Başlangıç en öncelikli, sonra Anchor ve Zemin Kat logolu mağazalar
+    // Hedef ve Başlangıç en öncelikli, sonra Anchor ve logolu kurumsal mağazalar
     const sortedStores = [...stores].sort((a, b) => {
       const getPrio = (s) => {
         if (this.activeTargetStore?.id === s.id || this.activeStartStore?.id === s.id) return 4;
         if (s.is_anchor) return 3;
-        if (floorNum === 4 && typeof hasBrandLogo === 'function' && hasBrandLogo(s)) return 2;
+        if (typeof hasBrandLogo === 'function' && hasBrandLogo(s)) return 2;
         return 1;
       };
       return getPrio(b) - getPrio(a);
@@ -441,9 +441,9 @@ class MallMap {
       const isTarget = this.activeTargetStore && this.activeTargetStore.id === store.id;
       const isStart = this.activeStartStore && this.activeStartStore.id === store.id;
       const isAnchor = !!store.is_anchor;
-      const isZeminLogo = (floorNum === 4 && typeof hasBrandLogo === 'function' && hasBrandLogo(store));
+      const hasLogo = (typeof hasBrandLogo === 'function' && hasBrandLogo(store));
 
-      if (!showAll && !isAnchor && !isTarget && !isStart && !isZeminLogo) {
+      if (!showAll && !isAnchor && !isTarget && !isStart && !hasLogo) {
         return;
       }
 
@@ -455,12 +455,13 @@ class MallMap {
 
       placedPositions.push({ x: store.cx, y: store.cy });
 
-      // Uzun mağazalarda (Twist, Faik Sönmez vb. y=560..730) logoyu SVG metninin üstüne orantılı yerleştir
-      const isTallShop = (store.cy > 520 && store.cy < 680 && store.cx > 350 && store.cx < 1050);
-      const offsetY = (isTallShop && !isAnchor) ? -22 : 0;
+      // Uzun mağazalarda veya 2. Kat Food Court'ta logoyu SVG metninin üstüne orantılı yerleştir
+      const isTallShop = (store.cy > 520 && store.cy < 680 && store.cx > 350 && store.cx < 1050 && floorNum === 4);
+      const isFoodCourtShop = (floorNum === 6);
+      const offsetY = (!isAnchor && (isFoodCourtShop || isTallShop)) ? -22 : 0;
 
       const marker = document.createElement('div');
-      marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : (isZeminLogo ? 'is-brand-store' : 'is-secondary')} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
+      marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : (hasLogo ? 'is-brand-store' : 'is-secondary')} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
       marker.style.left = `${store.cx}px`;
       marker.style.top = `${store.cy + offsetY}px`;
       marker.setAttribute('data-store-id', store.id);
