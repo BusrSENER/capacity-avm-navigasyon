@@ -141,6 +141,62 @@ window.openSidebarDrawer = openSidebarDrawer;
 window.closeSidebarDrawer = closeSidebarDrawer;
 window.toggleSidebarDrawer = toggleSidebarDrawer;
 
+// Masaüstü Sol Panel Daraltma / Tam Ekran Harita Yöneticisi (Desktop Collapse Sidebar)
+function collapseDesktopSidebar() {
+  if (window.innerWidth < 950) return;
+  document.body.classList.add('sidebar-collapsed');
+
+  // Haritayı hemen ve animasyon bitiminde (320ms) yeni genişliğe göre ortala
+  if (window.mallMap && typeof window.mallMap.resetView === 'function') {
+    window.mallMap.resetView();
+  }
+  setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
+    if (window.mallMap && typeof window.mallMap.resetView === 'function') {
+      window.mallMap.resetView();
+    }
+  }, 320);
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function expandDesktopSidebar() {
+  if (window.innerWidth < 950) return;
+  document.body.classList.remove('sidebar-collapsed');
+
+  // Haritayı hemen ve animasyon bitiminde (320ms) yeni genişliğe göre ortala
+  if (window.mallMap && typeof window.mallMap.resetView === 'function') {
+    window.mallMap.resetView();
+  }
+  setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
+    if (window.mallMap && typeof window.mallMap.resetView === 'function') {
+      window.mallMap.resetView();
+    }
+  }, 320);
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function toggleDesktopSidebar() {
+  if (window.innerWidth < 950) return;
+  if (document.body.classList.contains('sidebar-collapsed')) {
+    expandDesktopSidebar();
+  } else {
+    collapseDesktopSidebar();
+  }
+}
+
+window.collapseDesktopSidebar = collapseDesktopSidebar;
+window.expandDesktopSidebar = expandDesktopSidebar;
+window.toggleDesktopSidebar = toggleDesktopSidebar;
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth < 950 && document.body.classList.contains('sidebar-collapsed')) {
+    document.body.classList.remove('sidebar-collapsed');
+  }
+});
+
 // Toast Notification Engine (Tekil Kuyruk & Yığılma Önleyici)
 let activeToastTimeout = null;
 
@@ -344,12 +400,18 @@ function initApp() {
 
   window.addEventListener('resize', () => {
     updateFloatingToggleVisibility();
-    if (mallMap) mallMap.handleResize();
+    if (window.mallMap) {
+      if (typeof window.mallMap.handleResize === 'function') window.mallMap.handleResize();
+      else if (typeof window.mallMap.resetView === 'function') window.mallMap.resetView();
+    }
   });
   window.addEventListener('orientationchange', () => {
     setTimeout(() => {
       updateFloatingToggleVisibility();
-      if (mallMap) mallMap.handleResize();
+      if (window.mallMap) {
+        if (typeof window.mallMap.handleResize === 'function') window.mallMap.handleResize();
+        else if (typeof window.mallMap.resetView === 'function') window.mallMap.resetView();
+      }
     }, 150);
   });
 }
@@ -746,7 +808,11 @@ function setupUIEventListeners() {
 
   btnSidebarToggle?.addEventListener('click', (e) => {
     e.stopPropagation();
-    openSidebarDrawer();
+    if (window.innerWidth >= 950) {
+      expandDesktopSidebar();
+    } else {
+      openSidebarDrawer();
+    }
   });
 
   btnSidebarClose?.addEventListener('click', (e) => {
@@ -756,6 +822,15 @@ function setupUIEventListeners() {
 
   landscapeBackdrop?.addEventListener('click', () => {
     closeSidebarDrawer();
+  });
+
+  // Masaüstü Sidebar Daraltma Butonları (Sağ kenar [<] butonu ve header butonu)
+  const desktopCollapseBtns = document.querySelectorAll('.desktop-collapse-btn');
+  desktopCollapseBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      collapseDesktopSidebar();
+    });
   });
 }
 

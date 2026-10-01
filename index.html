@@ -79,8 +79,16 @@
   <div id="app-root-layout" class="flex h-screen w-screen overflow-hidden p-2.5 sm:p-3 gap-3">
 
     <!-- SOL PANEL / MOBİL BOTTOM SHEET: CAPACITY REHBER (cevahir-rehber.web.app mimarisinde) -->
-    <aside id="sidebar-panel" class="w-[350px] lg:w-[380px] h-full flex flex-col bg-white dark:bg-slate-900 rounded-[26px] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 p-4 z-40 shrink-0 transition-colors duration-200">
+    <aside id="sidebar-panel" class="relative w-[350px] lg:w-[380px] h-full flex flex-col bg-white dark:bg-slate-900 rounded-[26px] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 p-4 z-40 shrink-0 transition-colors duration-200">
       
+      <!-- Masaüstü Sol Panel Daraltma Butonu: Sağ Kenara Yapışık [<] (Daralt) Butonu -->
+      <button id="btn-collapse-sidebar" 
+              class="desktop-collapse-btn hidden md:flex absolute -right-3.5 top-6 z-50 w-7 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-md items-center justify-center text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer group active:scale-95" 
+              title="Paneli Daralt (<)" 
+              aria-label="Daralt">
+        <i data-lucide="chevron-left" class="w-4 h-4 transition-transform group-hover:-translate-x-0.5"></i>
+      </button>
+
       <!-- Mobil Bottom Sheet Tutamacı & Hızlı Eylem Çubuğu (Drag Handle Pill + Chevron Toggle) -->
       <div id="bottom-sheet-handle-bar" class="w-full flex items-center justify-between pb-1.5 pt-0.5 cursor-pointer md:hidden shrink-0 select-none touch-none">
         <div class="w-7"></div>
@@ -119,6 +127,14 @@
           <!-- Aydınlık / Karanlık Mod Butonu -->
           <button id="theme-toggle-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-amber-400 transition-all active:scale-95" title="Karanlık / Aydınlık Mod">
             <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Masaüstü Sidebar Daraltma Butonu (Header İçi) -->
+          <button id="btn-collapse-sidebar-header" 
+                  class="desktop-collapse-btn hidden md:flex w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-95 cursor-pointer" 
+                  title="Paneli Daralt (<)" 
+                  aria-label="Daralt">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
           </button>
 
           <!-- Yatay Mod Çekmece Kapatma Butonu (Landscape Drawer Close) -->
@@ -361,8 +377,8 @@
     <!-- SAĞ HARİTA ALANI (VIEWPORT) -->
     <main id="main-map-area" class="flex-1 relative h-full rounded-[26px] overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
       
-      <!-- Mobil Yatay / Kompakt Hamburger Drawer Açma Butonu (Apple Haritalar Stili) -->
-      <button id="btn-sidebar-toggle" class="hidden absolute top-1.5 left-1.5 z-30 w-9 h-9 rounded-xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-md flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Menüyü ve Aramayı Aç" aria-label="Menü">
+      <!-- Mobil Yatay & Masaüstü Daraltılmış Menü Açma Butonu [☰] (Apple Haritalar Stili) -->
+      <button id="btn-sidebar-toggle" class="hidden absolute top-1.5 left-1.5 z-30 w-9 h-9 rounded-xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-md flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Menüyü Aç" aria-label="Menüyü Aç">
         <i data-lucide="menu" class="w-4 h-4"></i>
       </button>
 

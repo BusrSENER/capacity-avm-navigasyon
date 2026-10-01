@@ -1551,4 +1551,101 @@ html.dark .search-autocomplete-item:hover {
   }
 }
 
+/* ==========================================================================
+   11. MASAÜSTÜ SOL PANEL DARALTMA (COLLAPSE SIDEBAR) MİMARİSİ (@media >= 950px)
+   ========================================================================== */
+@media (min-width: 950px) {
+  /* Masaüstü Daraltma Butonları: Sadece masaüstünde görünür */
+  .desktop-collapse-btn {
+    display: flex !important;
+  }
+
+  /* Akıcı geçiş animasyonları (300ms cubic-bezier) */
+  #sidebar-panel {
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                width 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                padding 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                margin 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 250ms ease !important;
+  }
+
+  #app-root-layout {
+    transition: padding 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                gap 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  #main-map-area {
+    transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-radius 300ms ease,
+                box-shadow 300ms ease !important;
+  }
+
+  /* Sidebar Kapandığında (body.sidebar-collapsed) */
+  body.sidebar-collapsed #sidebar-panel {
+    transform: translateX(-105%) !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-right: -12px !important; /* layout gap-3 nötrle */
+    border: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+  }
+
+  body.sidebar-collapsed #app-root-layout {
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  /* Haritayı 100vw ve 100vh Tam Ekran Yap */
+  body.sidebar-collapsed #main-map-area {
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Sol Üst Hamburger / Menü Aç Butonu */
+  body.sidebar-collapsed #btn-sidebar-toggle {
+    display: flex !important;
+    position: absolute !important;
+    top: 1rem !important;
+    left: 1rem !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    border-radius: 1rem !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+    z-index: 50 !important;
+    cursor: pointer !important;
+  }
+
+  html.dark body.sidebar-collapsed #btn-sidebar-toggle {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-color: rgba(51, 65, 85, 0.9) !important;
+    color: #f1f5f9 !important;
+  }
+
+  /* Kat Başlığı Bannerını Hamburger Butonunun Sağına Kaydır */
+  body.sidebar-collapsed #floor-header-card {
+    left: 4.5rem !important; /* 72px */
+    transition: left 300ms ease !important;
+  }
+}
+
+/* Mobilde ve Küçük Ekranlarda (< 950px) Masaüstü Daraltma Butonlarını Asla Gösterme */
+@media (max-width: 949px) {
+  .desktop-collapse-btn {
+    display: none !important;
+  }
+}
+
 

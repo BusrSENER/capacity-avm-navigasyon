@@ -868,6 +868,10 @@ class MallMap {
     this.smoothPanTo(x, y, false);
   }
 
+  handleResize() {
+    this.resetView();
+  }
+
   resetView() {
     this.updateDimensions();
     const rect = this.container.getBoundingClientRect();
