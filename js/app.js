@@ -462,6 +462,11 @@ function setupUIEventListeners() {
       activeCategory = pill.getAttribute('data-category');
       mallMap.setCategoryFilter(activeCategory);
       renderSidebarStoreGrid();
+
+      // Mobilde kategori filtresine tıklandığında mağaza listesini göstermek için çekmeceyi genişlet
+      if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+        expandBottomSheet();
+      }
     });
   });
 
@@ -912,6 +917,9 @@ function setupSearchEngine() {
       targetInput?.focus();
       return;
     }
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
+    }
     setActiveFocusSlot('start');
     if (startInput.value.trim().length > 0) {
       renderAutocomplete(startInput.value.trim(), 'start');
@@ -924,6 +932,9 @@ function setupSearchEngine() {
       targetInput?.focus();
       return;
     }
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
+    }
     setActiveFocusSlot('start');
     if (!startInput.value || startInput.value.trim().length === 0) {
       openEntranceModal();
@@ -935,6 +946,9 @@ function setupSearchEngine() {
   startInput?.addEventListener('input', (e) => {
     if (window.isKioskMode) {
       return;
+    }
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
     }
     setActiveFocusSlot('start');
     const val = e.target.value.trim();
@@ -971,6 +985,9 @@ function setupSearchEngine() {
 
   // 2. [ 🎯 Nereye? ] Girdisi
   targetInput?.addEventListener('focus', () => {
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
+    }
     setActiveFocusSlot('target');
     if (targetInput.value.trim().length > 0) {
       renderAutocomplete(targetInput.value.trim(), 'target');
@@ -978,6 +995,9 @@ function setupSearchEngine() {
   });
 
   targetInput?.addEventListener('click', () => {
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
+    }
     setActiveFocusSlot('target');
     if (targetInput.value.trim().length > 0) {
       renderAutocomplete(targetInput.value.trim(), 'target');
@@ -985,6 +1005,9 @@ function setupSearchEngine() {
   });
 
   targetInput?.addEventListener('input', (e) => {
+    if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      expandBottomSheet();
+    }
     setActiveFocusSlot('target');
     const val = e.target.value.trim();
     searchQuery = val;

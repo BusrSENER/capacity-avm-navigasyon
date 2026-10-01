@@ -635,16 +635,39 @@ html.dark .glass-panel {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Kat Seçici Butonları */
+/* Kompakt Kat Seçici Bar (Floor Selector) - Dikeyde %35 Küçültülmüş */
+.floors-pill-bar {
+  padding: 3px 2px !important;
+  gap: 2px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
+}
+
+.floors-pill-bar span {
+  font-size: 8px !important;
+  line-height: 1 !important;
+  padding: 2px 0 !important;
+  letter-spacing: 0.05em !important;
+}
+
 .floor-pill {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  max-width: 30px !important;
+  max-height: 30px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  padding: 0 !important;
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .floor-pill.active {
   background: #c41230 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(196, 18, 48, 0.35);
-  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(196, 18, 48, 0.4) !important;
+  transform: scale(1.06);
 }
 
 /* Minimal 64px HUD Navigasyon Çubuğu (Universal) */
@@ -732,8 +755,8 @@ body.has-active-route #route-panel {
     z-index: 45 !important;
     padding: 8px 12px 16px 12px !important;
     
-    /* Peek Height: ~170px (Arama barı + Tercih Butonları + 3 Hızlı Giriş Çipi doğrudan görünür) */
-    transform: translateY(calc(75vh - 170px)) !important;
+    /* Peek Height: ~160px (Arama barı + Kategori filtreleri doğrudan görünür, mağaza logoları ve grid gizli) */
+    transform: translateY(calc(75vh - 160px)) !important;
     transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
     will-change: transform;
     overflow: hidden !important;
@@ -746,44 +769,86 @@ body.has-active-route #route-panel {
     box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.28) !important;
   }
 
-  /* Peek Modunda Başlık Satırını Gizle, Arama & Giriş Çiplerini Öne Çıkar */
-  #sidebar-panel:not(.is-expanded) #sidebar-header-row {
-    display: none !important;
-  }
-
-  #sidebar-panel:not(.is-expanded) #category-pills-row,
+  /* Peek Modunda Başlık Satırını ve Mağaza Listesini Gizle, Sadece Arama & Kategori Filtrelerini Göster */
+  #sidebar-panel:not(.is-expanded) #sidebar-header-row,
+  #sidebar-panel:not(.is-expanded) #quick-start-chips-row,
   #sidebar-panel:not(.is-expanded) #amenity-chips-row,
   #sidebar-panel:not(.is-expanded) #sidebar-tabs-container,
   #sidebar-panel:not(.is-expanded) #sidebar-store-grid,
   #sidebar-panel:not(.is-expanded) #sidebar-poi-detail {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  #sidebar-panel:not(.is-expanded) #category-pills-row {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    margin-bottom: 0 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
   }
 
   #sidebar-panel.is-expanded #sidebar-header-row {
     display: flex !important;
   }
 
+  #sidebar-panel.is-expanded #quick-start-chips-row,
   #sidebar-panel.is-expanded #category-pills-row,
   #sidebar-panel.is-expanded #amenity-chips-row,
-  #sidebar-panel.is-expanded #sidebar-tabs-container,
-  #sidebar-panel.is-expanded #sidebar-store-grid,
+  #sidebar-panel.is-expanded #sidebar-tabs-container {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  #sidebar-panel.is-expanded #sidebar-store-grid {
+    display: grid !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
   #sidebar-panel.is-expanded #sidebar-poi-detail {
-    opacity: 1;
-    pointer-events: auto;
-    transition: opacity 0.25s ease 0.1s;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 
   /* 3. Yüzen Eylem Butonu (Floating View Toggle) */
   #floating-view-toggle {
-    bottom: 185px !important;
+    bottom: 175px !important;
     right: 14px !important;
     transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
   #sidebar-panel.is-expanded ~ #floating-view-toggle {
     bottom: calc(75vh + 12px) !important;
+  }
+
+  /* Toast Bildirim Konteyneri - Haritayı Kapatmadan Alt Çekmecenin Hemen Üzerinde */
+  #toast-container {
+    position: fixed !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: 175px !important;
+    top: auto !important;
+    z-index: 65 !important;
+    max-width: 90% !important;
+    width: auto !important;
+    pointer-events: none !important;
+    transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease !important;
+  }
+
+  body.has-sheet-expanded #toast-container {
+    bottom: calc(75vh + 14px) !important;
+  }
+
+  body.has-active-route #toast-container {
+    bottom: 78px !important;
+  }
+
+  body.has-peek-card #toast-container {
+    bottom: 140px !important;
   }
 
   /* Rota Aktifken veya Peek Kartı Açıkken Yüzen Liste Butonunu Gizle */
@@ -898,6 +963,21 @@ body.has-active-route #route-panel {
   }
 }
 
+/* Masaüstü Toast Konteyneri - Sağ Altta Şık Konum */
+@media (min-width: 769px) {
+  #toast-container {
+    position: fixed !important;
+    left: auto !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    top: auto !important;
+    transform: none !important;
+    max-width: 380px !important;
+    z-index: 65 !important;
+    pointer-events: none !important;
+  }
+}
+
 /* ========================================================
    GÖRSEL ODAK (ACTIVE FOCUS RING) - [📍 Nereden?] / [🎯 Nereye?]
    ======================================================== */
@@ -980,7 +1060,6 @@ html.dark .search-autocomplete-item:hover {
    ======================================================== */
 
 /* 1. Dokunma Alanları (Touch Targets - Apple HIG & WCAG Standardı >= 44x44px) */
-.floor-pill,
 #btn-compass,
 #zoom-in-btn,
 #zoom-out-btn,
