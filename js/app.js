@@ -59,7 +59,7 @@ function isMobileOrLandscape() {
 }
 window.isMobileOrLandscape = isMobileOrLandscape;
 
-// Mobil Bottom Sheet (Alt Çekmece) Durum Yöneticisi
+// Mobil Bottom Sheet (Alt Çekmece) ve Yatay Mod Çekmecesi Durum Yöneticisi
 let isBottomSheetExpanded = false;
 
 function toggleBottomSheet() {
@@ -96,11 +96,13 @@ function collapseBottomSheet() {
   const toggleText = document.getElementById('floating-toggle-text');
   const sheetToggleIcon = document.getElementById('sheet-toggle-icon');
   const sheetHint = document.getElementById('bottom-sheet-hint');
+  const backdrop = document.getElementById('landscape-drawer-backdrop');
 
   if (!panel) return;
-  panel.classList.remove('is-expanded');
+  panel.classList.remove('is-expanded', 'is-drawer-open');
   document.body.classList.remove('has-sheet-expanded');
   isBottomSheetExpanded = false;
+  if (backdrop) backdrop.classList.add('hidden');
 
   if (toggleIcon) toggleIcon.textContent = '📋';
   if (toggleText) toggleText.textContent = 'Liste';
@@ -109,6 +111,35 @@ function collapseBottomSheet() {
 
   updateFloatingToggleVisibility();
 }
+
+// Mobil Yatay (Landscape) Çekmece (Drawer) Yöneticisi (Apple Haritalar Stili)
+function openSidebarDrawer() {
+  const panel = document.getElementById('sidebar-panel');
+  const backdrop = document.getElementById('landscape-drawer-backdrop');
+  if (!panel) return;
+  panel.classList.add('is-expanded', 'is-drawer-open');
+  document.body.classList.add('has-sheet-expanded');
+  isBottomSheetExpanded = true;
+  if (backdrop) backdrop.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeSidebarDrawer() {
+  collapseBottomSheet();
+}
+
+function toggleSidebarDrawer() {
+  const panel = document.getElementById('sidebar-panel');
+  if (panel && (panel.classList.contains('is-drawer-open') || panel.classList.contains('is-expanded'))) {
+    closeSidebarDrawer();
+  } else {
+    openSidebarDrawer();
+  }
+}
+
+window.openSidebarDrawer = openSidebarDrawer;
+window.closeSidebarDrawer = closeSidebarDrawer;
+window.toggleSidebarDrawer = toggleSidebarDrawer;
 
 // Toast Notification Engine (Tekil Kuyruk & Yığılma Önleyici)
 let activeToastTimeout = null;
@@ -701,6 +732,25 @@ function setupUIEventListeners() {
     if (isMobileOrLandscape() && isBottomSheetExpanded) {
       collapseBottomSheet();
     }
+  });
+
+  // Apple Haritalar Tarzı Hamburger Drawer Butonu (#btn-sidebar-toggle), Kapatma Butonu ve Backdrop
+  const btnSidebarToggle = document.getElementById('btn-sidebar-toggle');
+  const btnSidebarClose = document.getElementById('btn-sidebar-close');
+  const landscapeBackdrop = document.getElementById('landscape-drawer-backdrop');
+
+  btnSidebarToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openSidebarDrawer();
+  });
+
+  btnSidebarClose?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeSidebarDrawer();
+  });
+
+  landscapeBackdrop?.addEventListener('click', () => {
+    closeSidebarDrawer();
   });
 }
 
@@ -1400,6 +1450,11 @@ function selectStore(store) {
 
   // POI Detay Panelini Güncelle (Masaüstü genişliğinde #sidebar-poi-detail görünür kılınır)
   renderPoiDetail(store);
+
+  // Mobilde veya yatay modda sol çekmece / alt çekmece açıksa haritayı rahat görebilmek için kapat
+  if (isMobileOrLandscape() && isBottomSheetExpanded) {
+    collapseBottomSheet();
+  }
 
   // Mobilde ekranın %85'ini kaplayan alt çekmece KESİNLİKLE açılmaz!
   // Bunun yerine ekranın altında kompakt bilgi kartı (Peek Mode) gösterilir:

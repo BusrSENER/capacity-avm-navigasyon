@@ -76,6 +76,8 @@ class MallMap {
     const cHeight = this.containerHeight;
     if (!cWidth || !cHeight) return;
 
+    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (cHeight < 550 && cWidth >= cHeight);
+
     // Rotasyonlu ve 8x ölçekli efektif boyutlar
     const rad = Math.abs(this.rotation * Math.PI / 180);
     const cos = Math.abs(Math.cos(rad));
@@ -85,7 +87,7 @@ class MallMap {
 
     // Yumuşak sınır payı (soft margin buffer) - 8x yakınlaşmada ve döndürmede rahatça gezinebilmek için
     const marginX = Math.max(140, cWidth * 0.35);
-    const marginY = Math.max(140, cHeight * 0.35);
+    const marginY = isLandscape ? Math.max(380, cHeight * 1.2) : Math.max(140, cHeight * 0.35);
 
     if (mapWidth <= cWidth) {
       const centerX = (cWidth - mapWidth) / 2;
@@ -96,7 +98,12 @@ class MallMap {
       this.panX = Math.max(minPanX, Math.min(maxPanX, this.panX));
     }
 
-    if (mapHeight <= cHeight) {
+    if (isLandscape) {
+      // Ekran basıkken (landscape) binayı zorla ortaya sıkıştırma; kullanıcı yukarı/aşağı serbestçe kaysın
+      const minPanY = Math.min(0, cHeight - mapHeight) - marginY;
+      const maxPanY = Math.max(0, cHeight - mapHeight) + marginY;
+      this.panY = Math.max(minPanY, Math.min(maxPanY, this.panY));
+    } else if (mapHeight <= cHeight) {
       const centerY = (cHeight - mapHeight) / 2;
       this.panY = Math.max(centerY - marginY, Math.min(centerY + marginY, this.panY));
     } else {
@@ -112,6 +119,7 @@ class MallMap {
   settleBounds(duration = 200) {
     if (!this.container) return;
     this.updateDimensions();
+    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (this.containerHeight < 550 && this.containerWidth >= this.containerHeight);
     const rad = Math.abs(this.rotation * Math.PI / 180);
     const cos = Math.abs(Math.cos(rad));
     const sin = Math.abs(Math.sin(rad));
@@ -129,7 +137,14 @@ class MallMap {
       targetX = Math.max(minX, Math.min(maxX, targetX));
     }
 
-    if (mapHeight <= this.containerHeight) {
+    if (isLandscape) {
+      // Yatay modda haritayı zorla ortaya sıkıştırma / sekme (bounce) yapma!
+      // Kullanıcının dikey eksendeki kaydırmasını koru, sadece harita ekranın çok dışına taşmasın
+      const vBuffer = Math.max(280, this.containerHeight * 0.85);
+      const minAllowedY = Math.min(0, this.containerHeight - mapHeight) - vBuffer;
+      const maxAllowedY = Math.max(0, this.containerHeight - mapHeight) + vBuffer;
+      targetY = Math.max(minAllowedY, Math.min(maxAllowedY, this.panY));
+    } else if (mapHeight <= this.containerHeight) {
       const isMobile = window.innerWidth <= 768;
       const mobileOffsetY = isMobile ? -30 : 0;
       targetY = ((this.containerHeight - mapHeight) / 2) + mobileOffsetY;
@@ -806,15 +821,16 @@ class MallMap {
     const spanY = Math.max(160, maxY - minY);
 
     const rect = this.container.getBoundingClientRect();
-    const isMobile = window.innerWidth <= 768;
-    const availWidth = rect.width * (isMobile ? 0.78 : 0.65);
-    const availHeight = rect.height * (isMobile ? 0.44 : 0.62);
+    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
+    const isMobile = window.innerWidth <= 768 && !isLandscape;
+    const availWidth = rect.width * (isLandscape ? 0.82 : (isMobile ? 0.78 : 0.65));
+    const availHeight = rect.height * (isLandscape ? 0.72 : (isMobile ? 0.44 : 0.62));
 
     const fitScale = Math.min(this.maxScale, Math.max(this.minScale, Math.min(availWidth / spanX, availHeight / spanY)));
     const targetScale = Math.min(fitScale, isMobile ? 1.25 : 1.4);
 
-    // Mobilde alt çekmece ve rota kartı nedeniyle merkezi yukarı kaydır
-    const offsetY = isMobile ? Math.min(110, rect.height * 0.16) : 0;
+    // Mobilde dikey modda alt çekmece ve rota kartı nedeniyle merkezi yukarı kaydır; yatayda (landscape) offset yapma
+    const offsetY = isLandscape ? 0 : (isMobile ? Math.min(110, rect.height * 0.16) : 0);
     this.flyTo(midX, midY, targetScale, duration, offsetY);
   }
 
@@ -830,8 +846,9 @@ class MallMap {
     const rect = this.container.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
 
-    const isMobile = window.innerWidth <= 768;
-    const offsetY = isMobile ? Math.min(80, rect.height * 0.12) : 0;
+    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
+    const isMobile = window.innerWidth <= 768 && !isLandscape;
+    const offsetY = isLandscape ? 0 : (isMobile ? Math.min(80, rect.height * 0.12) : 0);
 
     const targetPanX = (rect.width / 2) - (x * this.scale);
     const targetPanY = ((rect.height / 2) - offsetY) - (y * this.scale);
@@ -853,13 +870,17 @@ class MallMap {
   resetView() {
     this.updateDimensions();
     const rect = this.container.getBoundingClientRect();
-    const scaleX = (rect.width || this.containerWidth) / this.vbWidth;
-    const scaleY = (rect.height || this.containerHeight) / this.vbHeight;
-    const isMobile = window.innerWidth <= 768;
-    this.scale = Math.max(this.minScale, Math.min(scaleX, scaleY) * (isMobile ? 0.90 : 0.94));
-    this.panX = ((rect.width || this.containerWidth) - this.vbWidth * this.scale) / 2;
+    const cW = rect.width || this.containerWidth;
+    const cH = rect.height || this.containerHeight;
+    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
+    const isMobile = window.innerWidth <= 768 && !isLandscape;
+
+    const scaleX = cW / this.vbWidth;
+    const scaleY = cH / this.vbHeight;
+    this.scale = Math.max(this.minScale, Math.min(scaleX, scaleY) * (isLandscape ? 0.92 : (isMobile ? 0.90 : 0.94)));
+    this.panX = (cW - this.vbWidth * this.scale) / 2;
     const mobileOffset = isMobile ? -35 : 0;
-    this.panY = (((rect.height || this.containerHeight) - this.vbHeight * this.scale) / 2) + mobileOffset;
+    this.panY = ((cH - this.vbHeight * this.scale) / 2) + mobileOffset;
     this.applyTransform();
   }
 

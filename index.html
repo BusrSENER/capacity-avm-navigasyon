@@ -120,6 +120,11 @@
           <button id="theme-toggle-btn" class="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-amber-400 transition-all active:scale-95" title="Karanlık / Aydınlık Mod">
             <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
           </button>
+
+          <!-- Yatay Mod Çekmece Kapatma Butonu (Landscape Drawer Close) -->
+          <button id="btn-sidebar-close" class="hidden w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-95" title="Menüyü Kapat" aria-label="Kapat">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
         </div>
       </div>
 
@@ -356,6 +361,11 @@
     <!-- SAĞ HARİTA ALANI (VIEWPORT) -->
     <main id="main-map-area" class="flex-1 relative h-full rounded-[26px] overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
       
+      <!-- Mobil Yatay / Kompakt Hamburger Drawer Açma Butonu (Apple Haritalar Stili) -->
+      <button id="btn-sidebar-toggle" class="hidden absolute top-1.5 left-1.5 z-30 w-9 h-9 rounded-xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-md flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Menüyü ve Aramayı Aç" aria-label="Menü">
+        <i data-lucide="menu" class="w-4 h-4"></i>
+      </button>
+
       <!-- Sol Üst Yüzen Kat Başlığı Bannerı (cevahir-rehber.web.app birebir) -->
       <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all max-w-[calc(100vw-65px)]">
         <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
@@ -746,6 +756,9 @@
       </div>
     </div>
   </div>
+
+  <!-- YATAY MOD MENÜ ÇEKMECESİ ARKA PLAN KARARTMASI (LANDSCAPE DRAWER BACKDROP) -->
+  <div id="landscape-drawer-backdrop" class="fixed inset-0 z-50 bg-slate-950/45 backdrop-blur-xs hidden transition-opacity duration-300"></div>
 
   <!-- TOAST BİLDİRİM KONTEYNERİ (Mobilde Üstte Dynamic Island tarzı, Masaüstünde Sağ Altta) -->
   <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
