@@ -247,15 +247,22 @@ function showToast(message, type = 'info') {
   }, 3200);
 }
 
-// Açılış Ekranı (Splash Screen - Pulse Radar): 0ms Yapay Gecikmesiz Doğal Fade-Out
+// Açılış Ekranı (Splash Screen - Pulse Radar): nrdsor Marka Algısı İçin ~2.5 Saniye (2500ms) Temiz Gösterim
+const splashStartTime = Date.now();
+const MIN_SPLASH_DURATION = 2500; // ms
+
 function hideSplashScreen() {
-  const splash = document.getElementById('splash-screen');
-  if (splash && !splash.classList.contains('pointer-events-none')) {
-    splash.classList.add('opacity-0', 'pointer-events-none');
-    setTimeout(() => {
-      splash.remove();
-    }, 550);
-  }
+  const elapsed = Date.now() - splashStartTime;
+  const remaining = Math.max(0, MIN_SPLASH_DURATION - elapsed);
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash && !splash.classList.contains('pointer-events-none')) {
+      splash.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        splash.remove();
+      }, 550);
+    }
+  }, remaining);
 }
 window.hideSplashScreen = hideSplashScreen;
 
@@ -359,6 +366,15 @@ function initApp() {
   );
   window.cartSimulator = cartSimulator;
 
+  // Yol Üstü Kampanya Sensörü & Rota Sıfırlama Kancaları
+  cartSimulator.onProximityCheck = (x, y, floor) => {
+    checkEnRouteCampaignProximity(x, y, floor);
+  };
+  cartSimulator.onRouteReset = () => {
+    triggeredCampaignsThisRun.clear();
+    dismissEnRouteCampaignToast();
+  };
+
   setupTheme();
   setupUIEventListeners();
   setupPeekCardEvents();
@@ -366,6 +382,9 @@ function initApp() {
   setupAmenityPills();
   setupTabs();
   setupPathPreferenceChips();
+  setupParkingMemoryEvents();
+  setupCampaignEvents();
+  updateParkingUI();
 
   // Dikey geçiş tercihini varsayılan olarak 'escalator' (yürüyen merdiven) olarak sabitle
   setRoutePreference('escalator');
@@ -911,8 +930,8 @@ function handleStoreSelectedFromSearch(store, targetSlot) {
     mallMap.highlightStore(store.id, true);
   }
 
-  // 5. Altta yalnızca 130px'lik mini kartı (Peek Mode) bırak (rota başlamadıysa ve mobildeyse)
-  if (!mallMap.activeRoute && isMobileOrLandscape()) {
+  // 5. Altta 130px'lik kompakt kartı (Peek Mode) aç (rota başlamadıysa)
+  if (!mallMap.activeRoute) {
     showPoiPeekCard(store);
   }
 }
@@ -1430,7 +1449,7 @@ window.getStoreLandmark = getStoreLandmark;
 let currentPeekStore = null;
 
 function showPoiPeekCard(store) {
-  if (!store || !isMobileOrLandscape()) return;
+  if (!store) return;
   currentPeekStore = store;
 
   const peekCard = document.getElementById('poi-peek-card');
@@ -1446,19 +1465,27 @@ function showPoiPeekCard(store) {
   if (catEl) catEl.textContent = store.category_name || store.category || 'Mağaza';
   if (landmarkEl) landmarkEl.textContent = getStoreLandmark(store);
 
+  // Buton Metinlerini & İkonlarını Kesinlikle Standardize Et
+  if (btnStart) {
+    btnStart.innerHTML = '<span>📍</span><span class="truncate font-bold">Buradayım (Başlangıç Yap)</span>';
+  }
+  if (btnTarget) {
+    btnTarget.innerHTML = '<span>🎯</span><span class="truncate font-bold">Hedef Yap</span>';
+  }
+
   // Dinamik Buton Önceliği (Durum Makinesi):
   // Eğer activeFocusSlot === 'start' veya başlangıç noktası henüz seçilmemişse:
-  // [📍 Buradan Başla] birincil buton, [🎯 Hedef Yap] ikincil buton.
-  // Aksi halde [🎯 Hedef Yap] birincil buton, [📍 Buradan Başla] ikincil buton.
+  // [📍 Buradayım (Başlangıç Yap)] birincil buton, [🎯 Hedef Yap] ikincil buton.
+  // Aksi halde [🎯 Hedef Yap] birincil buton, [📍 Buradayım (Başlangıç Yap)] ikincil buton.
   const prioritizeStart = (activeFocusSlot === 'start') || (!selectedStartStore && activeFocusSlot !== 'target');
 
   if (btnStart && btnTarget) {
     if (prioritizeStart) {
-      btnStart.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30';
-      btnTarget.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700';
+      btnStart.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30 cursor-pointer';
+      btnTarget.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 cursor-pointer';
     } else {
-      btnTarget.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-red-600 hover:bg-red-700 text-white shadow-red-600/30';
-      btnStart.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700';
+      btnTarget.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-red-600 hover:bg-red-700 text-white shadow-red-600/30 cursor-pointer';
+      btnStart.className = 'py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 cursor-pointer';
     }
   }
 
@@ -1554,9 +1581,8 @@ function selectStore(store) {
     collapseBottomSheet();
   }
 
-  // Mobilde ekranın %85'ini kaplayan alt çekmece KESİNLİKLE açılmaz!
-  // Bunun yerine ekranın altında kompakt bilgi kartı (Peek Mode) gösterilir:
-  if (isMobileOrLandscape()) {
+  // Ekranın altında kompakt etkileşimli pinleme kartı (Peek Mode) gösterilir:
+  if (!mallMap.activeRoute) {
     showPoiPeekCard(store);
   }
 }
@@ -2515,3 +2541,412 @@ window.closeEntranceModal = closeEntranceModal;
 window.checkUrlParametersAndKiosk = checkUrlParametersAndKiosk;
 window.openRouteQrModal = openRouteQrModal;
 window.closeRouteQrModal = closeRouteQrModal;
+
+// ========================================================
+// OTOPARK HAFIZASI VE YÖNLENDİRME SİSTEMİ (PARKING MEMORY)
+// ========================================================
+let selectedParkingFloor = { floor: 2, code: 'P2', name: 'P2 (2. Bodrum Kat)' };
+let selectedParkingZone = { name: 'Mavi', color: '#2563eb' };
+
+function getSavedParkingSpot() {
+  try {
+    const raw = localStorage.getItem('capacity_parking_spot');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function updateParkingUI() {
+  const saved = getSavedParkingSpot();
+  const btnText = document.getElementById('parking-memory-btn-text');
+  const headerBtn = document.getElementById('btn-header-find-car');
+  const headerText = document.getElementById('header-car-spot-text');
+  const savedCard = document.getElementById('parking-saved-card');
+  const parkingForm = document.getElementById('parking-form');
+
+  if (saved) {
+    const label = `${saved.code} ${saved.zone}`;
+    if (btnText) btnText.textContent = `Arabama Git (${label})`;
+    if (headerText) headerText.textContent = `Arabama Git (${label})`;
+    if (headerBtn) headerBtn.classList.remove('hidden');
+
+    if (savedCard) {
+      savedCard.classList.remove('hidden');
+      const badge = document.getElementById('parking-saved-zone-badge');
+      const title = document.getElementById('parking-saved-location-title');
+      const pillar = document.getElementById('parking-saved-pillar-text');
+      const time = document.getElementById('parking-saved-time-text');
+
+      if (badge) {
+        badge.textContent = saved.code || 'P2';
+        badge.style.backgroundColor = saved.zoneColor || '#2563eb';
+      }
+      if (title) title.textContent = `${saved.name || saved.code + ' Katı'} • ${saved.zone} Bölge`;
+      if (pillar) pillar.textContent = saved.pillar ? `Direk / Not: ${saved.pillar}` : 'Genel Otopark Alanı';
+      if (time) time.textContent = saved.time ? `Kaydedildi: ${saved.time}` : 'Kayıtlı';
+    }
+    if (parkingForm) parkingForm.classList.add('hidden');
+  } else {
+    if (btnText) btnText.textContent = 'Otopark Konumu Kaydet';
+    if (headerBtn) headerBtn.classList.add('hidden');
+    if (savedCard) savedCard.classList.add('hidden');
+    if (parkingForm) parkingForm.classList.remove('hidden');
+  }
+}
+
+function openParkingMemoryModal() {
+  const modal = document.getElementById('parking-memory-modal');
+  if (!modal) return;
+  updateParkingUI();
+  modal.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeParkingMemoryModal() {
+  document.getElementById('parking-memory-modal')?.classList.add('hidden');
+}
+
+function saveParkingSpot() {
+  const pillarInput = document.getElementById('parking-spot-pillar');
+  const pillar = pillarInput ? pillarInput.value.trim() : '';
+
+  const spot = {
+    floor: selectedParkingFloor.floor,
+    code: selectedParkingFloor.code,
+    name: selectedParkingFloor.name,
+    zone: selectedParkingZone.name,
+    zoneColor: selectedParkingZone.color,
+    pillar: pillar,
+    time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+  };
+
+  try {
+    localStorage.setItem('capacity_parking_spot', JSON.stringify(spot));
+  } catch (e) {
+    console.error('LocalStorage write error', e);
+  }
+
+  showToast(`🚗 Otopark konumu kaydedildi: ${spot.code} ${spot.zone} Bölge`, 'success');
+  updateParkingUI();
+  closeParkingMemoryModal();
+}
+
+function deleteParkingSpot() {
+  try {
+    localStorage.removeItem('capacity_parking_spot');
+  } catch (e) {}
+  showToast('Otopark konumu silindi.', 'info');
+  updateParkingUI();
+}
+
+function navigateToSavedCar() {
+  const saved = getSavedParkingSpot();
+  if (!saved) {
+    openParkingMemoryModal();
+    return;
+  }
+
+  closeParkingMemoryModal();
+
+  const currentFl = mallMap ? mallMap.currentFloor : 4;
+  const elevatorNodeId = `c_${currentFl}_m_565`;
+
+  let startStoreObj = null;
+
+  if (selectedStartStore && selectedStartStore.floor === currentFl) {
+    startStoreObj = selectedStartStore;
+  } else {
+    if (currentFl === 4) {
+      startStoreObj = { id: 'danisma', name: 'Zemin Kat Danışma', floor: 4, cx: 1085, cy: 425, nav_node: 'n_danisma' };
+    } else {
+      const floorStores = getAllStores().filter(s => s.floor === currentFl);
+      startStoreObj = floorStores.length > 0 ? floorStores[0] : { id: 'door_0', name: 'Kat Girişi', floor: currentFl, cx: 600, cy: 400, nav_node: `c_${currentFl}_m_565` };
+    }
+  }
+
+  const elevatorStore = {
+    id: `am_lift_${currentFl}`,
+    name: 'Panoramik Asansörler (Otopark İnişi)',
+    floor: currentFl,
+    category_name: 'Asansör',
+    cx: 565,
+    cy: 420,
+    nav_node: elevatorNodeId
+  };
+
+  if (startStoreObj) {
+    setStartLocation(startStoreObj);
+  }
+  setTargetLocation(elevatorStore);
+
+  showToast(`🚗 Aracınız ${saved.code} ${saved.zone} katta (${saved.pillar || 'Otopark'}). Otoparka iniş için en yakın asansöre yönlendiriliyorsunuz.`, 'success');
+}
+
+function setupParkingMemoryEvents() {
+  document.getElementById('btn-parking-memory')?.addEventListener('click', () => {
+    openParkingMemoryModal();
+  });
+
+  document.getElementById('btn-header-find-car')?.addEventListener('click', () => {
+    navigateToSavedCar();
+  });
+
+  document.getElementById('btn-parking-modal-close')?.addEventListener('click', () => {
+    closeParkingMemoryModal();
+  });
+
+  document.getElementById('parking-modal-backdrop')?.addEventListener('click', () => {
+    closeParkingMemoryModal();
+  });
+
+  document.getElementById('btn-parking-save')?.addEventListener('click', () => {
+    saveParkingSpot();
+  });
+
+  document.getElementById('btn-parking-delete')?.addEventListener('click', () => {
+    deleteParkingSpot();
+  });
+
+  document.getElementById('btn-parking-navigate-car')?.addEventListener('click', () => {
+    navigateToSavedCar();
+  });
+
+  // Kat Seçenekleri
+  document.querySelectorAll('.parking-floor-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.parking-floor-btn').forEach(b => {
+        b.classList.remove('active');
+        b.className = 'parking-floor-btn py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold text-center transition-all cursor-pointer';
+      });
+      btn.classList.add('active');
+      btn.className = 'parking-floor-btn active py-2 px-2.5 rounded-xl border border-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-xs font-bold text-center transition-all shadow-xs cursor-pointer';
+
+      selectedParkingFloor = {
+        floor: parseInt(btn.getAttribute('data-floor') || '2', 10),
+        code: btn.getAttribute('data-code') || 'P2',
+        name: btn.getAttribute('data-name') || 'P2 (2. Bodrum Kat)'
+      };
+    });
+  });
+
+  // Bölge Seçenekleri
+  document.querySelectorAll('.parking-zone-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.parking-zone-btn').forEach(b => {
+        b.classList.remove('active');
+        b.style.borderWidth = '1px';
+      });
+      btn.classList.add('active');
+      btn.style.borderWidth = '2px';
+
+      selectedParkingZone = {
+        name: btn.getAttribute('data-zone') || 'Mavi',
+        color: btn.getAttribute('data-color') || '#2563eb'
+      };
+    });
+  });
+}
+
+// ========================================================
+// YOL ÜSTÜ CANLI KAMPANYA VE MARKA ETKİLEŞİMİ (KAMPANYA SENSÖRÜ)
+// ========================================================
+const ACTIVE_STORE_CAMPAIGNS = {
+  'store_4_8': {
+    storeId: 'store_4_8',
+    storeName: 'Cookshop',
+    floor: 4,
+    x: 1170,
+    y: 310,
+    title: 'Cookshop Gurme Ayrıcalığı',
+    discount: '%15 İndirim',
+    description: 'Capacity ziyaretçilerine özel: 500 TL üzeri tüm siparişlerde anında %15 indirim ve Magnolia tatlısı ikramı!',
+    couponCode: 'COOKSHOP15',
+    category: 'Yeme & İçme',
+    badgeClass: 'bg-orange-500'
+  },
+  'store_4_41': {
+    storeId: 'store_4_41',
+    storeName: 'Twist',
+    floor: 4,
+    x: 687.5,
+    y: 560,
+    title: 'İlkbahar / Yaz Koleksiyonu',
+    discount: 'Net %20 İndirim',
+    description: 'Yeni sezon tüm giyim ve aksesuar koleksiyonunda kasada anında net %20 indirim fırsatını yakalayın.',
+    couponCode: 'TWIST20',
+    category: 'Moda',
+    badgeClass: 'bg-pink-600'
+  },
+  'store_4_42': {
+    storeId: 'store_4_42',
+    storeName: 'Vakko',
+    floor: 4,
+    x: 170,
+    y: 300,
+    title: 'Vakko Özel Ayrıcalık',
+    discount: '2. Ürüne %40 İndirim',
+    description: 'Vakko Capacity butiğinde seçili eşarp, şal ve çanta koleksiyonlarında 2. ürüne %40 indirim!',
+    couponCode: 'VAKKO40',
+    category: 'Lüks Moda',
+    badgeClass: 'bg-slate-900'
+  },
+  'store_5_34': {
+    storeId: 'store_5_34',
+    storeName: 'Sephora',
+    floor: 5,
+    x: 845,
+    y: 550,
+    title: 'Beauty Pass Festivali',
+    discount: '%25 İndirim',
+    description: 'Seçili lüks parfüm ve cilt bakım ürünlerinde %25 indirim ve hediye minyatür bakım seti!',
+    couponCode: 'SEPHORA25',
+    category: 'Kozmetik',
+    badgeClass: 'bg-rose-600'
+  },
+  'store_5_45': {
+    storeId: 'store_5_45',
+    storeName: 'Zara',
+    floor: 5,
+    x: 1070,
+    y: 590,
+    title: 'Zara Sezon Trendleri',
+    discount: '%30 İndirim',
+    description: 'Capacity Zara mağazasında seçili yeni sezon kadın, erkek ve çocuk ürünlerinde net %30 indirim fırsatı.',
+    couponCode: 'ZARA30',
+    category: 'Moda',
+    badgeClass: 'bg-indigo-600'
+  }
+};
+
+let triggeredCampaignsThisRun = new Set();
+let activeCampaignToastTimeout = null;
+let currentActiveCampaign = null;
+
+function checkEnRouteCampaignProximity(curX, curY, curFloor) {
+  for (const campaign of Object.values(ACTIVE_STORE_CAMPAIGNS)) {
+    if (campaign.floor !== curFloor) continue;
+    if (triggeredCampaignsThisRun.has(campaign.storeId)) continue;
+
+    const dist = Math.hypot(campaign.x - curX, campaign.y - curY);
+    if (dist <= 85) {
+      triggeredCampaignsThisRun.add(campaign.storeId);
+      showEnRouteCampaignToast(campaign);
+      break;
+    }
+  }
+}
+
+function showEnRouteCampaignToast(campaign) {
+  currentActiveCampaign = campaign;
+  const toast = document.getElementById('en-route-campaign-toast');
+  if (!toast) return;
+
+  if (activeCampaignToastTimeout) {
+    clearTimeout(activeCampaignToastTimeout);
+    activeCampaignToastTimeout = null;
+  }
+
+  const textEl = document.getElementById('campaign-toast-text');
+  const discountEl = document.getElementById('campaign-toast-discount');
+
+  if (textEl) {
+    textEl.textContent = `Şu an ${campaign.storeName}'nın yanından geçiyorsunuz.`;
+  }
+  if (discountEl) {
+    discountEl.textContent = campaign.discount;
+  }
+
+  toast.classList.remove('hidden', 'is-fading-out');
+
+  activeCampaignToastTimeout = setTimeout(() => {
+    dismissEnRouteCampaignToast();
+  }, 5000);
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function dismissEnRouteCampaignToast() {
+  const toast = document.getElementById('en-route-campaign-toast');
+  if (!toast || toast.classList.contains('hidden')) return;
+
+  toast.classList.add('is-fading-out');
+  setTimeout(() => {
+    toast.classList.add('hidden');
+    toast.classList.remove('is-fading-out');
+  }, 350);
+}
+
+function openCampaignModal(campaign) {
+  dismissEnRouteCampaignToast();
+  const c = campaign || currentActiveCampaign;
+  if (!c) return;
+
+  const modal = document.getElementById('en-route-campaign-modal');
+  if (!modal) return;
+
+  const storeNameEl = document.getElementById('campaign-modal-store-name');
+  const titleEl = document.getElementById('campaign-modal-title');
+  const badgeEl = document.getElementById('campaign-modal-badge');
+  const catEl = document.getElementById('campaign-modal-category');
+  const descEl = document.getElementById('campaign-modal-desc');
+  const couponEl = document.getElementById('campaign-modal-coupon');
+
+  if (storeNameEl) storeNameEl.textContent = c.storeName;
+  if (titleEl) titleEl.textContent = c.title;
+  if (badgeEl) badgeEl.textContent = c.discount;
+  if (catEl) catEl.textContent = c.category;
+  if (descEl) descEl.textContent = c.description;
+  if (couponEl) couponEl.textContent = c.couponCode;
+
+  modal.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeCampaignModal() {
+  document.getElementById('en-route-campaign-modal')?.classList.add('hidden');
+}
+
+function setupCampaignEvents() {
+  document.getElementById('btn-campaign-toast-view')?.addEventListener('click', () => {
+    openCampaignModal();
+  });
+
+  document.getElementById('btn-campaign-toast-close')?.addEventListener('click', () => {
+    dismissEnRouteCampaignToast();
+  });
+
+  document.getElementById('btn-campaign-modal-close')?.addEventListener('click', () => {
+    closeCampaignModal();
+  });
+
+  document.getElementById('campaign-modal-backdrop')?.addEventListener('click', () => {
+    closeCampaignModal();
+  });
+
+  document.getElementById('btn-campaign-modal-ok')?.addEventListener('click', () => {
+    closeCampaignModal();
+  });
+
+  document.getElementById('btn-campaign-copy-coupon')?.addEventListener('click', () => {
+    const couponEl = document.getElementById('campaign-modal-coupon');
+    const code = couponEl ? couponEl.textContent.trim() : '';
+    if (code) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).catch(() => {});
+      }
+      showToast(`🎟️ Kupon kodu kopyalandı: ${code}`, 'success');
+    }
+  });
+}
+
+window.openParkingMemoryModal = openParkingMemoryModal;
+window.closeParkingMemoryModal = closeParkingMemoryModal;
+window.saveParkingSpot = saveParkingSpot;
+window.deleteParkingSpot = deleteParkingSpot;
+window.navigateToSavedCar = navigateToSavedCar;
+window.openCampaignModal = openCampaignModal;
+window.closeCampaignModal = closeCampaignModal;
+window.showEnRouteCampaignToast = showEnRouteCampaignToast;
+window.dismissEnRouteCampaignToast = dismissEnRouteCampaignToast;
+window.checkEnRouteCampaignProximity = checkEnRouteCampaignProximity;

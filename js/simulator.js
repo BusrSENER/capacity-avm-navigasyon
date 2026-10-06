@@ -27,6 +27,8 @@ class CartSimulator {
     this.facingX = 1; // 1: right, -1: left
 
     this.cartEl = null;
+    this.smoothedAngle = 0;
+    this.onProximityCheck = null;
     this.transitionTimer = null;
     this.transitionFadeTimeout = null;
     this.createCartAvatar();
@@ -90,6 +92,8 @@ class CartSimulator {
 
   setRoute(routeData) {
     this.stop();
+    this.smoothedAngle = 0;
+    if (this.onRouteReset) this.onRouteReset();
     this.activeRoute = routeData;
     this.pathNodes = routeData?.pathNodes || [];
     this.currentIndex = 0;
@@ -159,6 +163,8 @@ class CartSimulator {
 
   resetToStart() {
     this.pause();
+    this.smoothedAngle = 0;
+    if (this.onRouteReset) this.onRouteReset();
     this.currentIndex = 0;
     this.subProgress = 0;
     this.autoFollow = true;
@@ -235,11 +241,17 @@ class CartSimulator {
       const dy = curTo.y - curFrom.y;
       let angle = Math.atan2(dy, dx) * (180 / Math.PI);
 
-      if (Math.abs(dx) > 0.05) {
+      // Deadband: küçük dx değerlerinde yönün sürekli tersyüz olmasını ve titremeyi engelle
+      if (Math.abs(dx) > 1.5) {
         this.facingX = dx > 0 ? 1 : -1;
       }
 
       this.updateCartPosition(curX, curY, angle, curFrom.floor);
+
+      // Yol Üstü Mağaza Kampanya Sensörü (Proximity Sensor)
+      if (this.onProximityCheck) {
+        this.onProximityCheck(curX, curY, curFrom.floor);
+      }
 
       if (this.autoFollow && this.followCamera && this.map && this.map.currentFloor === curFrom.floor) {
         if (typeof this.map.smoothPanTo === 'function') {
@@ -297,14 +309,20 @@ class CartSimulator {
   updateCartPosition(x, y, angle, floor) {
     if (!this.cartEl) return;
 
-    this.cartEl.style.transform = `translate(${x}px, ${y}px)`;
+    // GPU-accelerated subpixel positioning for 60fps jitter-free movement
+    this.cartEl.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
 
     if (this.rotatorEl) {
-      let clampedAngle = Math.max(-25, Math.min(25, angle));
+      let targetAngle = Math.max(-20, Math.min(20, angle));
       if (this.facingX === -1) {
-        clampedAngle = -clampedAngle;
+        targetAngle = -targetAngle;
       }
-      this.rotatorEl.style.transform = `scaleX(${this.facingX}) rotate(${clampedAngle}deg)`;
+      if (this.smoothedAngle === undefined) {
+        this.smoothedAngle = targetAngle;
+      } else {
+        this.smoothedAngle += (targetAngle - this.smoothedAngle) * 0.18;
+      }
+      this.rotatorEl.style.transform = `scaleX(${this.facingX}) rotate(${this.smoothedAngle.toFixed(2)}deg)`;
     }
 
     this.checkVisibility(floor);

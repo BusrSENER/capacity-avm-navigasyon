@@ -121,7 +121,7 @@ html.dark .route__flow {
   left: 0;
   pointer-events: none;
   z-index: 45;
-  transition: transform 0.05s linear;
+  transition: none;
   will-change: transform;
 }
 
@@ -1014,13 +1014,16 @@ html.dark .active-focus-ring {
   box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
-/* Masaüstü Genişliklerinde (#poi-peek-card Kesinlikle Devre Dışı, Sol Sidebar Aktif - Yalnızca Standart Masaüstü / Büyük Ekranlar) */
-@media (min-width: 951px), (min-width: 768px) and (orientation: portrait) {
+/* Masaüstü Genişliklerinde (#poi-peek-card Haritanın Sağ Altında Zarifçe Süzülür) */
+@media (min-width: 951px) {
   #poi-peek-card {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+    position: fixed !important;
+    right: 28px !important;
+    bottom: 28px !important;
+    left: auto !important;
+    width: 380px !important;
+    max-height: 140px !important;
+    z-index: 45 !important;
   }
 }
 
@@ -1647,6 +1650,35 @@ html.dark .search-autocomplete-item:hover {
   .desktop-collapse-btn {
     display: none !important;
   }
+}
+
+/* ========================================================
+   YOL ÜSTÜ CANLI KAMPANYA VE MARKA BİLDİRİMİ (EN-ROUTE AD TOAST)
+   ======================================================== */
+#en-route-campaign-toast {
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.25);
+}
+
+#en-route-campaign-toast.is-fading-out {
+  transform: translate(-50%, -100%) !important;
+  opacity: 0 !important;
+  transition: all 0.35s ease-in !important;
+}
+
+/* Otopark Hafızası Buton Vurgusu */
+.parking-floor-btn.active {
+  border-color: #6366f1 !important;
+  background-color: rgba(99, 102, 241, 0.12) !important;
+  color: #4f46e5 !important;
+}
+html.dark .parking-floor-btn.active {
+  background-color: rgba(99, 102, 241, 0.25) !important;
+  color: #a5b4fc !important;
+}
+
+.parking-zone-btn.active {
+  border-width: 2px !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
 }
 
 

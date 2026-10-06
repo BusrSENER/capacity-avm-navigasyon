@@ -70,14 +70,13 @@
       </div>
     </div>
 
-    <!-- Başlık & Yükleniyor Durumu: nrdsor Yatay Logo & Capacity AVM -->
-    <div class="mt-8 flex flex-col items-center gap-2 text-center z-10">
-      <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" alt="nrdsor" id="splash-brand-logo" class="h-8 w-auto object-contain">
-      <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
-        <span class="text-slate-300 font-semibold">Capacity AVM</span>
-        <span class="text-slate-600">&bull;</span>
+    <!-- nrdsor Yatay Logo & Minimal Pulse Göstergesi (Temiz Marka Kimliği) -->
+    <div class="mt-8 flex flex-col items-center gap-3 text-center z-10">
+      <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" alt="nrdsor" id="splash-brand-logo" class="h-8.5 w-auto object-contain">
+      <div class="flex items-center gap-2 pt-0.5">
         <span class="w-2 h-2 rounded-full bg-[#ea5736] animate-pulse"></span>
-        <span>İç Mekan Navigasyon Başlatılıyor...</span>
+        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" style="animation-delay: 200ms;"></span>
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style="animation-delay: 400ms;"></span>
       </div>
     </div>
   </div>
@@ -294,6 +293,9 @@
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="carpark">
           <span>🅿️</span> Otopark
         </button>
+        <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Otopark Katı ve Konumunu Kaydet / Bul">
+          <span>🚗</span> <span id="parking-memory-btn-text">Otopark Konumu Kaydet</span>
+        </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="prayer">
           <span>🕌</span> Mescit
         </button>
@@ -417,6 +419,12 @@
       <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all max-w-[calc(100vw-65px)]">
         <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
         <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
+
+        <!-- Kayıtlı Otopark Çipi (Araba Hafızası Varsa Görünür) -->
+        <button id="btn-header-find-car" class="hidden mt-1.5 py-1 px-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-[11px] font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer self-start" title="Kayıtlı arabama en yakın asansöre yönlendir">
+          <span>🚗</span>
+          <span id="header-car-spot-text">Arabama Git</span>
+        </button>
 
         <!-- Rota Aktifken Görünen Koridor Tercih Çipleri: [🛣️ Geniş Yol], [✂️ Kısa Yol] ve [📲 Rotayı Cebine Al] -->
         <div id="route-path-chips" class="hidden flex items-center flex-wrap gap-1.5 pt-2">
@@ -605,7 +613,7 @@
     <div id="peek-action-buttons" class="grid grid-cols-2 gap-2 pt-0.5">
       <button id="btn-peek-start" class="min-h-[44px] py-2.5 px-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30">
         <span>📍</span>
-        <span class="truncate">Buradan Başla</span>
+        <span class="truncate">Buradayım (Başlangıç Yap)</span>
       </button>
       <button id="btn-peek-target" class="min-h-[44px] py-2.5 px-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
         <span>🎯</span>
@@ -822,6 +830,187 @@
 
   <!-- YATAY MOD MENÜ ÇEKMECESİ ARKA PLAN KARARTMASI (LANDSCAPE DRAWER BACKDROP) -->
   <div id="landscape-drawer-backdrop" class="fixed inset-0 z-50 bg-slate-950/45 backdrop-blur-xs hidden transition-opacity duration-300"></div>
+
+  <!-- OTOPARK HAFIZASI MODALI (PARKING MEMORY MODAL) -->
+  <div id="parking-memory-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" id="parking-modal-backdrop"></div>
+    <div class="relative w-full max-w-md rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-4">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
+            🚗
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-heading">Otopark Hafızası</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Park yerinizi kaydedin, dönüşte tek tıkla rotanızı çizin</p>
+          </div>
+        </div>
+        <button id="btn-parking-modal-close" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95" title="Kapat">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Kayıtlı Araç Kartı (Eğer hafızada araç varsa görünür) -->
+      <div id="parking-saved-card" class="hidden p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/5 border border-amber-500/30 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Kayıtlı Araç Konumu
+          </span>
+          <button id="btn-parking-delete" class="text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-3 h-3"></i> Konumu Sil
+          </button>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="parking-saved-zone-badge" class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black bg-blue-600 text-white shadow-md">
+            P2
+          </div>
+          <div class="flex-1 min-w-0">
+            <div id="parking-saved-location-title" class="text-sm font-extrabold text-slate-900 dark:text-white truncate">P2 Katı &bull; Mavi Bölge</div>
+            <div id="parking-saved-pillar-text" class="text-xs font-semibold text-slate-600 dark:text-slate-300">Direk No: R08</div>
+            <div id="parking-saved-time-text" class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Kaydedildi</div>
+          </div>
+        </div>
+        <button id="btn-parking-navigate-car" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all active:scale-95">
+          <span>🚗</span>
+          <span>Arabama Git (En Yakın Asansöre Yönlendir)</span>
+        </button>
+      </div>
+
+      <!-- Yeni Park Konumu Kaydet Formu -->
+      <div id="parking-form" class="flex flex-col gap-3">
+        <!-- Kat Seçimi -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hangi Kat?</label>
+          <div class="grid grid-cols-3 gap-2" id="parking-floor-options">
+            <button type="button" class="parking-floor-btn py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold text-center transition-all cursor-pointer" data-floor="3" data-code="P1" data-name="P1 (1. Bodrum Kat)">
+              P1 (-1)
+            </button>
+            <button type="button" class="parking-floor-btn active py-2 px-2.5 rounded-xl border border-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-xs font-bold text-center transition-all shadow-xs cursor-pointer" data-floor="2" data-code="P2" data-name="P2 (2. Bodrum Kat)">
+              P2 (-2)
+            </button>
+            <button type="button" class="parking-floor-btn py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold text-center transition-all cursor-pointer" data-floor="1" data-code="P3" data-name="P3 (3. Bodrum Kat)">
+              P3 (-3)
+            </button>
+          </div>
+        </div>
+
+        <!-- Bölge / Renk Seçimi -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hangi Bölge / Renk?</label>
+          <div class="grid grid-cols-4 gap-2" id="parking-zone-options">
+            <button type="button" class="parking-zone-btn active py-1.5 px-2 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer" data-zone="Mavi" data-color="#2563eb">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></span> Mavi
+            </button>
+            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer" data-zone="Sarı" data-color="#eab308">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span> Sarı
+            </button>
+            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer" data-zone="Turuncu" data-color="#f97316">
+              <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span> Turuncu
+            </button>
+            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer" data-zone="Kırmızı" data-color="#ef4444">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span> Kırmızı
+            </button>
+          </div>
+        </div>
+
+        <!-- Sütun / Direk / Not Girişi -->
+        <div>
+          <label for="parking-spot-pillar" class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Direk No / Sütun / Not (İsteğe Bağlı):</label>
+          <input 
+            id="parking-spot-pillar" 
+            type="text" 
+            placeholder="Örn: R08, S12, Voltrun şarj yanı..." 
+            class="w-full px-3 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
+
+        <!-- Kaydet Butonu -->
+        <button id="btn-parking-save" type="button" class="w-full py-2.5 px-4 mt-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-extrabold text-xs shadow-md shadow-amber-500/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
+          <span>💾</span>
+          <span>Otopark Konumunu Kaydet</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- YOL ÜSTÜ CANLI KAMPANYA VE MARKA BİLDİRİMİ (EN-ROUTE AD PROXIMITY SENSOR TOAST) -->
+  <div id="en-route-campaign-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-[92%] sm:w-auto hidden transition-all select-none">
+    <div class="backdrop-blur-xl bg-slate-900/95 text-white border border-amber-500/40 shadow-2xl rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 ring-1 ring-amber-500/20">
+      <div id="campaign-toast-icon-wrapper" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-red-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
+        <div class="w-full h-full bg-white rounded-[10px] p-1 flex items-center justify-center text-sm">
+          🏷️
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30">Yakınındaki Fırsat</span>
+          <span id="campaign-toast-discount" class="text-[10px] font-black text-rose-300">%20 İndirim</span>
+        </div>
+        <p id="campaign-toast-text" class="text-xs font-bold text-slate-100 truncate mt-0.5">
+          Şu an Zara'nın yanından geçiyorsunuz.
+        </p>
+        <p class="text-[10px] text-slate-400">Güncel kampanya ve indirimleri görmek ister misiniz?</p>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="btn-campaign-toast-view" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-md shadow-amber-500/20 active:scale-95 transition-all cursor-pointer">
+          İncele
+        </button>
+        <button id="btn-campaign-toast-close" class="w-7 h-7 rounded-lg text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer" title="Kapat">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KAMPANYA DETAY POP-UP MODALI -->
+  <div id="en-route-campaign-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" id="campaign-modal-backdrop"></div>
+    <div class="relative w-full max-w-sm rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-3.5">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <span id="campaign-modal-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-red-600 text-white">%30 İndirim</span>
+          <span id="campaign-modal-category" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Moda &amp; Giyim</span>
+        </div>
+        <button id="btn-campaign-modal-close" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Store & Title -->
+      <div class="flex items-center gap-3">
+        <div id="campaign-modal-logo" class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 p-2 flex items-center justify-center text-2xl font-black shrink-0">
+          🛍️
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 id="campaign-modal-store-name" class="text-base font-extrabold text-slate-900 dark:text-white font-heading truncate">Zara</h3>
+          <p id="campaign-modal-title" class="text-xs font-bold text-amber-600 dark:text-amber-400 truncate">Sezon Sonu İndirimi</p>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <p id="campaign-modal-desc" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+        Capacity mağazasına özel tüm seçili ürünlerde %30 indirim!
+      </p>
+
+      <!-- Coupon Code Box -->
+      <div class="p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 flex items-center justify-between">
+        <div class="flex flex-col">
+          <span class="text-[9px] uppercase font-black text-amber-700 dark:text-amber-300">İndirim Kupon Kodu</span>
+          <span id="campaign-modal-coupon" class="text-sm font-mono font-black text-slate-900 dark:text-white tracking-wider">ZARA30</span>
+        </div>
+        <button id="btn-campaign-copy-coupon" class="px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer">
+          Kopyala
+        </button>
+      </div>
+
+      <!-- Close Button -->
+      <button id="btn-campaign-modal-ok" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer">
+        Haritaya Dön
+      </button>
+    </div>
+  </div>
 
   <!-- TOAST BİLDİRİM KONTEYNERİ (Mobilde Alt Çekmecenin Üzerinde, Masaüstünde Sağ Altta) -->
   <div id="toast-container" class="fixed z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
