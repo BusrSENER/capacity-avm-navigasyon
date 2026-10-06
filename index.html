@@ -54,29 +54,23 @@
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
-  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - PULSE / RADAR - nrdsor MARKA KİMLİĞİ) -->
+  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - nrdsor TEK KURUMSAL LOGO - MERKEZİ) -->
   <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 text-white select-none transition-all duration-500">
-    <div class="relative flex items-center justify-center">
-      <!-- Dışa doğru yayılan radar / sinyal dalgaları (Pulse Rings) -->
-      <div class="absolute w-28 h-28 rounded-full border-2 border-[#ea5736]/40 animate-ping" style="animation-duration: 2s;"></div>
-      <div class="absolute w-44 h-44 rounded-full border border-indigo-500/30 animate-ping" style="animation-duration: 2.6s; animation-delay: 0.3s;"></div>
-      <div class="absolute w-60 h-60 rounded-full border border-indigo-400/20 animate-ping" style="animation-duration: 3.2s; animation-delay: 0.6s;"></div>
+    <!-- Zarif Ambient Işık Halesi (Arka Plan Glow) -->
+    <div class="absolute w-72 h-72 rounded-full bg-gradient-to-tr from-[#ea5736]/15 via-indigo-600/10 to-transparent blur-3xl pointer-events-none"></div>
 
-      <!-- Merkez Logo & Rozet: nrdsor Soru İşaretli Pin İkonu / Stacked Logo -->
-      <div class="relative z-10 w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#ea5736] via-indigo-600 to-slate-800 p-1 shadow-[0_0_50px_rgba(234,87,54,0.35)] flex items-center justify-center">
-        <div class="w-full h-full bg-white rounded-[20px] p-2 flex items-center justify-center shadow-inner">
-          <img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor Pin" id="splash-brand-icon" class="w-full h-full object-contain">
-        </div>
-      </div>
-    </div>
-
-    <!-- nrdsor Yatay Logo & Minimal Pulse Göstergesi (Temiz Marka Kimliği) -->
-    <div class="mt-8 flex flex-col items-center gap-3 text-center z-10">
-      <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" alt="nrdsor" id="splash-brand-logo" class="h-8.5 w-auto object-contain">
-      <div class="flex items-center gap-2 pt-0.5">
-        <span class="w-2 h-2 rounded-full bg-[#ea5736] animate-pulse"></span>
-        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" style="animation-delay: 200ms;"></span>
-        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style="animation-delay: 400ms;"></span>
+    <!-- Ekranda Sadece BİR TANE ve Tam Ortalanmış 'nrdsor' Yatay Logosu -->
+    <div class="relative z-10 flex flex-col items-center justify-center gap-4">
+      <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
+           alt="nrdsor" 
+           id="splash-brand-logo" 
+           class="h-11 sm:h-14 w-auto max-w-[240px] sm:max-w-[280px] object-contain drop-shadow-[0_4px_30px_rgba(234,87,54,0.3)] transition-transform duration-500" />
+      
+      <!-- Minimalist 3-Nokta Yükleme Göstergesi -->
+      <div class="flex items-center gap-2 pt-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#ea5736] animate-pulse"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" style="animation-delay: 200ms;"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" style="animation-delay: 400ms;"></span>
       </div>
     </div>
   </div>

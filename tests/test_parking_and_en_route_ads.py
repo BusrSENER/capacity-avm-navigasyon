@@ -28,8 +28,8 @@ def test_clean_splash_screen():
         # 1. Immediately verify splash screen exists and shows nrdsor branding
         splash = page.locator("#splash-screen")
         assert splash.count() > 0, "Splash screen should exist in DOM"
-        assert page.locator("#splash-brand-icon").is_visible(), "Splash nrdsor pin icon should be visible"
-        assert page.locator("#splash-brand-logo").is_visible(), "Splash nrdsor horizontal logo should be visible"
+        assert page.locator("#splash-brand-icon").count() == 0, "Duplicate pin icon should be removed"
+        assert page.locator("#splash-brand-logo").is_visible(), "Single centered nrdsor horizontal logo should be visible"
 
         # Verify generic text is REMOVED
         splash_text = splash.inner_text()
