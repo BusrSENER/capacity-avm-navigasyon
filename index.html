@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Capacity Rehber - İstanbul Bakırköy Capacity AVM İnteraktif Harita & Navigasyon</title>
+  <title>nrdsor &bull; Capacity AVM İnteraktif Harita &amp; Navigasyon</title>
   
-  <!-- Favicon -->
+  <!-- Favicon & PWA Icons (nrdsor Kurumsal Marka Kimliği) -->
   <link rel="icon" href="public/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="public/favicon.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="public/apple-touch-icon.png" sizes="180x180">
   
   <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +31,10 @@
               700: '#991b1b',
               800: '#7f1d1d',
               900: '#450a0a',
+            },
+            coral: {
+              500: '#ea5736',
+              600: '#d94726',
             }
           },
           fontFamily: {
@@ -48,37 +54,38 @@
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
-  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - PULSE / RADAR) -->
+  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - PULSE / RADAR - nrdsor MARKA KİMLİĞİ) -->
   <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 text-white select-none transition-all duration-500">
     <div class="relative flex items-center justify-center">
       <!-- Dışa doğru yayılan radar / sinyal dalgaları (Pulse Rings) -->
-      <div class="absolute w-28 h-28 rounded-full border-2 border-cyan-400/40 animate-ping" style="animation-duration: 2s;"></div>
-      <div class="absolute w-44 h-44 rounded-full border border-blue-500/30 animate-ping" style="animation-duration: 2.6s; animation-delay: 0.3s;"></div>
-      <div class="absolute w-60 h-60 rounded-full border border-indigo-500/20 animate-ping" style="animation-duration: 3.2s; animation-delay: 0.6s;"></div>
+      <div class="absolute w-28 h-28 rounded-full border-2 border-[#ea5736]/40 animate-ping" style="animation-duration: 2s;"></div>
+      <div class="absolute w-44 h-44 rounded-full border border-indigo-500/30 animate-ping" style="animation-duration: 2.6s; animation-delay: 0.3s;"></div>
+      <div class="absolute w-60 h-60 rounded-full border border-indigo-400/20 animate-ping" style="animation-duration: 3.2s; animation-delay: 0.6s;"></div>
 
-      <!-- Merkez Logo & Rozet -->
-      <div class="relative z-10 w-24 h-24 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 p-1 shadow-[0_0_50px_rgba(6,182,212,0.4)] flex items-center justify-center">
-        <div class="w-full h-full bg-slate-950 rounded-[20px] flex flex-col items-center justify-center">
-          <span class="text-3xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">C</span>
-          <span class="text-[8px] font-black tracking-widest text-cyan-400 uppercase mt-0.5">CAPACITY</span>
+      <!-- Merkez Logo & Rozet: nrdsor Soru İşaretli Pin İkonu / Stacked Logo -->
+      <div class="relative z-10 w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#ea5736] via-indigo-600 to-slate-800 p-1 shadow-[0_0_50px_rgba(234,87,54,0.35)] flex items-center justify-center">
+        <div class="w-full h-full bg-white rounded-[20px] p-2 flex items-center justify-center shadow-inner">
+          <img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor Pin" id="splash-brand-icon" class="w-full h-full object-contain">
         </div>
       </div>
     </div>
 
-    <!-- Başlık & Yükleniyor Durumu -->
-    <div class="mt-8 flex flex-col items-center gap-1.5 text-center z-10">
-      <h1 class="text-lg font-black tracking-wider text-white">CAPACITY AVM</h1>
-      <p class="text-xs text-slate-400 font-medium flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+    <!-- Başlık & Yükleniyor Durumu: nrdsor Yatay Logo & Capacity AVM -->
+    <div class="mt-8 flex flex-col items-center gap-2 text-center z-10">
+      <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" alt="nrdsor" id="splash-brand-logo" class="h-8 w-auto object-contain">
+      <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
+        <span class="text-slate-300 font-semibold">Capacity AVM</span>
+        <span class="text-slate-600">&bull;</span>
+        <span class="w-2 h-2 rounded-full bg-[#ea5736] animate-pulse"></span>
         <span>İç Mekan Navigasyon Başlatılıyor...</span>
-      </p>
+      </div>
     </div>
   </div>
 
   <!-- Ana Uygulama Düzeni: Sol Panel + Sağ Harita Alanı -->
   <div id="app-root-layout" class="flex h-screen w-screen overflow-hidden p-2.5 sm:p-3 gap-3">
 
-    <!-- SOL PANEL / MOBİL BOTTOM SHEET: CAPACITY REHBER (cevahir-rehber.web.app mimarisinde) -->
+    <!-- SOL PANEL / MOBİL BOTTOM SHEET: nrdsor & CAPACITY REHBER -->
     <aside id="sidebar-panel" class="relative w-[350px] lg:w-[380px] h-full flex flex-col bg-white dark:bg-slate-900 rounded-[26px] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 p-4 z-40 shrink-0 transition-colors duration-200">
       
       <!-- Masaüstü Sol Panel Daraltma Butonu: Sağ Kenara Yapışık [<] (Daralt) Butonu -->
@@ -101,19 +108,24 @@
         </button>
       </div>
 
-      <!-- Üst Başlık: Resmi Capacity Logosu, Başlık, TR | EN, Gece Modu Butonu -->
+      <!-- Üst Başlık: nrdsor Yatay Kurumsal Logo, Capacity Rozeti, TR | EN, Gece Modu Butonu -->
       <div id="sidebar-header-row" class="flex items-center justify-between pb-2.5 shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-md shadow-red-500/20 shrink-0 bg-gradient-to-br from-red-600 to-red-900 p-1 flex items-center justify-center">
-            <img src="public/favicon.svg" alt="Capacity Logo" class="w-full h-full object-contain">
-          </div>
-          <div>
-            <div class="flex items-center gap-1.5">
-              <h1 class="text-base font-bold font-heading text-slate-900 dark:text-white leading-tight">Capacity Rehber</h1>
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-black tracking-wider uppercase bg-gradient-to-r from-red-600 to-red-700 text-white shadow-xs">BAKIRKÖY</span>
+          <a href="#" class="flex flex-col select-none group" id="sidebar-brand-container" title="nrdsor - Capacity AVM">
+            <div class="flex items-center gap-2">
+              <!-- nrdsor Yatay Logo (Aydınlık modda mercan/lacivert, Karanlık modda mercan/beyaz) -->
+              <img src="public/assets/branding/nrdsor-logo-horizontal.png" 
+                   alt="nrdsor" 
+                   id="header-brand-logo-light"
+                   class="h-7 w-auto max-w-[135px] object-contain dark:hidden transition-transform group-hover:scale-102" />
+              <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
+                   alt="nrdsor" 
+                   id="header-brand-logo-dark" 
+                   class="h-7 w-auto max-w-[135px] object-contain hidden dark:block transition-transform group-hover:scale-102" />
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-black tracking-wider uppercase bg-slate-900 dark:bg-slate-700 text-white shadow-xs">CAPACITY</span>
             </div>
-            <p class="text-[11px] text-slate-400 dark:text-slate-400 font-medium">Bakırköy Capacity AVM &bull; Akıllı Harita</p>
-          </div>
+            <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium mt-0.5">Bakırköy Capacity AVM &bull; Akıllı Rehber</p>
+          </a>
         </div>
 
         <div class="flex items-center gap-2">
@@ -142,6 +154,15 @@
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
+      </div>
+
+      <!-- Kiosk Modu Sidebar İçi Bilgilendirme Rozeti (?kiosk=true) -->
+      <div id="kiosk-sidebar-banner" class="hidden items-center justify-between px-3 py-1.5 mb-1.5 rounded-xl bg-slate-900 text-white border border-slate-800 shadow-sm text-xs select-none">
+        <div class="flex items-center gap-2">
+          <img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor" class="w-4 h-4 object-contain">
+          <span class="font-bold tracking-tight">nrdsor Kiosk Modu</span>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950">Sabit Konum</span>
       </div>
 
       <!-- Google Maps Standardı Çift Girdi (Nereden / Nereye) & Swap Butonu -->
@@ -377,10 +398,20 @@
     <!-- SAĞ HARİTA ALANI (VIEWPORT) -->
     <main id="main-map-area" class="flex-1 relative h-full rounded-[26px] overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
       
-      <!-- Mobil Yatay & Masaüstü Daraltılmış Menü Açma Butonu [☰] (Apple Haritalar Stili) -->
-      <button id="btn-sidebar-toggle" class="hidden absolute top-1.5 left-1.5 z-30 w-9 h-9 rounded-xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-md flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Menüyü Aç" aria-label="Menüyü Aç">
+      <!-- Mobil Yatay & Masaüstü Daraltılmış Menü Açma Butonu [☰ nrdsor] (Apple Haritalar Stili) -->
+      <button id="btn-sidebar-toggle" class="hidden absolute top-2 left-2 z-30 px-2.5 h-9 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-md flex items-center gap-1.5 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Menüyü Aç" aria-label="Menüyü Aç">
         <i data-lucide="menu" class="w-4 h-4"></i>
+        <img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor" class="w-4 h-4 object-contain">
+        <span class="text-xs font-bold font-heading">nrdsor</span>
       </button>
+
+      <!-- Kiosk Modu Kurumsal nrdsor Rozeti (?kiosk=true) -->
+      <div id="kiosk-brand-badge" class="hidden absolute top-4 right-16 md:right-20 z-30 px-3 py-1.5 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800 shadow-md items-center gap-2 select-none pointer-events-auto">
+        <img src="public/assets/branding/nrdsor-logo-horizontal.png" alt="nrdsor" class="h-4 w-auto object-contain dark:hidden">
+        <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" alt="nrdsor" class="h-4 w-auto object-contain hidden dark:block">
+        <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+        <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Danışma Kiosk Modu</span>
+      </div>
 
       <!-- Sol Üst Yüzen Kat Başlığı Bannerı (cevahir-rehber.web.app birebir) -->
       <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all max-w-[calc(100vw-65px)]">
@@ -716,18 +747,28 @@
   <!-- ROTAYI CEBİNE AL (QR KOD) MODALI -->
   <div id="route-qr-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
     <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onclick="closeRouteQrModal()"></div>
-    <div class="relative w-full max-w-sm rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 shadow-2xl z-10 space-y-4 flex flex-col items-center text-center">
-      <!-- Modal Header -->
-      <div class="w-full flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+    <div class="relative w-full max-w-sm rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 shadow-2xl z-10 space-y-3.5 flex flex-col items-center text-center">
+      <!-- Kurumsal nrdsor İmzası & Header -->
+      <div class="w-full flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base">
-            📲
-          </div>
-          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Rotayı Cebine Al</h3>
+          <img src="public/assets/branding/nrdsor-logo-horizontal.png" alt="nrdsor" id="qr-modal-brand-logo-light" class="h-5 w-auto object-contain dark:hidden">
+          <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" alt="nrdsor" id="qr-modal-brand-logo-dark" class="h-5 w-auto object-contain hidden dark:block">
+          <span class="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-orange-500/10 text-[#ea5736] border border-[#ea5736]/20">Kiosk QR</span>
         </div>
-        <button id="btn-qr-modal-close" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95" title="Kapat">
+        <button id="btn-qr-modal-close" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95" title="Kapat">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
+      </div>
+
+      <!-- Alt Başlık / Modül -->
+      <div class="w-full flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm">
+            📲
+          </div>
+          <h3 class="text-xs font-bold text-slate-900 dark:text-white">Rotayı Cebine Al</h3>
+        </div>
+        <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">Canlı Yol Tarifi</span>
       </div>
 
       <!-- Description & Route Info -->
@@ -769,6 +810,12 @@
         <button id="btn-qr-copy-url" class="px-3 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 transition-all active:scale-95 shadow-sm">
           Kopyala
         </button>
+      </div>
+
+      <!-- Footer nrdsor İmzası -->
+      <div class="w-full flex items-center justify-center gap-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-800 text-[10px] font-medium text-slate-400 dark:text-slate-500">
+        <img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor pin" class="w-3.5 h-3.5 object-contain">
+        <span>Powered by <strong class="text-slate-700 dark:text-slate-300 font-bold">nrdsor</strong> Akıllı Harita Teknolojisi</span>
       </div>
     </div>
   </div>

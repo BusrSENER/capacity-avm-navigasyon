@@ -771,6 +771,7 @@ body.has-active-route #route-panel {
 
   /* Peek Modunda Başlık Satırını ve Mağaza Listesini Gizle, Sadece Arama & Kategori Filtrelerini Göster */
   #sidebar-panel:not(.is-expanded) #sidebar-header-row,
+  #sidebar-panel:not(.is-expanded) #kiosk-sidebar-banner,
   #sidebar-panel:not(.is-expanded) #quick-start-chips-row,
   #sidebar-panel:not(.is-expanded) #amenity-chips-row,
   #sidebar-panel:not(.is-expanded) #sidebar-tabs-container,

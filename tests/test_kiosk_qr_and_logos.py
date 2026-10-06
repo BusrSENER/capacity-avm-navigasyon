@@ -70,8 +70,7 @@ def test_kiosk_qr_and_logos():
 
         print("=== 3. TEST: KIOSK MODE (?kiosk=true) ===")
         page.goto("http://127.0.0.1:3000/?kiosk=true", wait_until="networkidle")
-        page.wait_for_timeout(1000)
-
+        page.wait_for_function("() => window.isKioskMode === true", timeout=5000)
         is_kiosk = page.evaluate("window.isKioskMode")
         assert is_kiosk == True, f"Expected isKioskMode to be True, got {is_kiosk}"
 

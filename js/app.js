@@ -2415,7 +2415,17 @@ function checkUrlParametersAndKiosk() {
     if (danismaChip) {
       danismaChip.classList.add('ring-2', 'ring-cyan-500', 'font-black');
     }
-    showToast('🖥️ Kiosk Modu Aktif: Başlangıç noktası Danışma olarak sabitlendi.', 'info');
+    const kioskBrandBadge = document.getElementById('kiosk-brand-badge');
+    if (kioskBrandBadge) {
+      kioskBrandBadge.classList.remove('hidden');
+      kioskBrandBadge.classList.add('flex');
+    }
+    const kioskSidebarBanner = document.getElementById('kiosk-sidebar-banner');
+    if (kioskSidebarBanner) {
+      kioskSidebarBanner.classList.remove('hidden');
+      kioskSidebarBanner.classList.add('flex');
+    }
+    showToast('🖥️ nrdsor Kiosk Modu Aktif: Başlangıç noktası Danışma olarak sabitlendi.', 'info');
   }
 
   const fromParam = urlParams.get('from');
