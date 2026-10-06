@@ -604,7 +604,330 @@ const BrandLogos = {
     <rect width="100" height="100" rx="20" fill="#09090b"/>
     <text x="50" y="52" font-family="'Times New Roman', serif" font-weight="900" font-size="28" fill="#ffffff" text-anchor="middle">W</text>
     <text x="50" y="70" font-family="sans-serif" font-weight="700" font-size="7" fill="#d4af37" text-anchor="middle" letter-spacing="1.5">COLLECTION</text>
+  </svg>`,
+
+  // --- B1, B2, 1. KAT & B3 EKLENEN YENİ KURUMSAL LOGOLAR ---
+  migros: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#ea580c"/>
+    <text x="50" y="46" font-family="sans-serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle">M</text>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">MİGROS</text>
+  </svg>`,
+
+  migrosmmm: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#ea580c"/>
+    <text x="50" y="44" font-family="sans-serif" font-weight="900" font-size="28" fill="#ffffff" text-anchor="middle">MMM</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">MİGROS</text>
+  </svg>`,
+
+  thenorthface: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <path d="M48 28 A16 16 0 0 1 64 44 L64 56 A4 4 0 0 1 56 56 L56 44 A8 8 0 0 0 48 36 Z M54 22 A22 22 0 0 1 76 44 L76 56 A4 4 0 0 1 68 56 L68 44 A14 14 0 0 0 54 30 Z" fill="#ffffff"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="7.5" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">THE NORTH FACE</text>
+  </svg>`,
+
+  northface: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <path d="M48 28 A16 16 0 0 1 64 44 L64 56 A4 4 0 0 1 56 56 L56 44 A8 8 0 0 0 48 36 Z M54 22 A22 22 0 0 1 76 44 L76 56 A4 4 0 0 1 68 56 L68 44 A14 14 0 0 0 54 30 Z" fill="#ffffff"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="7.5" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">THE NORTH FACE</text>
+  </svg>`,
+
+  teknosa: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#f97316"/>
+    <circle cx="50" cy="38" r="14" fill="#00205b"/>
+    <circle cx="50" cy="38" r="7" fill="#f97316"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="12" fill="#00205b" text-anchor="middle" letter-spacing="1">TEKNOSA</text>
+  </svg>`,
+
+  teknostandpremium: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#f97316"/>
+    <circle cx="50" cy="38" r="14" fill="#00205b"/>
+    <circle cx="50" cy="38" r="7" fill="#f97316"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="12" fill="#00205b" text-anchor="middle" letter-spacing="1">TEKNOSA</text>
+  </svg>`,
+
+  hibatech: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#090d16"/>
+    <path d="M28 48 C32 40, 68 40, 72 48 L76 56 C76 60, 24 60, 24 56 Z" fill="#06b6d4"/>
+    <circle cx="34" cy="56" r="4" fill="#ffffff"/>
+    <circle cx="66" cy="56" r="4" fill="#ffffff"/>
+    <text x="50" y="74" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">HIBATECH</text>
+  </svg>`,
+
+  hibatechotoyikama: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#090d16"/>
+    <path d="M28 48 C32 40, 68 40, 72 48 L76 56 C76 60, 24 60, 24 56 Z" fill="#06b6d4"/>
+    <circle cx="34" cy="56" r="4" fill="#ffffff"/>
+    <circle cx="66" cy="56" r="4" fill="#ffffff"/>
+    <text x="50" y="74" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">HIBATECH</text>
+  </svg>`,
+
+  pullbear: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">PULL&amp;BEAR</text>
+  </svg>`,
+
+  pullandbear: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">PULL&amp;BEAR</text>
+  </svg>`,
+
+  calzedonia: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="800" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="2">CALZEDONIA</text>
+  </svg>`,
+
+  nike: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <path d="M22 56 C34 62, 54 62, 78 30 C66 48, 48 56, 32 50 C26 48, 22 52, 22 56 Z" fill="#ffffff"/>
+    <text x="50" y="78" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">NIKE</text>
+  </svg>`,
+
+  starbucks: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#006241"/>
+    <circle cx="50" cy="50" r="30" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <polygon points="50,28 53,35 60,35 55,40 57,47 50,42 43,47 45,40 40,35 47,35" fill="#ffffff"/>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="8.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">STARBUCKS</text>
+  </svg>`,
+
+  samsung: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#034ea2"/>
+    <ellipse cx="50" cy="50" rx="38" ry="20" fill="none" stroke="#ffffff" stroke-width="2" transform="rotate(-12 50 50)"/>
+    <text x="50" y="55" font-family="sans-serif" font-weight="900" font-size="11.5" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">SAMSUNG</text>
+  </svg>`,
+
+  turkcell: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f224a"/>
+    <circle cx="42" cy="40" r="8" fill="#fec325"/>
+    <circle cx="58" cy="40" r="8" fill="#fec325"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="1">TURKCELL</text>
+  </svg>`,
+
+  vodafone: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#e60000"/>
+    <circle cx="50" cy="42" r="16" fill="#ffffff"/>
+    <circle cx="50" cy="42" r="9" fill="#e60000"/>
+    <path d="M50 42 C50 48, 54 52, 58 52 C54 55, 48 55, 46 50 Z" fill="#ffffff"/>
+    <text x="50" y="74" font-family="sans-serif" font-weight="800" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1">vodafone</text>
+  </svg>`,
+
+  atasun: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#009fe3"/>
+    <circle cx="36" cy="44" r="11" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <circle cx="64" cy="44" r="11" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <path d="M47 44 Q50 40 53 44" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">ATASUN</text>
+  </svg>`,
+
+  atasunoptik: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#009fe3"/>
+    <circle cx="36" cy="44" r="11" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <circle cx="64" cy="44" r="11" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <path d="M47 44 Q50 40 53 44" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">ATASUN</text>
+  </svg>`,
+
+  toyzzshop: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#e11d48"/>
+    <text x="50" y="48" font-family="sans-serif" font-weight="900" font-size="20" fill="#facc15" text-anchor="middle">TOYZZ</text>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">SHOP</text>
+  </svg>`,
+
+  penti: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#db2777"/>
+    <text x="50" y="60" font-family="sans-serif" font-weight="900" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="1">penti</text>
+  </svg>`,
+
+  tchibo: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0b1c3e"/>
+    <path d="M50 25 C45 32, 55 38, 50 45 C48 38, 42 32, 50 25 Z" fill="#eab308"/>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle">Tchibo</text>
+  </svg>`,
+
+  tefal: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#e11d48"/>
+    <text x="50" y="60" font-family="sans-serif" font-weight="900" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="1">Tefal</text>
+  </svg>`,
+
+  armagan: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <polygon points="50,24 54,34 65,34 56,40 59,51 50,44 41,51 44,40 35,34 46,34" fill="#facc15"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">ARMAĞAN</text>
+  </svg>`,
+
+  armaganoyuncak: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <polygon points="50,24 54,34 65,34 56,40 59,51 50,44 41,51 44,40 35,34 46,34" fill="#facc15"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">ARMAĞAN</text>
+  </svg>`,
+
+  birkenstock: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#1e3a8a"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="10.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">BIRKENSTOCK</text>
+  </svg>`,
+
+  camper: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#e11d48"/>
+    <path d="M30 46 C30 38, 70 38, 70 46 L70 54 L30 54 Z" fill="#ffffff"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="2">CAMPER</text>
+  </svg>`,
+
+  dagi: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="2">DAGI</text>
+  </svg>`,
+
+  elle: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="60" font-family="'Times New Roman', serif" font-weight="900" font-style="italic" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="3">ELLE</text>
+  </svg>`,
+
+  flormar: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#09090b"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="16" fill="#ec4899" text-anchor="middle" letter-spacing="1">Flormar</text>
+  </svg>`,
+
+  goldenrose: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#881337"/>
+    <text x="50" y="48" font-family="'Times New Roman', serif" font-weight="900" font-size="12" fill="#fbbf24" text-anchor="middle">GOLDEN</text>
+    <text x="50" y="68" font-family="'Times New Roman', serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle" letter-spacing="2">ROSE</text>
+  </svg>`,
+
+  guess: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#ffffff"/>
+    <polygon points="50,75 22,25 78,25" fill="none" stroke="#dc2626" stroke-width="4"/>
+    <text x="50" y="44" font-family="sans-serif" font-weight="900" font-size="11" fill="#dc2626" text-anchor="middle">GUESS</text>
+    <text x="50" y="62" font-family="sans-serif" font-weight="900" font-size="16" fill="#dc2626" text-anchor="middle">?</text>
+  </svg>`,
+
+  kiko: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <text x="50" y="52" font-family="sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle" letter-spacing="2">KIKO</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="600" font-size="8" fill="#a1a1aa" text-anchor="middle" letter-spacing="2">MILANO</text>
+  </svg>`,
+
+  konyalisaat: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#172554"/>
+    <circle cx="50" cy="40" r="14" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="8.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">KONYALI SAAT</text>
+  </svg>`,
+
+  loccitane: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#f59e0b"/>
+    <text x="50" y="52" font-family="'Times New Roman', serif" font-weight="900" font-size="12" fill="#000000" text-anchor="middle" letter-spacing="1">L'OCCITANE</text>
+    <text x="50" y="66" font-family="'Times New Roman', serif" font-weight="600" font-size="7" fill="#000000" text-anchor="middle" letter-spacing="1.5">EN PROVENCE</text>
+  </svg>`,
+
+  oxxo: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="2">OXXO</text>
+  </svg>`,
+
+  pandora: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <polygon points="50,30 46,35 54,35" fill="#f43f5e"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="800" font-size="12.5" fill="#ffffff" text-anchor="middle" letter-spacing="3">PANDORA</text>
+  </svg>`,
+
+  sneaksup: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <text x="50" y="48" font-family="sans-serif" font-weight="900" font-size="15" fill="#84cc16" text-anchor="middle">SNEAKS</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">UP</text>
+  </svg>`,
+
+  swarovski: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <path d="M42 36 C42 30, 50 30, 50 36 C50 42, 42 46, 42 50 C46 50, 56 46, 58 40 C56 50, 46 54, 40 54 C36 50, 38 42, 42 36 Z" fill="#ffffff"/>
+    <text x="50" y="74" font-family="'Times New Roman', serif" font-weight="800" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="2">SWAROVSKI</text>
+  </svg>`,
+
+  timberland: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#14532d"/>
+    <circle cx="50" cy="38" r="14" fill="#d97706"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="9.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">Timberland</text>
+  </svg>`,
+
+  uspolo: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#001a4e"/>
+    <text x="50" y="46" font-family="'Times New Roman', serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle" letter-spacing="1">U.S. POLO</text>
+    <text x="50" y="66" font-family="'Times New Roman', serif" font-weight="900" font-size="10" fill="#dc2626" text-anchor="middle" letter-spacing="2">ASSN.</text>
+  </svg>`,
+
+  uspoloassn: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#001a4e"/>
+    <text x="50" y="46" font-family="'Times New Roman', serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle" letter-spacing="1">U.S. POLO</text>
+    <text x="50" y="66" font-family="'Times New Roman', serif" font-weight="900" font-size="10" fill="#dc2626" text-anchor="middle" letter-spacing="2">ASSN.</text>
+  </svg>`,
+
+  yvesrocher: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#15803d"/>
+    <circle cx="50" cy="38" r="14" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <path d="M46 32 C48 36, 52 38, 55 35 C52 42, 45 42, 44 38 Z" fill="#ffffff"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">YVES ROCHER</text>
+  </svg>`,
+
+  greyder: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#eab308"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="15" fill="#000000" text-anchor="middle" letter-spacing="2">GREYDER</text>
+  </svg>`,
+
+  ceyo: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0284c7"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="2">CEYO</text>
+  </svg>`,
+
+  drycleanexpress: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0369a1"/>
+    <path d="M50 30 C53 26, 47 22, 50 20 C54 22, 52 26, 50 30 L30 46 L70 46 Z" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <text x="50" y="66" font-family="sans-serif" font-weight="900" font-size="8" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">DRY CLEAN</text>
+    <text x="50" y="78" font-family="sans-serif" font-weight="900" font-size="8" fill="#38bdf8" text-anchor="middle" letter-spacing="1">EXPRESS</text>
+  </svg>`,
+
+  petbox: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#d97706"/>
+    <circle cx="50" cy="46" r="8" fill="#ffffff"/>
+    <circle cx="40" cy="34" r="4" fill="#ffffff"/>
+    <circle cx="60" cy="34" r="4" fill="#ffffff"/>
+    <circle cx="34" cy="44" r="3.5" fill="#ffffff"/>
+    <circle cx="66" cy="44" r="3.5" fill="#ffffff"/>
+    <text x="50" y="74" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="1">PETBOX</text>
+  </svg>`,
+
+  jumbo: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="900" font-size="18" fill="#eab308" text-anchor="middle" letter-spacing="2">JUMBO</text>
+  </svg>`,
+
+  korkmaz: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#b91c1c"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">KORKMAZ</text>
+  </svg>`,
+
+  linens: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f766e"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">Linens</text>
+  </svg>`,
+
+  eve: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#9333ea"/>
+    <text x="50" y="60" font-family="sans-serif" font-weight="900" font-size="26" fill="#ffffff" text-anchor="middle" letter-spacing="1">eve</text>
+  </svg>`,
+
+  ltb: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="24" fill="#ef4444" text-anchor="middle" letter-spacing="2">LTB</text>
+  </svg>`,
+
+  lufian: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#1c1917"/>
+    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="800" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">LUFIAN</text>
+  </svg>`,
+
+  samsonite: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <circle cx="50" cy="38" r="12" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1">Samsonite</text>
   </svg>`
+
 };
 
 /**
@@ -707,3 +1030,5 @@ function getStoreMonogram(name, category, size = 38) {
     </div>
   `;
 }
+
+window.BrandLogos = BrandLogos;

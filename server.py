@@ -1,4 +1,4 @@
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import sys
 
 class Handler(SimpleHTTPRequestHandler):
@@ -8,6 +8,6 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
-    server = HTTPServer(('127.0.0.1', port), Handler)
-    print(f"Server started on http://127.0.0.1:{port}")
+    server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
+    print(f"Server started on http://127.0.0.1:{port}", flush=True)
     server.serve_forever()

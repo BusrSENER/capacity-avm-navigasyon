@@ -67,28 +67,101 @@
   ],
   "amenities": [
     {
+      "id": "am_wc_1",
+      "name": "3. Bodrum (B3) WC",
+      "floor": 1,
+      "type": "wc",
+      "kind": "wc",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_1_n_1000"
+    },
+    {
+      "id": "am_prayer_1",
+      "name": "3. Bodrum (B3) Mescit",
+      "floor": 1,
+      "type": "prayer",
+      "kind": "prayer",
+      "cx": 1000,
+      "cy": 750,
+      "nav_node": "c_1_s_1000"
+    },
+    {
+      "id": "am_wc_2",
+      "name": "2. Bodrum (B2) Otopark WC",
+      "floor": 2,
+      "type": "wc",
+      "kind": "wc",
+      "cx": 1000,
+      "cy": 750,
+      "nav_node": "c_2_s_1000"
+    },
+    {
+      "id": "am_carpark_2",
+      "name": "Kapalı Otopark & Vale Noktası",
+      "floor": 2,
+      "type": "carpark",
+      "kind": "carpark",
+      "cx": 1085,
+      "cy": 425,
+      "nav_node": "n_ent_carpark"
+    },
+    {
+      "id": "am_wc_3",
+      "name": "1. Bodrum (B1) WC",
+      "floor": 3,
+      "type": "wc",
+      "kind": "wc",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_3_n_1000"
+    },
+    {
+      "id": "am_baby_3",
+      "name": "1. Bodrum (B1) Bebek Bakım Odası",
+      "floor": 3,
+      "type": "baby",
+      "kind": "baby",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_3_n_1000"
+    },
+    {
+      "id": "am_atm_3",
+      "name": "1. Bodrum (B1) Bankamatikler (ATM)",
+      "floor": 3,
+      "type": "atm",
+      "kind": "atm",
+      "cx": 1000,
+      "cy": 750,
+      "nav_node": "c_3_s_1000"
+    },
+    {
       "id": "am_info_4",
       "name": "Ana Danışma & Misafir Hizmetleri",
       "floor": 4,
       "type": "info",
+      "kind": "info",
       "cx": 1085,
       "cy": 425,
       "nav_node": "n_danisma"
     },
     {
       "id": "am_wc_4_ne",
-      "name": "Kuzeydoğu WC & Bebek Bakım",
+      "name": "Kuzeydoğu WC",
       "floor": 4,
       "type": "wc",
+      "kind": "wc",
       "cx": 1000,
       "cy": 75,
       "nav_node": "c_4_n_1000"
     },
     {
       "id": "am_wc_4_se",
-      "name": "Güneydoğu WC & Mescit",
+      "name": "Güneydoğu WC",
       "floor": 4,
       "type": "wc",
+      "kind": "wc",
       "cx": 1000,
       "cy": 750,
       "nav_node": "c_4_s_1000"
@@ -98,6 +171,37 @@
       "name": "Güneybatı WC (Bay/Bayan)",
       "floor": 4,
       "type": "wc",
+      "kind": "wc",
+      "cx": 100,
+      "cy": 750,
+      "nav_node": "c_4_s_200"
+    },
+    {
+      "id": "am_baby_4",
+      "name": "Zemin Kat Bebek Bakım Odası",
+      "floor": 4,
+      "type": "baby",
+      "kind": "baby",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_4_n_1000"
+    },
+    {
+      "id": "am_prayer_4",
+      "name": "Zemin Kat Mescit",
+      "floor": 4,
+      "type": "prayer",
+      "kind": "prayer",
+      "cx": 1000,
+      "cy": 750,
+      "nav_node": "c_4_s_1000"
+    },
+    {
+      "id": "am_atm_4",
+      "name": "Zemin Kat Bankamatikler (ATM)",
+      "floor": 4,
+      "type": "atm",
+      "kind": "atm",
       "cx": 100,
       "cy": 750,
       "nav_node": "c_4_s_200"
@@ -107,36 +211,70 @@
       "name": "Panoramik Cam Asansörler",
       "floor": 4,
       "type": "elevator",
+      "kind": "elevator",
       "cx": 565,
       "cy": 420,
       "nav_node": "c_4_m_565"
     },
     {
-      "id": "am_esc_4_w",
-      "name": "Batı Yürüyen Merdivenler",
-      "floor": 4,
-      "type": "escalator",
-      "cx": 265,
-      "cy": 420,
-      "nav_node": "c_4_m_265"
+      "id": "am_wc_5",
+      "name": "1. Kat WC",
+      "floor": 5,
+      "type": "wc",
+      "kind": "wc",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_5_n_1000"
     },
     {
-      "id": "am_esc_4_e",
-      "name": "Doğu Yürüyen Merdivenler",
-      "floor": 4,
-      "type": "escalator",
-      "cx": 1010,
-      "cy": 420,
-      "nav_node": "c_4_m_1010"
+      "id": "am_baby_5",
+      "name": "1. Kat Bebek Bakım Odası",
+      "floor": 5,
+      "type": "baby",
+      "kind": "baby",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_5_n_1000"
     },
     {
-      "id": "am_pool_4",
-      "name": "İnteraktif Müzikli Gösteri Havuzu",
-      "floor": 4,
-      "type": "fountain",
-      "cx": 700,
-      "cy": 440,
-      "nav_node": "c_4_m_700"
+      "id": "am_atm_5",
+      "name": "1. Kat ATM Noktası",
+      "floor": 5,
+      "type": "atm",
+      "kind": "atm",
+      "cx": 1000,
+      "cy": 750,
+      "nav_node": "c_5_s_1000"
+    },
+    {
+      "id": "am_wc_6",
+      "name": "2. Kat Food Court WC",
+      "floor": 6,
+      "type": "wc",
+      "kind": "wc",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_6_n_1000"
+    },
+    {
+      "id": "am_baby_6",
+      "name": "2. Kat Bebek Bakım Odası",
+      "floor": 6,
+      "type": "baby",
+      "kind": "baby",
+      "cx": 1000,
+      "cy": 75,
+      "nav_node": "c_6_n_1000"
+    },
+    {
+      "id": "am_prayer_6",
+      "name": "2. Kat Mescit & İbadethane",
+      "floor": 6,
+      "type": "prayer",
+      "kind": "prayer",
+      "cx": 1000,
+      "cy": 750,
+      "nav_node": "c_6_s_1000"
     }
   ],
   "floors": {
@@ -394,6 +532,28 @@
           "category_web": "Elektronik & Beyaz Eşya",
           "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/9c924b1a1f4b.jpg"
         }
+      ],
+      "amenities": [
+        {
+          "id": "am_wc_1",
+          "name": "3. Bodrum (B3) WC",
+          "floor": 1,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_1_n_1000"
+        },
+        {
+          "id": "am_prayer_1",
+          "name": "3. Bodrum (B3) Mescit",
+          "floor": 1,
+          "type": "prayer",
+          "kind": "prayer",
+          "cx": 1000,
+          "cy": 750,
+          "nav_node": "c_1_s_1000"
+        }
       ]
     },
     "2": {
@@ -432,6 +592,28 @@
           },
           "category_web": "Hizmet",
           "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/589027cb6851.jpg"
+        }
+      ],
+      "amenities": [
+        {
+          "id": "am_wc_2",
+          "name": "2. Bodrum (B2) Otopark WC",
+          "floor": 2,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 1000,
+          "cy": 750,
+          "nav_node": "c_2_s_1000"
+        },
+        {
+          "id": "am_carpark_2",
+          "name": "Kapalı Otopark & Vale Noktası",
+          "floor": 2,
+          "type": "carpark",
+          "kind": "carpark",
+          "cx": 1085,
+          "cy": 425,
+          "nav_node": "n_ent_carpark"
         }
       ]
     },
@@ -2022,6 +2204,38 @@
           "category_web": "1. Bodrum Kat",
           "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/cd40d7db654f.jpg"
         }
+      ],
+      "amenities": [
+        {
+          "id": "am_wc_3",
+          "name": "1. Bodrum (B1) WC",
+          "floor": 3,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_3_n_1000"
+        },
+        {
+          "id": "am_baby_3",
+          "name": "1. Bodrum (B1) Bebek Bakım Odası",
+          "floor": 3,
+          "type": "baby",
+          "kind": "baby",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_3_n_1000"
+        },
+        {
+          "id": "am_atm_3",
+          "name": "1. Bodrum (B1) Bankamatikler (ATM)",
+          "floor": 3,
+          "type": "atm",
+          "kind": "atm",
+          "cx": 1000,
+          "cy": 750,
+          "nav_node": "c_3_s_1000"
+        }
       ]
     },
     "4": {
@@ -3393,6 +3607,88 @@
           },
           "category_web": "Mücevher & Aksesuar",
           "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/77d0c69199ea.jpg"
+        }
+      ],
+      "amenities": [
+        {
+          "id": "am_info_4",
+          "name": "Ana Danışma & Misafir Hizmetleri",
+          "floor": 4,
+          "type": "info",
+          "kind": "info",
+          "cx": 1085,
+          "cy": 425,
+          "nav_node": "n_danisma"
+        },
+        {
+          "id": "am_wc_4_ne",
+          "name": "Kuzeydoğu WC",
+          "floor": 4,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_4_n_1000"
+        },
+        {
+          "id": "am_wc_4_se",
+          "name": "Güneydoğu WC",
+          "floor": 4,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 1000,
+          "cy": 750,
+          "nav_node": "c_4_s_1000"
+        },
+        {
+          "id": "am_wc_4_sw",
+          "name": "Güneybatı WC (Bay/Bayan)",
+          "floor": 4,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 100,
+          "cy": 750,
+          "nav_node": "c_4_s_200"
+        },
+        {
+          "id": "am_baby_4",
+          "name": "Zemin Kat Bebek Bakım Odası",
+          "floor": 4,
+          "type": "baby",
+          "kind": "baby",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_4_n_1000"
+        },
+        {
+          "id": "am_prayer_4",
+          "name": "Zemin Kat Mescit",
+          "floor": 4,
+          "type": "prayer",
+          "kind": "prayer",
+          "cx": 1000,
+          "cy": 750,
+          "nav_node": "c_4_s_1000"
+        },
+        {
+          "id": "am_atm_4",
+          "name": "Zemin Kat Bankamatikler (ATM)",
+          "floor": 4,
+          "type": "atm",
+          "kind": "atm",
+          "cx": 100,
+          "cy": 750,
+          "nav_node": "c_4_s_200"
+        },
+        {
+          "id": "am_lift_4",
+          "name": "Panoramik Cam Asansörler",
+          "floor": 4,
+          "type": "elevator",
+          "kind": "elevator",
+          "cx": 565,
+          "cy": 420,
+          "nav_node": "c_4_m_565"
         }
       ]
     },
@@ -4797,6 +5093,38 @@
           "category_web": "Kadın & Erkek Giyim",
           "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/071e0cdd4ef3.jpg"
         }
+      ],
+      "amenities": [
+        {
+          "id": "am_wc_5",
+          "name": "1. Kat WC",
+          "floor": 5,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_5_n_1000"
+        },
+        {
+          "id": "am_baby_5",
+          "name": "1. Kat Bebek Bakım Odası",
+          "floor": 5,
+          "type": "baby",
+          "kind": "baby",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_5_n_1000"
+        },
+        {
+          "id": "am_atm_5",
+          "name": "1. Kat ATM Noktası",
+          "floor": 5,
+          "type": "atm",
+          "kind": "atm",
+          "cx": 1000,
+          "cy": 750,
+          "nav_node": "c_5_s_1000"
+        }
       ]
     },
     "6": {
@@ -5548,6 +5876,38 @@
           },
           "category_web": "Yiyecek & İçecek",
           "logo_url": "https://www.capacity.com.tr/uploads/stores/thumb/51f92e68b24c.jpg"
+        }
+      ],
+      "amenities": [
+        {
+          "id": "am_wc_6",
+          "name": "2. Kat Food Court WC",
+          "floor": 6,
+          "type": "wc",
+          "kind": "wc",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_6_n_1000"
+        },
+        {
+          "id": "am_baby_6",
+          "name": "2. Kat Bebek Bakım Odası",
+          "floor": 6,
+          "type": "baby",
+          "kind": "baby",
+          "cx": 1000,
+          "cy": 75,
+          "nav_node": "c_6_n_1000"
+        },
+        {
+          "id": "am_prayer_6",
+          "name": "2. Kat Mescit & İbadethane",
+          "floor": 6,
+          "type": "prayer",
+          "kind": "prayer",
+          "cx": 1000,
+          "cy": 750,
+          "nav_node": "c_6_s_1000"
         }
       ]
     }

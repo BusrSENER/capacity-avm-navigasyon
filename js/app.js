@@ -247,6 +247,268 @@ function showToast(message, type = 'info') {
   }, 3200);
 }
 
+// ==========================================
+// DİL DESTEĞİ VE YERELLEŞTİRME (TR / EN)
+// ==========================================
+let currentLanguage = localStorage.getItem('capacity_language') || 'tr';
+window.currentLanguage = currentLanguage;
+
+const TRANSLATIONS = {
+  tr: {
+    startPlaceholder: '📍 Nereden? (Giriş / Mağaza)',
+    targetPlaceholder: '🎯 Nereye? (Mağaza / Hizmet)',
+    entranceLabel: 'Giriş:',
+    danisma: 'ℹ️ Danışma',
+    escalator: 'Yürüyen Merdiven',
+    elevator: 'Asansör / Bebek',
+    tabThisFloor: 'Bu katta · ',
+    tabAllFloors: 'Tüm katlar',
+    categories: {
+      all: 'Tümü',
+      fashion: 'Moda',
+      shoes: 'Ayakkabı & Çanta',
+      sports: 'Spor',
+      tech: 'Teknoloji',
+      cosmetics: 'Kozmetik',
+      food: 'Yeme & İçme',
+      home: 'Ev & Yaşam',
+      entertainment: 'Eğlence',
+      service: 'Hizmet'
+    },
+    amenities: {
+      wc: 'Tuvalet',
+      entrance: 'Giriş-Çıkış',
+      info: 'Danışma',
+      atm: 'ATM',
+      carpark: 'Otopark',
+      prayer: 'Mescit',
+      baby: 'Bebek Odası'
+    },
+    parkingMemoryBtn: 'Otopark Konumu Kaydet',
+    parkingModalTitle: 'Otopark Hafızası',
+    parkingModalDesc: 'Park yerinizi kaydedin, dönüşte tek tıkla rotanızı çizin',
+    parkingFloorLabel: 'Hangi Kat?',
+    parkingZoneLabel: 'Hangi Bölge / Renk?',
+    parkingPillarLabel: 'Direk No / Sütun / Not (İsteğe Bağlı):',
+    parkingPillarPlaceholder: 'Örn: R08, S12, Voltrun şarj yanı...',
+    parkingSaveBtn: 'Otopark Konumunu Kaydet',
+    parkingSavedTitle: 'Kayıtlı Araç Konumu',
+    parkingDeleteBtn: 'Konumu Sil',
+    parkingNavigateBtn: 'Arabama Git (En Yakın Asansöre Yönlendir)',
+    peekStartBtn: 'Buradayım (Başlangıç Yap)',
+    peekTargetBtn: 'Hedef Yap',
+    simStart: 'Simülasyonu Başlat',
+    simPause: 'Duraklat',
+    hudDetail: 'Detay',
+    compass: 'Kuzey: Carousel • Doğu: Fişekhane Cad.'
+  },
+  en: {
+    startPlaceholder: '📍 From where? (Entrance / Store)',
+    targetPlaceholder: '🎯 To where? (Store / Service)',
+    entranceLabel: 'Entrance:',
+    danisma: 'ℹ️ Info Desk',
+    escalator: 'Escalator',
+    elevator: 'Elevator / Stroller',
+    tabThisFloor: 'On this floor · ',
+    tabAllFloors: 'All floors',
+    categories: {
+      all: 'All',
+      fashion: 'Fashion',
+      shoes: 'Shoes & Bags',
+      sports: 'Sports',
+      tech: 'Technology',
+      cosmetics: 'Cosmetics',
+      food: 'Food & Drink',
+      home: 'Home & Living',
+      entertainment: 'Entertainment',
+      service: 'Services'
+    },
+    amenities: {
+      wc: 'Restrooms',
+      entrance: 'Entrances',
+      info: 'Info Desk',
+      atm: 'ATMs',
+      carpark: 'Parking',
+      prayer: 'Prayer Room',
+      baby: 'Baby Care'
+    },
+    parkingMemoryBtn: 'Save Parking Spot',
+    parkingModalTitle: 'Parking Memory',
+    parkingModalDesc: 'Save your parking spot, route back with 1-click',
+    parkingFloorLabel: 'Which Floor?',
+    parkingZoneLabel: 'Which Zone / Color?',
+    parkingPillarLabel: 'Pillar No / Column / Note (Optional):',
+    parkingPillarPlaceholder: 'e.g. R08, S12, near EV charger...',
+    parkingSaveBtn: 'Save Parking Spot',
+    parkingSavedTitle: 'Saved Vehicle Location',
+    parkingDeleteBtn: 'Delete Spot',
+    parkingNavigateBtn: 'Go to My Car (Nearest Elevator)',
+    peekStartBtn: 'I am here (Start Point)',
+    peekTargetBtn: 'Set as Target',
+    simStart: 'Start Simulation',
+    simPause: 'Pause',
+    hudDetail: 'Details',
+    compass: 'North: Carousel • East: Fişekhane Ave.'
+  }
+};
+
+function setLanguage(lang) {
+  currentLanguage = (lang === 'en') ? 'en' : 'tr';
+  try {
+    localStorage.setItem('capacity_language', currentLanguage);
+  } catch (e) {}
+  window.currentLanguage = currentLanguage;
+
+  const t = TRANSLATIONS[currentLanguage];
+
+  // 1. Language Toggle Button labels
+  const trLabel = document.getElementById('lang-tr-label');
+  const enLabel = document.getElementById('lang-en-label');
+  if (trLabel && enLabel) {
+    if (currentLanguage === 'tr') {
+      trLabel.className = 'text-slate-900 dark:text-white font-black';
+      enLabel.className = 'text-slate-400 dark:text-slate-400 font-normal';
+    } else {
+      trLabel.className = 'text-slate-400 dark:text-slate-400 font-normal';
+      enLabel.className = 'text-slate-900 dark:text-white font-black';
+    }
+  }
+
+  // 2. Input Placeholders
+  const startInput = document.getElementById('input-start-loc');
+  const targetInput = document.getElementById('input-target-loc');
+  if (startInput) startInput.placeholder = t.startPlaceholder;
+  if (targetInput) targetInput.placeholder = t.targetPlaceholder;
+
+  // 3. Escalator / Elevator
+  const escBtn = document.getElementById('tab-pref-escalator');
+  const eleBtn = document.getElementById('tab-pref-elevator');
+  if (escBtn) {
+    const span = escBtn.querySelectorAll('span')[1];
+    if (span) span.textContent = t.escalator;
+  }
+  if (eleBtn) {
+    const span = eleBtn.querySelectorAll('span')[1];
+    if (span) span.textContent = t.elevator;
+  }
+
+  // 4. Quick start chips
+  const quickDanisma = document.getElementById('btn-quick-danisma');
+  if (quickDanisma) {
+    const span = quickDanisma.querySelector('span');
+    if (span) span.textContent = t.danisma;
+  }
+  const quickRow = document.getElementById('quick-start-chips-row');
+  if (quickRow) {
+    const labelSpan = quickRow.querySelector('span');
+    if (labelSpan) labelSpan.textContent = t.entranceLabel;
+  }
+
+  // 5. Category Pills
+  document.querySelectorAll('#category-pills-row .cat-pill').forEach(pill => {
+    const cat = pill.getAttribute('data-category');
+    if (cat && t.categories[cat]) {
+      const dot = pill.querySelector('span');
+      if (dot) {
+        pill.innerHTML = '';
+        pill.appendChild(dot);
+        pill.appendChild(document.createTextNode(' ' + t.categories[cat]));
+      } else {
+        pill.textContent = t.categories[cat];
+      }
+    }
+  });
+
+  // 6. Amenity Pills
+  document.querySelectorAll('#amenity-chips-row .amenity-pill').forEach(pill => {
+    const amen = pill.getAttribute('data-amenity');
+    if (amen && t.amenities[amen]) {
+      const iconSpan = pill.querySelector('span');
+      const iconText = iconSpan ? iconSpan.textContent : '';
+      pill.innerHTML = `<span>${iconText}</span> ${t.amenities[amen]}`;
+    }
+  });
+
+  // 7. Parking memory button
+  const pBtnText = document.getElementById('parking-memory-btn-text');
+  if (pBtnText) {
+    pBtnText.textContent = t.parkingMemoryBtn;
+  }
+
+  // 8. Tabs (Bu katta / Tüm katlar)
+  const tabAll = document.getElementById('tab-all-floors');
+  if (tabAll) tabAll.textContent = t.tabAllFloors;
+
+  // 9. Peek Card Buttons
+  const peekStart = document.getElementById('btn-peek-start');
+  const peekTarget = document.getElementById('btn-peek-target');
+  if (peekStart) {
+    const span = peekStart.querySelectorAll('span')[1];
+    if (span) span.textContent = t.peekStartBtn;
+  }
+  if (peekTarget) {
+    const span = peekTarget.querySelectorAll('span')[1];
+    if (span) span.textContent = t.peekTargetBtn;
+  }
+
+  // 10. Compass
+  const compass = document.querySelector('#map-cardinal-compass span');
+  if (compass) compass.textContent = t.compass;
+
+  // 11. Parking Modal texts
+  const pModalTitle = document.querySelector('#parking-memory-modal h3');
+  if (pModalTitle) pModalTitle.textContent = t.parkingModalTitle;
+  const pModalDesc = document.querySelector('#parking-memory-modal p');
+  if (pModalDesc) pModalDesc.textContent = t.parkingModalDesc;
+  const pFloorLabels = document.querySelectorAll('#parking-form label');
+  if (pFloorLabels.length >= 3) {
+    pFloorLabels[0].textContent = t.parkingFloorLabel;
+    pFloorLabels[1].textContent = t.parkingZoneLabel;
+    pFloorLabels[2].textContent = t.parkingPillarLabel;
+  }
+  const pPillarInput = document.getElementById('parking-spot-pillar');
+  if (pPillarInput) pPillarInput.placeholder = t.parkingPillarPlaceholder;
+  const pSaveBtn = document.getElementById('btn-parking-save');
+  if (pSaveBtn) {
+    const span = pSaveBtn.querySelectorAll('span')[1];
+    if (span) span.textContent = t.parkingSaveBtn;
+  }
+  const pNavBtn = document.getElementById('btn-parking-navigate-car');
+  if (pNavBtn) {
+    const span = pNavBtn.querySelectorAll('span')[1];
+    if (span) span.textContent = t.parkingNavigateBtn;
+  }
+  const pDelBtn = document.getElementById('btn-parking-delete');
+  if (pDelBtn) pDelBtn.innerHTML = `<i data-lucide="trash-2" class="w-3 h-3"></i> ${t.parkingDeleteBtn}`;
+
+  // 12. Simulation play button
+  const simPlayText = document.getElementById('sim-play-text');
+  if (simPlayText) {
+    const isRunning = cartSimulator && cartSimulator.isRunning;
+    simPlayText.textContent = isRunning ? t.simPause : t.simStart;
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+window.setLanguage = setLanguage;
+
+function toggleLanguage() {
+  const nextLang = (currentLanguage === 'tr') ? 'en' : 'tr';
+  setLanguage(nextLang);
+}
+window.toggleLanguage = toggleLanguage;
+
+function setupLanguageToggle() {
+  const btn = document.getElementById('lang-toggle-btn');
+  btn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleLanguage();
+  });
+  setLanguage(currentLanguage);
+}
+window.setupLanguageToggle = setupLanguageToggle;
+
+
 // Açılış Ekranı (Splash Screen - Pulse Radar): nrdsor Marka Algısı İçin ~2.5 Saniye (2500ms) Temiz Gösterim
 const splashStartTime = Date.now();
 const MIN_SPLASH_DURATION = 2500; // ms
@@ -383,6 +645,7 @@ function initApp() {
   setupTabs();
   setupPathPreferenceChips();
   setupParkingMemoryEvents();
+  setupLanguageToggle();
   setupCampaignEvents();
   updateParkingUI();
 
@@ -1147,33 +1410,87 @@ function setupSearchEngine() {
   });
 }
 
-// 5. Hızlı İhtiyaç Çipleri (Amenities)
+// 5. Hızlı İhtiyaç Çipleri (Amenities) & En Yakın Servis Noktası Bulma Algoritması
+function findNearestAmenity(amenityKind, floor) {
+  if (!mallData) return null;
+  const currentFl = floor || currentFloor || 4;
+
+  const allList = [];
+  if (Array.isArray(mallData.amenities)) allList.push(...mallData.amenities);
+  if (Array.isArray(mallData.entrances)) allList.push(...mallData.entrances);
+  if (mallData.floors) {
+    for (let fl = 1; fl <= 6; fl++) {
+      const floorAms = mallData.floors[fl]?.amenities || [];
+      allList.push(...floorAms);
+    }
+  }
+
+  const seen = new Set();
+  const deduped = [];
+  for (const item of allList) {
+    if (item && item.id && !seen.has(item.id)) {
+      seen.add(item.id);
+      deduped.push(item);
+    }
+  }
+
+  const kind = (amenityKind || '').toLowerCase();
+  const matches = deduped.filter(a => {
+    const aType = (a.type || '').toLowerCase();
+    const aKind = (a.kind || '').toLowerCase();
+    const aName = (a.name || '').toLowerCase();
+
+    if (kind === 'wc') {
+      return aType === 'wc' || aKind === 'wc' || aName.includes('wc') || aName.includes('tuvalet') || aName.includes('lavabo');
+    }
+    if (kind === 'baby') {
+      return aType === 'baby' || aKind === 'baby' || aName.includes('bebek');
+    }
+    if (kind === 'prayer') {
+      return aType === 'prayer' || aKind === 'prayer' || aName.includes('mescit');
+    }
+    if (kind === 'atm') {
+      return aType === 'atm' || aKind === 'atm' || aName.includes('atm') || aName.includes('bankamatik');
+    }
+    if (kind === 'info') {
+      return aType === 'info' || aKind === 'info' || aName.includes('danışma') || aName.includes('danisma');
+    }
+    if (kind === 'entrance') {
+      return aType === 'entrance' || aKind === 'entrance' || aName.includes('giriş') || aName.includes('giris');
+    }
+    if (kind === 'carpark') {
+      return aType === 'carpark' || aKind === 'carpark' || aName.includes('otopark') || aName.includes('vale');
+    }
+    return aType === kind || aKind === kind || aName.includes(kind);
+  });
+
+  if (matches.length === 0) return null;
+
+  // 1. Kullanıcının bulunduğu kattaki servis noktası
+  const sameFloor = matches.find(m => m.floor === currentFl);
+  if (sameFloor) return sameFloor;
+
+  // 2. Kat farkı mutlak değeri en az olan en yakın kat
+  matches.sort((a, b) => {
+    const distA = Math.abs((a.floor || 4) - currentFl);
+    const distB = Math.abs((b.floor || 4) - currentFl);
+    return distA - distB;
+  });
+
+  return matches[0];
+}
+window.findNearestAmenity = findNearestAmenity;
+
 function setupAmenityPills() {
   document.querySelectorAll('.amenity-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       const amenityKind = pill.getAttribute('data-amenity');
-      const floorAmenities = mallData.floors[currentFloor]?.amenities || [];
-      let found = floorAmenities.find(a => a.kind === amenityKind);
+      if (!amenityKind) return; // e.g. btn-parking-memory handles itself
 
-      if (!found) {
-        // Başka katlarda ara
-        for (let fl = 1; fl <= 6; fl++) {
-          const ams = mallData.floors[fl]?.amenities || [];
-          found = ams.find(a => a.kind === amenityKind);
-          if (found) {
-            mallMap.loadFloor(fl).then(() => {
-              updateFloorUI(fl);
-              selectStore(found);
-            });
-            return;
-          }
-        }
-      }
-
-      if (found) {
-        selectStore(found);
-      } else {
-        showToast('Bu katta aranan servis noktası bulunamadı.', 'warning');
+      const targetAmenity = findNearestAmenity(amenityKind, currentFloor);
+      if (targetAmenity) {
+        setTargetLocation(targetAmenity);
+        selectStore(targetAmenity);
       }
     });
   });
@@ -1311,7 +1628,7 @@ function setStartLocation(loc) {
     setActiveFocusSlot(null);
   } else {
     setActiveFocusSlot('target');
-    showToast(`📍 Başlangıç: "${loc.name}". Lütfen hedef mağazanızı seçin.`, 'info');
+    // Bilgi kutusu kaldırıldı
     // Başlangıç katına ve koordinatına odaklan
     if (mallMap.currentFloor !== loc.floor) {
       mallMap.loadFloor(loc.floor).then(() => {
@@ -1380,7 +1697,7 @@ function setTargetLocation(store) {
     setActiveFocusSlot(null);
   } else if (!selectedStartStore) {
     setActiveFocusSlot('start');
-    showToast(`🎯 Hedef: ${store.name}. Lütfen başlangıç noktanızı seçin (Giriş veya Mağaza).`, 'info');
+    // Bilgi kutusu kaldırıldı
   }
 
   if (activePoiStore) {
@@ -1661,7 +1978,7 @@ function swapLocations() {
     setActiveFocusSlot('start');
     startInput?.focus();
 
-    showToast(`🎯 Hedef: "${selectedTargetStore.name}". Lütfen başlangıç noktanızı seçin.`, 'info');
+    // Bilgi kutusu kaldırıldı
   }
   // 3. Durum: Yalnızca [🎯 Nereye?] doluyken [⇅] basılırsa
   else if (!selectedStartStore && selectedTargetStore) {
@@ -1698,7 +2015,7 @@ function swapLocations() {
     setActiveFocusSlot('target');
     targetInput?.focus();
 
-    showToast(`📍 Başlangıç: "${selectedStartStore.name}". Lütfen hedef mağazanızı seçin.`, 'info');
+    // Bilgi kutusu kaldırıldı
   }
   // 4. Durum: İkisi de boşken [⇅] basılırsa
   else {
@@ -2712,39 +3029,69 @@ function setupParkingMemoryEvents() {
     navigateToSavedCar();
   });
 
-  // Kat Seçenekleri
-  document.querySelectorAll('.parking-floor-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.parking-floor-btn').forEach(b => {
-        b.classList.remove('active');
-        b.className = 'parking-floor-btn py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold text-center transition-all cursor-pointer';
-      });
-      btn.classList.add('active');
-      btn.className = 'parking-floor-btn active py-2 px-2.5 rounded-xl border border-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-xs font-bold text-center transition-all shadow-xs cursor-pointer';
-
-      selectedParkingFloor = {
-        floor: parseInt(btn.getAttribute('data-floor') || '2', 10),
-        code: btn.getAttribute('data-code') || 'P2',
-        name: btn.getAttribute('data-name') || 'P2 (2. Bodrum Kat)'
-      };
+  function selectParkingFloor(btn) {
+    if (!btn) return;
+    document.querySelectorAll('.parking-floor-btn').forEach(b => {
+      b.classList.remove('active');
+      b.className = 'parking-floor-btn py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold text-center transition-all cursor-pointer';
     });
+    btn.classList.add('active');
+    btn.className = 'parking-floor-btn active py-2 px-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 ring-2 ring-indigo-500/50 text-xs font-black text-center transition-all shadow-xs cursor-pointer';
+
+    selectedParkingFloor = {
+      floor: parseInt(btn.getAttribute('data-floor') || '2', 10),
+      code: btn.getAttribute('data-code') || 'P2',
+      name: btn.getAttribute('data-name') || 'P2 (2. Bodrum Kat)'
+    };
+  }
+  window.selectParkingFloor = selectParkingFloor;
+
+  function selectParkingZone(btn) {
+    if (!btn) return;
+    const zone = btn.getAttribute('data-zone') || 'Mavi';
+    const color = btn.getAttribute('data-color') || '#2563eb';
+
+    document.querySelectorAll('.parking-zone-btn').forEach(b => {
+      b.classList.remove('active');
+      b.className = 'parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer';
+    });
+
+    btn.classList.add('active');
+    if (zone === 'Mavi') {
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-blue-600 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+    } else if (zone === 'Sarı') {
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-amber-500 bg-amber-50 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 ring-2 ring-amber-400/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+    } else if (zone === 'Turuncu') {
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-orange-500 bg-orange-50 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 ring-2 ring-orange-400/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+    } else if (zone === 'Kırmızı') {
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-red-500 bg-red-50 dark:bg-red-900/40 text-red-800 dark:text-red-200 ring-2 ring-red-400/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+    }
+
+    selectedParkingZone = {
+      name: zone,
+      color: color
+    };
+  }
+  window.selectParkingZone = selectParkingZone;
+
+  // Kat Seçenekleri Dinleyicileri (Delegation + Doğrudan)
+  const floorContainer = document.getElementById('parking-floor-options');
+  floorContainer?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.parking-floor-btn');
+    if (btn) selectParkingFloor(btn);
+  });
+  document.querySelectorAll('.parking-floor-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectParkingFloor(btn));
   });
 
-  // Bölge Seçenekleri
+  // Bölge Seçenekleri Dinleyicileri (Delegation + Doğrudan)
+  const zoneContainer = document.getElementById('parking-zone-options');
+  zoneContainer?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.parking-zone-btn');
+    if (btn) selectParkingZone(btn);
+  });
   document.querySelectorAll('.parking-zone-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.parking-zone-btn').forEach(b => {
-        b.classList.remove('active');
-        b.style.borderWidth = '1px';
-      });
-      btn.classList.add('active');
-      btn.style.borderWidth = '2px';
-
-      selectedParkingZone = {
-        name: btn.getAttribute('data-zone') || 'Mavi',
-        color: btn.getAttribute('data-color') || '#2563eb'
-      };
-    });
+    btn.addEventListener('click', () => selectParkingZone(btn));
   });
 }
 
