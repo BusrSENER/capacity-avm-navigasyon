@@ -804,8 +804,33 @@ function setupUIEventListeners() {
       pill.classList.add('active', 'bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900');
 
       activeCategory = pill.getAttribute('data-category');
-      mallMap.setCategoryFilter(activeCategory);
-      renderSidebarStoreGrid();
+
+      // Eğer seçilen kategoride bu katta mağaza yoksa, mağazaların bulunduğu kata otomatik geç (Örn: Spor -> B1 Katı)
+      const currentFloorStores = (mallData?.floors[currentFloor]?.stores || []).filter(s => s.category === activeCategory);
+      if (activeCategory !== 'all' && currentFloorStores.length === 0) {
+        let bestFloor = null;
+        let maxCount = 0;
+        for (let fl = 1; fl <= 6; fl++) {
+          const count = (mallData?.floors[fl]?.stores || []).filter(s => s.category === activeCategory).length;
+          if (count > maxCount) {
+            maxCount = count;
+            bestFloor = fl;
+          }
+        }
+        if (bestFloor) {
+          mallMap.loadFloor(bestFloor).then(() => {
+            updateFloorUI(bestFloor);
+            mallMap.setCategoryFilter(activeCategory);
+            renderSidebarStoreGrid();
+          });
+        } else {
+          mallMap.setCategoryFilter(activeCategory);
+          renderSidebarStoreGrid();
+        }
+      } else {
+        mallMap.setCategoryFilter(activeCategory);
+        renderSidebarStoreGrid();
+      }
 
       // Mobilde kategori filtresine tıklandığında mağaza listesini göstermek için çekmeceyi genişlet
       if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
@@ -1542,7 +1567,13 @@ function renderSidebarStoreGrid() {
 
   // Kategori Filtresi
   if (activeCategory && activeCategory !== 'all') {
-    list = list.filter(s => s.category === activeCategory);
+    const filtered = list.filter(s => s.category === activeCategory);
+    if (filtered.length === 0 && filterTab === 'this_floor') {
+      // Eğer bu katta o kategoriden mağaza yoksa, kullanıcının boş liste görmemesi için tüm AVM'deki mağazaları göster
+      list = getAllStores().filter(s => s.category === activeCategory);
+    } else {
+      list = filtered;
+    }
   }
 
   // Arama Filtresi (Türkçe karakter duyarsız)
@@ -1782,9 +1813,9 @@ function showPoiPeekCard(store) {
   if (catEl) catEl.textContent = store.category_name || store.category || 'Mağaza';
   if (landmarkEl) landmarkEl.textContent = getStoreLandmark(store);
 
-  // Buton Metinlerini & İkonlarını Kesinlikle Standardize Et
+  // Buton Metinlerini & İkonlarını Kesinlikle Standardize Et (Mobilde taşmadan kusursuz görünür)
   if (btnStart) {
-    btnStart.innerHTML = '<span>📍</span><span class="truncate font-bold">Buradayım (Başlangıç Yap)</span>';
+    btnStart.innerHTML = '<span>📍</span><span class="truncate font-bold"><span class="sm:hidden">Başlangıç Yap</span><span class="hidden sm:inline">Buradayım (Başlangıç Yap)</span></span>';
   }
   if (btnTarget) {
     btnTarget.innerHTML = '<span>🎯</span><span class="truncate font-bold">Hedef Yap</span>';
@@ -2447,6 +2478,7 @@ function clearCurrentRoute() {
   resetSimControls();
   setActiveFocusSlot(null);
 }
+window.clearCurrentRoute = clearCurrentRoute;
 
 function resetSimControls() {
   document.getElementById('btn-recenter-cart')?.classList.add('hidden');

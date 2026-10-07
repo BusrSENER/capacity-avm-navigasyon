@@ -421,16 +421,16 @@
         </button>
 
         <!-- Rota Aktifken Görünen Koridor Tercih Çipleri: [🛣️ Geniş Yol], [✂️ Kısa Yol] ve [📲 Rotayı Cebine Al] -->
-        <div id="route-path-chips" class="hidden flex items-center flex-wrap gap-1.5 pt-2">
-          <button id="chip-path-wide" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white cursor-pointer" data-path="wide" title="Geniş ve Ferah Koridorları Tercih Et">
+        <div id="route-path-chips" class="hidden flex items-center flex-nowrap overflow-x-auto no-scrollbar gap-1.5 pt-2">
+          <button id="chip-path-wide" class="shrink-0 min-h-[38px] px-3 py-1.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white cursor-pointer" data-path="wide" title="Geniş ve Ferah Koridorları Tercih Et">
             <span class="text-sm">🛣️</span>
             <span>Geniş Yol</span>
           </button>
-          <button id="chip-path-short" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-path="short" title="En Kısa Mesafeli Koridorları Tercih Et">
+          <button id="chip-path-short" class="shrink-0 min-h-[38px] px-3 py-1.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-path="short" title="En Kısa Mesafeli Koridorları Tercih Et">
             <span class="text-sm">✂️</span>
             <span>Kısa Yol</span>
           </button>
-          <button id="btn-route-qr" class="min-h-[44px] px-3.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white cursor-pointer" title="Rotayı Telefona Aktar">
+          <button id="btn-route-qr" class="shrink-0 min-h-[38px] px-3 py-1.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white cursor-pointer" title="Rotayı Telefona Aktar">
             <span class="text-sm">📲</span>
             <span>Rotayı Cebine Al</span>
           </button>
@@ -605,11 +605,11 @@
     </div>
     <!-- Alt Satır: Yan yana [📍 Buradan Başla] ve [🎯 Hedef Yap] Butonları -->
     <div id="peek-action-buttons" class="grid grid-cols-2 gap-2 pt-0.5">
-      <button id="btn-peek-start" class="min-h-[44px] py-2.5 px-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30">
+      <button id="btn-peek-start" class="min-h-[42px] sm:min-h-[44px] py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30">
         <span>📍</span>
-        <span class="truncate">Buradayım (Başlangıç Yap)</span>
+        <span class="truncate"><span class="sm:hidden">Başlangıç Yap</span><span class="hidden sm:inline">Buradayım (Başlangıç Yap)</span></span>
       </button>
-      <button id="btn-peek-target" class="min-h-[44px] py-2.5 px-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+      <button id="btn-peek-target" class="min-h-[42px] sm:min-h-[44px] py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
         <span>🎯</span>
         <span class="truncate">Hedef Yap</span>
       </button>

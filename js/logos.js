@@ -991,9 +991,10 @@ function getStoreLogo(store, size = 38) {
   }
 
   // 2. If store has an official scraped thumbnail image URL
-  if (store.img && store.img.startsWith('http')) {
-    return `<div class="store-badge-icon rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-200/60 dark:border-slate-700 flex items-center justify-center p-1" style="width: ${size}px; height: ${size}px;">
-      <img src="${store.img}" alt="${store.name}" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML = getStoreMonogram('${store.name}', '${store.category}', ${size});" />
+  const imgUrl = store.img || store.logo_url || store.logo;
+  if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
+    return `<div class="store-badge-icon rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-200/60 dark:border-slate-700 flex items-center justify-center p-0.5" style="width: ${size}px; height: ${size}px;">
+      <img src="${imgUrl}" href="${imgUrl}" alt="${store.name}" class="w-full h-full object-contain" loading="lazy" onerror="this.parentElement.innerHTML = getStoreMonogram('${store.name}', '${store.category}', ${size});" />
     </div>`;
   }
 

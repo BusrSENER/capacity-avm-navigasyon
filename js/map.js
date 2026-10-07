@@ -225,8 +225,8 @@ class MallMap {
           <!-- SVG Floor Layer -->
           <div id="svg-layer" class="absolute inset-0 pointer-events-auto" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 5;"></div>
           
-          <!-- HTML Markers Layer (Brand Logos & Icons) -->
-          <div id="markers-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 25;"></div>
+          <!-- HTML Markers Layer (Brand Logos & Icons - Zemin Poligonlarının Üstünde) -->
+          <div id="markers-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 40;"></div>
 
           <!-- Navigation Route SVG Layer (Mağaza poligonlarının EN ÜSTÜNDE) -->
           <svg id="route-svg" class="absolute inset-0 pointer-events-none" width="${this.vbWidth}" height="${this.vbHeight}" viewBox="0 0 ${this.vbWidth} ${this.vbHeight}" style="z-index: 50; overflow: visible;"></svg>
@@ -383,24 +383,11 @@ class MallMap {
     const poly = this.getStorePolygon(storeId);
     if (!poly) return;
 
-    const child = poly.querySelector('rect, polygon, path');
-
+    // Haritada içi boş mavi çerçeveli kutu kaldırıldı
     if (isHighlighted) {
       poly.classList.add('store-highlight');
-      poly.style.stroke = '#0284c7';
-      poly.style.strokeWidth = '2.8px';
-      if (child) {
-        child.style.stroke = '#0284c7';
-        child.style.strokeWidth = '2.8px';
-      }
     } else {
       poly.classList.remove('store-highlight');
-      poly.style.stroke = '';
-      poly.style.strokeWidth = '';
-      if (child) {
-        child.style.stroke = '';
-        child.style.strokeWidth = '';
-      }
     }
   }
 
@@ -416,7 +403,7 @@ class MallMap {
     // 1. Mağazalar: Sıralama & Akıllı Çakışma Önleme (Spatial Collision Avoidance)
     let stores = floorInfo.stores || [];
     if (this.activeCategoryFilter && this.activeCategoryFilter !== 'all') {
-      stores = stores.filter(s => s.category === this.activeCategoryFilter);
+      stores = stores.filter(s => s.category === this.activeCategoryFilter || s.id === this.activeTargetStore?.id || s.id === this.activeStartStore?.id);
     }
 
     const isZoomed = this.scale >= 1.35;
@@ -456,9 +443,11 @@ class MallMap {
       placedPositions.push({ x: store.cx, y: store.cy });
 
       // Uzun mağazalarda veya 2. Kat Food Court'ta logoyu SVG metninin üstüne orantılı yerleştir
+      // Hedef veya Başlangıç noktalarında ofset ASLA uygulanmaz, doğrudan mağazanın matematiksel merkezine (cx, cy) ortalanır
+      const isTargetOrStart = isTarget || isStart;
       const isTallShop = (store.cy > 520 && store.cy < 680 && store.cx > 350 && store.cx < 1050 && floorNum === 4);
       const isFoodCourtShop = (floorNum === 6);
-      const offsetY = (!isAnchor && (isFoodCourtShop || isTallShop)) ? -22 : 0;
+      const offsetY = (!isAnchor && !isTargetOrStart && (isFoodCourtShop || isTallShop)) ? -22 : 0;
 
       const marker = document.createElement('div');
       marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : (hasLogo ? 'is-brand-store' : 'is-secondary')} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
@@ -544,6 +533,27 @@ class MallMap {
           </span>
         `;
         fragment.appendChild(startMarker);
+      }
+    }
+
+    // Eğer seçili hedef noktası bu kattaysa ve mağaza listesinde yoksa
+    if (this.activeTargetStore && this.activeTargetStore.floor === floorNum) {
+      const alreadyHas = sortedStores.some(s => s.id === this.activeTargetStore.id);
+      if (!alreadyHas && this.activeTargetStore.cx && this.activeTargetStore.cy) {
+        const targetMarker = document.createElement('div');
+        targetMarker.className = 'logo-tile-marker is-target is-active';
+        targetMarker.style.left = `${this.activeTargetStore.cx}px`;
+        targetMarker.style.top = `${this.activeTargetStore.cy}px`;
+        targetMarker.title = `Hedef: ${this.activeTargetStore.name}`;
+        targetMarker.innerHTML = `
+          <div class="logo-tile">
+            <span class="text-base font-bold text-rose-600">🎯</span>
+          </div>
+          <span class="marker-name-label text-sm font-black text-white bg-rose-600 ring-2 ring-rose-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
+            🎯 Hedef: ${this.activeTargetStore.name}
+          </span>
+        `;
+        fragment.appendChild(targetMarker);
       }
     }
 
@@ -687,38 +697,44 @@ class MallMap {
       g.appendChild(flowPath);
     });
 
-    // 2. Başlangıç ve Hedef Noktaları İçin Animasyonlu SVG İmleri
+    // 2. Başlangıç ve Hedef Noktaları İçin Animasyonlu SVG İmleri (Tam Mağaza Merkezine Ortalanmış)
     const allPath = this.activeRoute.pathNodes || [];
     if (allPath.length > 0) {
       const firstNode = allPath[0];
       const lastNode = allPath[allPath.length - 1];
 
-      // Eğer başlangıç noktası bu kattaysa: Yeşil Başlangıç İmi
+      // Eğer başlangıç noktası bu kattaysa: Yeşil Başlangıç İmi (Merkeze Ortala)
       if (firstNode.floor === this.currentFloor) {
+        const startX = (this.activeStartStore && this.activeStartStore.floor === this.currentFloor && this.activeStartStore.cx) ? this.activeStartStore.cx : firstNode.x;
+        const startY = (this.activeStartStore && this.activeStartStore.floor === this.currentFloor && this.activeStartStore.cy) ? this.activeStartStore.cy : firstNode.y;
+
         const startG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         startG.setAttribute('class', 'route-start-pin');
         startG.innerHTML = `
-          <circle cx="${firstNode.x}" cy="${firstNode.y}" r="12" fill="#10b981" opacity="0.3">
+          <circle cx="${startX}" cy="${startY}" r="12" fill="#10b981" opacity="0.3">
             <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite" />
             <animate attributeName="opacity" values="0.45;0.1;0.45" dur="2s" repeatCount="indefinite" />
           </circle>
-          <circle cx="${firstNode.x}" cy="${firstNode.y}" r="6.5" fill="#10b981" stroke="#ffffff" stroke-width="2.5" />
-          <circle cx="${firstNode.x}" cy="${firstNode.y}" r="2" fill="#ffffff" />
+          <circle cx="${startX}" cy="${startY}" r="6.5" fill="#10b981" stroke="#ffffff" stroke-width="2.5" />
+          <circle cx="${startX}" cy="${startY}" r="2" fill="#ffffff" />
         `;
         g.appendChild(startG);
       }
 
-      // Eğer hedef nokta bu kattaysa: Kırmızı Hedef İmi
+      // Eğer hedef nokta bu kattaysa: Kırmızı Hedef İmi (Mağazanın Dışına Taşmadan Tam Merkeze Ortala)
       if (lastNode.floor === this.currentFloor) {
+        const targetX = (this.activeTargetStore && this.activeTargetStore.floor === this.currentFloor && this.activeTargetStore.cx) ? this.activeTargetStore.cx : lastNode.x;
+        const targetY = (this.activeTargetStore && this.activeTargetStore.floor === this.currentFloor && this.activeTargetStore.cy) ? this.activeTargetStore.cy : lastNode.y;
+
         const endG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         endG.setAttribute('class', 'route-end-pin');
         endG.innerHTML = `
-          <circle cx="${lastNode.x}" cy="${lastNode.y}" r="14" fill="#ef4444" opacity="0.35">
+          <circle cx="${targetX}" cy="${targetY}" r="14" fill="#ef4444" opacity="0.35">
             <animate attributeName="r" values="9;18;9" dur="1.8s" repeatCount="indefinite" />
             <animate attributeName="opacity" values="0.5;0.12;0.5" dur="1.8s" repeatCount="indefinite" />
           </circle>
-          <circle cx="${lastNode.x}" cy="${lastNode.y}" r="7" fill="#ef4444" stroke="#ffffff" stroke-width="2.5" />
-          <circle cx="${lastNode.x}" cy="${lastNode.y}" r="2.5" fill="#ffffff" />
+          <circle cx="${targetX}" cy="${targetY}" r="7" fill="#ef4444" stroke="#ffffff" stroke-width="2.5" />
+          <circle cx="${targetX}" cy="${targetY}" r="2.5" fill="#ffffff" />
         `;
         g.appendChild(endG);
       }
@@ -744,14 +760,8 @@ class MallMap {
     if (this.selectedStore && this.selectedStore.floor === this.currentFloor) {
       const p = this.getStorePolygon(this.selectedStore);
       if (p) {
-        p.classList.add('store-selected', 'store-highlight');
-        p.style.stroke = '#0284c7';
-        p.style.strokeWidth = '2.8px';
-        const child = p.querySelector('rect, polygon, path');
-        if (child) {
-          child.style.stroke = '#0284c7';
-          child.style.strokeWidth = '2.8px';
-        }
+        // İçi boş mavi kutu kaldırıldı
+        p.classList.add('store-selected');
       }
     }
 
@@ -901,6 +911,14 @@ class MallMap {
     // Billboard Etkisi: Tüm HTML marker ve ikonların dik kalmasını sağla
     if (this.container) {
       this.container.style.setProperty('--billboard-rot', `${-this.rotation}deg`);
+
+      // Mobil ve Masaüstü Dinamik Logo Ölçekleme (Zoom'a göre dengeli boyut)
+      const isMobile = window.innerWidth <= 768;
+      const targetScreenSize = isMobile ? 26 : 30;
+      const baseMarkerSize = 30;
+      const rawScale = (targetScreenSize / baseMarkerSize) / this.scale;
+      const clampedScale = Math.min(isMobile ? 3.4 : 2.2, Math.max(0.45, rawScale));
+      this.container.style.setProperty('--marker-scale', clampedScale.toFixed(3));
 
       // LoD (Level of Detail) Sınıfları: scale >= 1.8x ise tüm mağaza isimleri görünür, altında yalnız anchor'lar
       if (this.scale >= 1.8) {
