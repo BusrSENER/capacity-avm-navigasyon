@@ -509,9 +509,10 @@ function setupLanguageToggle() {
 window.setupLanguageToggle = setupLanguageToggle;
 
 
-// Açılış Ekranı (Splash Screen - Pulse Radar): nrdsor Marka Algısı İçin ~2.5 Saniye (2500ms) Temiz Gösterim
+// Açılış Ekranı (Splash Screen): nrdsor Marka & Kayan Lüks Alışveriş Torbası Sinematiği (Toplam 2800ms)
 const splashStartTime = Date.now();
-const MIN_SPLASH_DURATION = 2500; // ms
+const MIN_SPLASH_DURATION = 2300; // ms (torba geçişi bitip sağdan çıktığında fade-out başlar)
+const SPLASH_FADE_OUT_MS = 500;   // ms (toplam 2800ms'de harita açılışı tamamlanır)
 
 function hideSplashScreen() {
   const elapsed = Date.now() - splashStartTime;
@@ -522,7 +523,7 @@ function hideSplashScreen() {
       splash.classList.add('opacity-0', 'pointer-events-none');
       setTimeout(() => {
         splash.remove();
-      }, 550);
+      }, SPLASH_FADE_OUT_MS);
     }
   }, remaining);
 }

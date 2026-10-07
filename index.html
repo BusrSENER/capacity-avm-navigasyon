@@ -54,23 +54,53 @@
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
-  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - nrdsor TEK KURUMSAL LOGO - MERKEZİ) -->
-  <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 text-white select-none transition-all duration-500">
+  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - nrdsor TEK KURUMSAL LOGO & ALIŞVERİŞ TORBASI SİNEMATİĞİ) -->
+  <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 text-white select-none overflow-hidden transition-opacity duration-500">
     <!-- Zarif Ambient Işık Halesi (Arka Plan Glow) -->
-    <div class="absolute w-72 h-72 rounded-full bg-gradient-to-tr from-[#ea5736]/15 via-indigo-600/10 to-transparent blur-3xl pointer-events-none"></div>
+    <div class="absolute w-80 h-80 rounded-full bg-gradient-to-tr from-[#ea5736]/20 via-indigo-600/10 to-transparent blur-3xl pointer-events-none"></div>
 
     <!-- Ekranda Sadece BİR TANE ve Tam Ortalanmış 'nrdsor' Yatay Logosu -->
-    <div class="relative z-10 flex flex-col items-center justify-center gap-4">
+    <div class="relative z-10 flex flex-col items-center justify-center gap-3 max-w-full">
       <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
            alt="nrdsor" 
            id="splash-brand-logo" 
-           class="h-11 sm:h-14 w-auto max-w-[240px] sm:max-w-[280px] object-contain drop-shadow-[0_4px_30px_rgba(234,87,54,0.3)] transition-transform duration-500" />
+           class="h-11 sm:h-14 w-auto max-w-[240px] sm:max-w-[280px] object-contain drop-shadow-[0_4px_30px_rgba(234,87,54,0.35)] select-none" />
       
-      <!-- Minimalist 3-Nokta Yükleme Göstergesi -->
-      <div class="flex items-center gap-2 pt-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#ea5736] animate-pulse"></span>
-        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" style="animation-delay: 200ms;"></span>
-        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" style="animation-delay: 400ms;"></span>
+      <!-- Logonun Altında Kayan Lüks Alışveriş Torbası Pisti -->
+      <div id="splash-bag-track" class="relative w-screen max-w-full h-12 overflow-hidden flex items-center pointer-events-none">
+        <!-- İnce Zemin İzi / Işıltı Çizgisi -->
+        <div class="absolute bottom-2 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#ea5736]/40 to-transparent"></div>
+        
+        <!-- Kayan Alışveriş Torbası (@keyframes slide-bag) -->
+        <div id="splash-slide-bag" class="absolute flex items-center justify-center" aria-label="Alışveriş Torbası">
+          <svg viewBox="-20 -36 40 42" width="34" height="34" class="splash-bag-svg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="splashBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff6b4a"/>
+                <stop offset="50%" stop-color="#ea5736"/>
+                <stop offset="100%" stop-color="#c2410c"/>
+              </linearGradient>
+              <linearGradient id="splashHandleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#475569"/>
+                <stop offset="100%" stop-color="#0f172a"/>
+              </linearGradient>
+            </defs>
+            <ellipse class="bag__shadow" cx="0" cy="1.5" rx="12" ry="2.8" fill="rgba(0, 0, 0, 0.45)" />
+            <path d="M-5 -21 C -5 -32, 5 -32, 5 -21" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>
+            <path d="M-13 -20 L13 -20 L11 0 L-11 0 Z" fill="url(#splashBagGrad)" stroke="#c2410c" stroke-width="0.8" stroke-linejoin="round"/>
+            <path d="M-11 0 L-7 -20" stroke="rgba(255, 255, 255, 0.35)" stroke-width="1.1" fill="none"/>
+            <path d="M11 0 L7 -20" stroke="rgba(0, 0, 0, 0.22)" stroke-width="1.2" fill="none"/>
+            <path d="M-4.5 -19.5 C -4.5 -29.5, 4.5 -29.5, 4.5 -19.5" fill="none" stroke="url(#splashHandleGrad)" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M-13 -20 L13 -20 L12.5 -17.5 L-12.5 -17.5 Z" fill="#d94726" opacity="0.9"/>
+            <g transform="translate(0, -9.5)">
+              <rect x="-4.5" y="-4.5" width="9" height="9" rx="2.5" fill="#0f172a" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+              <circle cx="0" cy="-0.6" r="1.7" fill="#ea5736"/>
+              <path d="M-1.4 -0.3 L0 2.5 L1.4 -0.3 Z" fill="#ea5736"/>
+              <circle cx="0" cy="-0.6" r="0.6" fill="#ffffff"/>
+            </g>
+            <path d="M-11.5 -19 L-4 -19 L-6.5 -1 L-10.5 -1 Z" fill="rgba(255, 255, 255, 0.22)"/>
+          </svg>
+        </div>
       </div>
     </div>
   </div>
@@ -464,10 +494,10 @@
         <button class="floor-pill w-7.5 h-7.5 min-w-[30px] min-h-[30px] rounded-full flex items-center justify-center text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" data-floor="1" title="3. Bodrum Kat: Hizmet &amp; Otopark">B3</button>
       </div>
 
-      <!-- Yüzen [ 🎯 Sepete Dön ] Butonu (Serbest Kamera Modunda Çıkar) -->
+      <!-- Yüzen [ 🛍️ Çantaya Dön ] Butonu (Serbest Kamera Modunda Çıkar) -->
       <button id="btn-recenter-cart" class="fixed sm:absolute right-4 bottom-24 sm:bottom-28 z-40 hidden flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md border border-white/20 dark:border-slate-800 transition-all duration-300 hover:scale-105 active:scale-95">
-        <span class="text-sm">🎯</span>
-        <span>Sepete Dön</span>
+        <span class="text-sm">🛍️</span>
+        <span>Çantaya Dön</span>
       </button>
 
       <!-- Sağ Orta Zoom Kontrolleri (+, -, merkezle) - Dikey Eksenin Ortasında Çakışmasız Konum -->

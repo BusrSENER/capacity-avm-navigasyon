@@ -41,45 +41,40 @@ class CartSimulator {
       <div class="cart-beacon"></div>
       <div class="cart-marker" id="cart-mascot">
         <div id="cart-rotator" class="cart-rotator-wrapper">
-          <svg viewBox="-20 -35 45 42" width="48" height="48" class="cart-svg-el">
+          <svg viewBox="-20 -36 40 42" width="46" height="46" class="bag-svg-el" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="routeBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff6b4a"/>
+                <stop offset="50%" stop-color="#ea5736"/>
+                <stop offset="100%" stop-color="#c2410c"/>
+              </linearGradient>
+              <linearGradient id="routeHandleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#475569"/>
+                <stop offset="100%" stop-color="#0f172a"/>
+              </linearGradient>
+            </defs>
             <!-- Ground Shadow -->
-            <ellipse class="cart__shadow" cx="0" cy="1.5" rx="14" ry="3.2" />
-            
-            <!-- Cart Body -->
-            <g class="cart__body">
-              <!-- Handle -->
-              <path d="M-15.5 -25.5 h4.2 l2.3 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
-              
-              <!-- Basket Wireframe Body (Capacity Ruby Red & Gold styling) -->
-              <path d="M-10 -20 h24.5 a1.5 1.5 0 0 1 1.45 1.9 l-2.7 9.7 a2.6 2.6 0 0 1-2.5 1.9 H-4.6 a2.6 2.6 0 0 1-2.5 -1.9 Z" fill="rgba(185, 28, 28, 0.25)" stroke="#b91c1c" stroke-width="2.2" stroke-linejoin="round" />
-              
-              <!-- Basket Grid Wires -->
-              <path d="M-3.5 -19.5 l1.5 12 M3.5 -19.5 v12 M10 -19.5 l-1.3 12 M-8.5 -14 h23" stroke="#eab308" stroke-width="1.2" opacity="0.75" fill="none" />
-              
-              <!-- Shopping bags inside basket (Capacity Colors: Ruby & Gold) -->
-              <rect x="-4" y="-27" width="6.5" height="8" rx="1.2" fill="#b91c1c" stroke="#991b1b" stroke-width="0.8" />
-              <rect x="3.5" y="-25" width="7" height="6" rx="1.2" fill="#eab308" stroke="#ca8a04" stroke-width="0.8" />
-              <path d="M-1 -27 v-2.5 a1 1 0 0 1 2 0 v2.5" stroke="#ffffff" stroke-width="0.9" fill="none" />
-              
-              <!-- Chassis -->
-              <path d="M-7 -6.5 l-1.5 3.5 h20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            <ellipse class="bag__shadow" cx="0" cy="1.5" rx="13" ry="3" fill="rgba(0, 0, 0, 0.35)" />
+            <!-- Back Handle -->
+            <path d="M-5 -21 C -5 -32, 5 -32, 5 -21" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>
+            <!-- Bag Main Body (Luxury nrdsor Coral Tote) -->
+            <path d="M-13 -20 L13 -20 L11 0 L-11 0 Z" fill="url(#routeBagGrad)" stroke="#c2410c" stroke-width="0.8" stroke-linejoin="round"/>
+            <!-- Luxury Side Pleats / Creases -->
+            <path d="M-11 0 L-7 -20" stroke="rgba(255, 255, 255, 0.35)" stroke-width="1.1" fill="none"/>
+            <path d="M11 0 L7 -20" stroke="rgba(0, 0, 0, 0.22)" stroke-width="1.2" fill="none"/>
+            <!-- Front Handle -->
+            <path d="M-4.5 -19.5 C -4.5 -29.5, 4.5 -29.5, 4.5 -19.5" fill="none" stroke="url(#routeHandleGrad)" stroke-width="2.4" stroke-linecap="round"/>
+            <!-- Top Turnover Fold Edge -->
+            <path d="M-13 -20 L13 -20 L12.5 -17.5 L-12.5 -17.5 Z" fill="#d94726" opacity="0.9"/>
+            <!-- Brand Navy Emblem Patch with nrdsor Coral Pin -->
+            <g transform="translate(0, -9.5)">
+              <rect x="-4.5" y="-4.5" width="9" height="9" rx="2.5" fill="#0f172a" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+              <circle cx="0" cy="-0.6" r="1.7" fill="#ea5736"/>
+              <path d="M-1.4 -0.3 L0 2.5 L1.4 -0.3 Z" fill="#ea5736"/>
+              <circle cx="0" cy="-0.6" r="0.6" fill="#ffffff"/>
             </g>
-
-            <!-- Wheels (Spin during movement) -->
-            <g class="cart__wheel" transform="translate(-6, -2.6)">
-              <g class="cart__wheel-hub">
-                <circle r="3.2" fill="currentColor" />
-                <circle r="1.8" fill="#ffffff" />
-                <path d="M-2 0 h4 M0 -2 v4" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" />
-              </g>
-            </g>
-            <g class="cart__wheel" transform="translate(9.5, -2.6)">
-              <g class="cart__wheel-hub">
-                <circle r="3.2" fill="currentColor" />
-                <circle r="1.8" fill="#ffffff" />
-                <path d="M-2 0 h4 M0 -2 v4" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" />
-              </g>
-            </g>
+            <!-- Luxury Gloss Reflection / Highlights -->
+            <path d="M-11.5 -19 L-4 -19 L-6.5 -1 L-10.5 -1 Z" fill="rgba(255, 255, 255, 0.22)"/>
           </svg>
         </div>
       </div>

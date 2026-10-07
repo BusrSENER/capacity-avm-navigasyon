@@ -150,7 +150,7 @@ html.dark .route__flow {
   white-space: nowrap !important;
 }
 
-/* 3. ALIŞVERİŞ SEPETİ SİMÜLATÖRÜ VE ANİMASYONLARI */
+/* 3. LÜKS ALIŞVERİŞ TORBASI (SHOPPING BAG) SİMÜLATÖRÜ VE ANİMASYONLARI */
 .cart-avatar {
   position: absolute;
   top: 0;
@@ -168,14 +168,14 @@ html.dark .route__flow {
   width: 32px;
   height: 32px;
   border-radius: 9999px;
-  border: 2px solid #0284c7;
-  background: rgba(2, 132, 199, 0.2);
+  border: 2px solid #ea5736;
+  background: rgba(234, 87, 54, 0.25);
   animation: beaconPulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 html.dark .cart-beacon {
-  border-color: #06b6d4;
-  background: rgba(6, 182, 212, 0.2);
+  border-color: #ff6b4a;
+  background: rgba(255, 107, 74, 0.28);
 }
 
 @keyframes beaconPulse {
@@ -195,22 +195,14 @@ html.dark .cart-beacon {
   will-change: transform;
 }
 
+.bag__shadow,
 .cart__shadow {
   fill: rgba(0, 0, 0, 0.35);
 }
 
-.rolling .cart__wheel-hub {
-  animation: spinWheel 0.4s linear infinite;
-  transform-origin: center;
-}
-
-@keyframes spinWheel {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.bag-svg-el {
+  filter: drop-shadow(0 4px 12px rgba(234, 87, 54, 0.25));
+  transition: transform 0.2s ease;
 }
 
 /* 4. MAĞAZA POLİGONLARI VE KATEGORİ RENKLERİ (MİMARİ PASTEL PALETİ) */
@@ -1207,10 +1199,52 @@ html.dark .search-autocomplete-item:hover {
   filter: brightness(1.05);
 }
 
-/* 4. Açılış Ekranı (Splash Screen) */
+/* 4. Açılış Ekranı (Splash Screen) & Kayan Lüks Alışveriş Torbası Sinematiği */
 #splash-screen {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  transition: opacity 0.5s ease-out;
+}
+
+#splash-bag-track {
+  width: 100vw;
+  max-width: 100vw;
+  height: 48px;
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  position: relative;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+#splash-slide-bag {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 36px;
+  height: 38px;
+  animation: slide-bag 2.25s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  will-change: transform;
+}
+
+@keyframes slide-bag {
+  0% {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 50px));
+    opacity: 0;
+  }
 }
 
 /* 5. Çok Katlı Geçiş Bildirim Kartı (Glassmorphism Floor Transition Card) */
