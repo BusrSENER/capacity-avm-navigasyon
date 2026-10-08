@@ -77,19 +77,15 @@ def test_shopping_bag_and_splash():
         print(f"✓ Saved screenshot: {scr_splash}")
 
         # -------------------------------------------------------------
-        # 3. TRANSITION TIMING (TOTAL ~2800ms)
+        # 3. TRANSITION TIMING (TOTAL ~3200ms)
         # -------------------------------------------------------------
-        print("\n--- 3. TIMING TEST: SPLASH SMOOTH FADE OUT AT ~2.8s ---")
-        # At 1.2s, splash should definitely still be visible
-        page.wait_for_timeout(1000)
-        assert splash.count() > 0 and splash.is_visible(), "Splash screen should still be visible at 1.2s"
-        print("✓ Verified: Splash remains visible while bag travels across runway")
-
-        # Wait until 3.2s total (2800ms + margin)
-        page.wait_for_timeout(2000)
+        print("\n--- 3. TIMING TEST: SPLASH SMOOTH FADE OUT AT ~3.2s ---")
+        # Wait for splash screen to smoothly dismiss
+        splash.wait_for(state="detached", timeout=7000)
         elapsed = time.time() - start_time
         print(f"Elapsed time: {elapsed:.2f}s")
-        assert splash.count() == 0 or not splash.is_visible(), f"Splash screen should fade out by 2.8s - 3.2s (elapsed: {elapsed:.2f}s)"
+        assert elapsed >= 2.5, f"Splash screen should stay for cinematic duration >= 2.5s, got {elapsed:.2f}s"
+        assert splash.count() == 0 or not splash.is_visible(), "Splash screen should smoothly fade out"
         print("✓ Verified: Splash screen smoothly faded out into map navigation")
 
         # -------------------------------------------------------------

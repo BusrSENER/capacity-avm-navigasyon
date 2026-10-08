@@ -509,10 +509,10 @@ function setupLanguageToggle() {
 window.setupLanguageToggle = setupLanguageToggle;
 
 
-// Açılış Ekranı (Splash Screen): nrdsor Marka & Kayan Lüks Alışveriş Torbası Sinematiği (Toplam 2800ms)
+// Açılış Ekranı (Splash Screen): nrdsor Marka & Sinematik Route Reveal (Toplam 3200ms)
 const splashStartTime = Date.now();
-const MIN_SPLASH_DURATION = 2300; // ms (torba geçişi bitip sağdan çıktığında fade-out başlar)
-const SPLASH_FADE_OUT_MS = 500;   // ms (toplam 2800ms'de harita açılışı tamamlanır)
+const MIN_SPLASH_DURATION = 2650; // ms (torba geçişi + ripple + reveal tamamlandıktan sonra fade-out başlar)
+const SPLASH_FADE_OUT_MS = 550;   // ms (toplam 3200ms'de harita açılışı tamamlanır)
 
 function hideSplashScreen() {
   const elapsed = Date.now() - splashStartTime;
@@ -576,6 +576,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resp = await fetch('public/mall_data.json');
     if (!resp.ok) throw new Error('mall_data.json fetch failed: ' + resp.status);
     mallData = await resp.json();
+    window.mallData = mallData;
+    window.getAllStores = getAllStores;
 
     initApp();
   } catch (err) {
@@ -623,8 +625,66 @@ function initApp() {
       updateFloorUI(newFloor);
     },
     () => {
+      // 1. Başarı Bildirimi Göster
       showToast('🎉 Hedefe ulaştınız! Keyifli alışverişler dileriz.', 'success');
       resetSimControls();
+
+      // Az önce varılan hedef mağazayı sakla
+      const reachedStore = selectedTargetStore;
+
+      // A) Haritadaki kesik mavi/neon rota çizgisini (SVG path) 1 saniye içinde yumuşakça SİL (fade-out)
+      const routeGroup = mallMap && mallMap.routeLayer;
+      if (routeGroup) {
+        routeGroup.style.transition = 'opacity 1s ease-out';
+        routeGroup.style.opacity = '0';
+        setTimeout(() => {
+          if (mallMap) mallMap.clearRoute();
+          if (mallMap && mallMap.routeLayer) {
+            mallMap.routeLayer.style.transition = '';
+            mallMap.routeLayer.style.opacity = '1';
+          }
+        }, 1000);
+      } else if (mallMap) {
+        mallMap.clearRoute();
+      }
+
+      // B) Hedefe varan "Alışveriş Torbası" ikonunu ekrandan kaldır (gizle)
+      if (cartSimulator) {
+        if (cartSimulator.cartEl) {
+          cartSimulator.cartEl.classList.add('hidden');
+        }
+        cartSimulator.stop();
+      }
+
+      // C) UI panelindeki "Nereden" (Başlangıç) input'unu, az önce ulaşılan Hedef Mağaza olarak GÜNCELLE
+      if (reachedStore) {
+        selectedStartStore = reachedStore;
+        if (mallMap) mallMap.activeStartStore = reachedStore;
+        const startInput = document.getElementById('input-start-loc');
+        if (startInput) startInput.value = reachedStore.name;
+        document.getElementById('btn-clear-start')?.classList.remove('hidden');
+        updateStartBadgeUI(reachedStore.name);
+      }
+
+      // D) UI panelindeki "Nereye" (Hedef) input'unu TEMİZLE (boşalt)
+      selectedTargetStore = null;
+      if (mallMap) mallMap.activeTargetStore = null;
+      const targetInput = document.getElementById('input-target-loc');
+      if (targetInput) targetInput.value = '';
+      document.getElementById('btn-clear-target')?.classList.add('hidden');
+
+      // Odak hedef kutusuna geçirilsin (kullanıcı bulunduğu noktadan yeni hedef arayabilir)
+      setActiveFocusSlot('target');
+
+      // Durum ve Harita Katmanlarını Güncelle
+      lastCalculatedRoute = null;
+      document.body.classList.remove('has-active-route');
+      updateFloatingToggleVisibility();
+      if (mallMap) {
+        mallMap.updateActiveStorePolygons();
+        mallMap.renderBrandMarkers(mallMap.currentFloor);
+      }
+      if (activePoiStore) renderPoiActionButtons(activePoiStore);
     }
   );
   window.cartSimulator = cartSimulator;
@@ -1736,6 +1796,8 @@ function setTargetLocation(store) {
     renderPoiActionButtons(activePoiStore);
   }
 }
+window.setStartLocation = setStartLocation;
+window.setTargetLocation = setTargetLocation;
 
 function getStoreLandmark(store) {
   if (!store) return '';

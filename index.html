@@ -59,12 +59,18 @@
     <!-- Zarif Ambient Işık Halesi (Arka Plan Glow) -->
     <div class="absolute w-80 h-80 rounded-full bg-gradient-to-tr from-[#ea5736]/20 via-indigo-600/10 to-transparent blur-3xl pointer-events-none"></div>
 
+    <!-- İnce Neon Rota Çizgisi (Ekran Boyunca Uzanır) -->
+    <div id="splash-route-line" class="pointer-events-none"></div>
+
+    <!-- Dalgalanma Efekti (Ripple) - Torba Ortadan Geçtiğinde Yayılır -->
+    <div id="splash-ripple" class="pointer-events-none" aria-hidden="true"></div>
+
     <!-- Ekranda Sadece BİR TANE ve Tam Ortalanmış 'nrdsor' Yatay Logosu -->
     <div class="relative z-10 flex flex-col items-center justify-center gap-3 max-w-full">
       <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
            alt="nrdsor" 
            id="splash-brand-logo" 
-           class="h-11 sm:h-14 w-auto max-w-[240px] sm:max-w-[280px] object-contain drop-shadow-[0_4px_30px_rgba(234,87,54,0.35)] select-none" />
+           class="h-11 sm:h-14 w-auto max-w-[240px] sm:max-w-[280px] object-contain drop-shadow-[0_4px_30px_rgba(234,87,54,0.35)] select-none splash-logo-reveal" />
       
       <!-- Logonun Altında Kayan Lüks Alışveriş Torbası Pisti -->
       <div id="splash-bag-track" class="relative w-screen max-w-full h-12 overflow-hidden flex items-center pointer-events-none">

@@ -269,19 +269,27 @@ class MallMap {
         svgEl.style.width = `${this.vbWidth}px`;
         svgEl.style.height = `${this.vbHeight}px`;
 
-        // Anchor mağazalar için SVG içi metinleri gizle (üzerlerinde bağımsız HTML rozet/logo bulunduğu için)
+        // Anchor mağazalar için SVG içi metinleri gizle; logosuz mağazaları (.no-logo / .store-text-subtle) sadeleştir
         const floorInfo = this.mallData && this.mallData.floors ? this.mallData.floors[floorNum] : null;
         if (floorInfo && floorInfo.stores) {
           floorInfo.stores.forEach(store => {
-            if (store.is_anchor) {
-              const poly = svgEl.querySelector(`[data-id="${store.id}"], #${store.room_id || store.id}`);
-              if (poly) {
+            const poly = svgEl.querySelector(`[data-id="${store.id}"], #${store.room_id || store.id}`);
+            if (poly) {
+              const txt = poly.querySelector('text');
+              if (txt) {
+                txt.classList.add('store-text');
+              }
+              if (store.is_anchor) {
                 poly.classList.add('is-anchor');
                 poly.setAttribute('data-is-anchor', 'true');
-                const txt = poly.querySelector('text');
                 if (txt) {
                   txt.setAttribute('display', 'none');
                   txt.style.display = 'none';
+                }
+              } else if (typeof hasBrandLogo === 'function' && !hasBrandLogo(store)) {
+                poly.classList.add('no-logo');
+                if (txt) {
+                  txt.classList.add('no-logo', 'store-text-subtle');
                 }
               }
             }
