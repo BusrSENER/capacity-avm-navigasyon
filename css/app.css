@@ -989,30 +989,52 @@ body.has-active-route #route-panel {
     position: fixed !important;
     left: 12px !important;
     right: auto !important;
-    bottom: 175px !important;
+    bottom: 165px !important;
     top: auto !important;
     transform: none !important;
     z-index: 35 !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
   }
 
-  /* [ +/- ] Yakınlaştırma Butonları: Sol Alt Köşede (bottom: 70px, left: 12px) */
+  /* [ +/- ] Yakınlaştırma Butonları: Sol Alt Köşede (bottom: 72px, left: 12px) */
   .zoom-bar {
     position: fixed !important;
     left: 12px !important;
     right: auto !important;
-    bottom: 70px !important;
+    bottom: 72px !important;
     top: auto !important;
     transform: none !important;
-    width: 36px !important;
-    max-width: 36px !important;
-    padding: 3px !important;
-    gap: 3px !important;
+    width: 34px !important;
+    max-width: 34px !important;
+    padding: 2px !important;
+    gap: 2px !important;
     z-index: 35 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
   }
 
-  .zoom-bar button {
-    width: 30px !important;
-    height: 30px !important;
+  .zoom-bar button,
+  #zoom-in-btn,
+  #zoom-out-btn,
+  #zoom-reset-btn {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+    padding: 0 !important;
+  }
+
+  .zoom-bar button i,
+  .zoom-bar button svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   /* Alt Pusula / Telif Alanı Mobilde Gizle */
@@ -1150,10 +1172,6 @@ html.dark .search-autocomplete-item:hover {
    ======================================================== */
 
 /* 1. Dokunma Alanları (Touch Targets - Apple HIG & WCAG Standardı >= 44x44px) */
-#btn-compass,
-#zoom-in-btn,
-#zoom-out-btn,
-#zoom-reset-btn,
 #btn-swap-locations,
 #theme-toggle-btn,
 #btn-sheet-toggle,
@@ -1221,147 +1239,236 @@ html.dark .search-autocomplete-item:hover {
   filter: brightness(1.05);
 }
 
-/* 4. Açılış Ekranı (Splash Screen) & Kayan Lüks Alışveriş Torbası Sinematiği */
+/* 4. Açılış Ekranı (Splash Screen) - Mat, Flat & Sevimli Şaşkın Çanta Mikro-Kurgusu */
 #splash-screen {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   overflow: hidden !important;
   overflow-x: hidden !important;
-  transition: opacity 0.55s ease-out;
+  transition: opacity 0.4s ease-out;
 }
 
-/* İnce Neon Rota Çizgisi */
-#splash-route-line {
-  height: 2px;
-  width: 100vw;
-  max-width: 100vw;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  z-index: 5;
-  background: linear-gradient(90deg, rgba(6, 182, 212, 0) 0%, rgba(6, 182, 212, 0.75) 25%, rgba(234, 87, 54, 0.95) 50%, rgba(234, 87, 54, 0.75) 75%, rgba(234, 87, 54, 0) 100%);
-  box-shadow: 0 0 14px rgba(234, 87, 54, 0.6), 0 0 28px rgba(6, 182, 212, 0.35);
-  animation: splash-route-reveal 2.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes splash-route-reveal {
-  0% {
-    opacity: 0;
-    transform: translateY(-50%) scaleX(0.2);
-  }
-  20% {
-    opacity: 1;
-    transform: translateY(-50%) scaleX(1);
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.35;
-    transform: translateY(-50%) scaleX(1);
-  }
-}
-
-/* Merkez Dalgalanma Efekti (Ripple) */
-#splash-ripple {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 140px;
-  height: 140px;
-  margin-left: -70px;
-  margin-top: -70px;
-  border-radius: 50%;
-  border: 2px solid rgba(234, 87, 54, 0.7);
-  box-shadow: 0 0 32px rgba(234, 87, 54, 0.6), inset 0 0 20px rgba(6, 182, 212, 0.4);
-  transform: scale(0);
-  opacity: 0;
+#splash-stage {
   pointer-events: none;
-  z-index: 6;
-  animation: splash-ripple 1.35s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
 }
 
-@keyframes splash-ripple {
-  0% {
-    transform: scale(0.1);
-    opacity: 0.95;
-    border-color: rgba(234, 87, 54, 0.9);
-  }
-  50% {
-    opacity: 0.6;
-    border-color: rgba(6, 182, 212, 0.8);
-  }
-  100% {
-    transform: scale(3.6);
-    opacity: 0;
-    border-color: rgba(234, 87, 54, 0);
-  }
-}
-
-/* nrdsor Logo Parlayarak Ortaya Çıkış (Logo Reveal) */
-.splash-logo-reveal {
+/* nrdsor Logo Mat & Net Beliriş (2.4s'de Yumuşakça Fade-in) */
+#splash-logo-container {
   opacity: 0;
-  transform: scale(0.88);
-  filter: blur(5px);
-  animation: logo-reveal 1.05s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
+  transform: translateY(8px);
+  animation: splash-logo-clean-reveal 3.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes logo-reveal {
-  0% {
+@keyframes splash-logo-clean-reveal {
+  0%, 79% {
     opacity: 0;
-    transform: scale(0.88);
-    filter: blur(5px);
+    transform: translateY(8px);
   }
-  40% {
+  84%, 100% {
     opacity: 1;
-    filter: blur(0px);
-    transform: scale(1.04);
-    filter: drop-shadow(0 0 35px rgba(234, 87, 54, 0.8));
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-    filter: drop-shadow(0 4px 30px rgba(234, 87, 54, 0.4));
+    transform: translateY(0);
   }
 }
 
 #splash-bag-track {
-  width: 100vw;
-  max-width: 100vw;
-  height: 48px;
-  overflow: hidden !important;
-  overflow-x: hidden !important;
+  width: 100%;
+  max-width: 320px;
+  height: 64px;
   position: relative;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  z-index: 10;
+  overflow: hidden !important;
 }
 
+/* Şaşkın Çanta Taşıyıcısı (3000ms Mikro-Kurgu) */
 #splash-slide-bag {
   position: absolute;
-  top: 4px;
-  left: 0;
-  width: 36px;
-  height: 38px;
-  animation: slide-bag 2.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  bottom: 8px;
+  left: 50%;
+  width: 40px;
+  height: 48px;
+  margin-left: -20px;
+  transform-origin: bottom center;
+  animation: bag-quest-story 3.0s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   will-change: transform;
 }
 
-@keyframes slide-bag {
+/*
+ Mikro-Kurgu Zamanlaması:
+ a) [0.0s - 0.9s] Minik bacaklarıyla pıtır pıtır sağa koşar (tilt: 12deg). Sağa varınca durur, '?' belirir.
+ b) [0.9s - 1.8s] Ters dönüp sola koşar (tilt: -12deg). Durur ve etrafına bakınır.
+ c) [1.8s - 2.4s] Merkeze koşup durur, yukarı minik bir zıplama (hop) yapar, '!' belirir.
+ d) [2.4s - 3.0s] Çanta rahatlayıp dik durur; arkasından kurumsal nrdsor logosu belirir.
+ e) [3.0s] Splash ekranı yumuşakça kaybolur.
+*/
+@keyframes bag-quest-story {
+  /* [0.0s - 0.7s] Sağa doğru koşu (tilt: 12deg) */
   0% {
-    transform: translateX(-60px);
+    transform: translateX(-35px) rotate(12deg) translateY(0);
+  }
+  11% {
+    transform: translateX(10px) rotate(12deg) translateY(-2px);
+  }
+  22% {
+    transform: translateX(58px) rotate(10deg) translateY(0);
+  }
+  /* [0.7s - 0.9s] Sağa varıp durma, dik durup '?' bekleme */
+  23.3% {
+    transform: translateX(65px) rotate(0deg) translateY(0);
+  }
+  30% {
+    transform: translateX(65px) rotate(0deg) translateY(0);
+  }
+  /* [0.9s - 1.6s] Ters dönüp sola koşu (tilt: -12deg) */
+  31% {
+    transform: translateX(58px) rotate(-12deg) translateY(0);
+  }
+  42% {
+    transform: translateX(0px) rotate(-12deg) translateY(-2px);
+  }
+  52% {
+    transform: translateX(-58px) rotate(-10deg) translateY(0);
+  }
+  /* [1.6s - 1.8s] Sola varıp durma ve bakınma */
+  53.3% {
+    transform: translateX(-65px) rotate(0deg) translateY(0);
+  }
+  56% {
+    transform: translateX(-65px) rotate(-4deg) translateY(0);
+  }
+  58% {
+    transform: translateX(-65px) rotate(4deg) translateY(0);
+  }
+  60% {
+    transform: translateX(-65px) rotate(0deg) translateY(0);
+  }
+  /* [1.8s - 2.1s] Merkeze koşu */
+  61% {
+    transform: translateX(-50px) rotate(10deg) translateY(0);
+  }
+  66% {
+    transform: translateX(-20px) rotate(10deg) translateY(-2px);
+  }
+  70% {
+    transform: translateX(0px) rotate(0deg) translateY(0);
+  }
+  /* [2.1s - 2.35s] Yukarı minik zıplama (hop/bounce) ve '!' */
+  73.3% {
+    transform: translateX(0px) rotate(0deg) translateY(-14px) scale(1.06);
+  }
+  76.6% {
+    transform: translateX(0px) rotate(0deg) translateY(0) scale(1);
+  }
+  /* [2.4s - 3.0s] Rahatlayıp dik durma */
+  80%, 100% {
+    transform: translateX(0px) rotate(0deg) translateY(0) scale(1);
+  }
+}
+
+/* Bacakların Pıtır Pıtır Koşma Animasyonu */
+.splash-leg-left {
+  transform-origin: -5px 0;
+  animation: leg-step-l 3.0s ease-in-out forwards;
+}
+
+.splash-leg-right {
+  transform-origin: 5px 0;
+  animation: leg-step-r 3.0s ease-in-out forwards;
+}
+
+@keyframes leg-step-l {
+  /* 0 - 0.7s: Koşu adımları */
+  0%, 4%, 8%, 12%, 16%, 20% { transform: rotate(-24deg); }
+  2%, 6%, 10%, 14%, 18%, 22% { transform: rotate(24deg); }
+  /* 0.7s - 0.9s: Durma */
+  23.3%, 30% { transform: rotate(0deg); }
+  /* 0.9s - 1.6s: Sola koşu */
+  31%, 35%, 39%, 43%, 47%, 51% { transform: rotate(-24deg); }
+  33%, 37%, 41%, 45%, 49% { transform: rotate(24deg); }
+  /* 1.6s - 1.8s: Durma */
+  53.3%, 60% { transform: rotate(0deg); }
+  /* 1.8s - 2.1s: Merkeze koşu */
+  61%, 65%, 69% { transform: rotate(-24deg); }
+  63%, 67% { transform: rotate(24deg); }
+  /* 2.1s - 3.0s: Zıplama & Dik durma */
+  70%, 100% { transform: rotate(0deg); }
+}
+
+@keyframes leg-step-r {
+  /* 0 - 0.7s: Koşu adımları (ters faz) */
+  0%, 4%, 8%, 12%, 16%, 20% { transform: rotate(24deg); }
+  2%, 6%, 10%, 14%, 18%, 22% { transform: rotate(-24deg); }
+  /* 0.7s - 0.9s: Durma */
+  23.3%, 30% { transform: rotate(0deg); }
+  /* 0.9s - 1.6s: Sola koşu */
+  31%, 35%, 39%, 43%, 47%, 51% { transform: rotate(24deg); }
+  33%, 37%, 41%, 45%, 49% { transform: rotate(-24deg); }
+  /* 1.6s - 1.8s: Durma */
+  53.3%, 60% { transform: rotate(0deg); }
+  /* 1.8s - 2.1s: Merkeze koşu */
+  61%, 65%, 69% { transform: rotate(24deg); }
+  63%, 67% { transform: rotate(-24deg); }
+  /* 2.1s - 3.0s: Zıplama & Dik durma */
+  70%, 100% { transform: rotate(0deg); }
+}
+
+/* Duygu Rozetleri (? ve !) */
+.splash-emotion-badge {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  margin-left: -11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 20;
+}
+
+#splash-badge-question {
+  background: #ea5736;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  animation: badge-q-anim 3.0s ease forwards;
+}
+
+#splash-badge-exclamation {
+  background: #10b981;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  animation: badge-excl-anim 3.0s ease forwards;
+}
+
+@keyframes badge-q-anim {
+  0%, 23% {
     opacity: 0;
+    transform: translateY(6px) scale(0.4);
   }
-  6% {
+  24.5%, 29% {
     opacity: 1;
+    transform: translateY(0) scale(1);
   }
-  92% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(calc(100vw + 60px));
+  30.5%, 100% {
     opacity: 0;
+    transform: translateY(-4px) scale(0.6);
+  }
+}
+
+@keyframes badge-excl-anim {
+  0%, 70% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.4);
+  }
+  73%, 78.5% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.15);
+  }
+  80%, 100% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.6);
   }
 }
 
@@ -1519,28 +1626,92 @@ html.dark .search-autocomplete-item:hover {
     display: none !important;
   }
 
-  /* 6. Üst Bilgi Kartı: Ekrana Ortalı ve Mobil Uyumlu (#floor-header-card) */
+  /* 6. Üst Bilgi Kartı: Ekrana Ortalı ve Kompakt (#floor-header-card) */
   #floor-header-card {
-    top: 10px !important;
+    top: 8px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 92% !important;
-    max-width: 430px !important;
+    width: auto !important;
+    max-width: 82% !important;
     margin: 0 auto !important;
+    padding: 4px 10px !important;
+    font-size: 11px !important;
+    max-height: 44px !important;
+    height: auto !important;
+    border-radius: 14px !important;
     z-index: 35 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    overflow: hidden !important;
   }
 
-  /* 7. Kontrol Düğmeleri: Üst Bilgi Kartının Altında Konumlandırılır */
+  #floor-header-card h2#current-floor-title {
+    font-size: 12px !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  #floor-header-card p#current-floor-sub {
+    font-size: 9.5px !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    max-width: 140px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Koridor Tercih Çipleri: Uzun metinler gizlenir, sadece ufak ikonlar görünür */
+  #floor-header-card #route-path-chips {
+    padding-top: 0 !important;
+    gap: 4px !important;
+    align-items: center !important;
+  }
+
+  #floor-header-card #route-path-chips button {
+    min-height: 26px !important;
+    height: 26px !important;
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+    gap: 4px !important;
+    border-radius: 9999px !important;
+  }
+
+  #floor-header-card #route-path-chips button span:not(.text-sm) {
+    display: none !important; /* Uzun metinleri gizle, sadece ufak ikonları göster */
+  }
+
+  #floor-header-card #btn-header-find-car {
+    margin-top: 0 !important;
+    padding: 2px 6px !important;
+    font-size: 9.5px !important;
+    height: 24px !important;
+  }
+
+  /* 7. Kontrol Düğmeleri: SOL ALT KÖŞEDE YATAY DÜZENDE (Pusula + Zoom) */
   #btn-compass {
     position: fixed !important;
     left: 10px !important;
     right: auto !important;
-    bottom: 170px !important;
+    bottom: 10px !important;
     top: auto !important;
     transform: none !important;
     z-index: 35 !important;
-    width: 32px !important;
-    height: 32px !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    border-radius: 9999px !important;
+  }
+
+  #btn-compass #compass-needle svg {
+    width: 16px !important;
+    height: 16px !important;
   }
 
   .floors-pill-bar {
@@ -1570,29 +1741,64 @@ html.dark .search-autocomplete-item:hover {
 
   .zoom-bar {
     position: fixed !important;
-    left: 10px !important;
+    left: 44px !important;
     right: auto !important;
-    bottom: 66px !important;
+    bottom: 10px !important;
     top: auto !important;
     transform: none !important;
-    width: 36px !important;
-    max-width: 36px !important;
-    padding: 3px !important;
-    gap: 3px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: auto !important;
+    max-width: none !important;
+    height: 32px !important;
+    max-height: 32px !important;
+    padding: 2px !important;
+    gap: 6px !important;
     z-index: 35 !important;
+    border-radius: 9999px !important;
   }
 
-  .zoom-bar button {
-    width: 30px !important;
-    height: 30px !important;
+  .zoom-bar button,
+  #zoom-in-btn,
+  #zoom-out-btn,
+  #zoom-reset-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    border-radius: 9999px !important;
   }
 
-  /* 8. Alt Kompakt 48px HUD Çubuğu */
+  .zoom-bar button i,
+  .zoom-bar button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* 8. Alt Kompakt 44px HUD Çubuğu (Yatay Modda Merkeze Ortalı Yüzen Bar - Sol & Sağ Kontrolleri Asla Kapatmaz) */
   #nav-hud-bar {
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 8px !important;
+    transform: translateX(-50%) translateY(100%) !important;
+    width: auto !important;
+    max-width: calc(100vw - 250px) !important;
+    min-width: 300px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
     padding: 0 10px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  #nav-hud-bar.is-active {
+    transform: translateX(-50%) translateY(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 
   #nav-hud-bar .w-full {

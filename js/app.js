@@ -515,10 +515,10 @@ function setupLanguageToggle() {
 window.setupLanguageToggle = setupLanguageToggle;
 
 
-// Açılış Ekranı (Splash Screen): nrdsor Marka & Sinematik Route Reveal (Toplam 3200ms)
+// Açılış Ekranı (Splash Screen): Sevimli Şaşkın Çanta & nrdsor Logo (Toplam 3000ms)
 const splashStartTime = Date.now();
-const MIN_SPLASH_DURATION = 2650; // ms (torba geçişi + ripple + reveal tamamlandıktan sonra fade-out başlar)
-const SPLASH_FADE_OUT_MS = 550;   // ms (toplam 3200ms'de harita açılışı tamamlanır)
+const MIN_SPLASH_DURATION = 3000; // ms (3.0s şaşkın çanta mikro-kurgusu sonrası fade-out başlar)
+const SPLASH_FADE_OUT_MS = 400;   // ms (toplam sürede harita açılışı tamamlanır)
 
 function hideSplashScreen() {
   const elapsed = Date.now() - splashStartTime;

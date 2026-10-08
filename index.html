@@ -54,57 +54,60 @@
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
-  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - nrdsor TEK KURUMSAL LOGO & ALIŞVERİŞ TORBASI SİNEMATİĞİ) -->
-  <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 text-white select-none overflow-hidden transition-opacity duration-500">
-    <!-- Zarif Ambient Işık Halesi (Arka Plan Glow) -->
-    <div class="absolute w-80 h-80 rounded-full bg-gradient-to-tr from-[#ea5736]/20 via-indigo-600/10 to-transparent blur-3xl pointer-events-none"></div>
-
-    <!-- İnce Neon Rota Çizgisi (Ekran Boyunca Uzanır) -->
-    <div id="splash-route-line" class="pointer-events-none"></div>
-
-    <!-- Dalgalanma Efekti (Ripple) - Torba Ortadan Geçtiğinde Yayılır -->
-    <div id="splash-ripple" class="pointer-events-none" aria-hidden="true"></div>
-
-    <!-- Ekranda Sadece BİR TANE ve Tam Ortalanmış 'nrdsor' Yatay Logosu -->
-    <div class="relative z-10 flex flex-col items-center justify-center gap-3 max-w-full">
-      <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
-           alt="nrdsor" 
-           id="splash-brand-logo" 
-           class="h-11 sm:h-14 w-auto max-w-[240px] sm:max-w-[280px] object-contain drop-shadow-[0_4px_30px_rgba(234,87,54,0.35)] select-none splash-logo-reveal" />
+  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - MAT, FLAT & SEVİMLİ ŞAŞKIN ÇANTA ANİMASYONU) -->
+  <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0d131f] text-white select-none overflow-hidden transition-opacity duration-400">
+    <!-- Mat Sahne Taşıyıcısı (Neon Yok, Glow Yok) -->
+    <div id="splash-stage" class="relative z-10 flex flex-col items-center justify-center gap-2 w-[340px] max-w-[92vw]">
       
-      <!-- Logonun Altında Kayan Lüks Alışveriş Torbası Pisti -->
-      <div id="splash-bag-track" class="relative w-screen max-w-full h-12 overflow-hidden flex items-center pointer-events-none">
-        <!-- İnce Zemin İzi / Işıltı Çizgisi -->
-        <div class="absolute bottom-2 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#ea5736]/40 to-transparent"></div>
-        
-        <!-- Kayan Alışveriş Torbası (@keyframes slide-bag) -->
-        <div id="splash-slide-bag" class="absolute flex items-center justify-center" aria-label="Alışveriş Torbası">
-          <svg viewBox="-20 -36 40 42" width="34" height="34" class="splash-bag-svg" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="splashBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ff6b4a"/>
-                <stop offset="50%" stop-color="#ea5736"/>
-                <stop offset="100%" stop-color="#c2410c"/>
-              </linearGradient>
-              <linearGradient id="splashHandleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#475569"/>
-                <stop offset="100%" stop-color="#0f172a"/>
-              </linearGradient>
-            </defs>
-            <ellipse class="bag__shadow" cx="0" cy="1.5" rx="12" ry="2.8" fill="rgba(0, 0, 0, 0.45)" />
-            <path d="M-5 -21 C -5 -32, 5 -32, 5 -21" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>
-            <path d="M-13 -20 L13 -20 L11 0 L-11 0 Z" fill="url(#splashBagGrad)" stroke="#c2410c" stroke-width="0.8" stroke-linejoin="round"/>
-            <path d="M-11 0 L-7 -20" stroke="rgba(255, 255, 255, 0.35)" stroke-width="1.1" fill="none"/>
-            <path d="M11 0 L7 -20" stroke="rgba(0, 0, 0, 0.22)" stroke-width="1.2" fill="none"/>
-            <path d="M-4.5 -19.5 C -4.5 -29.5, 4.5 -29.5, 4.5 -19.5" fill="none" stroke="url(#splashHandleGrad)" stroke-width="2.4" stroke-linecap="round"/>
-            <path d="M-13 -20 L13 -20 L12.5 -17.5 L-12.5 -17.5 Z" fill="#d94726" opacity="0.9"/>
+      <!-- Kurumsal 'nrdsor' Yatay Logosu (Mat ve Net - 2.4s'de Belirir) -->
+      <div id="splash-logo-container">
+        <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
+             alt="nrdsor" 
+             id="splash-brand-logo" 
+             class="h-10 sm:h-12 w-auto max-w-[220px] object-contain select-none" />
+      </div>
+
+      <!-- Çantanın Koştuğu Mat Zemin Pisti -->
+      <div id="splash-bag-track" class="relative w-full h-16 flex items-center justify-center pointer-events-none overflow-hidden">
+        <!-- Mat Zemin Çizgisi -->
+        <div class="absolute bottom-2.5 left-4 right-4 h-[1.5px] bg-slate-800 rounded-full"></div>
+
+        <!-- 3000ms Şaşkın Çanta Mikro-Kurgusu Taşıyıcısı -->
+        <div id="splash-slide-bag" class="absolute flex flex-col items-center justify-center" aria-label="Sevimli Alışveriş Çantası">
+          
+          <!-- Konuşma / Duygu Rozetleri (? ve !) -->
+          <div id="splash-badge-question" class="splash-emotion-badge">?</div>
+          <div id="splash-badge-exclamation" class="splash-emotion-badge">!</div>
+
+          <!-- Sevimli İki Bacaklı Çanta SVG'si -->
+          <svg viewBox="-20 -36 40 48" width="40" height="48" class="splash-bag-svg" xmlns="http://www.w3.org/2000/svg">
+            <!-- Çanta Kulpları (Handle) -->
+            <path d="M-5 -21 C -5 -32, 5 -32, 5 -21" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M-4.5 -19.5 C -4.5 -29.5, 4.5 -29.5, 4.5 -19.5" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round"/>
+
+            <!-- Çanta Gövdesi (Mat Turuncu / Mercan - Flat Tasarım) -->
+            <path d="M-13 -20 L13 -20 L11 0 L-11 0 Z" fill="#ea5736" stroke="#c2410c" stroke-width="0.8" stroke-linejoin="round"/>
+            <path d="M-13 -20 L13 -20 L12.5 -17.5 L-12.5 -17.5 Z" fill="#d94726"/>
+
+            <!-- Çanta Üzerindeki Mat nrdsor Pin Rozeti -->
             <g transform="translate(0, -9.5)">
-              <rect x="-4.5" y="-4.5" width="9" height="9" rx="2.5" fill="#0f172a" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+              <rect x="-4.5" y="-4.5" width="9" height="9" rx="2.5" fill="#0f172a" stroke="#334155" stroke-width="0.6"/>
               <circle cx="0" cy="-0.6" r="1.7" fill="#ea5736"/>
               <path d="M-1.4 -0.3 L0 2.5 L1.4 -0.3 Z" fill="#ea5736"/>
               <circle cx="0" cy="-0.6" r="0.6" fill="#ffffff"/>
             </g>
-            <path d="M-11.5 -19 L-4 -19 L-6.5 -1 L-10.5 -1 Z" fill="rgba(255, 255, 255, 0.22)"/>
+
+            <!-- Minik Sevimli Bacaklar / Ayaklar -->
+            <!-- Sol Bacak & Ayak -->
+            <g class="splash-leg-left">
+              <line x1="-5" y1="0" x2="-5" y2="7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M-5 7 L-1.5 7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
+            <!-- Sağ Bacak & Ayak -->
+            <g class="splash-leg-right">
+              <line x1="5" y1="0" x2="5" y2="7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M5 7 L8.5 7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
           </svg>
         </div>
       </div>
