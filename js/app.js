@@ -76,6 +76,7 @@ function expandBottomSheet() {
   const toggleText = document.getElementById('floating-toggle-text');
   const sheetToggleIcon = document.getElementById('sheet-toggle-icon');
   const sheetHint = document.getElementById('bottom-sheet-hint');
+  const sheetSubhint = document.getElementById('bottom-sheet-subhint');
 
   if (!panel) return;
   panel.classList.add('is-expanded');
@@ -85,7 +86,8 @@ function expandBottomSheet() {
   if (toggleIcon) toggleIcon.textContent = '🗺️';
   if (toggleText) toggleText.textContent = 'Harita';
   if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(180deg)';
-  if (sheetHint) sheetHint.textContent = 'Haritaya Dön';
+  if (sheetHint) sheetHint.innerHTML = '<span>Mağazalar &amp; Rota</span>';
+  if (sheetSubhint) sheetSubhint.textContent = 'Kapatmak için aşağı kaydırın';
 
   updateFloatingToggleVisibility();
 }
@@ -96,6 +98,7 @@ function collapseBottomSheet() {
   const toggleText = document.getElementById('floating-toggle-text');
   const sheetToggleIcon = document.getElementById('sheet-toggle-icon');
   const sheetHint = document.getElementById('bottom-sheet-hint');
+  const sheetSubhint = document.getElementById('bottom-sheet-subhint');
   const backdrop = document.getElementById('landscape-drawer-backdrop');
 
   if (!panel) return;
@@ -107,10 +110,13 @@ function collapseBottomSheet() {
   if (toggleIcon) toggleIcon.textContent = '📋';
   if (toggleText) toggleText.textContent = 'Liste';
   if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(0deg)';
-  if (sheetHint) sheetHint.textContent = 'Mağazalar & Rota';
+  if (sheetHint) sheetHint.innerHTML = '<span>Yeni Rota Çiz</span> <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">&bull; Mağaza Ara</span>';
+  if (sheetSubhint) sheetSubhint.textContent = 'Paneli açmak için dokunun';
 
   updateFloatingToggleVisibility();
 }
+window.expandBottomSheet = expandBottomSheet;
+window.collapseBottomSheet = collapseBottomSheet;
 
 // Mobil Yatay (Landscape) Çekmece (Drawer) Yöneticisi (Apple Haritalar Stili)
 function openSidebarDrawer() {
@@ -594,12 +600,18 @@ function initApp() {
   });
   mallMap.onMapClick = () => {
     closePoiPeekCard();
+    if (isMobileOrLandscape() && isBottomSheetExpanded) {
+      collapseBottomSheet();
+    }
   };
   window.mallMap = mallMap;
   window.navEngine = navEngine;
 
-  // Kullanıcı haritayı kaydırdığında simülasyon serbest kameraya geçer
+  // Kullanıcı haritayı kaydırdığında / zoomladığında alt çekmece otomatik küçülür ve simülasyon serbest kameraya geçer
   mallMap.onUserPan = () => {
+    if (isMobileOrLandscape() && isBottomSheetExpanded) {
+      collapseBottomSheet();
+    }
     if (cartSimulator && cartSimulator.isPlaying && cartSimulator.autoFollow) {
       cartSimulator.autoFollow = false;
       const recenterBtn = document.getElementById('btn-recenter-cart');
@@ -1161,11 +1173,20 @@ function setupUIEventListeners() {
     }
   }, { passive: true });
 
-  // Haritaya tıklandığında açık olan alt çekmeceyi küçült
+  // Haritaya veya dışarıya tıklandığında açık olan alt çekmeceyi küçült
   const mapCanvas = document.getElementById('map-canvas-container');
   mapCanvas?.addEventListener('click', () => {
     if (isMobileOrLandscape() && isBottomSheetExpanded) {
       collapseBottomSheet();
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if (isMobileOrLandscape() && isBottomSheetExpanded) {
+      const panel = document.getElementById('sidebar-panel');
+      const floatingToggle = document.getElementById('btn-floating-drawer-toggle');
+      if (panel && !panel.contains(e.target) && !floatingToggle?.contains(e.target)) {
+        collapseBottomSheet();
+      }
     }
   });
 
@@ -2160,6 +2181,9 @@ function setRoutePreference(mode) {
 
 function toggleCartSimulation() {
   if (!cartSimulator.isPlaying) {
+    if (isMobileOrLandscape() && isBottomSheetExpanded) {
+      collapseBottomSheet();
+    }
     cartSimulator.start();
     const playText = document.getElementById('sim-play-text');
     if (playText) playText.textContent = 'Duraklat';
@@ -2326,22 +2350,6 @@ function calculateAndDisplayRoute() {
   }
   result.path = result.pathNodes;
 
-  // 1. Rota Kartını Doldur
-  const routeCard = document.getElementById('route-info-card');
-  routeCard?.classList.remove('hidden');
-
-  const startLbl = document.getElementById('route-start-label');
-  const targetLbl = document.getElementById('route-target-label');
-  const routeFloors = document.getElementById('route-floors');
-  const routeDistance = document.getElementById('route-distance');
-  const routeTime = document.getElementById('route-time');
-
-  if (startLbl) startLbl.textContent = selectedStartStore.name;
-  if (targetLbl) targetLbl.textContent = selectedTargetStore.name;
-  if (routeFloors) routeFloors.textContent = `${selectedStartStore.floor_name || selectedStartStore.floor + '. Kat'} → ${selectedTargetStore.floor_name || selectedTargetStore.floor + '. Kat'}`;
-  if (routeDistance) routeDistance.textContent = `${result.totalDistance} m`;
-  if (routeTime) routeTime.textContent = `~${result.estimatedMinutes} dk`;
-
   // 1. Dinamik Üst Başlık Kartı: 1. Satır: Hedef • Kat, 2. Satır: Mesafe • Süre
   lastCalculatedRoute = result;
   updateHeaderNavSummary(selectedTargetStore, result);
@@ -2370,20 +2378,6 @@ function calculateAndDisplayRoute() {
   if (hudStepsCount) hudStepsCount.textContent = `${result.instructions?.length || 0} Adım`;
   if (hudStepsList && result.instructions) {
     hudStepsList.innerHTML = result.instructions.map(ins => `
-      <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
-        <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
-        <div>
-          <div class="font-bold text-slate-800 dark:text-slate-200">${ins.text}</div>
-          <div class="text-[10px] text-slate-400">${mallData.floors[ins.floor]?.label || ins.floor + '. Kat'}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // Adım Adım Talimatlar (Mevcut Rota Kartı İçin)
-  const stepsContainer = document.getElementById('route-steps-container');
-  if (stepsContainer && result.instructions) {
-    stepsContainer.innerHTML = result.instructions.map(ins => `
       <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
         <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
         <div>
@@ -2452,7 +2446,6 @@ function clearCurrentRoute() {
     const targetInput = document.getElementById('input-target-loc');
     if (targetInput) targetInput.value = '';
     document.getElementById('btn-clear-target')?.classList.add('hidden');
-    document.getElementById('route-info-card')?.classList.add('hidden');
 
     document.querySelectorAll('.store-card').forEach(c => c.classList.remove('is-active'));
     document.getElementById('btn-recenter-cart')?.classList.add('hidden');
@@ -2519,7 +2512,6 @@ function clearCurrentRoute() {
 
   document.getElementById('btn-clear-start')?.classList.add('hidden');
   document.getElementById('btn-clear-target')?.classList.add('hidden');
-  document.getElementById('route-info-card')?.classList.add('hidden');
 
   // Hızlı Başlangıç Çiplerini Sıfırla
   document.querySelectorAll('.quick-start-chip').forEach(b => {
