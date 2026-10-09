@@ -206,7 +206,24 @@ window.addEventListener('resize', () => {
 // Toast Notification Engine (Tekil Kuyruk & Yığılma Önleyici)
 let activeToastTimeout = null;
 
+function hideToast() {
+  if (activeToastTimeout) {
+    clearTimeout(activeToastTimeout);
+    activeToastTimeout = null;
+  }
+  const container = document.getElementById('toast-container');
+  if (container) {
+    container.innerHTML = '';
+  }
+}
+window.hideToast = hideToast;
+
 function showToast(message, type = 'info') {
+  // QR modal açıkken arka planda hiçbir toast oluşturma / gösterme
+  const qrModal = document.getElementById('route-qr-modal');
+  if (qrModal && !qrModal.classList.contains('hidden')) return;
+  if (document.body.classList.contains('has-qr-modal-open')) return;
+
   const container = document.getElementById('toast-container');
   if (!container) return;
 
@@ -515,10 +532,11 @@ function setupLanguageToggle() {
 window.setupLanguageToggle = setupLanguageToggle;
 
 
-// Açılış Ekranı (Splash Screen): Sevimli Şaşkın Çanta & nrdsor Logo (Toplam 3000ms)
+// Açılış Ekranı (Splash Screen): Hızlı & Mizahi Şaşkın Çanta & nrdsor Logo (Toplam ~2150ms)
 const splashStartTime = Date.now();
-const MIN_SPLASH_DURATION = 3000; // ms (3.0s şaşkın çanta mikro-kurgusu sonrası fade-out başlar)
-const SPLASH_FADE_OUT_MS = 400;   // ms (toplam sürede harita açılışı tamamlanır)
+window.splashStartedAt = splashStartTime;
+const MIN_SPLASH_DURATION = 2150; // ms (~2.15s hızlı kurgu sonrası fade-out başlar)
+const SPLASH_FADE_OUT_MS = 350;   // ms (toplam sürede harita açılışı tamamlanır)
 
 function hideSplashScreen() {
   const elapsed = Date.now() - splashStartTime;
@@ -529,6 +547,7 @@ function hideSplashScreen() {
       splash.classList.add('opacity-0', 'pointer-events-none');
       setTimeout(() => {
         splash.remove();
+        window.splashFinishedAt = Date.now();
       }, SPLASH_FADE_OUT_MS);
     }
   }, remaining);
@@ -2903,6 +2922,10 @@ function openRouteQrModal() {
     return;
   }
 
+  // QR Modalı açıldığında arka plandaki tüm toast bildirimlerini anında temizle ve gizle
+  hideToast();
+  document.body.classList.add('has-qr-modal-open');
+
   const fromStoreName = selectedStartStore ? selectedStartStore.name : 'Zemin Kat - Danışma / Kiosk';
   const toStoreName = selectedTargetStore.name;
   const fromId = (selectedStartStore && selectedStartStore.id !== 'ent_danisma') ? selectedStartStore.id : 'kiosk';
@@ -2938,6 +2961,7 @@ function openRouteQrModal() {
 
 function closeRouteQrModal() {
   document.getElementById('route-qr-modal')?.classList.add('hidden');
+  document.body.classList.remove('has-qr-modal-open');
 }
 
 window.openEntranceModal = openEntranceModal;

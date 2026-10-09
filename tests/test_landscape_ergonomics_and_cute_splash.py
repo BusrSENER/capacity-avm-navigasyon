@@ -56,11 +56,11 @@ def test_landscape_and_cute_splash():
         if os.path.exists(scr_splash):
             shutil.copy(scr_splash, os.path.join(ARTIFACT_DIR, scr_splash))
 
-        # Wait for splash screen to smoothly fade out (around ~3.0s - 3.4s)
+        # Wait for splash screen to smoothly fade out (around ~2.1s - 2.8s)
         splash.wait_for(state="detached", timeout=6000)
         elapsed = time.time() - start_time
-        print(f"Splash dismissed in {elapsed:.2f}s (target ~3.0s)")
-        assert elapsed >= 2.8, f"Expected splash duration >= 2.8s, got {elapsed:.2f}s"
+        print(f"Splash dismissed in {elapsed:.2f}s (target ~2.1 - 2.8s)")
+        assert elapsed >= 2.0, f"Expected splash duration >= 2.0s, got {elapsed:.2f}s"
         context_splash.close()
         print("PASS: Cute shopping bag splash animation verified.")
 

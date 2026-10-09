@@ -610,6 +610,17 @@ html.dark .store-polygon.no-logo text {
 }
 
 /* Level of Detail (LoD) Kuralları */
+/* Harita genel bakıştayken (Zoom < 1.2): YALNIZCA is_anchor: true olan ana mağazalar ve hedef/başlangıç görünür */
+.lod-far .logo-tile-marker:not(.is-anchor):not(.is-target):not(.is-start) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.logo-tile-marker {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, visibility 0.3s ease;
+}
+
 /* Genel planda (scale < 1.8x): Küçük ikincil mağaza etiketlerini gizle, ana çekim merkezleri açık */
 .lod-low .marker-name-secondary {
   display: none !important;
@@ -1212,6 +1223,25 @@ html.dark .search-autocomplete-item:hover {
   cursor: pointer !important;
 }
 
+/* Hedef / Başlangıç Bilgi Balonlarının Logoyu Örtmesini Önleyen Dikey Ofset */
+.logo-tile-marker.is-target,
+.logo-tile-marker.is-start {
+  z-index: 70 !important;
+  overflow: visible !important;
+}
+
+.marker-name-pinned {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin-top: 0 !important;
+  white-space: nowrap !important;
+  z-index: 80 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+  pointer-events: auto !important;
+}
+
 #current-floor-title {
   font-size: 16px !important;
 }
@@ -1239,32 +1269,50 @@ html.dark .search-autocomplete-item:hover {
   filter: brightness(1.05);
 }
 
-/* 4. Açılış Ekranı (Splash Screen) - Mat, Flat & Sevimli Şaşkın Çanta Mikro-Kurgusu */
+/* QR Modalı Açıldığında Arka Plandaki Toast Bildirimlerini Zorla Gizle (Mobil & Masaüstü) */
+body.has-qr-modal-open #toast-container,
+body:has(#route-qr-modal:not(.hidden)) #toast-container {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 4. Açılış Ekranı (Splash Screen) - Hızlı, Mizahi & Çanta Kafa Çarpma Mikro-Kurgusu (~2.15s) */
 #splash-screen {
   overflow: hidden !important;
   overflow-x: hidden !important;
-  transition: opacity 0.4s ease-out;
+  transition: opacity 0.35s ease-out;
 }
 
 #splash-stage {
   pointer-events: none;
 }
 
-/* nrdsor Logo Mat & Net Beliriş (2.4s'de Yumuşakça Fade-in) */
+/* nrdsor Logo - Çantanın Kafasını Çarpmasıyla Sarsılma / Tepki Animasyonu (@keyframes logo-bump) */
 #splash-logo-container {
-  opacity: 0;
-  transform: translateY(8px);
-  animation: splash-logo-clean-reveal 3.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center bottom;
+  animation: logo-bump 2.15s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform;
 }
 
-@keyframes splash-logo-clean-reveal {
-  0%, 79% {
-    opacity: 0;
-    transform: translateY(8px);
+@keyframes logo-bump {
+  0%, 62% {
+    transform: translateY(0) rotate(0deg);
   }
-  84%, 100% {
-    opacity: 1;
-    transform: translateY(0);
+  65% {
+    /* Çantanın kafasını çarpma anı: sarsıntı/tepki */
+    transform: translateY(-8px) rotate(2deg);
+  }
+  68% {
+    transform: translateY(2px) rotate(-1deg);
+  }
+  72%, 100% {
+    transform: translateY(0) rotate(0deg);
   }
 }
 
@@ -1276,7 +1324,7 @@ html.dark .search-autocomplete-item:hover {
   overflow: hidden !important;
 }
 
-/* Şaşkın Çanta Taşıyıcısı (3000ms Mikro-Kurgu) */
+/* Şaşkın Çanta Taşıyıcısı (2150ms Mikro-Kurgu) */
 #splash-slide-bag {
   position: absolute;
   bottom: 8px;
@@ -1285,127 +1333,137 @@ html.dark .search-autocomplete-item:hover {
   height: 48px;
   margin-left: -20px;
   transform-origin: bottom center;
-  animation: bag-quest-story 3.0s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: bag-quest-story 2.15s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   will-change: transform;
 }
 
 /*
- Mikro-Kurgu Zamanlaması:
- a) [0.0s - 0.9s] Minik bacaklarıyla pıtır pıtır sağa koşar (tilt: 12deg). Sağa varınca durur, '?' belirir.
- b) [0.9s - 1.8s] Ters dönüp sola koşar (tilt: -12deg). Durur ve etrafına bakınır.
- c) [1.8s - 2.4s] Merkeze koşup durur, yukarı minik bir zıplama (hop) yapar, '!' belirir.
- d) [2.4s - 3.0s] Çanta rahatlayıp dik durur; arkasından kurumsal nrdsor logosu belirir.
- e) [3.0s] Splash ekranı yumuşakça kaybolur.
+ Hızlı & Mizahi Splash Mikro-Kurgusu (Toplam 2.15s / 2150ms):
+ a) [0.0s - 0.45s] Seri panik sağa koşu (~0.45s / snappy). Sağa varınca durur, '?' belirir.
+ b) [0.55s - 1.05s] Hızla geri dönüp sola koşar (~0.5s). Sola varınca durur, bakınır.
+ c) [1.15s - 1.35s] Merkeze koşar.
+ d) [1.35s - 1.55s] Minik torba yukarı esneyip büyür (scale 1.35), zıplayıp kafasını 'nrdsor' logosuna çarpar!
+    Logoya logo-bump tepkisi tetiklenir, '!' rozeti parlar. Çanta toparlanıp normal boyutuna döner.
+ e) [1.60s - 2.15s] Çanta rahatlayıp dik durur, ekran haritaya yumuşakça (fade-out) açılır.
 */
 @keyframes bag-quest-story {
-  /* [0.0s - 0.7s] Sağa doğru koşu (tilt: 12deg) */
+  /* 0.0s - 0.45s: Sağa seri koşu (tilt: 14deg) */
   0% {
-    transform: translateX(-35px) rotate(12deg) translateY(0);
+    transform: translateX(-35px) rotate(14deg) translateY(0) scale(1.0);
   }
-  11% {
-    transform: translateX(10px) rotate(12deg) translateY(-2px);
+  10% {
+    transform: translateX(15px) rotate(14deg) translateY(-2px) scale(1.0);
   }
+  20% {
+    transform: translateX(60px) rotate(12deg) translateY(0) scale(1.0);
+  }
+  /* 0.45s - 0.55s: Sağa varıp frenleme, '?' bekleme */
   22% {
-    transform: translateX(58px) rotate(10deg) translateY(0);
+    transform: translateX(65px) rotate(0deg) translateY(0) scale(1.0);
   }
-  /* [0.7s - 0.9s] Sağa varıp durma, dik durup '?' bekleme */
-  23.3% {
-    transform: translateX(65px) rotate(0deg) translateY(0);
+  25.5% {
+    transform: translateX(65px) rotate(0deg) translateY(0) scale(1.0);
   }
-  30% {
-    transform: translateX(65px) rotate(0deg) translateY(0);
+  /* 0.55s - 1.05s: Sola hızlı koşu (tilt: -14deg) */
+  27% {
+    transform: translateX(55px) rotate(-14deg) translateY(0) scale(1.0);
   }
-  /* [0.9s - 1.6s] Ters dönüp sola koşu (tilt: -12deg) */
-  31% {
-    transform: translateX(58px) rotate(-12deg) translateY(0);
+  37% {
+    transform: translateX(0px) rotate(-14deg) translateY(-2px) scale(1.0);
   }
-  42% {
-    transform: translateX(0px) rotate(-12deg) translateY(-2px);
+  47% {
+    transform: translateX(-55px) rotate(-12deg) translateY(0) scale(1.0);
+  }
+  /* 1.05s - 1.22s: Sola varıp durma ve bakınma */
+  49% {
+    transform: translateX(-65px) rotate(0deg) translateY(0) scale(1.0);
   }
   52% {
-    transform: translateX(-58px) rotate(-10deg) translateY(0);
+    transform: translateX(-65px) rotate(-5deg) translateY(0) scale(1.0);
   }
-  /* [1.6s - 1.8s] Sola varıp durma ve bakınma */
-  53.3% {
-    transform: translateX(-65px) rotate(0deg) translateY(0);
+  54% {
+    transform: translateX(-65px) rotate(5deg) translateY(0) scale(1.0);
   }
   56% {
-    transform: translateX(-65px) rotate(-4deg) translateY(0);
+    transform: translateX(-65px) rotate(0deg) translateY(0) scale(1.0);
   }
+  /* 1.22s - 1.35s: Merkeze koşu */
   58% {
-    transform: translateX(-65px) rotate(4deg) translateY(0);
+    transform: translateX(-40px) rotate(12deg) translateY(0) scale(1.0);
   }
-  60% {
-    transform: translateX(-65px) rotate(0deg) translateY(0);
-  }
-  /* [1.8s - 2.1s] Merkeze koşu */
   61% {
-    transform: translateX(-50px) rotate(10deg) translateY(0);
+    transform: translateX(-15px) rotate(12deg) translateY(-2px) scale(1.0);
   }
-  66% {
-    transform: translateX(-20px) rotate(10deg) translateY(-2px);
+  63% {
+    transform: translateX(0px) rotate(0deg) translateY(0) scale(1.0);
   }
-  70% {
-    transform: translateX(0px) rotate(0deg) translateY(0);
+  /* 1.35s - 1.55s: Yukarı esneme (squash & stretch), büyüme (scale 1.35) ve kafayı logoya çarpma (bump) */
+  64% {
+    transform: translateX(0px) rotate(0deg) translateY(0) scale(1.0);
   }
-  /* [2.1s - 2.35s] Yukarı minik zıplama (hop/bounce) ve '!' */
-  73.3% {
-    transform: translateX(0px) rotate(0deg) translateY(-14px) scale(1.06);
+  66.5% {
+    /* Zirve sıçrama ve kafa çarpma anı: scale 1.35 */
+    transform: translateX(0px) rotate(-1deg) translateY(-28px) scale(1.35);
   }
-  76.6% {
-    transform: translateX(0px) rotate(0deg) translateY(0) scale(1);
+  69.5% {
+    /* Çarpma sonrası esnek toparlanma (squash & stretch) */
+    transform: translateX(0px) rotate(1deg) translateY(3px) scale(1.12, 0.92);
   }
-  /* [2.4s - 3.0s] Rahatlayıp dik durma */
-  80%, 100% {
-    transform: translateX(0px) rotate(0deg) translateY(0) scale(1);
+  73% {
+    /* Normal boyutuna dönüş */
+    transform: translateX(0px) rotate(0deg) translateY(0) scale(1.0);
+  }
+  /* 1.60s - 2.15s: Rahatlayıp dik durma */
+  76%, 100% {
+    transform: translateX(0px) rotate(0deg) translateY(0) scale(1.0);
   }
 }
 
 /* Bacakların Pıtır Pıtır Koşma Animasyonu */
 .splash-leg-left {
   transform-origin: -5px 0;
-  animation: leg-step-l 3.0s ease-in-out forwards;
+  animation: leg-step-l 2.15s ease-in-out forwards;
 }
 
 .splash-leg-right {
   transform-origin: 5px 0;
-  animation: leg-step-r 3.0s ease-in-out forwards;
+  animation: leg-step-r 2.15s ease-in-out forwards;
 }
 
 @keyframes leg-step-l {
-  /* 0 - 0.7s: Koşu adımları */
-  0%, 4%, 8%, 12%, 16%, 20% { transform: rotate(-24deg); }
-  2%, 6%, 10%, 14%, 18%, 22% { transform: rotate(24deg); }
-  /* 0.7s - 0.9s: Durma */
-  23.3%, 30% { transform: rotate(0deg); }
-  /* 0.9s - 1.6s: Sola koşu */
-  31%, 35%, 39%, 43%, 47%, 51% { transform: rotate(-24deg); }
-  33%, 37%, 41%, 45%, 49% { transform: rotate(24deg); }
-  /* 1.6s - 1.8s: Durma */
-  53.3%, 60% { transform: rotate(0deg); }
-  /* 1.8s - 2.1s: Merkeze koşu */
-  61%, 65%, 69% { transform: rotate(-24deg); }
-  63%, 67% { transform: rotate(24deg); }
-  /* 2.1s - 3.0s: Zıplama & Dik durma */
-  70%, 100% { transform: rotate(0deg); }
+  /* 0 - 0.45s: Sağa hızlı adımlar */
+  0%, 4%, 8%, 12%, 16%, 20% { transform: rotate(-26deg); }
+  2%, 6%, 10%, 14%, 18% { transform: rotate(26deg); }
+  /* 0.45s - 0.55s: Durma */
+  22%, 26% { transform: rotate(0deg); }
+  /* 0.55s - 1.05s: Sola hızlı koşu */
+  28%, 32%, 36%, 40%, 44%, 48% { transform: rotate(-26deg); }
+  30%, 34%, 38%, 42%, 46% { transform: rotate(26deg); }
+  /* 1.05s - 1.22s: Durma */
+  49%, 56% { transform: rotate(0deg); }
+  /* 1.22s - 1.35s: Merkeze koşu */
+  58%, 62% { transform: rotate(-26deg); }
+  60% { transform: rotate(26deg); }
+  /* 1.35s - 2.15s: Zıplama & Dik durma */
+  64%, 100% { transform: rotate(0deg); }
 }
 
 @keyframes leg-step-r {
-  /* 0 - 0.7s: Koşu adımları (ters faz) */
-  0%, 4%, 8%, 12%, 16%, 20% { transform: rotate(24deg); }
-  2%, 6%, 10%, 14%, 18%, 22% { transform: rotate(-24deg); }
-  /* 0.7s - 0.9s: Durma */
-  23.3%, 30% { transform: rotate(0deg); }
-  /* 0.9s - 1.6s: Sola koşu */
-  31%, 35%, 39%, 43%, 47%, 51% { transform: rotate(24deg); }
-  33%, 37%, 41%, 45%, 49% { transform: rotate(-24deg); }
-  /* 1.6s - 1.8s: Durma */
-  53.3%, 60% { transform: rotate(0deg); }
-  /* 1.8s - 2.1s: Merkeze koşu */
-  61%, 65%, 69% { transform: rotate(24deg); }
-  63%, 67% { transform: rotate(-24deg); }
-  /* 2.1s - 3.0s: Zıplama & Dik durma */
-  70%, 100% { transform: rotate(0deg); }
+  /* 0 - 0.45s: Sağa hızlı adımlar (ters faz) */
+  0%, 4%, 8%, 12%, 16%, 20% { transform: rotate(26deg); }
+  2%, 6%, 10%, 14%, 18% { transform: rotate(-26deg); }
+  /* 0.45s - 0.55s: Durma */
+  22%, 26% { transform: rotate(0deg); }
+  /* 0.55s - 1.05s: Sola hızlı koşu */
+  28%, 32%, 36%, 40%, 44%, 48% { transform: rotate(26deg); }
+  30%, 34%, 38%, 42%, 46% { transform: rotate(-26deg); }
+  /* 1.05s - 1.22s: Durma */
+  49%, 56% { transform: rotate(0deg); }
+  /* 1.22s - 1.35s: Merkeze koşu */
+  58%, 62% { transform: rotate(26deg); }
+  60% { transform: rotate(-26deg); }
+  /* 1.35s - 2.15s: Zıplama & Dik durma */
+  64%, 100% { transform: rotate(0deg); }
 }
 
 /* Duygu Rozetleri (? ve !) */
@@ -1432,43 +1490,43 @@ html.dark .search-autocomplete-item:hover {
   background: #ea5736;
   color: #ffffff;
   border: 1.5px solid #ffffff;
-  animation: badge-q-anim 3.0s ease forwards;
+  animation: badge-q-anim 2.15s ease forwards;
 }
 
 #splash-badge-exclamation {
   background: #10b981;
   color: #ffffff;
   border: 1.5px solid #ffffff;
-  animation: badge-excl-anim 3.0s ease forwards;
+  animation: badge-excl-anim 2.15s ease forwards;
 }
 
 @keyframes badge-q-anim {
-  0%, 23% {
+  0%, 20% {
     opacity: 0;
     transform: translateY(6px) scale(0.4);
   }
-  24.5%, 29% {
+  22%, 25.5% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(-4px) scale(1.1);
   }
-  30.5%, 100% {
+  27%, 100% {
     opacity: 0;
-    transform: translateY(-4px) scale(0.6);
+    transform: translateY(-10px) scale(0.6);
   }
 }
 
 @keyframes badge-excl-anim {
-  0%, 70% {
+  0%, 63% {
     opacity: 0;
     transform: translateY(6px) scale(0.4);
   }
-  73%, 78.5% {
+  66%, 70% {
     opacity: 1;
-    transform: translateY(-8px) scale(1.15);
+    transform: translateY(-20px) scale(1.25);
   }
-  80%, 100% {
+  73%, 100% {
     opacity: 0;
-    transform: translateY(-14px) scale(0.6);
+    transform: translateY(-28px) scale(0.6);
   }
 }
 

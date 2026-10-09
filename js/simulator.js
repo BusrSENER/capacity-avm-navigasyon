@@ -273,7 +273,7 @@ class CartSimulator {
     // 1. Ekranın merkezinde yarı şeffaf cam (glassmorphism) kat geçiş kartını göster
     this.showFloorTransitionCard(fromNode, toNode);
 
-    // 2. Bildirim 750ms süreyle ekranda kalsın, ardından yeni kata geç
+    // 2. Bildirim süresi (600ms), ardından yeni kata geç
     this.transitionTimer = setTimeout(() => {
       this.currentIndex++;
       this.subProgress = 0;
@@ -288,17 +288,19 @@ class CartSimulator {
           this.onFloorChange(toNode.floor);
         }
 
-        // Harita sert sıfırlanmaz; sepetin belirdiği iniş/çıkış noktasını merkeze alacak şekilde yumuşak pan (kayma) yapar
+        // Harita sert sıfırlanmaz, tüm binaya zoom-out yapmaz;
+        // Doğrudan sepetin çıktığı kapı/aktarma koordinatına TEK ve akıcı bir flyTo hareketiyle odaklanır
         const targetScale = Math.max(this.map.scale, 1.35);
-        this.map.flyTo(toNode.x, toNode.y, targetScale, 450);
+        const flyDuration = 400;
+        this.map.flyTo(toNode.x, toNode.y, targetScale, flyDuration);
 
-        // 4. Sepet yerleştikten sonra (toplam 700-900ms'ye denk gelecek şekilde) yumuşak fade-out ile kaybolsun
+        // Sepet yerleştikten ve flyTo animasyonu tamamen bittikten sonra simülasyon devam eder (kamera titremesini önler)
         this.transitionTimer = setTimeout(() => {
           this.hideFloorTransitionCard();
           this.play();
-        }, 150);
+        }, flyDuration + 50);
       });
-    }, 750);
+    }, 600);
   }
 
   updateCartPosition(x, y, angle, floor) {

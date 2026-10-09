@@ -536,7 +536,7 @@ class MallMap {
           <div class="logo-tile">
             <span class="text-base font-bold text-emerald-600">📍</span>
           </div>
-          <span class="marker-name-label text-sm font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
+          <span class="marker-name-label marker-name-pinned text-sm font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
             📍 Başlangıç: ${this.activeStartStore.name}
           </span>
         `;
@@ -557,7 +557,7 @@ class MallMap {
           <div class="logo-tile">
             <span class="text-base font-bold text-rose-600">🎯</span>
           </div>
-          <span class="marker-name-label text-sm font-black text-white bg-rose-600 ring-2 ring-rose-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
+          <span class="marker-name-label marker-name-pinned text-sm font-black text-white bg-rose-600 ring-2 ring-rose-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
             🎯 Hedef: ${this.activeTargetStore.name}
           </span>
         `;
@@ -785,6 +785,10 @@ class MallMap {
   }
 
   flyTo(x, y, targetScale = 1.35, duration = 400, offsetY = 0) {
+    if (this.flyToAnimId) {
+      cancelAnimationFrame(this.flyToAnimId);
+      this.flyToAnimId = null;
+    }
     const rect = this.container.getBoundingClientRect();
     const cx = rect.width / 2;
     const cy = (rect.height / 2) - offsetY;
@@ -811,11 +815,13 @@ class MallMap {
       this.applyTransform();
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        this.flyToAnimId = requestAnimationFrame(animate);
+      } else {
+        this.flyToAnimId = null;
       }
     };
 
-    requestAnimationFrame(animate);
+    this.flyToAnimId = requestAnimationFrame(animate);
   }
 
   /**
@@ -927,6 +933,15 @@ class MallMap {
       const rawScale = (targetScreenSize / baseMarkerSize) / this.scale;
       const clampedScale = Math.min(isMobile ? 3.4 : 2.2, Math.max(0.45, rawScale));
       this.container.style.setProperty('--marker-scale', clampedScale.toFixed(3));
+
+      // Kademeli Zoom Rozet Gösterimi (LOD):
+      // Zoom < 1.2: Yalnızca ana/büyük mağazalar (is_anchor: true) ile hedef/başlangıç görünür.
+      // Zoom >= 1.2: Diğer tüm ara mağaza logoları (.logo-tile) yumuşak geçişle görünür.
+      if (this.scale < 1.2) {
+        this.container.classList.add('lod-far');
+      } else {
+        this.container.classList.remove('lod-far');
+      }
 
       // LoD (Level of Detail) Sınıfları: scale >= 1.8x ise tüm mağaza isimleri görünür, altında yalnız anchor'lar
       if (this.scale >= 1.8) {
