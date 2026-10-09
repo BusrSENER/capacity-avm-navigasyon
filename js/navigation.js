@@ -156,11 +156,25 @@ class NavigationEngine {
           }
         }
 
+        // Havuz Bypass Koruması: Zemin katta (Floor 4) 'Müzikli Gösteri Havuzu' su poligonunun üzerinden transit geçişi engelle
+        const isPoolTransit = (nid) => {
+          if (nid === startNodeId || nid === targetNodeId) return false;
+          if (nid === 'c_4_m_700') return true;
+          const nd = this.nodes[nid];
+          if (nd && nd.floor === 4) {
+            const dx = (nd.x - 700) / 75;
+            const dy = (nd.y - 440) / 50;
+            if (dx * dx + dy * dy < 1.0) return true;
+          }
+          return false;
+        };
+        const poolPenalty = isPoolTransit(v) ? 9999 : 0;
+
         // Dikey geçiş cezası (Gerçek dünya modeli: bekleme ve binme süresi).
         // Başlangıç ve hedef aynı kattaysa gereksiz alt/üst kata inip çıkmayı engeller.
         const transferPenalty = isTransfer ? 200 : 0;
         const sameFloorPenalty = (isTransfer && isSameFloorRoute) ? 600 : 0;
-        const edgeWeight = edge.dist + transferPenalty + sameFloorPenalty;
+        const edgeWeight = edge.dist + transferPenalty + sameFloorPenalty + poolPenalty;
 
         const alt = currentDist + edgeWeight;
         if (dist[v] === undefined || alt < dist[v]) {
@@ -247,14 +261,33 @@ class NavigationEngine {
     const instructions = [];
     if (!pathNodes || pathNodes.length === 0) return instructions;
 
+    const getNearbyStoreName = (floor, x, y) => {
+      const floorStores = this.floors[floor]?.stores || [];
+      let best = null;
+      let minD = 75;
+      for (const s of floorStores) {
+        if (s.cx !== undefined && s.cy !== undefined) {
+          const d = Math.hypot(s.cx - x, s.cy - y);
+          if (d < minD) {
+            minD = d;
+            best = s.name;
+          }
+        }
+      }
+      return best;
+    };
+
     let stepNum = 1;
     let currentFloor = pathNodes[0].floor;
     let accumulatedWalk = 0;
+    let walkStartIndex = 0;
 
     instructions.push({
       step: stepNum++,
+      nodeIndex: 0,
       type: 'start',
       icon: 'map-pin',
+      emoji: '📍',
       floor: currentFloor,
       text: `${this._getFloorLabel(currentFloor)} üzerinde harekete başlayın.`
     });
@@ -266,25 +299,30 @@ class NavigationEngine {
       // Kat Değişimi
       if (u.floor !== v.floor) {
         if (accumulatedWalk > 5) {
+          const walkMeters = Math.round(accumulatedWalk * this.mPerUnit);
           instructions.push({
             step: stepNum++,
+            nodeIndex: walkStartIndex,
             type: 'straight',
             icon: 'arrow-up',
+            emoji: '⬆️',
             floor: u.floor,
-            meters: Math.round(accumulatedWalk * this.mPerUnit),
-            text: `Koridorda ${Math.round(accumulatedWalk * this.mPerUnit)} m düz ilerleyin.`
+            meters: walkMeters,
+            text: `Koridorda ${walkMeters} m düz ilerleyin.`
           });
           accumulatedWalk = 0;
         }
 
         const isElevator = v.edgeType === 'elevator' || v.portalKind === 'elevator';
-        const portalText = isElevator ? 'Asansöre binerek' : 'Yürüyen merdiveni kullanarak';
+        const portalText = isElevator ? 'Asansör ile' : 'Yürüyen merdiven ile';
         const dirText = v.floor > u.floor ? 'çıkın' : 'inin';
 
         instructions.push({
           step: stepNum++,
+          nodeIndex: i,
           type: 'floor_change',
           icon: isElevator ? 'arrow-up-down' : 'layers',
+          emoji: isElevator ? '🛗' : '🪜',
           floor: v.floor,
           fromFloor: u.floor,
           toFloor: v.floor,
@@ -292,6 +330,7 @@ class NavigationEngine {
         });
 
         currentFloor = v.floor;
+        walkStartIndex = i + 1;
         continue;
       }
 
@@ -310,44 +349,60 @@ class NavigationEngine {
 
         if (Math.abs(diff) >= 40) {
           if (accumulatedWalk > 5) {
+            const walkMeters = Math.round(accumulatedWalk * this.mPerUnit);
             instructions.push({
               step: stepNum++,
+              nodeIndex: walkStartIndex,
               type: 'straight',
               icon: 'arrow-up',
+              emoji: '⬆️',
               floor: currentFloor,
-              meters: Math.round(accumulatedWalk * this.mPerUnit),
-              text: `Koridorda ${Math.round(accumulatedWalk * this.mPerUnit)} m düz ilerleyin.`
+              meters: walkMeters,
+              text: `Koridorda ${walkMeters} m düz ilerleyin.`
             });
             accumulatedWalk = 0;
           }
 
           const isRight = diff > 0;
+          const nearbyLandmark = getNearbyStoreName(currentFloor, v.x, v.y);
+          const landmarkSuffix = nearbyLandmark ? ` (${nearbyLandmark})` : '';
+
           instructions.push({
             step: stepNum++,
+            nodeIndex: i + 1,
             type: isRight ? 'turn_right' : 'turn_left',
             icon: isRight ? 'corner-up-right' : 'corner-up-left',
+            emoji: isRight ? '↪️' : '↩️',
             floor: currentFloor,
-            text: isRight ? 'Sağa dönün.' : 'Sola dönün.'
+            landmark: nearbyLandmark,
+            text: isRight ? `Sağa dönün${landmarkSuffix}.` : `Sola dönün${landmarkSuffix}.`
           });
+
+          walkStartIndex = i + 1;
         }
       }
     }
 
     if (accumulatedWalk > 5) {
+      const walkMeters = Math.round(accumulatedWalk * this.mPerUnit);
       instructions.push({
         step: stepNum++,
+        nodeIndex: walkStartIndex,
         type: 'straight',
         icon: 'arrow-up',
+        emoji: '⬆️',
         floor: currentFloor,
-        meters: Math.round(accumulatedWalk * this.mPerUnit),
-        text: `Son ${Math.round(accumulatedWalk * this.mPerUnit)} m düz ilerleyin.`
+        meters: walkMeters,
+        text: `Son ${walkMeters} m düz ilerleyin.`
       });
     }
 
     instructions.push({
       step: stepNum++,
+      nodeIndex: pathNodes.length - 1,
       type: 'destination',
       icon: 'check-circle-2',
+      emoji: '🎯',
       floor: pathNodes[pathNodes.length - 1].floor,
       text: 'Hedefinize ulaştınız.'
     });

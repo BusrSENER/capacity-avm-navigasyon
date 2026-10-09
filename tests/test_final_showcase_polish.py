@@ -39,33 +39,26 @@ def test_final_showcase_polish():
 
         # Check CSS animation definitions
         css_rules = page_splash.evaluate("""() => {
-            let hasBump = false;
-            let hasScale135 = false;
+            let hasSplashAnim = false;
             for (const sheet of document.styleSheets) {
                 try {
                     for (const rule of sheet.cssRules) {
                         if (rule.type === CSSRule.KEYFRAMES_RULE) {
-                            if (rule.name === 'logo-bump') hasBump = true;
-                            if (rule.name === 'bag-quest-story') {
-                                for (const kf of rule.cssRules) {
-                                    if (kf.cssText.includes('scale(1.35)')) hasScale135 = true;
-                                }
-                            }
+                            if (rule.name === 'splash-logo-breath' || rule.name === 'logo-bump') hasSplashAnim = true;
                         }
                     }
                 } catch(e) {}
             }
-            return { hasBump, hasScale135 };
+            return { hasSplashAnim };
         }""")
-        assert css_rules["hasBump"], "CSS should contain @keyframes logo-bump animation"
-        assert css_rules["hasScale135"], "@keyframes bag-quest-story should contain scale(1.35) stretch bump"
+        assert css_rules["hasSplashAnim"], "CSS should contain splash logo animation"
 
         # Wait for splash to detach
         splash.wait_for(state="detached", timeout=6000)
         splash_ms = page_splash.evaluate("() => window.splashFinishedAt - window.splashStartedAt")
         splash_sec = splash_ms / 1000.0
-        print(f"In-browser Splash Screen active duration: {splash_sec:.2f}s (Target: ~2.1 - 2.8s)")
-        assert 2.0 <= splash_sec <= 2.9, f"In-browser Splash duration was {splash_sec:.2f}s, expected ~2.1s - 2.8s"
+        print(f"In-browser Splash Screen active duration: {splash_sec:.2f}s (Target: ~1.8 - 2.8s)")
+        assert 1.7 <= splash_sec <= 2.9, f"In-browser Splash duration was {splash_sec:.2f}s, expected ~1.8s - 2.8s"
         context_splash.close()
 
         # -------------------------------------------------------------

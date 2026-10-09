@@ -2351,8 +2351,8 @@
           "h": 40,
           "x": 660,
           "y": 495,
-          "door_x": 690,
-          "door_y": 440,
+          "door_x": 690.0,
+          "door_y": 500.0,
           "nav_node": "n_4_door_4",
           "room_id": "room_4_4",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/4094c10ff76d.jpg",
@@ -3591,8 +3591,8 @@
           "h": 40,
           "x": 730,
           "y": 495,
-          "door_x": 760,
-          "door_y": 440,
+          "door_x": 760.0,
+          "door_y": 500.0,
           "nav_node": "n_4_door_44",
           "room_id": "room_4_44",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/77d0c69199ea.jpg",
@@ -7338,8 +7338,8 @@
       "n_4_door_4": {
         "id": "n_4_door_4",
         "floor": 4,
-        "x": 690,
-        "y": 440,
+        "x": 690.0,
+        "y": 500.0,
         "kind": "door"
       },
       "n_4_door_5": {
@@ -7618,8 +7618,8 @@
       "n_4_door_44": {
         "id": "n_4_door_44",
         "floor": 4,
-        "x": 760,
-        "y": 440,
+        "x": 760.0,
+        "y": 500.0,
         "kind": "door"
       },
       "c_5_m_200": {
@@ -11597,7 +11597,7 @@
         {
           "to": "c_4_wp_pool_n1",
           "dist": 79.1,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         },
         {
@@ -11607,38 +11607,7 @@
           "portalKind": null
         }
       ],
-      "c_4_m_700": [
-        {
-          "to": "c_4_n_680",
-          "dist": 111.8,
-          "type": "main",
-          "portalKind": null
-        },
-        {
-          "to": "c_4_s_680",
-          "dist": 111.8,
-          "type": "main",
-          "portalKind": null
-        },
-        {
-          "to": "n_4_door_4",
-          "dist": 10,
-          "type": "main",
-          "portalKind": null
-        },
-        {
-          "to": "c_4_wp_pool_n2",
-          "dist": 80,
-          "type": "narrow",
-          "portalKind": null
-        },
-        {
-          "to": "c_4_wp_pool_s2",
-          "dist": 85,
-          "type": "main",
-          "portalKind": null
-        }
-      ],
+      "c_4_m_700": [],
       "c_4_m_800": [
         {
           "to": "c_4_m_900",
@@ -11671,15 +11640,9 @@
           "portalKind": null
         },
         {
-          "to": "n_4_door_44",
-          "dist": 40,
-          "type": "main",
-          "portalKind": null
-        },
-        {
           "to": "c_4_wp_pool_n3",
           "dist": 79.1,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         },
         {
@@ -11967,12 +11930,6 @@
           "portalKind": null
         },
         {
-          "to": "c_4_m_700",
-          "dist": 111.8,
-          "type": "main",
-          "portalKind": null
-        },
-        {
           "to": "c_4_car_mid",
           "dist": 190,
           "type": "main",
@@ -11987,7 +11944,7 @@
         {
           "to": "c_4_wp_pool_n1",
           "dist": 65.2,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         }
       ],
@@ -12019,7 +11976,7 @@
         {
           "to": "c_4_wp_pool_n3",
           "dist": 43,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         }
       ],
@@ -12221,12 +12178,6 @@
           "portalKind": null
         },
         {
-          "to": "c_4_m_700",
-          "dist": 111.8,
-          "type": "main",
-          "portalKind": null
-        },
-        {
           "to": "n_4_door_41",
           "dist": 12.5,
           "type": "main",
@@ -12235,6 +12186,12 @@
         {
           "to": "c_4_wp_pool_s1",
           "dist": 62.6,
+          "type": "main",
+          "portalKind": null
+        },
+        {
+          "to": "n_4_door_4",
+          "dist": 51.0,
           "type": "main",
           "portalKind": null
         }
@@ -12267,6 +12224,12 @@
         {
           "to": "c_4_wp_pool_s3",
           "dist": 39.1,
+          "type": "main",
+          "portalKind": null
+        },
+        {
+          "to": "n_4_door_44",
+          "dist": 51.0,
           "type": "main",
           "portalKind": null
         }
@@ -12423,8 +12386,14 @@
       ],
       "n_4_door_4": [
         {
-          "to": "c_4_m_700",
-          "dist": 10,
+          "to": "c_4_wp_pool_s2",
+          "dist": 27.0,
+          "type": "main",
+          "portalKind": null
+        },
+        {
+          "to": "c_4_s_680",
+          "dist": 51.0,
           "type": "main",
           "portalKind": null
         }
@@ -12743,8 +12712,14 @@
       ],
       "n_4_door_44": [
         {
-          "to": "c_4_m_800",
-          "dist": 40,
+          "to": "c_4_wp_pool_s3",
+          "dist": 25.0,
+          "type": "main",
+          "portalKind": null
+        },
+        {
+          "to": "c_4_s_750",
+          "dist": 51.0,
           "type": "main",
           "portalKind": null
         }
@@ -15025,19 +15000,19 @@
         {
           "to": "c_4_m_600",
           "dist": 79.1,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         },
         {
           "to": "c_4_wp_pool_n2",
           "dist": 75.2,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         },
         {
           "to": "c_4_n_680",
           "dist": 65.2,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         }
       ],
@@ -15045,19 +15020,13 @@
         {
           "to": "c_4_wp_pool_n1",
           "dist": 75.2,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         },
         {
           "to": "c_4_wp_pool_n3",
           "dist": 75.2,
-          "type": "narrow",
-          "portalKind": null
-        },
-        {
-          "to": "c_4_m_700",
-          "dist": 80,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         }
       ],
@@ -15065,19 +15034,19 @@
         {
           "to": "c_4_wp_pool_n2",
           "dist": 75.2,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         },
         {
           "to": "c_4_m_800",
           "dist": 79.1,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         },
         {
           "to": "c_4_n_750",
           "dist": 43,
-          "type": "narrow",
+          "type": "main",
           "portalKind": null
         }
       ],
@@ -15115,8 +15084,8 @@
           "portalKind": null
         },
         {
-          "to": "c_4_m_700",
-          "dist": 85,
+          "to": "n_4_door_4",
+          "dist": 27.0,
           "type": "main",
           "portalKind": null
         }
@@ -15137,6 +15106,12 @@
         {
           "to": "c_4_s_750",
           "dist": 39.1,
+          "type": "main",
+          "portalKind": null
+        },
+        {
+          "to": "n_4_door_44",
+          "dist": 25.0,
           "type": "main",
           "portalKind": null
         }
@@ -16733,20 +16708,6 @@
         "dist": 110.1
       },
       {
-        "from": "c_4_n_680",
-        "to": "c_4_m_700",
-        "type": "main",
-        "portalKind": null,
-        "dist": 111.8
-      },
-      {
-        "from": "c_4_m_700",
-        "to": "c_4_s_680",
-        "type": "main",
-        "portalKind": null,
-        "dist": 111.8
-      },
-      {
         "from": "c_4_n_750",
         "to": "c_4_m_800",
         "type": "main",
@@ -16829,13 +16790,6 @@
         "type": "main",
         "portalKind": null,
         "dist": 51
-      },
-      {
-        "from": "n_4_door_4",
-        "to": "c_4_m_700",
-        "type": "main",
-        "portalKind": null,
-        "dist": 10
       },
       {
         "from": "n_4_door_5",
@@ -17109,13 +17063,6 @@
         "type": "main",
         "portalKind": null,
         "dist": 107.7
-      },
-      {
-        "from": "n_4_door_44",
-        "to": "c_4_m_800",
-        "type": "main",
-        "portalKind": null,
-        "dist": 40
       },
       {
         "from": "c_5_m_200",
@@ -18366,51 +18313,44 @@
       {
         "from": "c_4_m_600",
         "to": "c_4_wp_pool_n1",
-        "type": "narrow",
+        "type": "main",
         "portalKind": null,
         "dist": 79.1
       },
       {
         "from": "c_4_wp_pool_n1",
         "to": "c_4_wp_pool_n2",
-        "type": "narrow",
+        "type": "main",
         "portalKind": null,
         "dist": 75.2
       },
       {
         "from": "c_4_wp_pool_n2",
         "to": "c_4_wp_pool_n3",
-        "type": "narrow",
+        "type": "main",
         "portalKind": null,
         "dist": 75.2
       },
       {
         "from": "c_4_wp_pool_n3",
         "to": "c_4_m_800",
-        "type": "narrow",
+        "type": "main",
         "portalKind": null,
         "dist": 79.1
       },
       {
         "from": "c_4_wp_pool_n1",
         "to": "c_4_n_680",
-        "type": "narrow",
+        "type": "main",
         "portalKind": null,
         "dist": 65.2
       },
       {
         "from": "c_4_wp_pool_n3",
         "to": "c_4_n_750",
-        "type": "narrow",
+        "type": "main",
         "portalKind": null,
         "dist": 43
-      },
-      {
-        "from": "c_4_m_700",
-        "to": "c_4_wp_pool_n2",
-        "type": "narrow",
-        "portalKind": null,
-        "dist": 80
       },
       {
         "from": "c_4_m_600",
@@ -18455,11 +18395,32 @@
         "dist": 39.1
       },
       {
-        "from": "c_4_m_700",
+        "from": "n_4_door_44",
+        "to": "c_4_wp_pool_s3",
+        "type": "main",
+        "portalKind": null,
+        "dist": 25.0
+      },
+      {
+        "from": "n_4_door_44",
+        "to": "c_4_s_750",
+        "type": "main",
+        "portalKind": null,
+        "dist": 51.0
+      },
+      {
+        "from": "n_4_door_4",
         "to": "c_4_wp_pool_s2",
         "type": "main",
         "portalKind": null,
-        "dist": 85
+        "dist": 27.0
+      },
+      {
+        "from": "n_4_door_4",
+        "to": "c_4_s_680",
+        "type": "main",
+        "portalKind": null,
+        "dist": 51.0
       }
     ]
   }

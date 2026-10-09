@@ -54,12 +54,12 @@
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
-  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - MAT, FLAT & SEVİMLİ ŞAŞKIN ÇANTA ANİMASYONU) -->
-  <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0d131f] text-white select-none overflow-hidden transition-opacity duration-400">
-    <!-- Mat Sahne Taşıyıcısı (Neon Yok, Glow Yok) -->
-    <div id="splash-stage" class="relative z-10 flex flex-col items-center justify-center gap-2 w-[340px] max-w-[92vw]">
+  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - MİNİMALİST LOGO REVEAL & ZARİF ÇANTA GEÇİŞİ) -->
+  <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0a0f1d] text-white select-none overflow-hidden transition-opacity duration-300">
+    <!-- Sahne Taşıyıcısı -->
+    <div id="splash-stage" class="relative z-10 flex flex-col items-center justify-center gap-3 w-[340px] max-w-[92vw]">
       
-      <!-- Kurumsal 'nrdsor' Yatay Logosu (Mat ve Net - 2.4s'de Belirir) -->
+      <!-- Kurumsal 'nrdsor' Yatay Logosu (Yumuşak Nefes Alma & Hafif Parlama Efekti) -->
       <div id="splash-logo-container">
         <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
              alt="nrdsor" 
@@ -67,47 +67,44 @@
              class="h-10 sm:h-12 w-auto max-w-[220px] object-contain select-none" />
       </div>
 
-      <!-- Çantanın Koştuğu Mat Zemin Pisti -->
-      <div id="splash-bag-track" class="relative w-full h-16 flex items-center justify-center pointer-events-none overflow-hidden">
-        <!-- Mat Zemin Çizgisi -->
-        <div class="absolute bottom-2.5 left-4 right-4 h-[1.5px] bg-slate-800 rounded-full"></div>
-
-        <!-- 3000ms Şaşkın Çanta Mikro-Kurgusu Taşıyıcısı -->
-        <div id="splash-slide-bag" class="absolute flex flex-col items-center justify-center" aria-label="Sevimli Alışveriş Çantası">
-          
-          <!-- Konuşma / Duygu Rozetleri (? ve !) -->
-          <div id="splash-badge-question" class="splash-emotion-badge">?</div>
-          <div id="splash-badge-exclamation" class="splash-emotion-badge">!</div>
-
-          <!-- Sevimli İki Bacaklı Çanta SVG'si -->
-          <svg viewBox="-20 -36 40 48" width="40" height="48" class="splash-bag-svg" xmlns="http://www.w3.org/2000/svg">
-            <!-- Çanta Kulpları (Handle) -->
-            <path d="M-5 -21 C -5 -32, 5 -32, 5 -21" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M-4.5 -19.5 C -4.5 -29.5, 4.5 -29.5, 4.5 -19.5" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round"/>
-
-            <!-- Çanta Gövdesi (Mat Turuncu / Mercan - Flat Tasarım) -->
-            <path d="M-13 -20 L13 -20 L11 0 L-11 0 Z" fill="#ea5736" stroke="#c2410c" stroke-width="0.8" stroke-linejoin="round"/>
-            <path d="M-13 -20 L13 -20 L12.5 -17.5 L-12.5 -17.5 Z" fill="#d94726"/>
-
-            <!-- Çanta Üzerindeki Mat nrdsor Pin Rozeti -->
+      <!-- Çantanın Zarifçe Süzüldüğü Mat Zemin Alanı -->
+      <div id="splash-bag-track" class="relative w-full h-14 flex items-center justify-center pointer-events-none overflow-hidden">
+        <!-- Zarif Süzülen Mat Alışveriş Çantası Taşıyıcısı -->
+        <div id="splash-slide-bag" class="absolute flex items-center justify-center" aria-label="Alışveriş Çantası">
+          <svg viewBox="-20 -36 40 42" width="42" height="44" class="splash-bag-svg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="splashBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff6b4a"/>
+                <stop offset="50%" stop-color="#ea5736"/>
+                <stop offset="100%" stop-color="#c2410c"/>
+              </linearGradient>
+              <linearGradient id="splashHandleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#475569"/>
+                <stop offset="100%" stop-color="#0f172a"/>
+              </linearGradient>
+            </defs>
+            <!-- Ground Shadow -->
+            <ellipse class="bag__shadow" cx="0" cy="1.5" rx="12" ry="2.8" fill="rgba(0, 0, 0, 0.35)" />
+            <!-- Back Handle -->
+            <path d="M-5 -21 C -5 -32, 5 -32, 5 -21" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>
+            <!-- Bag Main Body (Luxury nrdsor Coral Tote) -->
+            <path d="M-13 -20 L13 -20 L11 0 L-11 0 Z" fill="url(#splashBagGrad)" stroke="#c2410c" stroke-width="0.8" stroke-linejoin="round"/>
+            <!-- Luxury Side Pleats / Creases -->
+            <path d="M-11 0 L-7 -20" stroke="rgba(255, 255, 255, 0.35)" stroke-width="1.1" fill="none"/>
+            <path d="M11 0 L7 -20" stroke="rgba(0, 0, 0, 0.22)" stroke-width="1.2" fill="none"/>
+            <!-- Front Handle -->
+            <path d="M-4.5 -19.5 C -4.5 -29.5, 4.5 -29.5, 4.5 -19.5" fill="none" stroke="url(#splashHandleGrad)" stroke-width="2.4" stroke-linecap="round"/>
+            <!-- Top Turnover Fold Edge -->
+            <path d="M-13 -20 L13 -20 L12.5 -17.5 L-12.5 -17.5 Z" fill="#d94726" opacity="0.9"/>
+            <!-- Brand Navy Emblem Patch with nrdsor Coral Pin -->
             <g transform="translate(0, -9.5)">
-              <rect x="-4.5" y="-4.5" width="9" height="9" rx="2.5" fill="#0f172a" stroke="#334155" stroke-width="0.6"/>
+              <rect x="-4.5" y="-4.5" width="9" height="9" rx="2.5" fill="#0f172a" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
               <circle cx="0" cy="-0.6" r="1.7" fill="#ea5736"/>
               <path d="M-1.4 -0.3 L0 2.5 L1.4 -0.3 Z" fill="#ea5736"/>
               <circle cx="0" cy="-0.6" r="0.6" fill="#ffffff"/>
             </g>
-
-            <!-- Minik Sevimli Bacaklar / Ayaklar -->
-            <!-- Sol Bacak & Ayak -->
-            <g class="splash-leg-left">
-              <line x1="-5" y1="0" x2="-5" y2="7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M-5 7 L-1.5 7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
-            </g>
-            <!-- Sağ Bacak & Ayak -->
-            <g class="splash-leg-right">
-              <line x1="5" y1="0" x2="5" y2="7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M5 7 L8.5 7" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
-            </g>
+            <!-- Luxury Gloss Reflection / Highlights -->
+            <path d="M-11.5 -19 L-4 -19 L-6.5 -1 L-10.5 -1 Z" fill="rgba(255, 255, 255, 0.22)"/>
           </svg>
         </div>
       </div>
@@ -463,11 +460,20 @@
         <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
         <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
 
-        <!-- Kayıtlı Otopark Çipi (Araba Hafızası Varsa Görünür) -->
-        <button id="btn-header-find-car" class="hidden mt-1.5 py-1 px-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-[11px] font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer self-start" title="Kayıtlı arabama en yakın asansöre yönlendir">
-          <span>🚗</span>
-          <span id="header-car-spot-text">Arabama Git</span>
-        </button>
+        <!-- Canlı Turn-by-Turn Navigasyon Barı (Adım Adım Yönlendirme HUD) -->
+        <div id="header-live-nav-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center gap-2.5 transition-all">
+          <div id="live-nav-icon" class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex items-center justify-center text-base sm:text-lg font-bold shrink-0 shadow-xs select-none">
+            ⬆️
+          </div>
+          <div class="flex flex-col min-w-0 flex-1">
+            <div id="live-nav-text" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-tight truncate">
+              Düz İlerleyin
+            </div>
+            <div id="live-nav-sub" class="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-400 leading-tight truncate mt-0.5">
+              Rotayı takip edin
+            </div>
+          </div>
+        </div>
 
         <!-- Rota Aktifken Görünen Koridor Tercih Çipleri: [🛣️ Geniş Yol], [✂️ Kısa Yol] ve [📲 Rotayı Cebine Al] -->
         <div id="route-path-chips" class="hidden flex items-center flex-nowrap overflow-x-auto no-scrollbar gap-1.5 pt-2">

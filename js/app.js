@@ -532,11 +532,11 @@ function setupLanguageToggle() {
 window.setupLanguageToggle = setupLanguageToggle;
 
 
-// Açılış Ekranı (Splash Screen): Hızlı & Mizahi Şaşkın Çanta & nrdsor Logo (Toplam ~2150ms)
+// Açılış Ekranı (Splash Screen): Minimalist Logo Reveal & Zarif Çanta Geçişi (Toplam ~1.85s)
 const splashStartTime = Date.now();
 window.splashStartedAt = splashStartTime;
-const MIN_SPLASH_DURATION = 2150; // ms (~2.15s hızlı kurgu sonrası fade-out başlar)
-const SPLASH_FADE_OUT_MS = 350;   // ms (toplam sürede harita açılışı tamamlanır)
+const MIN_SPLASH_DURATION = 1850; // ms (~1.85s lüks logo parlaması ve zarif çanta süzülmesi)
+const SPLASH_FADE_OUT_MS = 250;   // ms (pürüzsüz fade-out ile doğrudan haritaya geçiş)
 
 function hideSplashScreen() {
   const elapsed = Date.now() - splashStartTime;
@@ -638,6 +638,72 @@ function initApp() {
     }
   };
 
+  /**
+   * Canlı Turn-by-Turn Adım Banner'ı (Adım Adım Yönlendirme HUD)
+   * @param {number} nodeIndex - Mevcut düğüm indeksi (-1 ise varış)
+   * @param {number} progressPct - İlerleme yüzdesi 0..100
+   */
+  function updateLiveNavHUD(nodeIndex, progressPct = 0) {
+    const banner = document.getElementById('header-live-nav-banner');
+    const iconEl = document.getElementById('live-nav-icon');
+    const textEl = document.getElementById('live-nav-text');
+    const subEl = document.getElementById('live-nav-sub');
+    if (!banner || !iconEl || !textEl || !subEl) return;
+
+    if (!lastCalculatedRoute || !lastCalculatedRoute.instructions || !lastCalculatedRoute.instructions.length) {
+      banner.classList.add('hidden');
+      return;
+    }
+
+    // 1. Hedefe Ulaşıldı Durumu
+    if (nodeIndex === -1 || progressPct >= 100) {
+      banner.classList.remove('hidden');
+      iconEl.textContent = '🎉';
+      textEl.textContent = 'Hedefe Ulaştınız!';
+      const destName = (selectedTargetStore && selectedTargetStore.name) || 'Hedef Mağaza';
+      subEl.textContent = `${destName} önündesiniz`;
+      return;
+    }
+
+    banner.classList.remove('hidden');
+
+    const instructions = lastCalculatedRoute.instructions;
+
+    // 2. Mevcut düğüme karşılık gelen manevra adımını bul
+    let activeIns = instructions[0];
+    let nextIns = instructions[1] || null;
+
+    for (let i = 0; i < instructions.length; i++) {
+      const ins = instructions[i];
+      if (ins.nodeIndex !== undefined && nodeIndex >= ins.nodeIndex) {
+        activeIns = ins;
+        nextIns = instructions[i + 1] || null;
+      }
+    }
+
+    // 3. İkon ve Metinleri Güncelle
+    let emoji = activeIns.emoji || '⬆️';
+    if (!emoji || emoji === '📍') {
+      if (activeIns.type === 'straight') emoji = '⬆️';
+      else if (activeIns.type === 'turn_right') emoji = '↪️';
+      else if (activeIns.type === 'turn_left') emoji = '↩️';
+      else if (activeIns.type === 'floor_change') emoji = activeIns.icon === 'arrow-up-down' ? '🛗' : '🪜';
+      else if (activeIns.type === 'destination') emoji = '🎯';
+      else emoji = '⬆️';
+    }
+    iconEl.textContent = emoji;
+    textEl.textContent = activeIns.text;
+
+    // 4. Alt Bilgi: Bir sonraki manevra veya kalan ilerleme
+    if (nextIns) {
+      const nextEmoji = nextIns.emoji || (nextIns.type === 'floor_change' ? '🪜' : (nextIns.type === 'turn_right' ? '↪️' : (nextIns.type === 'turn_left' ? '↩️' : '⬆️')));
+      subEl.textContent = `Sonraki: ${nextEmoji} ${nextIns.text}`;
+    } else {
+      subEl.textContent = `Hedefe doğru ilerliyorsunuz (%${Math.round(progressPct)})`;
+    }
+  }
+  window.updateLiveNavHUD = updateLiveNavHUD;
+
   cartSimulator = new CartSimulator(
     mallMap,
     (progress, stepIndex) => {
@@ -650,6 +716,10 @@ function initApp() {
       if (hudPct) {
         hudPct.textContent = `(%${Math.round(pct)})`;
       }
+      // Canlı Turn-by-Turn Adım Banner Güncellemesi
+      if (cartSimulator) {
+        updateLiveNavHUD(cartSimulator.currentIndex, pct);
+      }
     },
     (newFloor) => {
       currentFloor = newFloor;
@@ -660,23 +730,18 @@ function initApp() {
       showToast('🎉 Hedefe ulaştınız! Keyifli alışverişler dileriz.', 'success');
       resetSimControls();
 
+      // Canlı HUD bildirimini "Hedefe Ulaştınız" olarak güncelle
+      updateLiveNavHUD(-1, 100);
+
       // Az önce varılan hedef mağazayı sakla
       const reachedStore = selectedTargetStore;
 
-      // A) Haritadaki kesik mavi/neon rota çizgisini (SVG path) 1 saniye içinde yumuşakça SİL (fade-out)
-      const routeGroup = mallMap && mallMap.routeLayer;
+      // A) ROTA İZİNİ KORU: Hedefe varıldığında rota çizgisini SİLME!
+      // Sadece rengi mat/tamamlanmış bir tona geçir (opacity: 0.6)
+      const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
       if (routeGroup) {
-        routeGroup.style.transition = 'opacity 1s ease-out';
-        routeGroup.style.opacity = '0';
-        setTimeout(() => {
-          if (mallMap) mallMap.clearRoute();
-          if (mallMap && mallMap.routeLayer) {
-            mallMap.routeLayer.style.transition = '';
-            mallMap.routeLayer.style.opacity = '1';
-          }
-        }, 1000);
-      } else if (mallMap) {
-        mallMap.clearRoute();
+        routeGroup.style.transition = 'opacity 0.6s ease';
+        routeGroup.style.opacity = '0.6';
       }
 
       // B) Hedefe varan "Alışveriş Torbası" ikonunu ekrandan kaldır (gizle)
@@ -708,7 +773,6 @@ function initApp() {
       setActiveFocusSlot('target');
 
       // Durum ve Harita Katmanlarını Güncelle
-      lastCalculatedRoute = null;
       document.body.classList.remove('has-active-route');
       updateFloatingToggleVisibility();
       if (mallMap) {
@@ -2413,6 +2477,15 @@ function calculateAndDisplayRoute() {
   mallMap.renderRoute(result);
   mallMap.updateActiveStorePolygons();
 
+  // Rota çizgisinin opaklığını tam opak yap (önceki tamamlanan rotanın 0.6 matlığından kurtar)
+  const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
+  if (routeGroup) {
+    routeGroup.style.opacity = '1';
+  }
+
+  // Canlı Turn-by-Turn HUD Banner'ını ilk adıma ayarla
+  updateLiveNavHUD(0, 0);
+
   // Mobilde Alt Çekmeceyi Otomatik Küçült ve Rota Modunu Aktif Et
   if (isMobileOrLandscape()) {
     collapseBottomSheet();
@@ -2446,6 +2519,11 @@ function clearCurrentRoute() {
     selectedTargetStore = null;
     lastCalculatedRoute = null;
     mallMap.clearRoute();
+    const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
+    if (routeGroup) {
+      routeGroup.style.opacity = '1';
+    }
+    document.getElementById('header-live-nav-banner')?.classList.add('hidden');
     cartSimulator.stop();
     document.body.classList.remove('has-active-route');
     updateFloatingToggleVisibility();
@@ -2500,6 +2578,11 @@ function clearCurrentRoute() {
   selectedTargetStore = null;
   lastCalculatedRoute = null;
   mallMap.clearRoute();
+  const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
+  if (routeGroup) {
+    routeGroup.style.opacity = '1';
+  }
+  document.getElementById('header-live-nav-banner')?.classList.add('hidden');
   cartSimulator.stop();
   document.body.classList.remove('has-active-route');
   updateFloatingToggleVisibility();
