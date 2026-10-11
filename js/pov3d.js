@@ -359,7 +359,11 @@ class Pov3DEngine {
       return;
     }
     if (this.totalProgressPct >= 100) {
-      this.restartWalk();
+      if (typeof window.completeAndResetRouteTo2D === 'function') {
+        window.completeAndResetRouteTo2D(this.targetStore);
+      } else {
+        this.restartWalk();
+      }
       return;
     }
     this.isWalking = !this.isWalking;
@@ -368,6 +372,10 @@ class Pov3DEngine {
 
   restartWalk() {
     if (!this.route) return;
+    if (window.arrivalResetTimer) {
+      clearTimeout(window.arrivalResetTimer);
+      window.arrivalResetTimer = null;
+    }
     this.segIndex = 0;
     this.segProgress = 0;
     this.totalProgressPct = 0;
@@ -400,7 +408,7 @@ class Pov3DEngine {
     if (this.isWalking) {
       btn.innerHTML = '<span>⏸️</span><span>Duraklat</span>';
     } else if (this.totalProgressPct >= 100) {
-      btn.innerHTML = '<span>🔄</span><span>Tekrar Yürü</span>';
+      btn.innerHTML = '<span>✅</span><span>Varış Tamamlandı • 2B\'ye Dön</span>';
     } else {
       btn.innerHTML = '<span>▶️</span><span>Yürüyüşe Devam Et</span>';
     }
@@ -424,15 +432,33 @@ class Pov3DEngine {
       return;
     }
 
-    // Kat geçişi animasyonu (Yürüyen Merdiven / Asansör)
+    // Kat geçişi animasyonu (3B Yürüyen Merdiven / Panoramik Asansör)
     if (this.floorTransitionState) {
       this.floorTransitionState.timer += dt * this.walkSpeed;
+      const tNorm = Math.min(1, this.floorTransitionState.timer / Math.max(0.1, this.floorTransitionState.duration));
+      const goingUp = this.floorTransitionState.toFloor > this.floorTransitionState.fromFloor;
+      // Yürüyen merdiven / asansör üzerinde yükselme veya alçalma 3B kamera yüksekliği
+      this.camZ = goingUp ? (26 + tNorm * 36) : (52 - tNorm * 28);
+
       if (this.floorTransitionState.timer >= this.floorTransitionState.duration) {
         const nextFloor = this.floorTransitionState.toFloor;
         this.currentFloor = nextFloor;
         this.floorTransitionState = null;
+        this.camZ = 26;
         this.segIndex++;
         this.segProgress = 0;
+        const nodes = this.route.pathNodes;
+        if (this.segIndex < nodes.length) {
+          this.camX = nodes[this.segIndex].x;
+          this.camY = nodes[this.segIndex].y;
+          if (this.segIndex + 1 < nodes.length) {
+            const nxt = nodes[this.segIndex + 1];
+            if (Math.hypot(nxt.x - this.camX, nxt.y - this.camY) > 1.5) {
+              this.targetYaw = Math.atan2(nxt.y - this.camY, nxt.x - this.camX);
+              this.camYaw = this.targetYaw;
+            }
+          }
+        }
         if (window.mallMap && window.mallMap.currentFloor !== nextFloor) {
           window.mallMap.loadFloor(nextFloor);
         }
@@ -467,7 +493,7 @@ class Pov3DEngine {
         fromFloor: u.floor,
         toFloor: v.floor,
         timer: 0,
-        duration: 1.4,
+        duration: 1.8,
         portalType: isElev ? 'elevator' : 'escalator'
       };
       const flLabel = this.mallData.floors[v.floor]?.label || `${v.floor}. Kat`;
@@ -524,8 +550,15 @@ class Pov3DEngine {
         const qrModal = document.getElementById('route-qr-modal');
         const isQrOpen = qrModal && !qrModal.classList.contains('hidden');
         if (window.showToast && !isQrOpen) {
-          window.showToast(`🎉 ${this.targetStore ? this.targetStore.name : 'Hedef'} mağazasına ulaştınız!`, 'success');
+          window.showToast(`🎉 ${this.targetStore ? this.targetStore.name : 'Hedef'} mağazasına ulaştınız! Rota sıfırlanıyor ve 2B haritaya dönülüyor...`, 'success');
         }
+        const reached = this.targetStore;
+        if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
+        window.arrivalResetTimer = setTimeout(() => {
+          if (typeof window.completeAndResetRouteTo2D === 'function') {
+            window.completeAndResetRouteTo2D(reached);
+          }
+        }, 1600);
         return;
       }
       const nu = nodes[this.segIndex];
@@ -927,15 +960,16 @@ class Pov3DEngine {
       this._render3DFountainPool(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W);
     }
 
-    // 6. 3B AVM İÇ MEKAN MOBİLYALARI (Palmiye Saksıları, Oturma Bankları) & SERVİS TOTEMLERİ (WC, Asansör, Bebek Odası, Acil Çıkış, Kiosk)
-    this._render3DAmenitiesAndDecor(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W);
-
-    // 7. 3B MAĞAZA CEPHELERİ, VİTRİN CAMLARI, KURUMSAL MARKA LOGOLARI VE IŞIKLI TABELALAR
+    // 6. 3B MAĞAZA CEPHELERİ, VİTRİN CAMLARI, KURUMSAL MARKA LOGOLARI VE IŞIKLI TABELALAR
     this._render3DStorefronts(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W, H);
 
-    // 8. KAT GEÇİŞİ (YÜRÜYEN MERDİVEN / ASANSÖR) EFEKTİ
+    // 7. 3B YÜRÜYEN MERDİVENLER, PANORAMİK ASANSÖRLER, PEYZAJ SAKSILARI VE SERVİS TOTEMLERİ
+    // (Mağaza duvarlarının önünde, koridor ve atrium içinde 3B hacimli olarak çizilir)
+    this._render3DAmenitiesAndDecor(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W);
+
+    // 8. KAT GEÇİŞİ (3B YÜRÜYEN MERDİVEN / PANORAMİK ASANSÖR SÜRÜŞÜ) EFEKTİ
     if (this.floorTransitionState) {
-      this._renderFloorTransitionOverlay(ctx, W, H);
+      this._renderFloorTransitionOverlay(ctx, W, H, now);
     }
 
     // 9. SAĞ ALT KÖŞE CANLI 2B RADAR MİNİ-HARİTA (Kullanıcının Konumu, Servisler ve Bakış Hunisi)
@@ -1093,8 +1127,8 @@ class Pov3DEngine {
   }
 
   /**
-   * Koridor İçindeki 3B Palmiye Saksıları, Ahşap Dinlenme Bankları ve Doğrulanmış 3B Hizmet Totemleri
-   * (Asansör, Yürüyen Merdiven, Bebek Bakım Odası, Acil Çıkış, WC, Kiosk Harita, Otopark)
+   * Koridor İçindeki 3B Yürüyen Merdivenler, Panoramik Asansörler, Palmiye Saksıları ve Hizmet Totemleri
+   * (Yürüyen Merdiven, Asansör, Bebek Bakım Odası, Acil Çıkış, WC, Kiosk Harita, Otopark)
    */
   _render3DAmenitiesAndDecor(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W) {
     // 1. Koridor Peyzaj Saksıları & Oturma Bankları (Koridor ve Ara Yol Kavşaklarında, Mağaza Dışında)
@@ -1134,14 +1168,56 @@ class Pov3DEngine {
     }
     ctx.restore();
 
-    // 2. Bu Kattaki Tüm Doğrulanmış Servis ve Güvenlik Noktaları (Amenities)
-    const amenities = this.mallData?.floors[this.currentFloor]?.amenities || [];
+    // 2. Bu Kattaki Tüm Doğrulanmış Servis, Yürüyen Merdiven ve Güvenlik Noktaları (Amenities)
+    const rawAmenities = this.mallData?.floors[this.currentFloor]?.amenities || [];
+    const amenities = [...rawAmenities];
+
+    // Aktif rotada bu kattan başka bir kata geçiş (Yürüyen Merdiven / Asansör) düğümü varsa,
+    // tam o düğüm koordinatında 3B Yürüyen Merdiven / Asansör yapısının kesin görünmesini sağla!
+    const routePortalNodes = [];
+    if (this.route && Array.isArray(this.route.pathNodes)) {
+      const nodes = this.route.pathNodes;
+      for (let i = 0; i < nodes.length - 1; i++) {
+        const u = nodes[i];
+        const v = nodes[i + 1];
+        if (u.floor === this.currentFloor && v.floor !== this.currentFloor) {
+          const isElev = v.edgeType === 'elevator' || v.portalKind === 'elevator';
+          const portalKind = isElev ? 'elevator' : 'escalator';
+          const goingUp = v.floor > u.floor;
+          const destLabel = this.mallData?.floors[v.floor]?.label || `${v.floor}. Kat`;
+          routePortalNodes.push({
+            x: u.x,
+            y: u.y,
+            kind: portalKind,
+            goingUp,
+            destLabel
+          });
+          // Eğer bu noktanın 28 birim yakınında aynı tipte bir amenity yoksa listeye ekle
+          const alreadyHas = amenities.some(a =>
+            ((a.kind || a.type || '').toLowerCase() === portalKind) &&
+            Math.hypot((a.cx || 700) - u.x, (a.cy || 425) - u.y) < 32
+          );
+          if (!alreadyHas) {
+            amenities.push({
+              id: `route_portal_${i}`,
+              kind: portalKind,
+              cx: u.x,
+              cy: u.y,
+              isRoutePortal: true,
+              goingUp,
+              destLabel
+            });
+          }
+        }
+      }
+    }
+
     if (!amenities.length) return;
 
     const AMENITY_STYLE = {
       emergency: { icon: '🚨', label: 'ACİL ÇIKIŞ', bg: '#dc2626', border: '#fef08a' },
-      elevator:  { icon: '🛗', label: 'ASANSÖR', bg: '#0284c7', border: '#bae6fd' },
-      escalator: { icon: '🪜', label: 'YÜRÜYEN MERDİVEN', bg: '#4f46e5', border: '#c7d2fe' },
+      elevator:  { icon: '🛗', label: 'PANORAMİK ASANSÖR', bg: '#0284c7', border: '#bae6fd' },
+      escalator: { icon: '🪜', label: 'YÜRÜYEN MERDİVEN', bg: '#4f46e5', border: '#a5b4fc' },
       baby:      { icon: '🍼', label: 'BEBEK ODASI', bg: '#db2777', border: '#fbcfe8' },
       wc:        { icon: '🚻', label: 'WC / TUVALET', bg: '#0d9488', border: '#99f6e4' },
       kiosk:     { icon: '🖥️', label: 'KİOSK HARİTA', bg: '#ea580c', border: '#fed7aa' },
@@ -1154,22 +1230,50 @@ class Pov3DEngine {
 
     const visibleAm = [];
     for (const am of amenities) {
-      const d = Math.hypot((am.cx || 700) - this.camX, (am.cy || 425) - this.camY);
-      if (d <= 330) {
-        visibleAm.push({ am, d });
+      const ax = am.cx || 700;
+      const ay = am.cy || 425;
+      const d = Math.hypot(ax - this.camX, ay - this.camY);
+      const kind = (am.kind || am.type || 'info').toLowerCase();
+      const maxDist = (kind === 'escalator' || kind === 'elevator') ? 400 : 330;
+      if (d <= maxDist) {
+        const matchedPortal = routePortalNodes.find(rp => Math.hypot(rp.x - ax, rp.y - ay) < 42);
+        visibleAm.push({
+          am,
+          d,
+          kind,
+          isRoutePortal: Boolean(am.isRoutePortal || matchedPortal),
+          goingUp: matchedPortal ? matchedPortal.goingUp : (am.goingUp !== undefined ? am.goingUp : true),
+          destLabel: matchedPortal ? matchedPortal.destLabel : (am.destLabel || '')
+        });
       }
     }
     visibleAm.sort((a, b) => b.d - a.d);
 
     ctx.save();
-    for (const { am } of visibleAm) {
-      const kind = (am.kind || am.type || 'info').toLowerCase();
+    for (const item of visibleAm) {
+      const { am, kind, isRoutePortal, goingUp, destLabel } = item;
+      const ax = am.cx || 700;
+      const ay = am.cy || 425;
+
+      // 2A. 3B YÜRÜYEN MERDİVEN MİMARİ MODELİ (Eğimli Çelik Gövde, Cam Korkuluklar, Hareketli Basamaklar & Sarı Güvenlik Şeritleri)
+      if (kind === 'escalator') {
+        this._draw3DEscalatorUnit(ctx, ax, ay, isRoutePortal, goingUp, destLabel, cx, horizonY, fovScale, cosYaw, sinYaw, now, W);
+        continue;
+      }
+
+      // 2B. 3B PANORAMİK CAM ASANSÖR KULESİ MODELİ
+      if (kind === 'elevator') {
+        this._draw3DElevatorUnit(ctx, ax, ay, isRoutePortal, destLabel, cx, horizonY, fovScale, cosYaw, sinYaw, now, W);
+        continue;
+      }
+
+      // 2C. Diğer Servis Totemleri (WC, Bebek Odası, Acil Çıkış, Kiosk, Danışma, Otopark)
       const st = AMENITY_STYLE[kind] || AMENITY_STYLE.info;
-      const cTotem = this._worldToCamera(am.cx || 700, am.cy || 425, 36, cosYaw, sinYaw);
+      const cTotem = this._worldToCamera(ax, ay, 36, cosYaw, sinYaw);
       if (cTotem.rx < 12 || cTotem.rx > 320 || Math.abs(cTotem.ry) > cTotem.rx * 0.92) continue;
 
       const isTargetAm = this.targetStore && this.targetStore.id === am.id;
-      if (!isTargetAm && cTotem.rx > 210 && kind !== 'emergency' && kind !== 'elevator' && kind !== 'kiosk') continue;
+      if (!isTargetAm && cTotem.rx > 210 && kind !== 'emergency' && kind !== 'kiosk') continue;
 
       const pT = this._projectCamVerts([cTotem], cx, horizonY, fovScale)[0];
       const sc = Math.max(0.55, Math.min(1.35, 95 / cTotem.rx)) * (W / 1150 + 0.32);
@@ -1195,6 +1299,247 @@ class Pov3DEngine {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(text, pT.x, pT.y);
+    }
+    ctx.restore();
+  }
+
+  /**
+   * 3B Yürüyen Merdiven (Escalator) Mimari Çizimi:
+   * - Zemin giriş tarak plakası (Sarı/İndigo güvenlik alanı)
+   * - Eğimli 3B çelik konstrüksiyon rampa (z: 0 ➔ 50)
+   * - Sağ ve sol 3B temperli cam korkuluklar (LED aydınlatmalı) ve hareketli küpeşte bantları
+   * - Animasyonlu yükselen/inen 3B merdiven basamakları (sarı güvenlik çizgili)
+   * - Üstte parlak 3B Yürüyen Merdiven yönlendirme takı
+   */
+  _draw3DEscalatorUnit(ctx, ax, ay, isRoutePortal, goingUp, destLabel, cx, horizonY, fovScale, cosYaw, sinYaw, now, W) {
+    const cCenter = this._worldToCamera(ax, ay, 24, cosYaw, sinYaw);
+    if (cCenter.rx < 8 || cCenter.rx > 390 || Math.abs(cCenter.ry) > cCenter.rx * 1.15) return;
+
+    // Yürüyen merdivenin rampa yönü: AVM atrium merkezine / doğu-batı aksına paralel uzanır
+    const dirX = ax < 700 ? 1 : -1;
+    const dirY = 0;
+    const halfLen = 19; // Toplam uzunluk 38 birim
+    const halfWid = 7.5; // Toplam genişlik 15 birim
+
+    // Alt sahanlık (giriş) ve üst sahanlık (çıkış) dünya koordinatları
+    const bx = ax - dirX * halfLen * 0.45;
+    const by = ay - dirY * halfLen * 0.45;
+    const tx = ax + dirX * halfLen * 0.95;
+    const ty = ay + dirY * halfLen * 0.95;
+
+    // Enine (sağ-sol korkuluk) normal vektörü
+    const nx = -dirY * halfWid;
+    const ny = dirX * halfWid;
+
+    const zBot = 0.8;
+    const zTop = 48.0;
+    const railH = 10.5;
+
+    ctx.save();
+
+    // 1. Zemin Giriş Güvenlik Plakası (Sarı/Mavi Parlayan Sahanlık Halısı)
+    const padVerts = [
+      this._worldToCamera(bx - dirX * 9 + nx * 1.15, by - dirY * 9 + ny * 1.15, 0.7, cosYaw, sinYaw),
+      this._worldToCamera(bx - dirX * 9 - nx * 1.15, by - dirY * 9 - ny * 1.15, 0.7, cosYaw, sinYaw),
+      this._worldToCamera(bx + dirX * 3 - nx * 1.15, by + dirY * 3 - ny * 1.15, 0.7, cosYaw, sinYaw),
+      this._worldToCamera(bx + dirX * 3 + nx * 1.15, by + dirY * 3 + ny * 1.15, 0.7, cosYaw, sinYaw)
+    ];
+    const padClip = this._clipPolygonNear(padVerts, 5.5);
+    if (padClip.length >= 3) {
+      const pPad = this._projectCamVerts(padClip, cx, horizonY, fovScale);
+      ctx.fillStyle = isRoutePortal ? 'rgba(79, 70, 229, 0.85)' : 'rgba(51, 65, 85, 0.85)';
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = Math.max(1.5, (220 / cCenter.rx) * (W / 1000));
+      ctx.beginPath();
+      ctx.moveTo(pPad[0].x, pPad[0].y);
+      for (let k = 1; k < pPad.length; k++) ctx.lineTo(pPad[k].x, pPad[k].y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // 2. Eğimli 3B Çelik Yürüyen Merdiven Yatağı (Rampa Gövdesi)
+    const rampVerts = [
+      this._worldToCamera(bx + nx, by + ny, zBot, cosYaw, sinYaw),
+      this._worldToCamera(bx - nx, by - ny, zBot, cosYaw, sinYaw),
+      this._worldToCamera(tx - nx, ty - ny, zTop, cosYaw, sinYaw),
+      this._worldToCamera(tx + nx, ty + ny, zTop, cosYaw, sinYaw)
+    ];
+    const rampClip = this._clipPolygonNear(rampVerts, 5.5);
+    if (rampClip.length >= 3) {
+      const pRamp = this._projectCamVerts(rampClip, cx, horizonY, fovScale);
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(pRamp[0].x, pRamp[0].y);
+      for (let k = 1; k < pRamp.length; k++) ctx.lineTo(pRamp[k].x, pRamp[k].y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // 3. Animasyonlu 3B Yürüyen Merdiven Basamakları (Sarı Güvenlik Çizgili 9 Adet Hareketli Basamak)
+    const numSteps = 9;
+    const animShift = ((now * 0.0022 * (goingUp ? 1 : -1)) % 1 + 1) % 1;
+    for (let s = 0; s < numSteps; s++) {
+      const tStep = (s + animShift) / numSteps;
+      const sx1 = bx + (tx - bx) * tStep;
+      const sy1 = by + (ty - by) * tStep;
+      const sz1 = zBot + (zTop - zBot) * tStep + 0.8;
+
+      const cLeft = this._worldToCamera(sx1 + nx * 0.88, sy1 + ny * 0.88, sz1, cosYaw, sinYaw);
+      const cRight = this._worldToCamera(sx1 - nx * 0.88, sy1 - ny * 0.88, sz1, cosYaw, sinYaw);
+      const cLeftRiser = this._worldToCamera(sx1 + nx * 0.88, sy1 + ny * 0.88, sz1 + 3.2, cosYaw, sinYaw);
+      const cRightRiser = this._worldToCamera(sx1 - nx * 0.88, sy1 - ny * 0.88, sz1 + 3.2, cosYaw, sinYaw);
+
+      if (cLeft.rx > 6 && cRight.rx > 6) {
+        const pStep = this._projectCamVerts([cLeft, cRight, cRightRiser, cLeftRiser], cx, horizonY, fovScale);
+        // Metalik basamak yüzeyi
+        ctx.fillStyle = s % 2 === 0 ? '#334155' : '#475569';
+        ctx.beginPath();
+        ctx.moveTo(pStep[0].x, pStep[0].y);
+        ctx.lineTo(pStep[1].x, pStep[1].y);
+        ctx.lineTo(pStep[2].x, pStep[2].y);
+        ctx.lineTo(pStep[3].x, pStep[3].y);
+        ctx.closePath();
+        ctx.fill();
+
+        // Sarı güvenlik basamak ucu çizgisi
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = Math.max(1.4, (210 / cLeft.rx) * (W / 1050));
+        ctx.beginPath();
+        ctx.moveTo(pStep[3].x, pStep[3].y);
+        ctx.lineTo(pStep[2].x, pStep[2].y);
+        ctx.stroke();
+      }
+    }
+
+    // 4. Sağ ve Sol 3B Temperli Cam Korkuluklar (LED Aydınlatmalı) ve Küpeşte Bantları
+    for (const sideSign of [-1, 1]) {
+      const sxOff = nx * sideSign;
+      const syOff = ny * sideSign;
+      const glassQuad = [
+        this._worldToCamera(bx + sxOff, by + syOff, zBot, cosYaw, sinYaw),
+        this._worldToCamera(tx + sxOff, ty + syOff, zTop, cosYaw, sinYaw),
+        this._worldToCamera(tx + sxOff, ty + syOff, zTop + railH, cosYaw, sinYaw),
+        this._worldToCamera(bx + sxOff, by + syOff, zBot + railH, cosYaw, sinYaw)
+      ];
+      const glassClip = this._clipPolygonNear(glassQuad, 5.5);
+      if (glassClip.length >= 3) {
+        const pGlass = this._projectCamVerts(glassClip, cx, horizonY, fovScale);
+        ctx.fillStyle = isRoutePortal ? 'rgba(56, 189, 248, 0.34)' : 'rgba(148, 163, 184, 0.28)';
+        ctx.strokeStyle = isRoutePortal ? '#38bdf8' : '#cbd5e1';
+        ctx.lineWidth = Math.max(1.5, (200 / cCenter.rx) * (W / 1000));
+        ctx.beginPath();
+        ctx.moveTo(pGlass[0].x, pGlass[0].y);
+        for (let k = 1; k < pGlass.length; k++) ctx.lineTo(pGlass[k].x, pGlass[k].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Üst Siyah/Kırmızı Küpeşte Bandı (Handrail)
+        const cRailBot = this._worldToCamera(bx + sxOff, by + syOff, zBot + railH, cosYaw, sinYaw);
+        const cRailTop = this._worldToCamera(tx + sxOff, ty + syOff, zTop + railH, cosYaw, sinYaw);
+        if (cRailBot.rx > 6 && cRailTop.rx > 6) {
+          const pRail = this._projectCamVerts([cRailBot, cRailTop], cx, horizonY, fovScale);
+          ctx.strokeStyle = isRoutePortal ? '#4f46e5' : '#0f172a';
+          ctx.lineWidth = Math.max(2.5, (320 / cCenter.rx) * (W / 1000));
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(pRail[0].x, pRail[0].y);
+          ctx.lineTo(pRail[1].x, pRail[1].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // 5. Üstte 3B Işıklı Yürüyen Merdiven Portal Tabelası
+    const cSign = this._worldToCamera(ax, ay, 44, cosYaw, sinYaw);
+    if (cSign.rx > 10 && cSign.rx < 370 && Math.abs(cSign.ry) < cSign.rx * 0.96) {
+      const pS = this._projectCamVerts([cSign], cx, horizonY, fovScale)[0];
+      const sc = Math.max(0.65, Math.min(1.45, 110 / cSign.rx)) * (W / 1150 + 0.35);
+      const fSize = Math.round(Math.max(10, Math.min(16, 12 * sc)));
+      ctx.font = `800 ${fSize}px "Plus Jakarta Sans", sans-serif`;
+
+      const arrow = goingUp ? '⬆️' : '⬇️';
+      const titleText = isRoutePortal
+        ? `🪜 YÜRÜYEN MERDİVEN ${arrow} ${destLabel || 'KAT GEÇİŞİ'}`
+        : `🪜 YÜRÜYEN MERDİVEN`;
+      const tw = ctx.measureText(titleText).width + 18 * sc;
+      const th = fSize + 10 * sc;
+      const bxSign = pS.x - tw / 2;
+      const bySign = pS.y - th / 2;
+
+      ctx.fillStyle = isRoutePortal ? '#4f46e5' : 'rgba(30, 27, 75, 0.92)';
+      ctx.strokeStyle = isRoutePortal ? '#facc15' : '#a5b4fc';
+      ctx.lineWidth = isRoutePortal ? 2.5 : 1.8;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(bxSign, bySign, tw, th, 8);
+      else ctx.rect(bxSign, bySign, tw, th);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(titleText, pS.x, pS.y);
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * 3B Panoramik Cam Asansör Kulesi Çizimi
+   */
+  _draw3DElevatorUnit(ctx, ax, ay, isRoutePortal, destLabel, cx, horizonY, fovScale, cosYaw, sinYaw, now, W) {
+    const cCenter = this._worldToCamera(ax, ay, 30, cosYaw, sinYaw);
+    if (cCenter.rx < 10 || cCenter.rx > 370 || Math.abs(cCenter.ry) > cCenter.rx * 1.1) return;
+
+    const hw = 8.5;
+    const zTop = 58;
+    const frontQuad = [
+      this._worldToCamera(ax - hw, ay - hw, 0, cosYaw, sinYaw),
+      this._worldToCamera(ax + hw, ay - hw, 0, cosYaw, sinYaw),
+      this._worldToCamera(ax + hw, ay - hw, zTop, cosYaw, sinYaw),
+      this._worldToCamera(ax - hw, ay - hw, zTop, cosYaw, sinYaw)
+    ];
+    const clip = this._clipPolygonNear(frontQuad, 5.5);
+    ctx.save();
+    if (clip.length >= 3) {
+      const pQ = this._projectCamVerts(clip, cx, horizonY, fovScale);
+      ctx.fillStyle = 'rgba(14, 165, 233, 0.28)';
+      ctx.strokeStyle = isRoutePortal ? '#38bdf8' : '#bae6fd';
+      ctx.lineWidth = Math.max(1.8, (220 / cCenter.rx) * (W / 1000));
+      ctx.beginPath();
+      ctx.moveTo(pQ[0].x, pQ[0].y);
+      for (let k = 1; k < pQ.length; k++) ctx.lineTo(pQ[k].x, pQ[k].y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    const cSign = this._worldToCamera(ax, ay, 42, cosYaw, sinYaw);
+    if (cSign.rx > 10 && Math.abs(cSign.ry) < cSign.rx * 0.95) {
+      const pS = this._projectCamVerts([cSign], cx, horizonY, fovScale)[0];
+      const sc = Math.max(0.6, Math.min(1.35, 100 / cSign.rx)) * (W / 1150 + 0.32);
+      const fSize = Math.round(Math.max(9, Math.min(15, 11 * sc)));
+      ctx.font = `800 ${fSize}px "Plus Jakarta Sans", sans-serif`;
+      const text = isRoutePortal && destLabel ? `🛗 ASANSÖR • ${destLabel}` : '🛗 PANORAMİK ASANSÖR';
+      const tw = ctx.measureText(text).width + 16 * sc;
+      const th = fSize + 9 * sc;
+      ctx.fillStyle = '#0284c7';
+      ctx.strokeStyle = isRoutePortal ? '#facc15' : '#bae6fd';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(pS.x - tw / 2, pS.y - th / 2, tw, th, 8);
+      else ctx.rect(pS.x - tw / 2, pS.y - th / 2, tw, th);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, pS.x, pS.y);
     }
     ctx.restore();
   }
@@ -1661,21 +2006,171 @@ class Pov3DEngine {
     }
   }
 
-  _renderFloorTransitionOverlay(ctx, W, H) {
+  /**
+   * Kat Değişimi Sırasında Birinci Şahıs (First-Person) 3B Yürüyen Merdiven / Panoramik Asansör Sürüş Deneyimi
+   */
+  _renderFloorTransitionOverlay(ctx, W, H, now = performance.now()) {
     const st = this.floorTransitionState;
     if (!st) return;
+    const fromLabel = this.mallData?.floors[st.fromFloor]?.label || `${st.fromFloor}. Kat`;
     const toLabel = this.mallData?.floors[st.toFloor]?.label || `${st.toFloor}. Kat`;
-    const icon = st.portalType === 'elevator' ? '🛗' : '🪜';
-    const action = st.toFloor > st.fromFloor ? 'Çıkılıyor' : 'İniliyor';
+    const isElev = st.portalType === 'elevator';
+    const goingUp = st.toFloor > st.fromFloor;
+    const prog = Math.min(1, Math.max(0, st.timer / Math.max(0.1, st.duration)));
 
     ctx.save();
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+
+    // 1. Arka plandaki 3B AVM atriumunu kapatmayan hafif cam atmosfer filtresi
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.34)';
     ctx.fillRect(0, 0, W, H);
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = `800 ${Math.max(18, Math.round(W * 0.024))}px "Plus Jakarta Sans", sans-serif`;
+    const cx = W * 0.5;
+    const vanishY = goingUp ? (H * 0.36 - prog * 18) : (H * 0.52 + prog * 18);
+
+    if (!isElev) {
+      // === 3B BİRİNCİ ŞAHIS YÜRÜYEN MERDİVEN SÜRÜŞÜ (SOL/SAĞ CAM KORKULUKLAR & AKAN BASAMAKLAR) ===
+      const nearHalfW = Math.min(W * 0.44, 380);
+      const farHalfW = Math.min(W * 0.13, 115);
+      const botY = H;
+      const topY = vanishY;
+
+      // Sol ve Sağ 3B Temperli Cam Korkuluk Panelleri (Balustrades)
+      const railDropNear = H * 0.25;
+      const railDropFar = H * 0.08;
+
+      // Sol Cam Korkuluk
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.28)';
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - nearHalfW, botY);
+      ctx.lineTo(cx - farHalfW, topY + railDropFar);
+      ctx.lineTo(cx - farHalfW, topY);
+      ctx.lineTo(cx - nearHalfW, botY - railDropNear);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Sağ Cam Korkuluk
+      ctx.beginPath();
+      ctx.moveTo(cx + nearHalfW, botY);
+      ctx.lineTo(cx + farHalfW, topY + railDropFar);
+      ctx.lineTo(cx + farHalfW, topY);
+      ctx.lineTo(cx + nearHalfW, botY - railDropNear);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Yürüyen Merdiven Çelik Basamak Yatağı
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.beginPath();
+      ctx.moveTo(cx - nearHalfW, botY);
+      ctx.lineTo(cx + nearHalfW, botY);
+      ctx.lineTo(cx + farHalfW, topY + railDropFar);
+      ctx.lineTo(cx - farHalfW, topY + railDropFar);
+      ctx.closePath();
+      ctx.fill();
+
+      // Perspektifte Akan 3B Yürüyen Merdiven Basamakları + Sarı Güvenlik Çizgileri
+      const stepCount = 10;
+      const phase = ((now * 0.0032 * (goingUp ? -1 : 1)) % 1 + 1) % 1;
+      for (let i = 0; i < stepCount; i++) {
+        // Perspektif derinlik dağılımı (kuadratik)
+        const linearT = (i + phase) / stepCount;
+        const pT = linearT * linearT;
+        const nextLinearT = Math.min(1, (i + phase + 0.55) / stepCount);
+        const nextPT = nextLinearT * nextLinearT;
+
+        const y1 = (topY + railDropFar) + (botY - (topY + railDropFar)) * pT;
+        const y2 = (topY + railDropFar) + (botY - (topY + railDropFar)) * nextPT;
+        const hw1 = farHalfW + (nearHalfW - farHalfW) * pT;
+        const hw2 = farHalfW + (nearHalfW - farHalfW) * nextPT;
+        const riserH = Math.max(4, 22 * pT);
+
+        // Basamak Üst Yüzeyi (Tread)
+        ctx.fillStyle = i % 2 === 0 ? '#334155' : '#475569';
+        ctx.beginPath();
+        ctx.moveTo(cx - hw1, y1);
+        ctx.lineTo(cx + hw1, y1);
+        ctx.lineTo(cx + hw2, y2);
+        ctx.lineTo(cx - hw2, y2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Basamak Aynası (Riser) & Sarı Güvenlik Çizgisi
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(cx - hw1, y1 - riserH * 0.45, hw1 * 2, riserH * 0.45);
+
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = Math.max(1.5, 4.2 * pT);
+        ctx.beginPath();
+        ctx.moveTo(cx - hw1 * 0.96, y1);
+        ctx.lineTo(cx + hw1 * 0.96, y1);
+        ctx.stroke();
+      }
+
+      // Sol ve Sağ Hareketli Küpeşte Bantları (Handrails)
+      ctx.strokeStyle = '#4f46e5';
+      ctx.lineWidth = Math.max(8, W * 0.012);
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx - nearHalfW, botY - railDropNear);
+      ctx.lineTo(cx - farHalfW, topY);
+      ctx.moveTo(cx + nearHalfW, botY - railDropNear);
+      ctx.lineTo(cx + farHalfW, topY);
+      ctx.stroke();
+    } else {
+      // === 3B PANORAMİK CAM ASANSÖR KABİN ÇERÇEVESİ ===
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(W * 0.12, H * 0.10, W * 0.76, H * 0.80);
+    }
+
+    // 2. Üst Orta Bilgi Kartı (Kat Geçiş Durumu + Canlı İlerleme Çubuğu)
+    const cardW = Math.min(W - 32, 430);
+    const cardH = 86;
+    const cardX = cx - cardW / 2;
+    const cardY = Math.max(96, H * 0.16);
+
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+    ctx.strokeStyle = isElev ? '#38bdf8' : '#818cf8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(cardX, cardY, cardW, cardH, 16);
+    else ctx.rect(cardX, cardY, cardW, cardH);
+    ctx.fill();
+    ctx.stroke();
+
+    const icon = isElev ? '🛗' : '🪜';
+    const modeTitle = isElev ? 'PANORAMİK ASANSÖR' : '3B YÜRÜYEN MERDİVEN';
+    const dirText = goingUp ? '⬆️ Üst Kata Çıkılıyor' : '⬇️ Alt Kata İniliyor';
+
+    ctx.fillStyle = '#a5b4fc';
+    ctx.font = `800 11px "Plus Jakarta Sans", sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(`${icon} ${toLabel} Katına ${action}...`, W / 2, H / 2);
+    ctx.fillText(`${icon} ${modeTitle} • ${dirText.toUpperCase()}`, cx, cardY + 24);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `800 ${Math.max(15, Math.min(19, Math.round(W * 0.022)))}px "Plus Jakarta Sans", sans-serif`;
+    ctx.fillText(`${fromLabel} ➔ ${toLabel}`, cx, cardY + 48);
+
+    // İlerleme çubuğu
+    const barW = cardW - 48;
+    const barH = 7;
+    const barX = cx - barW / 2;
+    const barY = cardY + 66;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(barX, barY, barW, barH, 4);
+    else ctx.rect(barX, barY, barW, barH);
+    ctx.fill();
+
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(barX, barY, Math.max(10, barW * prog), barH, 4);
+    else ctx.rect(barX, barY, Math.max(10, barW * prog), barH);
+    ctx.fill();
+
     ctx.restore();
   }
 

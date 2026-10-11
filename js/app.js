@@ -1174,8 +1174,8 @@ function initApp() {
       updateFloorUI(newFloor);
     },
     () => {
-      // 1. Başarı Bildirimi Göster
-      showToast('🎉 Hedefe ulaştınız! Keyifli alışverişler dileriz.', 'success');
+      // 1. Başarı Bildirimi Göster ve Sesli Varış Anonsunu Tetikle
+      showToast('🎉 Hedefe ulaştınız! Rota sıfırlanıyor ve 2B haritaya dönülüyor...', 'success');
       resetSimControls();
 
       // 3B Gözümden Motorunu da varış durumuna senkronize et
@@ -1193,15 +1193,7 @@ function initApp() {
       // Az önce varılan hedef mağazayı sakla
       const reachedStore = selectedTargetStore;
 
-      // A) ROTA İZİNİ KORU: Hedefe varıldığında rota çizgisini SİLME!
-      // Sadece rengi mat/tamamlanmış bir tona geçir (opacity: 0.6)
-      const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
-      if (routeGroup) {
-        routeGroup.style.transition = 'opacity 0.6s ease';
-        routeGroup.style.opacity = '0.6';
-      }
-
-      // B) Hedefe varan "Alışveriş Torbası" ikonunu ekrandan kaldır (gizle)
+      // Hedefe varan "Alışveriş Torbası" ikonunu gizle ve simülasyonu durdur
       if (cartSimulator) {
         if (cartSimulator.cartEl) {
           cartSimulator.cartEl.classList.add('hidden');
@@ -1209,37 +1201,56 @@ function initApp() {
         cartSimulator.stop();
       }
 
-      // C) UI panelindeki "Nereden" (Başlangıç) input'unu, az önce ulaşılan Hedef Mağaza olarak GÜNCELLE
-      if (reachedStore) {
-        selectedStartStore = reachedStore;
-        if (mallMap) mallMap.activeStartStore = reachedStore;
-        const startInput = document.getElementById('input-start-loc');
-        if (startInput) startInput.value = reachedStore.name;
-        document.getElementById('btn-clear-start')?.classList.remove('hidden');
-        updateStartBadgeUI(reachedStore.name);
-      }
-
-      // D) UI panelindeki "Nereye" (Hedef) input'unu TEMİZLE (boşalt)
-      selectedTargetStore = null;
-      if (mallMap) mallMap.activeTargetStore = null;
-      const targetInput = document.getElementById('input-target-loc');
-      if (targetInput) targetInput.value = '';
-      document.getElementById('btn-clear-target')?.classList.add('hidden');
-
-      // Odak hedef kutusuna geçirilsin (kullanıcı bulunduğu noktadan yeni hedef arayabilir)
-      setActiveFocusSlot('target');
-
-      // Durum ve Harita Katmanlarını Güncelle
-      document.body.classList.remove('has-active-route');
-      updateFloatingToggleVisibility();
-      if (mallMap) {
-        mallMap.updateActiveStorePolygons();
-        mallMap.renderBrandMarkers(mallMap.currentFloor);
-      }
-      if (activePoiStore) renderPoiActionButtons(activePoiStore);
+      // Kısa bir varış kutlaması (1.6 sn) ardından rotayı tamamen sıfırla ve 2B Haritaya dön
+      if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
+      window.arrivalResetTimer = setTimeout(() => {
+        if (typeof window.completeAndResetRouteTo2D === 'function') {
+          window.completeAndResetRouteTo2D(reachedStore);
+        }
+      }, 1600);
     }
   );
   window.cartSimulator = cartSimulator;
+
+  // Hedefe Varıldığında Rotayı Sıfırlayıp 2B Haritaya Dönen Merkezi Fonksiyon
+  window.completeAndResetRouteTo2D = (reachedStore) => {
+    if (window.arrivalResetTimer) {
+      clearTimeout(window.arrivalResetTimer);
+      window.arrivalResetTimer = null;
+    }
+    const targetFloor = reachedStore?.floor || mallMap?.currentFloor || currentFloor;
+
+    // 1. 3B Gözümden veya 3B Maket modundaysak 2B Haritaya (Plan) geri dön
+    if (typeof window.setMapViewMode === 'function') {
+      window.setMapViewMode('2d');
+    }
+
+    // 2. Rotayı, HUD çubuklarını, inputları, mağaza detay panelini ve rota çizgisini tamamen sıfırla
+    clearCurrentRoute();
+    if (typeof closePoiDetail === 'function') {
+      closePoiDetail();
+    }
+
+    // 3. 3B POV motorunun aktif rotasını da temizle
+    if (window.pov3dEngine) {
+      window.pov3dEngine.route = null;
+      window.pov3dEngine.totalProgressPct = 0;
+      window.pov3dEngine.isWalking = false;
+    }
+
+    // 4. Varılan katın 2B haritasını göster ve kamerayı genel görünüme odakla
+    if (mallMap && targetFloor) {
+      currentFloor = targetFloor;
+      updateFloorUI(targetFloor);
+      if (mallMap.currentFloor !== targetFloor) {
+        mallMap.loadFloor(targetFloor).then(() => {
+          if (typeof mallMap.resetView === 'function') mallMap.resetView();
+        });
+      } else {
+        if (typeof mallMap.resetView === 'function') mallMap.resetView();
+      }
+    }
+  };
 
   // Yol Üstü Kampanya Sensörü & Rota Sıfırlama Kancaları
   cartSimulator.onProximityCheck = (x, y, floor) => {
@@ -2998,6 +3009,10 @@ function closePoiDetail() {
 
 // 9. Rota Hesaplama ve Görüntüleme
 function calculateAndDisplayRoute() {
+  if (window.arrivalResetTimer) {
+    clearTimeout(window.arrivalResetTimer);
+    window.arrivalResetTimer = null;
+  }
   if (!selectedStartStore || !selectedTargetStore) return;
   if (selectedStartStore.id === selectedTargetStore.id) {
     showToast('Başlangıç ve hedef noktaları aynı olamaz.', 'warning');
@@ -3131,6 +3146,10 @@ function calculateAndDisplayRoute() {
 }
 
 function clearCurrentRoute() {
+  if (window.arrivalResetTimer) {
+    clearTimeout(window.arrivalResetTimer);
+    window.arrivalResetTimer = null;
+  }
   document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
   if (window.pov3dEngine && window.pov3dEngine.isActive) {
     window.setMapViewMode('2d');
