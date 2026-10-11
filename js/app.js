@@ -1176,6 +1176,67 @@ function initApp() {
    * @param {number} nodeIndex - Mevcut düğüm indeksi (-1 ise varış)
    * @param {number} progressPct - İlerleme yüzdesi 0..100
    */
+  function ensureArrivalActionBar() {
+    const banner = document.getElementById('header-live-nav-banner');
+    if (!banner) return null;
+    let bar = document.getElementById('arrival-action-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'arrival-action-bar';
+      bar.className = 'hidden flex items-center gap-1.5 pt-1';
+      bar.innerHTML = `
+        <button type="button" id="btn-arrival-new-route" class="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-[11px] font-extrabold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all cursor-pointer">
+          <span>🧭</span>
+          <span>Buradan Yeni Rota Seç</span>
+        </button>
+        <button type="button" id="btn-arrival-reset-all" class="py-1.5 px-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 border border-rose-500/30 text-[11px] font-extrabold flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer shrink-0">
+          <span>🔄</span>
+          <span>Konumu Sıfırla</span>
+        </button>
+      `;
+      banner.appendChild(bar);
+
+      bar.querySelector('#btn-arrival-new-route')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const newStart = window.lastReachedStore || selectedTargetStore || selectedStartStore;
+        if (newStart && !window.isKioskMode) {
+          selectedStartStore = newStart;
+          mallMap.activeStartStore = newStart;
+          updateStartBadgeUI(newStart.name);
+        }
+        selectedTargetStore = null;
+        mallMap.activeTargetStore = null;
+        const targetInput = document.getElementById('input-target-loc');
+        if (targetInput) targetInput.value = '';
+        document.getElementById('btn-clear-target')?.classList.add('hidden');
+        mallMap.updateActiveStorePolygons();
+
+        document.body.classList.remove('has-active-route');
+        const hudBar = document.getElementById('nav-hud-bar');
+        if (hudBar) {
+          hudBar.classList.remove('is-active');
+          hudBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+        }
+        updateFloatingToggleVisibility();
+        setActiveFocusSlot('target');
+        if (isMobileOrLandscape()) {
+          expandBottomSheet();
+        }
+        setTimeout(() => {
+          document.getElementById('input-target-loc')?.focus();
+        }, 120);
+        showToast(`📍 Başlangıç noktanız ${newStart ? newStart.name : 'güncellendi'}. Şimdi yeni hedef mağazanızı seçebilirsiniz!`, 'info');
+      });
+
+      bar.querySelector('#btn-arrival-reset-all')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearCurrentRoute();
+        showToast('🔄 Konumunuz ve rotanız sıfırlandı.', 'info');
+      });
+    }
+    return bar;
+  }
+
   function updateLiveNavHUD(nodeIndex, progressPct = 0) {
     const banner = document.getElementById('header-live-nav-banner');
     const iconEl = document.getElementById('live-nav-icon');
@@ -1190,15 +1251,22 @@ function initApp() {
       return;
     }
 
+    const arrivalBar = ensureArrivalActionBar();
+
     // 1. Hedefe Ulaşıldı Durumu (Önceki sesli yönlendirme aktifse kesmeden kuyruğa al)
     if (nodeIndex === -1 || progressPct >= 100) {
       banner.classList.remove('hidden');
       iconEl.textContent = '🎉';
       textEl.textContent = 'Hedefe Ulaştınız!';
-      const destName = (selectedTargetStore && selectedTargetStore.name) || 'Hedef Mağaza';
-      subEl.textContent = `${destName} önündesiniz`;
+      const destName = (selectedTargetStore && selectedTargetStore.name) || (window.lastReachedStore && window.lastReachedStore.name) || 'Hedef Mağaza';
+      subEl.textContent = `${destName} önündesiniz • Yeni hedef seçebilir veya sıfırlayabilirsiniz`;
       landmarksWrap?.classList.add('hidden');
+      arrivalBar?.classList.remove('hidden');
       const arrMsg = `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
+      const voiceSubText = document.getElementById('live-voice-subtitle-text');
+      if (voiceSubText) {
+        voiceSubText.textContent = `🔊 ${arrMsg}`;
+      }
       if (lastSpokenStepIndex !== -1) {
         lastSpokenStepIndex = -1;
         queueArrivalAnnouncement(arrMsg);
@@ -1206,6 +1274,7 @@ function initApp() {
       return;
     }
 
+    arrivalBar?.classList.add('hidden');
     banner.classList.remove('hidden');
 
     const instructions = lastCalculatedRoute.instructions;
@@ -1269,6 +1338,7 @@ function initApp() {
     if (window.queuedArrivalTimer) {
       clearTimeout(window.queuedArrivalTimer);
       window.queuedArrivalTimer = null;
+      window.arrivalSpeechQueueTimer = null;
     }
   };
 
@@ -1311,7 +1381,7 @@ function initApp() {
     },
     () => {
       // 1. Başarı Bildirimi Göster ve Sesli Varış Anonsunu Kuyruklu Olarak Tetikle
-      showToast('🎉 Hedefe ulaştınız! Tamamlanan rota haritada işaretlendi.', 'success');
+      showToast('🎉 Hedefe ulaştınız! Yeni bir mağaza seçerek yeni rotaya geçebilir veya konumu sıfırlayabilirsiniz.', 'success');
       resetSimControls();
 
       // 3B Gözümden Motorunu da varış durumuna senkronize et
@@ -1323,14 +1393,17 @@ function initApp() {
         window.pov3dEngine._updateHUDTexts();
       }
 
+      // Az önce varılan hedef mağazayı sakla
+      const reachedStore = selectedTargetStore;
+      if (reachedStore && typeof reachedStore === 'object') {
+        window.lastReachedStore = reachedStore;
+      }
+
       // Canlı HUD bildirimini "Hedefe Ulaştınız" olarak güncelle (aktif konuşma varsa kesmeden kuyruğa alır)
       updateLiveNavHUD(-1, 100);
 
       // Rota çizgisini silmeden 'route-completed' sınıfıyla mat gri-mavi (opacity: 0.5) olarak haritada bırak
       markRouteAsCompletedOnMap();
-
-      // Az önce varılan hedef mağazayı sakla
-      const reachedStore = selectedTargetStore;
 
       // Hedefe varan "Alışveriş Torbası" ikonunu gizle ve simülasyonu durdur
       if (cartSimulator) {
@@ -1340,32 +1413,37 @@ function initApp() {
         cartSimulator.stop();
       }
 
-      // Kısa bir varış kutlaması ardından 2B Haritaya dön ve rotayı 'route-completed' olarak ekranda tut
+      // Kısa bir varış kutlaması ardından 2B Haritaya dön, arama barını aç ve rotayı 'route-completed' olarak ekranda tut
       if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
       const extraSpeechDelay = window.wasArrivalSpeechQueued ? Math.min(1500, window.queuedArrivalDelayMs || 500) : 0;
       window.arrivalResetTimer = setTimeout(() => {
         if (typeof window.completeAndResetRouteTo2D === 'function') {
           window.completeAndResetRouteTo2D(reachedStore);
         }
-      }, 1600 + extraSpeechDelay);
+      }, 1500 + extraSpeechDelay);
     }
   );
   window.cartSimulator = cartSimulator;
 
-  // Hedefe Varıldığında Rota Çizgisini Haritada ('route-completed', opacity: 0.5) Bırakarak 2B Haritaya Dönen Merkezi Fonksiyon
+  // Hedefe Varıldığında Rota Çizgisini Haritada ('route-completed', opacity: 0.5) Bırakarak
+  // Yeni Rota Seçimine ve Konum Sıfırlamaya İzin Veren Merkezi Fonksiyon
   window.completeAndResetRouteTo2D = (reachedStore) => {
     if (window.arrivalResetTimer) {
       clearTimeout(window.arrivalResetTimer);
       window.arrivalResetTimer = null;
     }
-    const targetFloor = reachedStore?.floor || mallMap?.currentFloor || currentFloor;
+    const storeObj = (reachedStore && typeof reachedStore === 'object') ? reachedStore : (selectedTargetStore || window.lastReachedStore);
+    if (storeObj) {
+      window.lastReachedStore = storeObj;
+    }
+    const targetFloor = storeObj?.floor || mallMap?.currentFloor || currentFloor;
 
     // 1. 3B Gözümden veya 3B Maket modundaysak 2B Haritaya (Plan) geri dön
     if (typeof window.setMapViewMode === 'function') {
       window.setMapViewMode('2d');
     }
 
-    // 2. Simülatörü durdur ve detay kartını kapat, ancak ROTA ÇİZGİSİNİ HARİTADAN SİLME (.route-completed olarak bırak)
+    // 2. Simülatörü ve canlı GPS yürüyüşünü durdur, ancak ROTA ÇİZGİSİNİ HARİTADAN SİLME (.route-completed olarak bırak)
     if (cartSimulator) {
       if (cartSimulator.cartEl) {
         cartSimulator.cartEl.classList.add('hidden');
@@ -1385,13 +1463,41 @@ function initApp() {
       window.pov3dEngine.totalProgressPct = 100;
     }
 
-    // 4. Varılan katın 2B haritasını göster ve rota çizgisini 'route-completed' (mat gri-mavi, opacity: 0.5) olarak koru
+    // 4. KRİTİK: Kullanıcının yeni rotaya hemen geçebilmesi için:
+    // - Alt HUD barı gizle ve 'has-active-route' kilidini kaldır ki mobilde alt arama çekmecesi (58px bar) geri gelsin!
+    // - Varılan mağazayı yeni başlangıç noktası (selectedStartStore) olarak ata ve hedefi boşalt ki yeni mağaza seçildiğinde anında yeni rota çizilsin!
+    document.body.classList.remove('has-active-route');
+    const hudBar = document.getElementById('nav-hud-bar');
+    if (hudBar) {
+      hudBar.classList.remove('is-active');
+      hudBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+    }
+    document.getElementById('hud-steps-drawer')?.classList.add('hidden');
+
+    if (storeObj && !window.isKioskMode) {
+      selectedStartStore = storeObj;
+      mallMap.activeStartStore = storeObj;
+      updateStartBadgeUI(storeObj.name);
+    }
+    selectedTargetStore = null;
+    mallMap.activeTargetStore = null;
+    const targetInput = document.getElementById('input-target-loc');
+    if (targetInput) targetInput.value = '';
+    document.getElementById('btn-clear-target')?.classList.add('hidden');
+    setActiveFocusSlot('target');
+    updateFloatingToggleVisibility();
+
+    // 5. Varılan katın 2B haritasını göster ve rota çizgisini 'route-completed' (mat gri-mavi, opacity: 0.5) olarak koru
     const applyCompletedRouteState = () => {
       if (mallMap && lastCalculatedRoute) {
         if (!mallMap.routeSvg?.querySelector('.route-group')) {
           mallMap.renderRoute(lastCalculatedRoute);
         }
         markRouteAsCompletedOnMap();
+        mallMap.updateActiveStorePolygons();
+      }
+      if (typeof updateHeaderResetButtonVisibility === 'function') {
+        updateHeaderResetButtonVisibility();
       }
     };
 
@@ -3085,6 +3191,16 @@ function setupPeekCardEvents() {
   document.getElementById('btn-peek-target')?.addEventListener('click', () => {
     if (currentPeekStore) {
       const store = currentPeekStore;
+      if (!selectedStartStore || selectedStartStore.id === store.id) {
+        const fallbackStart = (window.lastReachedStore && window.lastReachedStore.id !== store.id)
+          ? window.lastReachedStore
+          : ((mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || (mallData?.entrances || [])[0]);
+        if (fallbackStart) {
+          selectedStartStore = fallbackStart;
+          mallMap.activeStartStore = fallbackStart;
+          updateStartBadgeUI(fallbackStart.name);
+        }
+      }
       setTargetLocation(store);
       closePoiPeekCard();
     }
@@ -3128,10 +3244,8 @@ function selectStore(store) {
     return;
   }
 
-  // Ekranın altında kompakt etkileşimli pinleme kartı (Peek Mode) gösterilir:
-  if (!mallMap.activeRoute) {
-    showPoiPeekCard(store);
-  }
+  // Ekranın altında kompakt etkileşimli pinleme kartı (Peek Mode) her zaman gösterilir (rota tamamlandığında veya aktifken de yeni hedefe geçiş sağlar):
+  showPoiPeekCard(store);
 }
 
 function swapLocations() {
@@ -3668,6 +3782,7 @@ function calculateAndDisplayRoute() {
 
 function clearCurrentRoute() {
   window.isRouteCompletedState = false;
+  window.lastReachedStore = null;
   if (window.arrivalResetTimer) {
     clearTimeout(window.arrivalResetTimer);
     window.arrivalResetTimer = null;
@@ -3677,6 +3792,7 @@ function clearCurrentRoute() {
   }
   document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
   document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
+  document.getElementById('arrival-action-bar')?.classList.add('hidden');
   if (typeof clearAmenityHighlightOnMap === 'function') {
     clearAmenityHighlightOnMap();
   }
@@ -3847,6 +3963,38 @@ function resetSimControls() {
   if (window.lucide) lucide.createIcons();
 }
 
+function updateHeaderResetButtonVisibility() {
+  if (window.isKioskMode) return;
+  const pinBtn = document.getElementById('btn-header-pin-here');
+  if (!pinBtn || !pinBtn.parentElement) return;
+
+  let resetBtn = document.getElementById('btn-header-reset-all');
+  if (!resetBtn) {
+    resetBtn = document.createElement('button');
+    resetBtn.id = 'btn-header-reset-all';
+    resetBtn.type = 'button';
+    resetBtn.className = 'hidden shrink-0 px-2 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-extrabold items-center justify-center gap-1 shadow-sm shadow-rose-600/20 transition-all active:scale-95 cursor-pointer';
+    resetBtn.title = 'Konumu ve Rotayı Sıfırla';
+    resetBtn.innerHTML = '<span>🔄</span><span class="hidden sm:inline">Sıfırla</span>';
+    resetBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearCurrentRoute();
+      showToast('🔄 Başlangıç konumu ve rota sıfırlandı.', 'info');
+    });
+    pinBtn.parentElement.appendChild(resetBtn);
+  }
+
+  const hasStateToReset = Boolean(selectedStartStore || selectedTargetStore || lastCalculatedRoute || window.isRouteCompletedState);
+  if (hasStateToReset) {
+    resetBtn.classList.remove('hidden');
+    resetBtn.classList.add('flex');
+  } else {
+    resetBtn.classList.add('hidden');
+    resetBtn.classList.remove('flex');
+  }
+}
+window.updateHeaderResetButtonVisibility = updateHeaderResetButtonVisibility;
+
 // 10. Başlangıç Konumu Rozetini ve Hızlı Butonları Güncelle
 function updateStartBadgeUI(name) {
   const startInput = document.getElementById('input-start-loc');
@@ -3884,6 +4032,8 @@ function updateStartBadgeUI(name) {
       b.className = 'quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700';
     });
   }
+
+  updateHeaderResetButtonVisibility();
 }
 
 // 11. Başlangıç Noktası Seçim Modalı (Tüm Girişler + Danışma + Havuz + 173 Mağaza)
@@ -4022,7 +4172,20 @@ function openEntranceModal() {
       return;
     }
 
-    listContainer.innerHTML = filtered.map(loc => {
+    const activeStartLabel = selectedStartStore ? (selectedStartStore.short_name || selectedStartStore.name) : '';
+    const resetHeaderHtml = (selectedStartStore || selectedTargetStore || lastCalculatedRoute || window.isRouteCompletedState)
+      ? `
+        <button type="button" id="btn-modal-reset-location" class="w-full mb-2 p-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 border border-rose-500/40 text-rose-700 dark:text-rose-300 text-xs font-extrabold flex items-center justify-between gap-2 transition-all active:scale-95 cursor-pointer shadow-xs">
+          <span class="flex items-center gap-2 min-w-0">
+            <span class="text-base">🔄</span>
+            <span class="truncate">Mevcut Konumu ve Rotayı Sıfırla${activeStartLabel ? ' (' + activeStartLabel + ')' : ''}</span>
+          </span>
+          <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black shrink-0">Sıfırla</span>
+        </button>
+      `
+      : '';
+
+    listContainer.innerHTML = resetHeaderHtml + filtered.map(loc => {
       const isSelected = selectedStartStore && (selectedStartStore.id === loc.id || selectedStartStore.name === loc.name);
       const iconHtml = loc.storeObj
         ? getStoreLogo(loc.storeObj, 24)
@@ -4059,6 +4222,13 @@ function openEntranceModal() {
         </div>
       `;
     }).join('');
+
+    listContainer.querySelector('#btn-modal-reset-location')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeEntranceModal();
+      clearCurrentRoute();
+      showToast('🔄 Konumunuz ve rotanız sıfırlandı.', 'info');
+    });
 
     listContainer.querySelectorAll('[data-loc-id]').forEach(el => {
       el.addEventListener('click', () => {
@@ -5447,17 +5617,27 @@ function startLiveGpsRouteWalk() {
 
       const insCount = (lastCalculatedRoute.instructions || []).length;
       const stepIdx = insCount > 1 ? Math.min(insCount - 1, Math.floor(ratio * insCount)) : 0;
-      updateLiveNavHUD(stepIdx, ratio);
 
       if (liveGpsRouteWalkIndex >= nodes.length - 1) {
         clearInterval(liveGpsSimulatedWalkTimer);
         liveGpsSimulatedWalkTimer = null;
+        const reachedStore = selectedTargetStore;
+        if (reachedStore && typeof reachedStore === 'object') {
+          window.lastReachedStore = reachedStore;
+        }
+        updateLiveNavHUD(-1, 100);
         if (typeof markRouteAsCompletedOnMap === 'function') {
           markRouteAsCompletedOnMap();
         }
-        if (selectedTargetStore && typeof queueArrivalAnnouncement === 'function') {
-          queueArrivalAnnouncement(`Hedefiniz ${selectedTargetStore.name} mağazasına ulaştınız.`);
-        }
+        if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
+        const extraSpeechDelay = window.wasArrivalSpeechQueued ? Math.min(1500, window.queuedArrivalDelayMs || 500) : 0;
+        window.arrivalResetTimer = setTimeout(() => {
+          if (typeof window.completeAndResetRouteTo2D === 'function') {
+            window.completeAndResetRouteTo2D(reachedStore);
+          }
+        }, 1500 + extraSpeechDelay);
+      } else {
+        updateLiveNavHUD(stepIdx, ratio * 100);
       }
     }, 950);
   };
@@ -5493,7 +5673,7 @@ function startLiveGpsRouteWalk() {
             if (proj) {
               const insCount = (lastCalculatedRoute.instructions || []).length;
               const stepIdx = insCount > 1 ? Math.min(insCount - 1, Math.floor(proj.progressRatio * insCount)) : 0;
-              updateLiveNavHUD(stepIdx, proj.progressRatio);
+              updateLiveNavHUD(stepIdx, proj.progressRatio * 100);
             }
           } else {
             triggerOutsideReferenceWalk(distKm);
@@ -5565,7 +5745,7 @@ function setTravelNavigationMode(mode) {
     if (hudPlayText) hudPlayText.textContent = 'Duraklat';
     const hudPlayBtn = document.getElementById('btn-hud-sim-play');
     if (hudPlayBtn) {
-      hudPlayBtn.className = 'flex-1 min-w-[96px] h-10 sm:h-11 min-h-[40px] px-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-amber-500/25 active:scale-95 shrink-0';
+      hudPlayBtn.className = 'flex-1 min-w-[78px] sm:min-w-[96px] h-9 sm:h-11 min-h-[36px] px-2 sm:px-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1 transition-all shadow-md shadow-amber-500/25 active:scale-95 shrink-0';
     }
   }
 
@@ -5599,25 +5779,50 @@ function setupTravelModeSelectorUI() {
     }
   }
 
-  // 2. Başlat butonunun yanına (#nav-hud-bar içine) tek tıkla geçiş sağlayan GPS / Simülasyon mod seçici butonları ekle
+  // 2. #nav-hud-bar ve iç kapsayıcısındaki 'overflow-hidden' kısıtlamasını kaldırıp yatay kaydırmayı (horizontal-chip-scroller) aktif et
+  const hudBar = document.getElementById('nav-hud-bar');
   const hudPlayBtn = document.getElementById('btn-hud-sim-play');
+  if (hudBar) {
+    hudBar.classList.remove('overflow-hidden');
+    hudBar.classList.add('overflow-x-auto', 'horizontal-chip-scroller');
+  }
+  if (hudPlayBtn && hudPlayBtn.parentElement) {
+    const innerRow = hudPlayBtn.parentElement;
+    innerRow.classList.remove('overflow-hidden');
+    innerRow.classList.add('overflow-x-auto', 'horizontal-chip-scroller');
+    hudPlayBtn.classList.remove('min-w-[104px]');
+    hudPlayBtn.classList.add('min-w-[78px]', 'sm:min-w-[100px]', 'px-2', 'sm:px-3');
+  }
+
+  // Üst karttaki (#floor-header-card) buton satırını da yatay kaydırılabilir yap
+  const headerTopRow = document.querySelector('#floor-header-card > div:first-child');
+  if (headerTopRow) {
+    headerTopRow.classList.add('overflow-x-auto', 'horizontal-chip-scroller');
+  }
+
+  // 3. Başlat butonunun yanına (#nav-hud-bar içine) tek tıkla geçiş sağlayan kompakt GPS / Simülasyon mod seçici butonları ekle
   if (hudPlayBtn && hudPlayBtn.parentElement && !document.getElementById('hud-travel-mode-switch')) {
     const modeSwitchWrap = document.createElement('div');
     modeSwitchWrap.id = 'hud-travel-mode-switch';
-    modeSwitchWrap.className = 'flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 shrink-0';
+    modeSwitchWrap.className = 'flex items-center gap-0.5 sm:gap-1 bg-slate-100 dark:bg-slate-800 p-0.5 sm:p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 shrink-0';
     modeSwitchWrap.innerHTML = `
-      <button type="button" id="btn-hud-mode-gps" data-travel-mode="gps" class="nav-travel-mode-btn h-8 px-2 sm:px-2.5 rounded-lg text-[10.5px] sm:text-xs font-extrabold bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 flex items-center gap-1 cursor-pointer transition-all" title="📍 Canlı Konumla Git (Gerçek Cihaz GPS'i ile Takip)">
+      <button type="button" id="btn-hud-mode-gps" data-travel-mode="gps" class="nav-travel-mode-btn h-8 px-1.5 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-extrabold bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 flex items-center gap-0.5 sm:gap-1 cursor-pointer transition-all shrink-0" title="📍 Canlı Konumla Git (Gerçek Cihaz GPS'i ile Takip)">
         <span>📍</span>
         <span class="hidden md:inline">Canlı Konumla Git</span>
-        <span class="md:hidden">Canlı GPS</span>
+        <span class="md:hidden">GPS</span>
       </button>
-      <button type="button" id="btn-hud-mode-sim" data-travel-mode="sim" class="nav-travel-mode-btn is-active-mode h-8 px-2 sm:px-2.5 rounded-lg text-[10.5px] sm:text-xs font-extrabold bg-cyan-600/15 hover:bg-cyan-600/25 text-cyan-700 dark:text-cyan-300 flex items-center gap-1 cursor-pointer transition-all" title="🎬 Önizle / Simülasyon (Sanal Torba ile Adım Adım Prova)">
+      <button type="button" id="btn-hud-mode-sim" data-travel-mode="sim" class="nav-travel-mode-btn is-active-mode h-8 px-1.5 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-extrabold bg-cyan-600/15 hover:bg-cyan-600/25 text-cyan-700 dark:text-cyan-300 flex items-center gap-0.5 sm:gap-1 cursor-pointer transition-all shrink-0" title="🎬 Önizle / Simülasyon (Sanal Torba ile Adım Adım Prova)">
         <span>🎬</span>
         <span class="hidden md:inline">Önizle / Simülasyon</span>
         <span class="md:hidden">Önizle</span>
       </button>
     `;
     hudPlayBtn.parentElement.insertBefore(modeSwitchWrap, hudPlayBtn);
+  }
+
+  // Yatay kaydırma olaylarını yeniden bağla
+  if (typeof setupHorizontalChipScrollers === 'function') {
+    setupHorizontalChipScrollers();
   }
 
   // Olay dinleyicilerini bağla
@@ -5648,6 +5853,7 @@ function setupTravelModeSelectorUI() {
   });
 
   updateTravelModeButtonsUI();
+  updateHeaderResetButtonVisibility();
 }
 window.setupTravelModeSelectorUI = setupTravelModeSelectorUI;
 

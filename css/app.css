@@ -120,10 +120,12 @@ html.dark .route__flow {
   stroke-width: 1.5px;
 }
 
-/* Tek Satırda Yatay Kaydırılabilir Kategori ve Servis Çipleri (Single-row Horizontal Swipe) */
+/* Tek Satırda Yatay Kaydırılabilir Kategori, Servis ve HUD Çipleri (Single-row Horizontal Swipe) */
 #category-pills-row,
 #amenity-chips-row,
-#quick-start-chips-row {
+#quick-start-chips-row,
+#nav-hud-bar,
+#nav-hud-bar > div {
   display: flex !important;
   flex-direction: row !important;
   flex-wrap: nowrap !important;
@@ -137,7 +139,9 @@ html.dark .route__flow {
 #category-pills-row::-webkit-scrollbar,
 #amenity-chips-row::-webkit-scrollbar,
 #quick-start-chips-row::-webkit-scrollbar,
-#route-path-chips::-webkit-scrollbar {
+#route-path-chips::-webkit-scrollbar,
+#nav-hud-bar::-webkit-scrollbar,
+#nav-hud-bar > div::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
@@ -920,13 +924,82 @@ body.has-active-route #route-panel {
     display: none !important;
   }
 
-  /* 4. Minimal 64px HUD Navigasyon Çubuğu */
+  /* 4. Minimal 64px HUD Navigasyon Çubuğu - Yatay Kaydırılabilir & 360-390px Mobil Ekrana Tam Sığan Kompakt Düzen */
   #nav-hud-bar {
-    height: 64px !important;
+    height: 60px !important;
     z-index: 50 !important;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease !important;
     flex-wrap: nowrap !important;
-    overflow: hidden !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  #nav-hud-bar::-webkit-scrollbar,
+  #nav-hud-bar > div::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  #nav-hud-bar > div {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    gap: 3.5px !important;
+    justify-content: space-between !important;
+  }
+
+  #btn-hud-swap,
+  #btn-hud-qr,
+  #btn-hud-finish {
+    width: 31px !important;
+    min-width: 31px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+
+  #btn-hud-speed {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 5px !important;
+    font-size: 11px !important;
+  }
+
+  #btn-hud-steps-toggle {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 6px !important;
+    font-size: 10.5px !important;
+    gap: 2px !important;
+  }
+
+  #hud-travel-mode-switch {
+    padding: 2px !important;
+    gap: 2px !important;
+  }
+
+  #btn-hud-mode-gps,
+  #btn-hud-mode-sim {
+    height: 30px !important;
+    padding: 0 5px !important;
+    font-size: 10px !important;
+  }
+
+  #btn-hud-sim-play {
+    height: 36px !important;
+    min-height: 36px !important;
+    min-width: 64px !important;
+    padding: 0 7px !important;
+    font-size: 11px !important;
+    gap: 3px !important;
   }
 
   #nav-hud-bar.is-active {
@@ -957,13 +1030,24 @@ body.has-active-route #route-panel {
     top: 10px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 92% !important;
+    width: 94% !important;
     max-width: 430px !important;
     margin: 0 auto !important;
-    padding: 8px 14px !important;
+    padding: 8px 11px !important;
     border-radius: 18px !important;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
     z-index: 35 !important;
+  }
+
+  #floor-header-card > div:first-child {
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+  }
+
+  #floor-header-card > div:first-child > div:first-child {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    margin-bottom: 2px !important;
   }
 
   #current-floor-title {
@@ -2354,3 +2438,75 @@ path.route-completed.route__flow {
   transform: translateY(-1px);
 }
 
+/* ========================================================
+   MOBİL 360-390px ALT HUD VE ÜST KART TAM SIĞMA & KAYDIRMA GARANTİSİ
+   ======================================================== */
+@media (max-width: 768px) {
+  #nav-hud-bar {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    overflow-x: auto !important;
+  }
+
+  #nav-hud-bar > div {
+    gap: 3px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: space-between !important;
+    overflow-x: auto !important;
+  }
+
+  #nav-hud-bar #btn-hud-swap,
+  #nav-hud-bar #btn-hud-qr,
+  #nav-hud-bar #btn-hud-finish {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+
+  #nav-hud-bar #btn-hud-speed {
+    width: auto !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 5px !important;
+    font-size: 11px !important;
+  }
+
+  #nav-hud-bar #btn-hud-steps-toggle {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+
+  #nav-hud-bar #btn-hud-steps-toggle span {
+    display: none !important;
+  }
+
+  #nav-hud-bar #hud-travel-mode-switch {
+    padding: 2px !important;
+    gap: 2px !important;
+  }
+
+  #nav-hud-bar #btn-hud-mode-gps,
+  #nav-hud-bar #btn-hud-mode-sim {
+    min-width: 0 !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 5px !important;
+    font-size: 10px !important;
+  }
+
+  #nav-hud-bar #btn-hud-sim-play {
+    min-width: 68px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 8px !important;
+    font-size: 11px !important;
+    gap: 3px !important;
+  }
+}
