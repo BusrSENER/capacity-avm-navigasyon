@@ -742,10 +742,16 @@ class Pov3DEngine {
     }
     this.camYaw = Math.atan2(lookTarget.y - n0.y, lookTarget.x - n0.x);
     this.targetYaw = this.camYaw;
+    this._lastSyncedSegIndex = -1;
 
     this.isWalking = !!autoWalk;
     this._syncPlayPauseButton();
     this._updateHUDTexts();
+
+    if (autoWalk && window.updateLiveNavHUD && document.body.classList.contains('has-active-route')) {
+      this._lastSyncedSegIndex = 0;
+      window.updateLiveNavHUD(0, 0);
+    }
 
     if (autoActivate) {
       this.activate();
@@ -857,6 +863,7 @@ class Pov3DEngine {
     this.segIndex = 0;
     this.segProgress = 0;
     this.totalProgressPct = 0;
+    this._lastSyncedSegIndex = 0;
     this.announcedPassingStores.clear();
     this.currentlyPassingStore = null;
     this.floorTransitionState = null;
@@ -878,6 +885,9 @@ class Pov3DEngine {
     }
     if (window.mallMap && window.mallMap.currentFloor !== n0.floor) {
       window.mallMap.loadFloor(n0.floor);
+    }
+    if (window.updateLiveNavHUD && document.body.classList.contains('has-active-route')) {
+      window.updateLiveNavHUD(0, 0);
     }
   }
 
@@ -1022,11 +1032,17 @@ class Pov3DEngine {
     const nowPerf = performance.now();
     const isMainSpeechSpeaking = nowPerf < (window.speechMainBusyUntil || 0);
     const isStoreSpeechSpeaking = nowPerf < (window.speechBusyUntil || 0);
-    const speechSyncFactor = isMainSpeechSpeaking ? 0.50 : (isStoreSpeechSpeaking ? 0.65 : 1.0);
+    const speechSyncFactor = isMainSpeechSpeaking ? 0.56 : (isStoreSpeechSpeaking ? 0.72 : 1.0);
 
     const segLen = Math.max(1, Math.hypot(v.x - u.x, v.y - u.y));
-    const baseSpeedUnitsPerSec = 34 * this.walkSpeed * speechSyncFactor;
+    const baseSpeedUnitsPerSec = 32 * this.walkSpeed * speechSyncFactor;
     this.segProgress += (baseSpeedUnitsPerSec * dt) / segLen;
+
+    // Köşede yeni bir sesli dönüş talimatı varsa ve mevcut cümle henüz bitmediyse, cümlenin yarıda kesilmemesi için köşe başında (0.96) bekle
+    const nextNodeHasInstruction = this.route.instructions && this.route.instructions.some(ins => ins.nodeIndex === this.segIndex + 1);
+    if (this.segProgress >= 0.96 && nextNodeHasInstruction && isMainSpeechSpeaking) {
+      this.segProgress = 0.96;
+    }
 
     // Doğal insan yürüyüşü kafa salınımı (Head-Bob)
     this.walkStepPhase += dt * 6.5 * this.walkSpeed * speechSyncFactor;
@@ -1121,8 +1137,8 @@ class Pov3DEngine {
     if (hudBar) hudBar.style.width = `${this.totalProgressPct}%`;
     if (hudPct) hudPct.textContent = `${this.totalProgressPct}%`;
 
-    // Şu an yanından geçilen mağazayı tespit et (En-Route Proximity + Sağ/Sol Yön Algısı)
-    this._detectPassingStore(true);
+    // Şu an yanından geçilen mağazayı tespit et (Aktif rota yürüyüşünde ana sesli komutu bölmemek için allowSpeak=false)
+    this._detectPassingStore(false);
 
     // Üst HUD ve Ana Harita HUD senkronu (Yalnızca düğüm değiştiğinde ve rota aktifken)
     this._updateHUDTexts();
@@ -1132,7 +1148,7 @@ class Pov3DEngine {
     }
   }
 
-  _detectPassingStore(allowSpeak = true) {
+  _detectPassingStore(allowSpeak = false) {
     // Hedefe ulaşıldığında veya son birkaç metrede doğrudan hedef mağazayı göster (komşu mağaza karışıklığını önle)
     if (this.targetStore && this.totalProgressPct >= 95) {
       this.currentlyPassingStore = this.targetStore;
@@ -1180,9 +1196,9 @@ class Pov3DEngine {
       this.currentlyPassingStore = closest;
       this.currentlyPassingSide = closestSide;
       const mainSpeaking = performance.now() < (window.speechMainBusyUntil || 0);
-      if (allowSpeak && !this.announcedPassingStores.has(closest.id) && Math.abs(closestForwardProj) <= 26 && !mainSpeaking) {
+      if (allowSpeak && !this.route && !this.announcedPassingStores.has(closest.id) && Math.abs(closestForwardProj) <= 26 && !mainSpeaking) {
         this.announcedPassingStores.add(closest.id);
-        if (window.isVoiceEnabled && window.speakNavigationText && this.totalProgressPct > 5 && this.totalProgressPct < 92) {
+        if (window.isVoiceEnabled && window.speakNavigationText) {
           window.speakNavigationText(`${closestSide} ${closest.name}`, false, true);
         }
       }
@@ -1400,52 +1416,52 @@ class Pov3DEngine {
     this.placedAmenitySignRects = [];
     ctx.clearRect(0, 0, W, H);
 
-    // 1. MİMARİ CAM TAVAN (SKYLIGHT ATRİUM), ALÜMİNYUM KİRİŞLER & Sıcak LED Cove Işıklar (0 .. horizonY)
+    // 1. GERÇEK CAPACITY AVM MİMARİ BEJ/KREM ALÇIPAN TAVAN & GÖMME ANTRASİT BAFFLE LED KANALLARI (0 .. horizonY)
     const ceilGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
-    ceilGrad.addColorStop(0, '#091326');
-    ceilGrad.addColorStop(0.38, '#132542');
-    ceilGrad.addColorStop(0.76, '#1f365c');
-    ceilGrad.addColorStop(1, '#334e75');
+    ceilGrad.addColorStop(0, '#f5efe4');
+    ceilGrad.addColorStop(0.42, '#ede3d2');
+    ceilGrad.addColorStop(0.78, '#e2d4be');
+    ceilGrad.addColorStop(1, '#d2c0a5');
     ctx.fillStyle = ceilGrad;
     ctx.fillRect(0, 0, W, horizonY + 2);
 
-    // Cam Tavan (Skylight) Merkez Işıltısı
-    const skyGlow = ctx.createRadialGradient(cx, horizonY * 0.25, 10, cx, horizonY * 0.35, W * 0.58);
-    skyGlow.addColorStop(0, 'rgba(186, 230, 253, 0.28)');
-    skyGlow.addColorStop(0.5, 'rgba(254, 243, 199, 0.14)');
-    skyGlow.addColorStop(1, 'rgba(15, 23, 42, 0)');
+    // Tavan sıcak günışığı / LED homojen aydınlatma ışıltısı
+    const skyGlow = ctx.createRadialGradient(cx, horizonY * 0.30, 10, cx, horizonY * 0.40, W * 0.65);
+    skyGlow.addColorStop(0, 'rgba(255, 251, 235, 0.55)');
+    skyGlow.addColorStop(0.55, 'rgba(254, 243, 199, 0.25)');
+    skyGlow.addColorStop(1, 'rgba(214, 196, 172, 0)');
     ctx.fillStyle = skyGlow;
     ctx.fillRect(0, 0, W, horizonY);
 
-    // 2. CILALI MERMER AVM KORİDOR ZEMİNİ (horizonY .. H)
+    // 2. GERÇEK CAPACITY AVM KREM & KARAMEL ŞERİTLİ CILALI TRAVERTEN MERMER ZEMİN (horizonY .. H)
     const floorGrad = ctx.createLinearGradient(0, horizonY, 0, H);
-    floorGrad.addColorStop(0, '#cbd5e1');
-    floorGrad.addColorStop(0.18, '#e2e8f0');
-    floorGrad.addColorStop(0.55, '#f1f5f9');
-    floorGrad.addColorStop(1, '#f8fafc');
+    floorGrad.addColorStop(0, '#cdb89d');
+    floorGrad.addColorStop(0.20, '#dfd0ba');
+    floorGrad.addColorStop(0.58, '#eee4d5');
+    floorGrad.addColorStop(1, '#f7f2ea');
     ctx.fillStyle = floorGrad;
     ctx.fillRect(0, horizonY, W, H - horizonY);
 
-    // Mermer zemin üzerinde sıcak koridor tavan yansıması
-    const floorReflect = ctx.createLinearGradient(cx - W * 0.28, horizonY, cx + W * 0.28, horizonY);
-    floorReflect.addColorStop(0, 'rgba(254, 243, 199, 0)');
-    floorReflect.addColorStop(0.5, 'rgba(254, 243, 199, 0.28)');
-    floorReflect.addColorStop(1, 'rgba(254, 243, 199, 0)');
+    // Mermer zemin üzerinde sıcak mağaza & tavan LED yansıması
+    const floorReflect = ctx.createLinearGradient(cx - W * 0.32, horizonY, cx + W * 0.32, horizonY);
+    floorReflect.addColorStop(0, 'rgba(255, 251, 235, 0)');
+    floorReflect.addColorStop(0.5, 'rgba(255, 251, 235, 0.38)');
+    floorReflect.addColorStop(1, 'rgba(255, 251, 235, 0)');
     ctx.fillStyle = floorReflect;
     ctx.fillRect(0, horizonY, W, H - horizonY);
 
-    // 3. 3B PERSPEKTİF MERMER KARO IZGARASI, KORİDOR BORDÜR ŞERİTLERİ, CAM TAVAN KİRİŞLERİ VE SICAK TAVAN SPOTLARI
+    // 3. 3B PERSPEKTİF TRAVERTEN MERMER KARO DERZLERİ, KARAMEL ZEMİN ŞERİTLERİ VE ANTRASİT GÖMME TAVAN BAFFLE LED PANELLERİ
     ctx.save();
-    ctx.strokeStyle = 'rgba(100, 116, 139, 0.16)';
+    ctx.strokeStyle = 'rgba(140, 108, 76, 0.22)';
     ctx.lineWidth = Math.max(1, W / 900);
     const gridStep = 65;
-    const minGX = Math.floor((this.camX - 420) / gridStep) * gridStep;
-    const maxGX = Math.ceil((this.camX + 420) / gridStep) * gridStep;
-    const minGY = Math.floor((this.camY - 420) / gridStep) * gridStep;
-    const maxGY = Math.ceil((this.camY + 420) / gridStep) * gridStep;
+    const minGX = Math.floor((this.camX - 650) / gridStep) * gridStep;
+    const maxGX = Math.ceil((this.camX + 650) / gridStep) * gridStep;
+    const minGY = Math.floor((this.camY - 650) / gridStep) * gridStep;
+    const maxGY = Math.ceil((this.camY + 650) / gridStep) * gridStep;
 
     for (let gx = minGX; gx <= maxGX; gx += gridStep) {
-      // Zemin mermer derzleri
+      // Zemin traverten mermer derzleri
       const c1 = this._worldToCamera(gx, minGY, 0, cosYaw, sinYaw);
       const c2 = this._worldToCamera(gx, maxGY, 0, cosYaw, sinYaw);
       const clipped = this._clipPolygonNear([c1, c2], 6);
@@ -1457,15 +1473,15 @@ class Pov3DEngine {
         ctx.stroke();
       }
 
-      // Cam tavan çelik/alüminyum skylight kirişleri (wz = 68)
+      // Alçıpan tavan akustik derz çizgileri (wz = 68)
       const t1 = this._worldToCamera(gx, minGY, 68, cosYaw, sinYaw);
       const t2 = this._worldToCamera(gx, maxGY, 68, cosYaw, sinYaw);
       const clippedT = this._clipPolygonNear([t1, t2], 8);
       if (clippedT.length === 2) {
         const pt = this._projectCamVerts(clippedT, cx, horizonY, fovScale);
         ctx.save();
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.24)';
-        ctx.lineWidth = Math.max(1, W / 850);
+        ctx.strokeStyle = 'rgba(180, 160, 135, 0.28)';
+        ctx.lineWidth = Math.max(1, W / 900);
         ctx.beginPath();
         ctx.moveTo(pt[0].x, pt[0].y);
         ctx.lineTo(pt[1].x, pt[1].y);
@@ -1487,31 +1503,55 @@ class Pov3DEngine {
       }
     }
 
-    // Mimari Galeri Zemin Bordür Şeritleri & Tavan Altın Cove LED Hatları (Kuzey & Güney Galeri Koridorları)
-    for (const galleryY of [388, 462]) {
-      const b1 = this._worldToCamera(160, galleryY, 0.2, cosYaw, sinYaw);
-      const b2 = this._worldToCamera(1240, galleryY, 0.2, cosYaw, sinYaw);
+    // Capacity AVM Gerçek Fotoğrafındaki (`media_1791722602735.jpg`) Gömme Koyu Antrasit Izgaralı Tavan Kanalı + Lineer Beyaz LED Bantları
+    const corridorAxesY = [325, 388, 462, 526];
+    for (const corrY of corridorAxesY) {
+      // Zemin karamel-kahve mermer bordür şeridi
+      const b1 = this._worldToCamera(140, corrY, 0.2, cosYaw, sinYaw);
+      const b2 = this._worldToCamera(1260, corrY, 0.2, cosYaw, sinYaw);
       const bClip = this._clipPolygonNear([b1, b2], 6);
       if (bClip.length === 2) {
         const pb = this._projectCamVerts(bClip, cx, horizonY, fovScale);
         ctx.save();
-        ctx.strokeStyle = 'rgba(217, 119, 6, 0.28)';
-        ctx.lineWidth = Math.max(2, W / 520);
+        ctx.strokeStyle = 'rgba(154, 104, 62, 0.34)';
+        ctx.lineWidth = Math.max(2.5, W / 420);
         ctx.beginPath();
         ctx.moveTo(pb[0].x, pb[0].y);
         ctx.lineTo(pb[1].x, pb[1].y);
         ctx.stroke();
         ctx.restore();
       }
-      // Tavan LED Cove Işık Şeridi (wz = 66)
-      const l1 = this._worldToCamera(160, galleryY, 66, cosYaw, sinYaw);
-      const l2 = this._worldToCamera(1240, galleryY, 66, cosYaw, sinYaw);
+
+      // Tavan gömme koyu antrasit baffle kanalı (wz = 67.5, genişlik 16 birim)
+      const chA1 = this._worldToCamera(140, corrY - 8, 67.5, cosYaw, sinYaw);
+      const chA2 = this._worldToCamera(1260, corrY - 8, 67.5, cosYaw, sinYaw);
+      const chB2 = this._worldToCamera(1260, corrY + 8, 67.5, cosYaw, sinYaw);
+      const chB1 = this._worldToCamera(140, corrY + 8, 67.5, cosYaw, sinYaw);
+      const chClip = this._clipPolygonNear([chA1, chA2, chB2, chB1], 8);
+      if (chClip.length >= 3) {
+        const pch = this._projectCamVerts(chClip, cx, horizonY, fovScale);
+        ctx.save();
+        ctx.fillStyle = '#27272a';
+        ctx.strokeStyle = '#a89984';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(pch[0].x, pch[0].y);
+        for (let k = 1; k < pch.length; k++) ctx.lineTo(pch[k].x, pch[k].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Gömme kanal içindeki parlak beyaz lineer LED armatür şeritleri (wz = 67.0)
+      const l1 = this._worldToCamera(140, corrY, 67.0, cosYaw, sinYaw);
+      const l2 = this._worldToCamera(1260, corrY, 67.0, cosYaw, sinYaw);
       const lClip = this._clipPolygonNear([l1, l2], 8);
       if (lClip.length === 2) {
         const pl = this._projectCamVerts(lClip, cx, horizonY, fovScale);
         ctx.save();
-        ctx.strokeStyle = 'rgba(253, 230, 138, 0.42)';
-        ctx.lineWidth = Math.max(2, W / 550);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.lineWidth = Math.max(2.2, W / 480);
         ctx.beginPath();
         ctx.moveTo(pl[0].x, pl[0].y);
         ctx.lineTo(pl[1].x, pl[1].y);
@@ -1520,22 +1560,55 @@ class Pov3DEngine {
       }
     }
 
-    // Tavan Sıcak Altın LED Spot Işıkları & Skylight Panelleri (wz = 68)
+    // Dikey (Kuzey-Güney) yan koridorlar için gömme antrasit tavan kanalı & lineer LED (x = 420, 600, 800, 980)
+    for (const corrX of [420, 600, 800, 980]) {
+      const chA1 = this._worldToCamera(corrX - 7, 160, 67.5, cosYaw, sinYaw);
+      const chA2 = this._worldToCamera(corrX - 7, 700, 67.5, cosYaw, sinYaw);
+      const chB2 = this._worldToCamera(corrX + 7, 700, 67.5, cosYaw, sinYaw);
+      const chB1 = this._worldToCamera(corrX + 7, 160, 67.5, cosYaw, sinYaw);
+      const chClip = this._clipPolygonNear([chA1, chA2, chB2, chB1], 8);
+      if (chClip.length >= 3) {
+        const pch = this._projectCamVerts(chClip, cx, horizonY, fovScale);
+        ctx.save();
+        ctx.fillStyle = '#27272a';
+        ctx.beginPath();
+        ctx.moveTo(pch[0].x, pch[0].y);
+        for (let k = 1; k < pch.length; k++) ctx.lineTo(pch[k].x, pch[k].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+      const l1 = this._worldToCamera(corrX, 160, 67.0, cosYaw, sinYaw);
+      const l2 = this._worldToCamera(corrX, 700, 67.0, cosYaw, sinYaw);
+      const lClip = this._clipPolygonNear([l1, l2], 8);
+      if (lClip.length === 2) {
+        const pl = this._projectCamVerts(lClip, cx, horizonY, fovScale);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.90)';
+        ctx.lineWidth = Math.max(2.0, W / 520);
+        ctx.beginPath();
+        ctx.moveTo(pl[0].x, pl[0].y);
+        ctx.lineTo(pl[1].x, pl[1].y);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // Alçıpan Tavan Gömme Kare Mimari Downlight Spotları (wz = 68)
     for (let gx = minGX; gx <= maxGX; gx += gridStep) {
       for (let gy = minGY; gy <= maxGY; gy += gridStep) {
         const cSpot = this._worldToCamera(gx, gy, 68, cosYaw, sinYaw);
-        if (cSpot.rx > 15 && cSpot.rx < 420 && Math.abs(cSpot.ry) < cSpot.rx * 1.1) {
+        if (cSpot.rx > 15 && cSpot.rx < 520 && Math.abs(cSpot.ry) < cSpot.rx * 1.1) {
           const sx = cx + (cSpot.ry / cSpot.rx) * fovScale;
           const sy = horizonY - (cSpot.rz / cSpot.rx) * fovScale;
-          const rad = Math.max(1.8, (560 / cSpot.rx) * (W / 1150));
-          ctx.fillStyle = 'rgba(253, 230, 138, 0.26)';
-          ctx.beginPath();
-          ctx.arc(sx, sy, rad * 2.1, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = 'rgba(255, 251, 235, 0.85)';
-          ctx.beginPath();
-          ctx.arc(sx, sy, rad, 0, Math.PI * 2);
-          ctx.fill();
+          const rad = Math.max(2.0, (540 / cSpot.rx) * (W / 1150));
+          ctx.fillStyle = 'rgba(254, 243, 199, 0.45)';
+          ctx.fillRect(sx - rad * 1.8, sy - rad * 1.1, rad * 3.6, rad * 2.2);
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = '#78716c';
+          ctx.lineWidth = 0.8;
+          ctx.fillRect(sx - rad * 1.1, sy - rad * 0.65, rad * 2.2, rad * 1.3);
+          ctx.strokeRect(sx - rad * 1.1, sy - rad * 0.65, rad * 2.2, rad * 1.3);
         }
       }
     }
@@ -2387,8 +2460,56 @@ class Pov3DEngine {
     const wallQuads = [];
     const storeSignAnchors = [];
 
-    const wallHeight = 62;
-    const fasciaBottom = 42;
+    const wallHeight = 66;
+    const fasciaBottom = 44;
+
+    // 0. MİMARİ AVM DIŞ ÇEVRE VE KORİDOR SONU TRAVERTEN KAPAMA DUVARLARI (Ufukta asla boşluk kalmaması için)
+    const perimeterWalls = [
+      { cA: { x: 115, y: 125 }, cB: { x: 1285, y: 125 } }, // Kuzey Ana Çevre Duvarı
+      { cA: { x: 1285, y: 740 }, cB: { x: 115, y: 740 } }, // Güney Ana Çevre Duvarı
+      { cA: { x: 115, y: 740 }, cB: { x: 115, y: 125 } },  // Batı Koridor Sonu Kapama Duvarı
+      { cA: { x: 1285, y: 125 }, cB: { x: 1285, y: 740 } } // Doğu Koridor Sonu Kapama Duvarı
+    ];
+    ctx.save();
+    for (const pw of perimeterWalls) {
+      const camPW = [
+        this._worldToCamera(pw.cA.x, pw.cA.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(pw.cB.x, pw.cB.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(pw.cB.x, pw.cB.y, 68, cosYaw, sinYaw),
+        this._worldToCamera(pw.cA.x, pw.cA.y, 68, cosYaw, sinYaw)
+      ];
+      const clipPW = this._clipPolygonNear(camPW, 6.0);
+      if (clipPW.length >= 3) {
+        const scrPW = this._projectCamVerts(clipPW, cx, horizonY, fovScale);
+        ctx.fillStyle = '#e7dac6';
+        ctx.strokeStyle = '#c5b092';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(scrPW[0].x, scrPW[0].y);
+        for (let k = 1; k < scrPW.length; k++) ctx.lineTo(scrPW[k].x, scrPW[k].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+      // Üst Galeri Koyu Antrasit Alınlık Bandı (z = 46 .. 68)
+      const camBand = [
+        this._worldToCamera(pw.cA.x, pw.cA.y, 46, cosYaw, sinYaw),
+        this._worldToCamera(pw.cB.x, pw.cB.y, 46, cosYaw, sinYaw),
+        this._worldToCamera(pw.cB.x, pw.cB.y, 68, cosYaw, sinYaw),
+        this._worldToCamera(pw.cA.x, pw.cA.y, 68, cosYaw, sinYaw)
+      ];
+      const clipBand = this._clipPolygonNear(camBand, 6.0);
+      if (clipBand.length >= 3) {
+        const scrBand = this._projectCamVerts(clipBand, cx, horizonY, fovScale);
+        ctx.fillStyle = '#292524';
+        ctx.beginPath();
+        ctx.moveTo(scrBand[0].x, scrBand[0].y);
+        for (let k = 1; k < scrBand.length; k++) ctx.lineTo(scrBand[k].x, scrBand[k].y);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+    ctx.restore();
 
     for (const s of floorStores) {
       const sx = s.x !== undefined ? s.x : (s.cx - (s.w || 70) / 2);
@@ -2399,7 +2520,7 @@ class Pov3DEngine {
       const doorX = s.door_x !== undefined ? s.door_x : s.cx;
       const doorY = s.door_y !== undefined ? s.door_y : s.cy;
       const distToStore = Math.hypot(doorX - this.camX, doorY - this.camY);
-      if (distToStore > 420) continue;
+      if (distToStore > 950) continue;
 
       const isStart = this.startStore && this.startStore.id === s.id;
       const isTarget = this.targetStore && this.targetStore.id === s.id;
@@ -2444,11 +2565,21 @@ class Pov3DEngine {
       let bestSignFace = null;
       const storeFaces = [];
       for (const face of candidateFaces) {
-        const midX = (face.cA.x + face.cB.x) * 0.5;
-        const midY = (face.cA.y + face.cB.y) * 0.5;
+        let midX = (face.cA.x + face.cB.x) * 0.5;
+        let midY = (face.cA.y + face.cB.y) * 0.5;
+        if (face.isDoorFace) {
+          const dxF = face.cB.x - face.cA.x;
+          const dyF = face.cB.y - face.cA.y;
+          const lenSq = dxF * dxF + dyF * dyF;
+          if (lenSq > 1) {
+            const tDoor = Math.max(0.12, Math.min(0.88, ((doorX - face.cA.x) * dxF + (doorY - face.cA.y) * dyF) / lenSq));
+            midX = face.cA.x + dxF * tDoor;
+            midY = face.cA.y + dyF * tDoor;
+          }
+        }
         const wallDist = Math.hypot(midX - this.camX, midY - this.camY);
         const faceLen = Math.hypot(face.cB.x - face.cA.x, face.cB.y - face.cA.y);
-        if (wallDist > 400) continue;
+        if (wallDist > 920) continue;
 
         const wqItem = {
           store: s,
@@ -2478,12 +2609,12 @@ class Pov3DEngine {
         bestSignFace.wqItem.isPrimaryFace = true;
       }
 
-      if (bestSignFace && bestSignFace.dist <= 380) {
+      if (bestSignFace && bestSignFace.dist <= 560) {
         storeSignAnchors.push({
           store: s,
           signX: bestSignFace.midX,
           signY: bestSignFace.midY,
-          signZ: 51,
+          signZ: 52,
           dist: bestSignFace.dist,
           isStart,
           isTarget,
@@ -2499,7 +2630,7 @@ class Pov3DEngine {
     // Her mağaza için koridora bakan ana vitrin cephesini (isDoorFace) önceliklendirerek TEK cephe belirle
     const bestFaceByStore = new Map();
     for (const wq of wallQuads) {
-      if (wq.faceLen < 20 || wq.wallDist >= 360) continue;
+      if (wq.faceLen < 20 || wq.wallDist >= 820) continue;
       const cw = [
         this._worldToCamera(wq.cA.x, wq.cA.y, 0, cosYaw, sinYaw),
         this._worldToCamera(wq.cB.x, wq.cB.y, 0, cosYaw, sinYaw),
@@ -2518,8 +2649,8 @@ class Pov3DEngine {
       }
       const visW = Math.min(W - 6, maxX) - Math.max(6, minX);
       const visH = maxY - minY;
-      const minReqW = wq.isDoorFace ? 14 : 28;
-      if (visW >= minReqW && visH >= 18) {
+      const minReqW = wq.isDoorFace ? 12 : 24;
+      if (visW >= minReqW && visH >= 14) {
         const prev = bestFaceByStore.get(wq.store.id);
         if (!prev || (wq.isDoorFace && !prev.isDoorFace) || (wq.isDoorFace === prev.isDoorFace && visW > prev.visW)) {
           bestFaceByStore.set(wq.store.id, { wq, visW, isDoorFace: wq.isDoorFace });
@@ -2531,7 +2662,7 @@ class Pov3DEngine {
       const { store, cA, cB, midX, midY, faceLen, isFrontFacade, isDoorFace, isPrimaryFace, isStart, isTarget, isEnRoute, isPassingNow, wallDist } = wq;
       const catStyle = this._getCategoryColors(store.category);
 
-      // 1. Ana Vitrin Duvarı (z = 0 .. wallHeight)
+      // 1. Ana Vitrin Duvarı & Traverten Kolon Çerçevesi (z = 0 .. wallHeight)
       const camWall = [
         this._worldToCamera(cA.x, cA.y, 0, cosYaw, sinYaw),
         this._worldToCamera(cB.x, cB.y, 0, cosYaw, sinYaw),
@@ -2554,12 +2685,13 @@ class Pov3DEngine {
         ctx.strokeStyle = '#10b981';
         ctx.lineWidth = 3.0;
       } else if (isPassingNow || isEnRoute) {
-        ctx.fillStyle = '#ecfdf5';
+        ctx.fillStyle = '#e7dac6';
         ctx.strokeStyle = isPassingNow ? '#059669' : '#10b981';
         ctx.lineWidth = 2.6;
       } else {
-        ctx.fillStyle = catStyle.wall;
-        ctx.strokeStyle = catStyle.border;
+        // Capacity AVM gerçek bej traverten mermer kolon & duvar dokusu
+        ctx.fillStyle = '#e5d5be';
+        ctx.strokeStyle = '#bfa785';
         ctx.lineWidth = 1.6;
       }
 
@@ -2574,20 +2706,20 @@ class Pov3DEngine {
 
       if (faceLen >= 20) {
         // 1B. Sıcak Aydınlatmalı Cam Vitrin & Çift Kanatlı Cam Kapı Doğramaları (Tüm Koridor ve Ara Yol Cephelerinde)
-        const glassA = { x: cA.x + (cB.x - cA.x) * 0.06, y: cA.y + (cB.y - cA.y) * 0.06 };
-        const glassB = { x: cA.x + (cB.x - cA.x) * 0.94, y: cA.y + (cB.y - cA.y) * 0.94 };
+        const glassA = { x: cA.x + (cB.x - cA.x) * 0.07, y: cA.y + (cB.y - cA.y) * 0.07 };
+        const glassB = { x: cA.x + (cB.x - cA.x) * 0.93, y: cA.y + (cB.y - cA.y) * 0.93 };
         const camGlass = [
-          this._worldToCamera(glassA.x, glassA.y, 1.5, cosYaw, sinYaw),
-          this._worldToCamera(glassB.x, glassB.y, 1.5, cosYaw, sinYaw),
-          this._worldToCamera(glassB.x, glassB.y, fasciaBottom - 2, cosYaw, sinYaw),
-          this._worldToCamera(glassA.x, glassA.y, fasciaBottom - 2, cosYaw, sinYaw)
+          this._worldToCamera(glassA.x, glassA.y, 1.2, cosYaw, sinYaw),
+          this._worldToCamera(glassB.x, glassB.y, 1.2, cosYaw, sinYaw),
+          this._worldToCamera(glassB.x, glassB.y, fasciaBottom - 1.5, cosYaw, sinYaw),
+          this._worldToCamera(glassA.x, glassA.y, fasciaBottom - 1.5, cosYaw, sinYaw)
         ];
         const clippedGlass = this._clipPolygonNear(camGlass, 6.0);
         if (clippedGlass.length >= 3) {
           const scrGlass = this._projectCamVerts(clippedGlass, cx, horizonY, fovScale);
-          ctx.fillStyle = isPassingNow ? 'rgba(254, 249, 195, 0.94)' : 'rgba(255, 251, 235, 0.92)';
-          ctx.strokeStyle = 'rgba(100, 116, 139, 0.55)';
-          ctx.lineWidth = 1.4;
+          ctx.fillStyle = isPassingNow ? 'rgba(254, 249, 195, 0.96)' : 'rgba(255, 250, 235, 0.94)';
+          ctx.strokeStyle = '#292524';
+          ctx.lineWidth = 1.6;
           ctx.beginPath();
           ctx.moveTo(scrGlass[0].x, scrGlass[0].y);
           for (let k = 1; k < scrGlass.length; k++) ctx.lineTo(scrGlass[k].x, scrGlass[k].y);
@@ -2595,17 +2727,17 @@ class Pov3DEngine {
           ctx.fill();
           ctx.stroke();
 
-          // Mağaza vitrin camı dikey alüminyum kayıtları (mullions)
+          // Mağaza vitrin camı dikey antrasit alüminyum kayıtları (mullions)
           for (const frac of [0.33, 0.67]) {
             const mx = cA.x + (cB.x - cA.x) * frac;
             const my = cA.y + (cB.y - cA.y) * frac;
-            const mBot = this._worldToCamera(mx, my, 1.5, cosYaw, sinYaw);
-            const mTop = this._worldToCamera(mx, my, fasciaBottom - 2, cosYaw, sinYaw);
+            const mBot = this._worldToCamera(mx, my, 1.2, cosYaw, sinYaw);
+            const mTop = this._worldToCamera(mx, my, fasciaBottom - 1.5, cosYaw, sinYaw);
             const mClip = this._clipPolygonNear([mBot, mTop], 6.0);
             if (mClip.length === 2) {
               const mProj = this._projectCamVerts(mClip, cx, horizonY, fovScale);
-              ctx.strokeStyle = 'rgba(148, 163, 184, 0.48)';
-              ctx.lineWidth = 1.1;
+              ctx.strokeStyle = 'rgba(41, 37, 36, 0.62)';
+              ctx.lineWidth = 1.2;
               ctx.beginPath();
               ctx.moveTo(mProj[0].x, mProj[0].y);
               ctx.lineTo(mProj[1].x, mProj[1].y);
@@ -2614,26 +2746,31 @@ class Pov3DEngine {
           }
         }
 
-        // 2. Üst Işıklı Mağaza Tabelası Şeridi (Fascia Header: z = fasciaBottom .. wallHeight)
+        // 2. Üst Işıklı Mağaza Tabelası Şeridi (Capacity AVM Koyu Antrasit / Bronz Kurumsal Alınlık: z = fasciaBottom .. wallHeight)
+        const fA = { x: cA.x + (cB.x - cA.x) * 0.05, y: cA.y + (cB.y - cA.y) * 0.05 };
+        const fB = { x: cA.x + (cB.x - cA.x) * 0.95, y: cA.y + (cB.y - cA.y) * 0.95 };
         const camFascia = [
-          this._worldToCamera(cA.x, cA.y, fasciaBottom, cosYaw, sinYaw),
-          this._worldToCamera(cB.x, cB.y, fasciaBottom, cosYaw, sinYaw),
-          this._worldToCamera(cB.x, cB.y, wallHeight, cosYaw, sinYaw),
-          this._worldToCamera(cA.x, cA.y, wallHeight, cosYaw, sinYaw)
+          this._worldToCamera(fA.x, fA.y, fasciaBottom, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, fasciaBottom, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, wallHeight - 2, cosYaw, sinYaw),
+          this._worldToCamera(fA.x, fA.y, wallHeight - 2, cosYaw, sinYaw)
         ];
         const clippedFascia = this._clipPolygonNear(camFascia, 6.0);
         if (clippedFascia.length >= 3) {
           const scrFascia = this._projectCamVerts(clippedFascia, cx, horizonY, fovScale);
-          ctx.fillStyle = isTarget ? '#dc2626' : (isStart ? '#059669' : (isPassingNow ? '#047857' : catStyle.fascia));
+          ctx.fillStyle = isTarget ? '#dc2626' : (isStart ? '#059669' : (isPassingNow ? '#047857' : '#1c1917'));
+          ctx.strokeStyle = isTarget ? '#fca5a5' : (isPassingNow ? '#34d399' : '#78716c');
+          ctx.lineWidth = 1.2;
           ctx.beginPath();
           ctx.moveTo(scrFascia[0].x, scrFascia[0].y);
           for (let k = 1; k < scrFascia.length; k++) ctx.lineTo(scrFascia[k].x, scrFascia[k].y);
           ctx.closePath();
           ctx.fill();
+          ctx.stroke();
 
           // Mimari Fascia Altı Sıcak LED Aydınlatma Şeridi (z = fasciaBottom)
-          ctx.strokeStyle = 'rgba(254, 240, 138, 0.82)';
-          ctx.lineWidth = Math.max(1.5, W / 700);
+          ctx.strokeStyle = 'rgba(254, 240, 138, 0.88)';
+          ctx.lineWidth = Math.max(1.6, W / 680);
           ctx.beginPath();
           ctx.moveTo(scrFascia[0].x, scrFascia[0].y);
           ctx.lineTo(scrFascia[1].x, scrFascia[1].y);
@@ -2642,7 +2779,7 @@ class Pov3DEngine {
 
         // 1C. Her Mağazanın Koridora Bakan Ana Vitrin Cephesinde + Köşe Mağazaların Ön Plan Yan Vitrinlerinde Büyük Işıklı Kurumsal Marka Logosu
         const isBestCorridorFace = bestFaceByStore.get(store.id)?.wq === wq;
-        const isForegroundCornerWindow = !wq.isDoorFace && wallDist < 190;
+        const isForegroundCornerWindow = !wq.isDoorFace && wallDist < 220;
         if (isBestCorridorFace || isForegroundCornerWindow) {
           let minWallX = Infinity, maxWallX = -Infinity;
           let minWallY = Infinity, maxWallY = -Infinity;
@@ -2663,7 +2800,16 @@ class Pov3DEngine {
 
           const minPlaqueW = isBestCorridorFace ? 14 : 64;
           if (visWallW >= minPlaqueW && visWallH >= 18 && avgRx > 6) {
-            const plaqueCx = (clampedMinX + clampedMaxX) * 0.5;
+            let plaqueCx = (clampedMinX + clampedMaxX) * 0.5;
+            if (isDoorFace) {
+              const doorCam = this._worldToCamera(midX, midY, wallHeight * 0.45, cosYaw, sinYaw);
+              if (doorCam.rx > 6) {
+                const doorScr = this._projectCamVerts([doorCam], cx, horizonY, fovScale)[0];
+                if (doorScr && doorScr.x >= clampedMinX + 10 && doorScr.x <= clampedMaxX - 10) {
+                  plaqueCx = doorScr.x;
+                }
+              }
+            }
             const plaqueCy = minWallY + visWallH * 0.54;
             const logoImg = this._getStoreLogoImage(store);
             const winLogoSize = Math.max(22, Math.min(82, Math.min(visWallW * 0.78, (2800 / avgRx) * (W / 1050))));

@@ -201,9 +201,22 @@ class CartSimulator {
     }
 
     const segDist = Math.hypot(toNode.x - fromNode.x, toNode.y - fromNode.y);
-    const isSpeaking = currentTime < (window.speechBusyUntil || 0);
-    const speechFactor = isSpeaking ? 0.52 : 1.0;
-    const baseSpeed = 34; // Doğal yürüyüş temposu (sesli komutla senkronize)
+    const remainingSpeechMs = Math.max(0, (window.speechMainBusyUntil || 0) - currentTime);
+    const isSpeaking = Boolean(window.isVoiceEnabled && remainingSpeechMs > 0);
+    const nextNodeTriggersInstruction = Boolean(
+      this.activeRoute &&
+      Array.isArray(this.activeRoute.instructions) &&
+      this.activeRoute.instructions.some(ins => ins.nodeIndex === this.currentIndex + 1)
+    );
+
+    const baseSpeed = 38; // Doğal yürüyüş temposu (sesli komutla senkronize)
+    let speechFactor = isSpeaking ? 0.68 : 1.0;
+    if (isSpeaking && nextNodeTriggersInstruction && segDist > 0) {
+      const remDist = Math.max(2, segDist * (1 - this.subProgress));
+      const remSec = Math.max(0.25, remainingSpeechMs / 1000);
+      const idealSpeed = remDist / remSec;
+      speechFactor = Math.max(0.28, Math.min(1.0, idealSpeed / (baseSpeed * this.speed)));
+    }
     const currentSpeed = baseSpeed * this.speed * speechFactor;
 
     if (segDist > 0) {
@@ -212,7 +225,11 @@ class CartSimulator {
       this.subProgress = 1;
     }
 
-    if (this.subProgress >= 1) {
+    // Eğer bir sonraki düğüm yeni bir sesli dönüş/manevra cümlesi başlatıyorsa ve mevcut cümle henüz bitmediyse,
+    // köşede cümlenin tamamlanmasını bekle ki sesli komut asla yarıda kesilmesin!
+    if (this.subProgress >= 0.96 && isSpeaking && nextNodeTriggersInstruction) {
+      this.subProgress = 0.96;
+    } else if (this.subProgress >= 1) {
       this.subProgress = 0;
       this.currentIndex++;
 
@@ -244,6 +261,10 @@ class CartSimulator {
       }
 
       this.updateCartPosition(curX, curY, angle, curFrom.floor);
+
+      if (this.map && typeof this.map.updateLiveUserLocation === 'function') {
+        this.map.updateLiveUserLocation(curX, curY, curFrom.floor, angle);
+      }
 
       // POV 3B Motorunu arka planda birebir aynı koordinat ve segmentte tut
       if (window.pov3dEngine && !window.pov3dEngine.isActive && typeof window.pov3dEngine.syncFromCart === 'function') {
@@ -297,6 +318,9 @@ class CartSimulator {
       }
     }
     this.updateCartPosition(curX, curY, angle, floor);
+    if (this.map && typeof this.map.updateLiveUserLocation === 'function') {
+      this.map.updateLiveUserLocation(curX, curY, floor, angle);
+    }
   }
 
   handleFloorTransition(fromNode, toNode) {

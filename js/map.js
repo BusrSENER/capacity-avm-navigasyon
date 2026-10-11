@@ -19,6 +19,8 @@ class MallMap {
     // Görünüm Modu ('anchor' = Öne Çıkanlar, 'all' = Tüm Mağazalar)
     this.displayMode = 'anchor';
     this.activeCategoryFilter = 'all';
+    this.activeAmenityHighlight = null; // Seçili servis filtresi ('elevator', 'wc', 'baby', 'exit', vb.)
+    this.liveUserLocation = null; // { x, y, floor, headingDeg, labelText }
 
     // Pan, Zoom, Rotation & 2.5D/3D Perspective State
     this.scale = 1.0;
@@ -581,13 +583,39 @@ class MallMap {
       }
     }
 
-    // 2. Servis Noktaları (Amenities) - cevahir-rehber.web.app Temiz Dairesel İkonları
-    const amenities = floorInfo.amenities || [];
+    // 2. Servis Noktaları (Amenities + Portals) - Seçili Servis Filtresinde TÜM Noktaları Belirgin Etiketle Göster
+    const rawAmenities = [
+      ...(floorInfo.amenities || []),
+      ...((this.mallData.amenities || []).filter(a => a.floor === floorNum)),
+      ...((floorInfo.portals || []).map(p => ({
+        id: p.id,
+        name: p.label || (p.kind === 'elevator' ? 'Asansör' : 'Yürüyen Merdiven'),
+        kind: p.kind,
+        type: p.kind,
+        floor: floorNum,
+        cx: p.x,
+        cy: p.y
+      })))
+    ];
+    // Aynı koordinattaki mükerrer servis kayıtlarını tekilleştir
+    const amenities = [];
+    for (const item of rawAmenities) {
+      const ix = item.cx ?? item.x;
+      const iy = item.cy ?? item.y;
+      if (ix === undefined || iy === undefined) continue;
+      const iKind = item.kind || item.type || 'info';
+      const dup = amenities.some(ex => (ex.kind || ex.type) === iKind && Math.hypot((ex.cx ?? ex.x) - ix, (ex.cy ?? ex.y) - iy) < 22);
+      if (!dup) {
+        amenities.push({ ...item, cx: ix, cy: iy, kind: iKind, floor: floorNum });
+      }
+    }
+
     const AMENITY_ICONS = {
       wc: '🚻',
       elevator: '🛗',
       escalator: '🪜',
       emergency: '🚨',
+      exit: '🚨',
       kiosk: '🖥️',
       atm: '💳',
       info: '🛡️',
@@ -602,11 +630,15 @@ class MallMap {
 
     amenities.forEach(am => {
       const amKind = am.kind || am.type || 'info';
+      const isHighlighted = this._matchesAmenityHighlight(amKind, this.activeAmenityHighlight);
+      const isDimmed = this.activeAmenityHighlight && !isHighlighted;
+
       const amMarker = document.createElement('div');
-      amMarker.className = `amenity-marker-wrapper kind-${amKind}`;
+      amMarker.className = `amenity-marker-wrapper kind-${amKind} ${isHighlighted ? 'is-amenity-highlighted' : ''} ${isDimmed ? 'is-amenity-dimmed' : ''}`;
       amMarker.style.left = `${am.cx}px`;
       amMarker.style.top = `${am.cy}px`;
       amMarker.title = am.name;
+      amMarker.setAttribute('data-amenity-kind', amKind);
 
       const iconChar = AMENITY_ICONS[amKind] || 'ℹ️';
 
@@ -614,6 +646,7 @@ class MallMap {
         <div class="amenity-icon-circle" title="${am.name}">
           <span>${iconChar}</span>
         </div>
+        ${isHighlighted ? `<span class="amenity-highlight-label">${iconChar} ${am.name}</span>` : ''}
       `;
 
       amMarker.addEventListener('click', (e) => {
@@ -627,6 +660,7 @@ class MallMap {
     });
 
     this.markersLayer.appendChild(fragment);
+    this._renderLiveUserDot();
   }
 
   /**
@@ -1187,5 +1221,95 @@ class MallMap {
   setCategoryFilter(category) {
     this.activeCategoryFilter = category;
     this.renderBrandMarkers(this.currentFloor);
+  }
+
+  _matchesAmenityHighlight(amKind, filterKind) {
+    if (!filterKind) return false;
+    const k = (amKind || '').toLowerCase();
+    const f = filterKind.toLowerCase();
+    if (f === 'exit' || f === 'emergency') return k === 'emergency' || k === 'exit' || k === 'entrance';
+    if (f === 'kiosk' || f === 'info') return k === 'kiosk' || k === 'info';
+    return k === f;
+  }
+
+  getMatchingAmenitiesOnFloor(floorNum = this.currentFloor, filterKind = this.activeAmenityHighlight) {
+    if (!filterKind) return [];
+    const floorInfo = this.mallData.floors[floorNum];
+    if (!floorInfo) return [];
+    const rawAmenities = [
+      ...(floorInfo.amenities || []),
+      ...((this.mallData.amenities || []).filter(a => a.floor === floorNum)),
+      ...((floorInfo.portals || []).map(p => ({
+        id: p.id,
+        name: p.label || (p.kind === 'elevator' ? 'Asansör' : 'Yürüyen Merdiven'),
+        kind: p.kind,
+        type: p.kind,
+        floor: floorNum,
+        cx: p.x,
+        cy: p.y
+      })))
+    ];
+    const deduped = [];
+    for (const item of rawAmenities) {
+      const ix = item.cx ?? item.x;
+      const iy = item.cy ?? item.y;
+      if (ix === undefined || iy === undefined) continue;
+      const iKind = item.kind || item.type || 'info';
+      if (!this._matchesAmenityHighlight(iKind, filterKind)) continue;
+      const dup = deduped.some(ex => Math.hypot((ex.cx ?? ex.x) - ix, (ex.cy ?? ex.y) - iy) < 22);
+      if (!dup) {
+        deduped.push({ ...item, cx: ix, cy: iy, kind: iKind, floor: floorNum });
+      }
+    }
+    return deduped;
+  }
+
+  setAmenityHighlight(kind) {
+    this.activeAmenityHighlight = kind || null;
+    this.renderBrandMarkers(this.currentFloor);
+    return this.getMatchingAmenitiesOnFloor(this.currentFloor, this.activeAmenityHighlight);
+  }
+
+  /**
+   * Kullanıcının harita üzerindeki canlı yürüyüş / GPS konumunu mavi radar noktası ve yön konisi ile günceller
+   */
+  updateLiveUserLocation(x, y, floor = this.currentFloor, headingDeg = 0, labelText = 'Canlı Konumunuz') {
+    if (x === null || x === undefined || y === null || y === undefined) {
+      this.liveUserLocation = null;
+    } else {
+      this.liveUserLocation = { x, y, floor, headingDeg: headingDeg || 0, labelText };
+    }
+    this._renderLiveUserDot();
+  }
+
+  _renderLiveUserDot() {
+    if (!this.avatarLayer) return;
+    let dot = document.getElementById('live-user-gps-dot');
+    if (!this.liveUserLocation || this.liveUserLocation.floor !== this.currentFloor) {
+      if (dot) dot.remove();
+      return;
+    }
+    if (!dot) {
+      dot = document.createElement('div');
+      dot.id = 'live-user-gps-dot';
+      dot.className = 'live-user-gps-dot';
+      dot.innerHTML = `
+        <div class="live-user-gps-pulse"></div>
+        <div class="live-user-gps-cone" id="live-user-gps-cone"></div>
+        <div class="live-user-gps-core"></div>
+        <div class="live-user-gps-label" id="live-user-gps-label">📍 Canlı Konumunuz</div>
+      `;
+      this.avatarLayer.appendChild(dot);
+    }
+    dot.style.left = `${this.liveUserLocation.x}px`;
+    dot.style.top = `${this.liveUserLocation.y}px`;
+    const cone = dot.querySelector('#live-user-gps-cone');
+    if (cone) {
+      cone.style.transform = `translate(-50%, -50%) rotate(${this.liveUserLocation.headingDeg || 0}deg)`;
+    }
+    const lbl = dot.querySelector('#live-user-gps-label');
+    if (lbl && this.liveUserLocation.labelText) {
+      lbl.textContent = `📍 ${this.liveUserLocation.labelText}`;
+    }
   }
 }

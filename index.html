@@ -51,7 +51,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Custom CSS (Cache-Busted) -->
-  <link rel="stylesheet" href="css/app.css?v=20261011_v3">
+  <link rel="stylesheet" href="css/app.css?v=20261011_v5">
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
@@ -300,108 +300,120 @@
         </div>
       </div>
 
-      <!-- Hızlı Başlangıç, GPS Otomatik Konum & Etkinlik Takvimi Çipleri -->
-      <div id="quick-start-chips-row" class="flex items-center gap-1.5 mb-2 overflow-x-auto no-scrollbar py-0.5 shrink-0">
-        <button id="btn-gps-auto-locate" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all shadow-sm shadow-sky-600/25 cursor-pointer active:scale-95" title="GPS ve İç Mekan Konumlandırma (IPS) ile Konumunuzu Otomatik Algıla">
-          <span id="gps-btn-icon">📡</span>
-          <span id="gps-btn-label">GPS Konumumu Bul</span>
-        </button>
-        <button id="btn-pin-here" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-xs cursor-pointer active:scale-95" title="Şu An Bulunduğunuz Kapı veya Mağazayı Tek Tıkla Pinleyin">
-          <span>📍 Şu An Buradayım</span>
-        </button>
-        <button id="btn-quick-events" class="px-2.5 py-1 rounded-xl bg-violet-600/15 hover:bg-violet-600/25 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/35 text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all cursor-pointer active:scale-95" title="Takviminizde Yer Alan AVM Etkinlikleri ve Konumları">
-          <span>📅 Etkinlik Takvimi</span>
-        </button>
-        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Kapılar:</span>
-        <button id="btn-quick-fisekhane" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="fisekhane" title="C Kapısı - Fişekhane Ana Giriş (x: 1245, y: 410)">
-          <span>🚪 C Kapısı (Fişekhane)</span>
-        </button>
-        <button id="btn-quick-carousel" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="carousel" title="B Kapısı - Carousel Geçiş Kapısı (x: 680, y: 50)">
-          <span>🚪 B Kapısı (Carousel)</span>
-        </button>
-        <button id="btn-quick-akapisi" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="akapisi" title="A Kapısı - Ataköy / Marks & Spencer Girişi (x: 200, y: 440)">
-          <span>🚪 A Kapısı</span>
-        </button>
-        <button id="btn-quick-danisma" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="danisma" title="Zemin Kat Danışma (x: 1085, y: 425)">
-          <span>ℹ️ Danışma</span>
-        </button>
+      <!-- Hızlı Başlangıç, GPS Otomatik Konum & Etkinlik Takvimi Çipleri (Sol/Sağ Kaydırma Okları + Mouse Wheel & Sürükleme Destekli) -->
+      <div class="relative flex items-center gap-1 mb-1.5 shrink-0 group/scroll">
+        <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="quick-start-chips-row" data-scroll-dir="-1" title="Sola Kaydır" aria-label="Sola Kaydır">‹</button>
+        <div id="quick-start-chips-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 select-none">
+          <button id="btn-gps-auto-locate" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all shadow-sm shadow-sky-600/25 cursor-pointer active:scale-95" title="GPS ve İç Mekan Konumlandırma (IPS) ile Konumunuzu Otomatik Algıla">
+            <span id="gps-btn-icon">📡</span>
+            <span id="gps-btn-label">GPS Konumumu Bul</span>
+          </button>
+          <button id="btn-pin-here" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-xs cursor-pointer active:scale-95" title="Şu An Bulunduğunuz Kapı veya Mağazayı Tek Tıkla Pinleyin">
+            <span>📍 Şu An Buradayım</span>
+          </button>
+          <button id="btn-quick-events" class="px-2.5 py-1 rounded-xl bg-violet-600/15 hover:bg-violet-600/25 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/35 text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all cursor-pointer active:scale-95" title="Takviminizde Yer Alan AVM Etkinlikleri ve Konumları">
+            <span>📅 Etkinlik Takvimi</span>
+          </button>
+          <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Kapılar:</span>
+          <button id="btn-quick-fisekhane" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="fisekhane" title="C Kapısı - Fişekhane Ana Giriş (x: 1245, y: 410)">
+            <span>🚪 C Kapısı (Fişekhane)</span>
+          </button>
+          <button id="btn-quick-carousel" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="carousel" title="B Kapısı - Carousel Geçiş Kapısı (x: 680, y: 50)">
+            <span>🚪 B Kapısı (Carousel)</span>
+          </button>
+          <button id="btn-quick-akapisi" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="akapisi" title="A Kapısı - Ataköy / Marks & Spencer Girişi (x: 200, y: 440)">
+            <span>🚪 A Kapısı</span>
+          </button>
+          <button id="btn-quick-danisma" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="danisma" title="Zemin Kat Danışma (x: 1085, y: 425)">
+            <span>ℹ️ Danışma</span>
+          </button>
+        </div>
+        <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="quick-start-chips-row" data-scroll-dir="1" title="Sağa Kaydır" aria-label="Sağa Kaydır">›</button>
       </div>
 
-      <!-- Kategori Filtre Butonları (Yatay Kaydırılabilir) -->
-      <div id="category-pills-row" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 shrink-0">
-        <button class="cat-pill active px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900 dark:bg-white text-white dark:text-slate-900 shrink-0 shadow-sm transition-all" data-category="all">
-          Tümü
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="fashion">
-          <span class="w-2 h-2 rounded-full bg-pink-400 shrink-0"></span>Moda
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="shoes">
-          <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>Ayakkabı &amp; Çanta
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="sports">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>Spor
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="tech">
-          <span class="w-2 h-2 rounded-full bg-blue-400 shrink-0"></span>Teknoloji
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="cosmetics">
-          <span class="w-2 h-2 rounded-full bg-rose-400 shrink-0"></span>Kozmetik
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="food">
-          <span class="w-2 h-2 rounded-full bg-orange-400 shrink-0"></span>Yeme &amp; İçme
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="home">
-          <span class="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>Ev &amp; Yaşam
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="entertainment">
-          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>Eğlence
-        </button>
-        <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all" data-category="service">
-          <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>Hizmet
-        </button>
+      <!-- Kategori Filtre Butonları (Yatay Kaydırılabilir + Sol/Sağ Oklar) -->
+      <div class="relative flex items-center gap-1 shrink-0">
+        <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="category-pills-row" data-scroll-dir="-1" title="Kategorileri Sola Kaydır" aria-label="Sola Kaydır">‹</button>
+        <div id="category-pills-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 select-none">
+          <button class="cat-pill active px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900 dark:bg-white text-white dark:text-slate-900 shrink-0 shadow-sm transition-all cursor-pointer" data-category="all">
+            Tümü
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="fashion">
+            <span class="w-2 h-2 rounded-full bg-pink-400 shrink-0"></span>Moda
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="shoes">
+            <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>Ayakkabı &amp; Çanta
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="sports">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>Spor
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="tech">
+            <span class="w-2 h-2 rounded-full bg-blue-400 shrink-0"></span>Teknoloji
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="cosmetics">
+            <span class="w-2 h-2 rounded-full bg-rose-400 shrink-0"></span>Kozmetik
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="food">
+            <span class="w-2 h-2 rounded-full bg-orange-400 shrink-0"></span>Yeme &amp; İçme
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="home">
+            <span class="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>Ev &amp; Yaşam
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="entertainment">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>Eğlence
+          </button>
+          <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="service">
+            <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>Hizmet
+          </button>
+        </div>
+        <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="category-pills-row" data-scroll-dir="1" title="Kategorileri Sağa Kaydır" aria-label="Sağa Kaydır">›</button>
       </div>
 
-      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: Otopark Doluluk, Etkinlikler, WC, Asansör, Bebek Odası, Acil Çıkış, Kiosk, Danışma, ATM, Mescit, Engelsiz -->
-      <div id="amenity-chips-row" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 shrink-0">
-        <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Dolu/Boş Park Alanı Takibi, Park Yeri Kaydı ve Araca Yönlendirme">
-          <span>🅿️🚗</span> <span id="parking-memory-btn-text">Otopark &amp; Park Kaydı</span>
-        </button>
-        <button id="btn-amenity-events" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-violet-500/15 hover:bg-violet-500/25 dark:bg-violet-400/20 text-violet-800 dark:text-violet-200 border border-violet-500/30 shrink-0 flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs" title="AVM Etkinlik Takvimi ve Etkinlik Konumlarına Yönlendirme">
-          <span>📅</span> <span>Etkinlikler</span>
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="wc">
-          <span>🚻</span> Tuvalet
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="elevator">
-          <span>🛗</span> Asansör
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="baby">
-          <span>🍼</span> Bebek Odası
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/25 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30 shrink-0 flex items-center gap-1 transition-all" data-amenity="emergency">
-          <span>🚨</span> Acil Çıkış
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="carpark">
-          <span>🅿️</span> Otopark Girişi
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="kiosk">
-          <span>🖥️</span> Kiosk Harita
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="entrance">
-          <span>🚪</span> Giriş-Çıkış
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="info">
-          <span>🛡️</span> Danışma
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="wheelchair">
-          <span>♿</span> Akülü Sandalye Şarj
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="atm">
-          <span>💳</span> ATM
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="prayer">
-          <span>🕌</span> Mescit
-        </button>
+      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: Asansör, Bebek Odası, WC, Acil Çıkış, Otopark, Etkinlikler vb. (Sol/Sağ Kaydırma Okları ile) -->
+      <div class="relative flex items-center gap-1 shrink-0">
+        <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="amenity-chips-row" data-scroll-dir="-1" title="Hizmetleri Sola Kaydır" aria-label="Sola Kaydır">‹</button>
+        <div id="amenity-chips-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 select-none">
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-500/15 hover:bg-sky-500/25 dark:bg-sky-500/20 text-sky-800 dark:text-sky-200 border border-sky-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="elevator" title="Kattaki Tüm Asansörleri Haritada İşaretle ve Göster">
+            <span>🛗</span> Asansör
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-pink-500/15 hover:bg-pink-500/25 dark:bg-pink-500/20 text-pink-800 dark:text-pink-200 border border-pink-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="baby" title="Kattaki Tüm Bebek Bakım Odalarını Haritada İşaretle ve Göster">
+            <span>🍼</span> Bebek Odası
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-indigo-500/15 hover:bg-indigo-500/25 dark:bg-indigo-500/20 text-indigo-800 dark:text-indigo-200 border border-indigo-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="wc" title="Kattaki Tüm WC / Tuvaletleri Haritada İşaretle ve Göster">
+            <span>🚻</span> WC / Tuvalet
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/25 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="emergency" title="Kattaki Tüm Acil Çıkış Kapılarını Haritada İşaretle ve Göster">
+            <span>🚨</span> Acil Çıkış
+          </button>
+          <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:bg-amber-400/20 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Dolu/Boş Park Alanı Takibi, Park Yeri Kaydı ve Araca Yönlendirme">
+            <span>🅿️🚗</span> <span id="parking-memory-btn-text">Otopark &amp; Park Kaydı</span>
+          </button>
+          <button id="btn-amenity-events" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-violet-500/15 hover:bg-violet-500/25 dark:bg-violet-400/20 text-violet-800 dark:text-violet-200 border border-violet-500/30 shrink-0 flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs" title="AVM Etkinlik Takvimi ve Etkinlik Konumlarına Yönlendirme">
+            <span>📅</span> <span>Etkinlikler</span>
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="entrance" title="Tüm Giriş ve Çıkış Kapılarını Haritada İşaretle">
+            <span>🚪</span> Giriş-Çıkış
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="kiosk" title="Kiosk ve Danışma Noktalarını Haritada İşaretle">
+            <span>🖥️</span> Kiosk Harita
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="carpark" title="Otopark Giriş ve Asansörlerini Haritada İşaretle">
+            <span>🅿️</span> Otopark Girişi
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="info">
+            <span>🛡️</span> Danışma
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="wheelchair">
+            <span>♿</span> Akülü Sandalye Şarj
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="atm">
+            <span>💳</span> ATM
+          </button>
+          <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="prayer">
+            <span>🕌</span> Mescit
+          </button>
+        </div>
+        <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="amenity-chips-row" data-scroll-dir="1" title="Hizmetleri Sağa Kaydır" aria-label="Sağa Kaydır">›</button>
       </div>
 
       <!-- Segmented Tabs: Bu katta vs Tüm katlar -->
@@ -555,17 +567,35 @@
           </button>
         </div>
 
-        <!-- Canlı Turn-by-Turn Navigasyon Barı (Adım Adım Yönlendirme HUD & Yanından Geçilen Mağazalar & Sesli Tarif) -->
+        <!-- Servis / İhtiyaç Noktaları Çoklu İşaretleme Bannerı (Asansör, Bebek Odası, WC, Acil Çıkış Tıklandığında Tümünü Gösterir) -->
+        <div id="amenity-highlight-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-2 transition-all">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="amenity-banner-icon" class="w-7 h-7 rounded-lg bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center text-sm shrink-0">🛗</span>
+            <div class="flex flex-col min-w-0">
+              <span id="amenity-banner-title" class="text-xs font-extrabold text-slate-800 dark:text-slate-100 truncate">Bu katta 2 Asansör işaretlendi</span>
+              <span id="amenity-banner-sub" class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">Haritadaki pinlere dokunabilir veya en yakınına rota çizebilirsiniz</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" id="btn-amenity-route-nearest" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-xs cursor-pointer active:scale-95">
+              <span>🧭</span>
+              <span>En Yakınına Rota</span>
+            </button>
+            <button type="button" id="btn-amenity-clear-highlight" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center text-xs font-bold cursor-pointer" title="İşaretleri Kaldır">✕</button>
+          </div>
+        </div>
+
+        <!-- Canlı Turn-by-Turn Navigasyon Barı (Adım Adım Yönlendirme HUD & Yanından Geçilen Mağazalar & Sesli Altyazı) -->
         <div id="header-live-nav-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col gap-1.5 transition-all">
           <div class="flex items-center gap-2.5 min-w-0">
             <div id="live-nav-icon" class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex items-center justify-center text-base sm:text-lg font-bold shrink-0 shadow-xs select-none">
               ⬆️
             </div>
             <div class="flex flex-col min-w-0 flex-1">
-              <div id="live-nav-text" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-tight truncate">
+              <div id="live-nav-text" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-snug">
                 Düz İlerleyin
               </div>
-              <div id="live-nav-sub" class="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-400 leading-tight truncate mt-0.5">
+              <div id="live-nav-sub" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">
                 Rotayı takip edin
               </div>
             </div>
@@ -574,6 +604,11 @@
               <span id="voice-toggle-icon">🔊</span>
               <span id="voice-toggle-label" class="hidden sm:inline">Sesli Açık</span>
             </button>
+          </div>
+          <!-- Sesli Komut Canlı Altyazı Şeridi (Kalabalık yapmadan mevcut HUD içinde o an okunan cümleyi gösterir) -->
+          <div id="live-voice-subtitle-bar" class="hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/25 text-[10.5px] font-bold text-cyan-900 dark:text-cyan-200">
+            <span class="inline-block w-2 h-2 rounded-full bg-cyan-500 animate-ping shrink-0"></span>
+            <span id="live-voice-subtitle-text" class="leading-snug">🔊 Sesli Rehber: Rotanız hazır.</span>
           </div>
           <!-- Yanından Geçilen Mağazalar (Landmark Strip) -->
           <div id="live-nav-landmarks" class="hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-[10.5px] font-bold text-amber-800 dark:text-amber-300 truncate">
@@ -1423,12 +1458,12 @@
   <div id="toast-container" class="fixed z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
 
   <!-- JavaScript Modülleri (Cache-Busted) -->
-  <script src="js/logos.js?v=20261011_v4"></script>
-  <script src="js/qrcode.js?v=20261011_v4"></script>
-  <script src="js/navigation.js?v=20261011_v4"></script>
-  <script src="js/simulator.js?v=20261011_v4"></script>
-  <script src="js/map.js?v=20261011_v4"></script>
-  <script src="js/pov3d.js?v=20261011_v4"></script>
-  <script src="js/app.js?v=20261011_v4"></script>
+  <script src="js/logos.js?v=20261011_v5"></script>
+  <script src="js/qrcode.js?v=20261011_v5"></script>
+  <script src="js/navigation.js?v=20261011_v5"></script>
+  <script src="js/simulator.js?v=20261011_v5"></script>
+  <script src="js/map.js?v=20261011_v5"></script>
+  <script src="js/pov3d.js?v=20261011_v5"></script>
+  <script src="js/app.js?v=20261011_v5"></script>
 </body>
 </html>

@@ -8,8 +8,9 @@
     <rect x="178" y="304" width="934" height="50" rx="8" />
     <!-- Merkez Ana Koridoru (y=440) -->
     <rect x="178" y="414" width="1075" height="52" rx="8" />
-    <!-- Güney Ana Koridoru (y=550) -->
-    <rect x="178" y="526" width="934" height="48" rx="8" />
+    <!-- Güney Ana Koridoru (y=550 - Paşabahçe Karşı Cephe Kapanışlı) -->
+    <rect x="178" y="526" width="548" height="48" rx="8" />
+    <rect x="778" y="526" width="334" height="48" rx="8" />
     <!-- Dikey Ara Yollar (x=200, 370, 565, 680, 800, 1005, 1090) -->
     <rect x="178" y="135" width="44" height="605" rx="6" />
     <rect x="348" y="304" width="44" height="270" rx="6" />
@@ -24,7 +25,8 @@
     <line x1="200" y1="330" x2="1090" y2="330" />
     <line x1="200" y1="440" x2="600" y2="440" />
     <line x1="800" y1="440" x2="1245" y2="440" />
-    <line x1="200" y1="550" x2="1090" y2="550" />
+    <line x1="200" y1="550" x2="720" y2="550" />
+    <line x1="780" y1="550" x2="1090" y2="550" />
     <line x1="200" y1="330" x2="200" y2="550" />
     <line x1="370" y1="330" x2="370" y2="550" />
     <line x1="565" y1="330" x2="565" y2="550" />
@@ -192,8 +194,8 @@
       <text class="pointer-events-none select-none" x="382.0" y="677.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Network Women</text>
     </g>
     <g class="store-polygon" data-id="store_4_27" id="room_4_27" data-name="Paşabahçe Mağazaları">
-      <rect x="735.0" y="576.0" width="70.0" height="158.0" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="770.0" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Paşabahçe Mağazaları</text>
+      <rect x="726.0" y="524.0" width="52.0" height="210.0" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="752.0" y="629.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Paşabahçe Mağazaları</text>
     </g>
     <g class="store-polygon" data-id="store_4_28" id="room_4_28" data-name="Pelit">
       <rect x="822.0" y="356.0" width="78.0" height="56.0" rx="6" fill="#ffedd5" stroke="#fb923c" stroke-width="1.8" />

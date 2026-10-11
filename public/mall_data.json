@@ -639,6 +639,313 @@
       "cx": 210,
       "cy": 550,
       "nav_node": "c_6_s_200"
+    },
+    {
+      "id": "am_lift_1_east",
+      "name": "3. Bodrum (B3) Doğu Otopark Asansörleri",
+      "kind": "elevator",
+      "type": "elevator",
+      "floor": 1,
+      "floor_name": "3. Bodrum Kat (B3)",
+      "cx": 985,
+      "cy": 425,
+      "door_x": 985,
+      "door_y": 440
+    },
+    {
+      "id": "am_wc_1_sw",
+      "name": "3. Bodrum (B3) Güneybatı WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 1,
+      "floor_name": "3. Bodrum Kat (B3)",
+      "cx": 200,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550
+    },
+    {
+      "id": "am_baby_1",
+      "name": "3. Bodrum (B3) Bebek Bakım Odası",
+      "kind": "baby",
+      "type": "baby",
+      "floor": 1,
+      "floor_name": "3. Bodrum Kat (B3)",
+      "cx": 1020,
+      "cy": 75,
+      "door_x": 1005,
+      "door_y": 330
+    },
+    {
+      "id": "am_lift_2_east",
+      "name": "2. Bodrum (B2) Doğu Vale & Otopark Asansörleri",
+      "kind": "elevator",
+      "type": "elevator",
+      "floor": 2,
+      "floor_name": "2. Bodrum Kat (B2)",
+      "cx": 985,
+      "cy": 425,
+      "door_x": 985,
+      "door_y": 440
+    },
+    {
+      "id": "am_wc_2_ne",
+      "name": "2. Bodrum (B2) Kuzeydoğu WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 2,
+      "floor_name": "2. Bodrum Kat (B2)",
+      "cx": 1000,
+      "cy": 75,
+      "door_x": 1005,
+      "door_y": 330
+    },
+    {
+      "id": "am_baby_2_ne",
+      "name": "2. Bodrum (B2) Kuzeydoğu Bebek Bakım Odası",
+      "kind": "baby",
+      "type": "baby",
+      "floor": 2,
+      "floor_name": "2. Bodrum Kat (B2)",
+      "cx": 1020,
+      "cy": 75,
+      "door_x": 1005,
+      "door_y": 330
+    },
+    {
+      "id": "am_lift_3_east",
+      "name": "1. Bodrum (B1) Doğu Asansörleri",
+      "kind": "elevator",
+      "type": "elevator",
+      "floor": 3,
+      "floor_name": "1. Bodrum Kat (B1)",
+      "cx": 985,
+      "cy": 425,
+      "door_x": 985,
+      "door_y": 440
+    },
+    {
+      "id": "am_wc_3_se",
+      "name": "1. Bodrum (B1) Güneydoğu WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 3,
+      "floor_name": "1. Bodrum Kat (B1)",
+      "cx": 1000,
+      "cy": 750,
+      "door_x": 1005,
+      "door_y": 550
+    },
+    {
+      "id": "am_wc_3_sw",
+      "name": "1. Bodrum (B1) Güneybatı Engelli & Aile WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 3,
+      "floor_name": "1. Bodrum Kat (B1)",
+      "cx": 200,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550
+    },
+    {
+      "id": "am_baby_3_sw",
+      "name": "1. Bodrum (B1) Güneybatı Bebek Bakım & Emzirme Odası",
+      "kind": "baby",
+      "type": "baby",
+      "floor": 3,
+      "floor_name": "1. Bodrum Kat (B1)",
+      "cx": 235,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550
+    },
+    {
+      "id": "am_lift_4_east",
+      "name": "Zemin Kat Doğu Asansörleri (Fişekhane Kanadı)",
+      "kind": "elevator",
+      "type": "elevator",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 985,
+      "cy": 425,
+      "door_x": 1005,
+      "door_y": 440,
+      "nav_node": "c_4_m_1010"
+    },
+    {
+      "id": "am_lift_4_west",
+      "name": "Zemin Kat Batı Servis & Engelsiz Asansörü",
+      "kind": "elevator",
+      "type": "elevator",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 265,
+      "cy": 425,
+      "door_x": 265,
+      "door_y": 440,
+      "nav_node": "c_4_m_265"
+    },
+    {
+      "id": "am_baby_4_sw",
+      "name": "Zemin Kat Güneybatı Bebek Bakım & Aile Odası",
+      "kind": "baby",
+      "type": "baby",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 235,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550,
+      "nav_node": "c_4_s_200"
+    },
+    {
+      "id": "am_baby_4_se",
+      "name": "Zemin Kat Güneydoğu Bebek Bakım Odası",
+      "kind": "baby",
+      "type": "baby",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 975,
+      "cy": 750,
+      "door_x": 1005,
+      "door_y": 550,
+      "nav_node": "c_4_s_1000"
+    },
+    {
+      "id": "am_ent_4_c",
+      "name": "C Kapısı (Fişekhane Ana Giriş)",
+      "kind": "entrance",
+      "type": "entrance",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 1245,
+      "cy": 410,
+      "door_x": 1245,
+      "door_y": 440,
+      "nav_node": "c_4_m_1245"
+    },
+    {
+      "id": "am_ent_4_b",
+      "name": "B Kapısı (Carousel Geçiş Girişi)",
+      "kind": "entrance",
+      "type": "entrance",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 680,
+      "cy": 50,
+      "door_x": 680,
+      "door_y": 50,
+      "nav_node": "c_4_car_gate"
+    },
+    {
+      "id": "am_ent_4_a",
+      "name": "A Kapısı (Ataköy / Batı Girişi)",
+      "kind": "entrance",
+      "type": "entrance",
+      "floor": 4,
+      "floor_name": "Zemin Kat",
+      "cx": 200,
+      "cy": 440,
+      "door_x": 200,
+      "door_y": 440,
+      "nav_node": "c_4_m_200"
+    },
+    {
+      "id": "am_lift_5_east",
+      "name": "1. Kat Doğu Asansörleri",
+      "kind": "elevator",
+      "type": "elevator",
+      "floor": 5,
+      "floor_name": "1. Kat",
+      "cx": 985,
+      "cy": 425,
+      "door_x": 985,
+      "door_y": 440
+    },
+    {
+      "id": "am_wc_5_se",
+      "name": "1. Kat Güneydoğu WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 5,
+      "floor_name": "1. Kat",
+      "cx": 1000,
+      "cy": 750,
+      "door_x": 1005,
+      "door_y": 550
+    },
+    {
+      "id": "am_wc_5_sw",
+      "name": "1. Kat Güneybatı Engelli WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 5,
+      "floor_name": "1. Kat",
+      "cx": 200,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550
+    },
+    {
+      "id": "am_baby_5_sw",
+      "name": "1. Kat Güneybatı Bebek Bakım Odası",
+      "kind": "baby",
+      "type": "baby",
+      "floor": 5,
+      "floor_name": "1. Kat",
+      "cx": 235,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550
+    },
+    {
+      "id": "am_lift_6_east",
+      "name": "2. Kat Doğu Sinema & Food Court Asansörleri",
+      "kind": "elevator",
+      "type": "elevator",
+      "floor": 6,
+      "floor_name": "2. Kat",
+      "cx": 985,
+      "cy": 425,
+      "door_x": 985,
+      "door_y": 440
+    },
+    {
+      "id": "am_wc_6_se",
+      "name": "2. Kat Güneydoğu Food Court WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 6,
+      "floor_name": "2. Kat",
+      "cx": 1000,
+      "cy": 750,
+      "door_x": 1005,
+      "door_y": 550
+    },
+    {
+      "id": "am_wc_6_sw",
+      "name": "2. Kat Sinema Fuaye WC",
+      "kind": "wc",
+      "type": "wc",
+      "floor": 6,
+      "floor_name": "2. Kat",
+      "cx": 200,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550
+    },
+    {
+      "id": "am_baby_6_sw",
+      "name": "2. Kat Food Court Aile & Bebek Odası",
+      "kind": "baby",
+      "type": "baby",
+      "floor": 6,
+      "floor_name": "2. Kat",
+      "cx": 235,
+      "cy": 750,
+      "door_x": 200,
+      "door_y": 550
     }
   ],
   "floors": {
@@ -977,6 +1284,42 @@
           "cx": 210,
           "cy": 550,
           "nav_node": "c_1_s_200"
+        },
+        {
+          "id": "am_lift_1_east",
+          "name": "3. Bodrum (B3) Doğu Otopark Asansörleri",
+          "kind": "elevator",
+          "type": "elevator",
+          "floor": 1,
+          "floor_name": "3. Bodrum Kat (B3)",
+          "cx": 985,
+          "cy": 425,
+          "door_x": 985,
+          "door_y": 440
+        },
+        {
+          "id": "am_wc_1_sw",
+          "name": "3. Bodrum (B3) Güneybatı WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 1,
+          "floor_name": "3. Bodrum Kat (B3)",
+          "cx": 200,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550
+        },
+        {
+          "id": "am_baby_1",
+          "name": "3. Bodrum (B3) Bebek Bakım Odası",
+          "kind": "baby",
+          "type": "baby",
+          "floor": 1,
+          "floor_name": "3. Bodrum Kat (B3)",
+          "cx": 1020,
+          "cy": 75,
+          "door_x": 1005,
+          "door_y": 330
         }
       ]
     },
@@ -1098,6 +1441,42 @@
           "cx": 210,
           "cy": 550,
           "nav_node": "c_2_s_200"
+        },
+        {
+          "id": "am_lift_2_east",
+          "name": "2. Bodrum (B2) Doğu Vale & Otopark Asansörleri",
+          "kind": "elevator",
+          "type": "elevator",
+          "floor": 2,
+          "floor_name": "2. Bodrum Kat (B2)",
+          "cx": 985,
+          "cy": 425,
+          "door_x": 985,
+          "door_y": 440
+        },
+        {
+          "id": "am_wc_2_ne",
+          "name": "2. Bodrum (B2) Kuzeydoğu WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 2,
+          "floor_name": "2. Bodrum Kat (B2)",
+          "cx": 1000,
+          "cy": 75,
+          "door_x": 1005,
+          "door_y": 330
+        },
+        {
+          "id": "am_baby_2_ne",
+          "name": "2. Bodrum (B2) Kuzeydoğu Bebek Bakım Odası",
+          "kind": "baby",
+          "type": "baby",
+          "floor": 2,
+          "floor_name": "2. Bodrum Kat (B2)",
+          "cx": 1020,
+          "cy": 75,
+          "door_x": 1005,
+          "door_y": 330
         }
       ]
     },
@@ -2779,6 +3158,54 @@
           "cx": 210,
           "cy": 550,
           "nav_node": "c_3_s_200"
+        },
+        {
+          "id": "am_lift_3_east",
+          "name": "1. Bodrum (B1) Doğu Asansörleri",
+          "kind": "elevator",
+          "type": "elevator",
+          "floor": 3,
+          "floor_name": "1. Bodrum Kat (B1)",
+          "cx": 985,
+          "cy": 425,
+          "door_x": 985,
+          "door_y": 440
+        },
+        {
+          "id": "am_wc_3_se",
+          "name": "1. Bodrum (B1) Güneydoğu WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 3,
+          "floor_name": "1. Bodrum Kat (B1)",
+          "cx": 1000,
+          "cy": 750,
+          "door_x": 1005,
+          "door_y": 550
+        },
+        {
+          "id": "am_wc_3_sw",
+          "name": "1. Bodrum (B1) Güneybatı Engelli & Aile WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 3,
+          "floor_name": "1. Bodrum Kat (B1)",
+          "cx": 200,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550
+        },
+        {
+          "id": "am_baby_3_sw",
+          "name": "1. Bodrum (B1) Güneybatı Bebek Bakım & Emzirme Odası",
+          "kind": "baby",
+          "type": "baby",
+          "floor": 3,
+          "floor_name": "1. Bodrum Kat (B1)",
+          "cx": 235,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550
         }
       ]
     },
@@ -3602,19 +4029,19 @@
           "category_name": "Ev & Yaşam",
           "floor": 4,
           "floor_name": "Zemin Kat",
-          "cx": 770.0,
-          "cy": 655.0,
-          "w": 70.0,
-          "h": 158.0,
-          "x": 735.0,
-          "y": 576.0,
-          "door_x": 770.0,
-          "door_y": 576.0,
+          "cx": 752.0,
+          "cy": 629.0,
+          "w": 52.0,
+          "h": 210.0,
+          "x": 726.0,
+          "y": 524.0,
+          "door_x": 778.0,
+          "door_y": 550.0,
           "nav_node": "n_4_door_13",
           "room_id": "room_4_27",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/a778d6b67dc6.jpg",
           "phone": "0212 560 6646-47",
-          "is_anchor": false,
+          "is_anchor": true,
           "campaign": {
             "active": true,
             "title": "Capacity Özel İndirimi",
@@ -4136,7 +4563,7 @@
           "x": 726.0,
           "y": 490.0,
           "door_x": 752.0,
-          "door_y": 524.0,
+          "door_y": 490.0,
           "nav_node": "n_4_door_44",
           "room_id": "room_4_44",
           "img": "https://www.capacity.com.tr/uploads/stores/thumb/77d0c69199ea.jpg",
@@ -4302,6 +4729,97 @@
           "kind": "emergency",
           "cx": 200,
           "cy": 440,
+          "nav_node": "c_4_m_200"
+        },
+        {
+          "id": "am_lift_4_east",
+          "name": "Zemin Kat Doğu Asansörleri (Fişekhane Kanadı)",
+          "kind": "elevator",
+          "type": "elevator",
+          "floor": 4,
+          "floor_name": "Zemin Kat",
+          "cx": 985,
+          "cy": 425,
+          "door_x": 1005,
+          "door_y": 440,
+          "nav_node": "c_4_m_1010"
+        },
+        {
+          "id": "am_lift_4_west",
+          "name": "Zemin Kat Batı Servis & Engelsiz Asansörü",
+          "kind": "elevator",
+          "type": "elevator",
+          "floor": 4,
+          "floor_name": "Zemin Kat",
+          "cx": 265,
+          "cy": 425,
+          "door_x": 265,
+          "door_y": 440,
+          "nav_node": "c_4_m_265"
+        },
+        {
+          "id": "am_baby_4_sw",
+          "name": "Zemin Kat Güneybatı Bebek Bakım & Aile Odası",
+          "kind": "baby",
+          "type": "baby",
+          "floor": 4,
+          "floor_name": "Zemin Kat",
+          "cx": 235,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550,
+          "nav_node": "c_4_s_200"
+        },
+        {
+          "id": "am_baby_4_se",
+          "name": "Zemin Kat Güneydoğu Bebek Bakım Odası",
+          "kind": "baby",
+          "type": "baby",
+          "floor": 4,
+          "floor_name": "Zemin Kat",
+          "cx": 975,
+          "cy": 750,
+          "door_x": 1005,
+          "door_y": 550,
+          "nav_node": "c_4_s_1000"
+        },
+        {
+          "id": "am_ent_4_c",
+          "name": "C Kapısı (Fişekhane Ana Giriş)",
+          "kind": "entrance",
+          "type": "entrance",
+          "floor": 4,
+          "floor_name": "Zemin Kat",
+          "cx": 1245,
+          "cy": 410,
+          "door_x": 1245,
+          "door_y": 440,
+          "nav_node": "c_4_m_1245"
+        },
+        {
+          "id": "am_ent_4_b",
+          "name": "B Kapısı (Carousel Geçiş Girişi)",
+          "kind": "entrance",
+          "type": "entrance",
+          "floor": 4,
+          "floor_name": "Zemin Kat",
+          "cx": 680,
+          "cy": 50,
+          "door_x": 680,
+          "door_y": 50,
+          "nav_node": "c_4_car_gate"
+        },
+        {
+          "id": "am_ent_4_a",
+          "name": "A Kapısı (Ataköy / Batı Girişi)",
+          "kind": "entrance",
+          "type": "entrance",
+          "floor": 4,
+          "floor_name": "Zemin Kat",
+          "cx": 200,
+          "cy": 440,
+          "door_x": 200,
+          "door_y": 440,
           "nav_node": "c_4_m_200"
         }
       ]
@@ -5788,6 +6306,54 @@
           "cx": 210,
           "cy": 550,
           "nav_node": "c_5_s_200"
+        },
+        {
+          "id": "am_lift_5_east",
+          "name": "1. Kat Doğu Asansörleri",
+          "kind": "elevator",
+          "type": "elevator",
+          "floor": 5,
+          "floor_name": "1. Kat",
+          "cx": 985,
+          "cy": 425,
+          "door_x": 985,
+          "door_y": 440
+        },
+        {
+          "id": "am_wc_5_se",
+          "name": "1. Kat Güneydoğu WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 5,
+          "floor_name": "1. Kat",
+          "cx": 1000,
+          "cy": 750,
+          "door_x": 1005,
+          "door_y": 550
+        },
+        {
+          "id": "am_wc_5_sw",
+          "name": "1. Kat Güneybatı Engelli WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 5,
+          "floor_name": "1. Kat",
+          "cx": 200,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550
+        },
+        {
+          "id": "am_baby_5_sw",
+          "name": "1. Kat Güneybatı Bebek Bakım Odası",
+          "kind": "baby",
+          "type": "baby",
+          "floor": 5,
+          "floor_name": "1. Kat",
+          "cx": 235,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550
         }
       ]
     },
@@ -6622,6 +7188,54 @@
           "cx": 210,
           "cy": 550,
           "nav_node": "c_6_s_200"
+        },
+        {
+          "id": "am_lift_6_east",
+          "name": "2. Kat Doğu Sinema & Food Court Asansörleri",
+          "kind": "elevator",
+          "type": "elevator",
+          "floor": 6,
+          "floor_name": "2. Kat",
+          "cx": 985,
+          "cy": 425,
+          "door_x": 985,
+          "door_y": 440
+        },
+        {
+          "id": "am_wc_6_se",
+          "name": "2. Kat Güneydoğu Food Court WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 6,
+          "floor_name": "2. Kat",
+          "cx": 1000,
+          "cy": 750,
+          "door_x": 1005,
+          "door_y": 550
+        },
+        {
+          "id": "am_wc_6_sw",
+          "name": "2. Kat Sinema Fuaye WC",
+          "kind": "wc",
+          "type": "wc",
+          "floor": 6,
+          "floor_name": "2. Kat",
+          "cx": 200,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550
+        },
+        {
+          "id": "am_baby_6_sw",
+          "name": "2. Kat Food Court Aile & Bebek Odası",
+          "kind": "baby",
+          "type": "baby",
+          "floor": 6,
+          "floor_name": "2. Kat",
+          "cx": 235,
+          "cy": 750,
+          "door_x": 200,
+          "door_y": 550
         }
       ]
     }
@@ -7830,7 +8444,7 @@
       },
       "n_4_door_13": {
         "floor": 4,
-        "x": 770.0,
+        "x": 778.0,
         "y": 550.0
       },
       "n_4_door_28": {
@@ -7916,7 +8530,7 @@
       "n_4_door_44": {
         "floor": 4,
         "x": 752.0,
-        "y": 550.0
+        "y": 482.0
       },
       "c_5_n_200": {
         "floor": 5,
@@ -11849,6 +12463,11 @@
           "to": "c_4_wp_pool_s3",
           "dist": 100.0,
           "type": "main"
+        },
+        {
+          "to": "n_4_door_44",
+          "dist": 52.0,
+          "type": "main"
         }
       ],
       "c_4_wp_pool_s3": [
@@ -11865,6 +12484,11 @@
         {
           "to": "c_4_s_750",
           "dist": 68.0,
+          "type": "main"
+        },
+        {
+          "to": "n_4_door_44",
+          "dist": 48.0,
           "type": "main"
         }
       ],
@@ -11908,11 +12532,6 @@
         {
           "to": "n_4_door_41",
           "dist": 9.0,
-          "type": "main"
-        },
-        {
-          "to": "n_4_door_44",
-          "dist": 58.0,
           "type": "main"
         }
       ],
@@ -12172,11 +12791,6 @@
       ],
       "n_4_door_13": [
         {
-          "to": "n_4_door_44",
-          "dist": 18.0,
-          "type": "main"
-        },
-        {
           "to": "c_4_s_750",
           "dist": 30.0,
           "type": "main"
@@ -12366,13 +12980,13 @@
       ],
       "n_4_door_44": [
         {
-          "to": "n_4_door_4",
-          "dist": 58.0,
+          "to": "c_4_wp_pool_s3",
+          "dist": 48.0,
           "type": "main"
         },
         {
-          "to": "n_4_door_13",
-          "dist": 18.0,
+          "to": "c_4_wp_pool_s2",
+          "dist": 52.0,
           "type": "main"
         }
       ],
@@ -15921,13 +16535,6 @@
         "type": "main",
         "portalKind": null,
         "dist": 120
-      },
-      {
-        "from": "c_4_s_680",
-        "to": "c_4_s_750",
-        "type": "main",
-        "portalKind": null,
-        "dist": 70
       },
       {
         "from": "c_4_s_750",

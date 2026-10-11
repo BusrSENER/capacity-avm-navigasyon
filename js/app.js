@@ -898,8 +898,28 @@ function initApp() {
   }
   window.toTurkishPhoneticSpeech = toTurkishPhoneticSpeech;
 
+  function updateVoiceSubtitleUI(rawText, isSpeaking = true) {
+    const subBar = document.getElementById('live-voice-subtitle-bar');
+    const subText = document.getElementById('live-voice-subtitle-text');
+    if (!subBar || !subText) return;
+    if (!rawText) {
+      subBar.classList.add('hidden');
+      return;
+    }
+    subBar.classList.remove('hidden');
+    subText.textContent = `🔊 ${String(rawText).replace(/^[⬆️↪️↩️📍🎯🎉🔊]+\s*/, '')}`;
+    const dot = subBar.querySelector('span');
+    if (dot) {
+      dot.className = isSpeaking
+        ? 'inline-block w-2 h-2 rounded-full bg-cyan-500 animate-ping shrink-0'
+        : 'inline-block w-2 h-2 rounded-full bg-emerald-500 shrink-0';
+    }
+  }
+  window.updateVoiceSubtitleUI = updateVoiceSubtitleUI;
+
   function speakNavigationText(text, force = false, isStoreCue = false) {
     if (!text) return;
+    updateVoiceSubtitleUI(text, true);
     if (!isVoiceEnabled && !force) return;
     window.lastSpokenNavigationText = text;
     const isEn = currentLanguage === 'en';
@@ -908,12 +928,12 @@ function initApp() {
     const spokenText = isEn ? String(text) : toTurkishPhoneticSpeech(text);
     const now = performance.now();
     const spd = (window.pov3dEngine && window.pov3dEngine.walkSpeed) || currentSimSpeed || 1.0;
-    const baseRate = spd >= 3.5 ? 1.55 : (spd >= 1.8 ? 1.28 : 1.05);
+    const baseRate = spd >= 3.5 ? 1.55 : (spd >= 1.8 ? 1.32 : 1.15);
     const rate = isStoreCue ? Math.min(1.65, baseRate * 1.08) : baseRate;
 
     // Kelime sayısına göre başlangıç tahmini konuşma süresi (ms) -> Ses metadata gelince gerçek süreyle güncellenir
     const wordCount = Math.max(1, spokenText.trim().split(/\s+/).length);
-    const estMs = Math.round((wordCount * 410) / rate);
+    const estMs = Math.round((wordCount * 380) / rate);
 
     const mainStillSpeaking = now < (window.speechMainBusyUntil || 0);
     if (isStoreCue && mainStillSpeaking) {
@@ -952,7 +972,7 @@ function initApp() {
         audio.referrerPolicy = 'no-referrer';
         audio.preload = 'auto';
         audio.src = ttsUrl;
-        audio.playbackRate = Math.min(2.0, Math.max(0.85, rate));
+        audio.playbackRate = Math.min(2.0, Math.max(0.95, rate));
         window.activeTtsAudio = audio;
 
         audio.onloadedmetadata = () => {
@@ -969,6 +989,7 @@ function initApp() {
           if (window.activeTtsAudio === audio) {
             window.speechBusyUntil = 0;
             if (!isStoreCue) window.speechMainBusyUntil = 0;
+            updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
           }
         };
         audio.onended = clearBusy;
@@ -994,10 +1015,12 @@ function initApp() {
         utterance.onend = () => {
           window.speechBusyUntil = 0;
           if (!isStoreCue) window.speechMainBusyUntil = 0;
+          updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
         };
         utterance.onerror = () => {
           window.speechBusyUntil = 0;
           if (!isStoreCue) window.speechMainBusyUntil = 0;
+          updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
         };
         window.speechSynthesis.speak(utterance);
       }
@@ -1082,9 +1105,11 @@ function initApp() {
       const destName = (selectedTargetStore && selectedTargetStore.name) || 'Hedef Mağaza';
       subEl.textContent = `${destName} önündesiniz`;
       landmarksWrap?.classList.add('hidden');
+      const arrMsg = `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
+      updateVoiceSubtitleUI(arrMsg, true);
       if (isVoiceEnabled && lastSpokenStepIndex !== -1) {
         lastSpokenStepIndex = -1;
-        speakNavigationText(`Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`);
+        speakNavigationText(arrMsg);
       }
       return;
     }
@@ -1131,7 +1156,8 @@ function initApp() {
       }
     }
 
-    // 5. Sesli Yönlendirme (Adım Değiştiğinde)
+    // 5. Sesli Yönlendirme & Canlı Altyazı (Adım Değiştiğinde)
+    updateVoiceSubtitleUI(activeIns.voiceText || activeIns.text, isVoiceEnabled);
     if (isVoiceEnabled && activeIns.step !== lastSpokenStepIndex) {
       lastSpokenStepIndex = activeIns.step;
       speakNavigationText(activeIns.voiceText || activeIns.text);
@@ -2304,30 +2330,205 @@ function findNearestAmenity(amenityKind, floor) {
 }
 window.findNearestAmenity = findNearestAmenity;
 
+const AMENITY_META_LABELS = {
+  elevator: { icon: '🛗', label: 'Asansör' },
+  baby: { icon: '🍼', label: 'Bebek Bakım Odası' },
+  wc: { icon: '🚻', label: 'WC / Tuvalet' },
+  emergency: { icon: '🚨', label: 'Acil Çıkış' },
+  exit: { icon: '🚨', label: 'Acil Çıkış' },
+  entrance: { icon: '🚪', label: 'Giriş / Çıkış Kapısı' },
+  kiosk: { icon: '🖥️', label: 'Kiosk & Danışma' },
+  info: { icon: '🛡️', label: 'Danışma Noktası' },
+  carpark: { icon: '🅿️', label: 'Otopark Girişi / Asansörü' },
+  wheelchair: { icon: '♿', label: 'Engelsiz / Akülü Sandalye Noktası' },
+  atm: { icon: '💳', label: 'ATM' },
+  prayer: { icon: '🕌', label: 'Mescit' }
+};
+
+function clearAmenityHighlightOnMap() {
+  if (mallMap && typeof mallMap.setAmenityHighlight === 'function') {
+    mallMap.setAmenityHighlight(null);
+  }
+  document.getElementById('amenity-highlight-banner')?.classList.add('hidden');
+  document.querySelectorAll('.amenity-pill[data-amenity]').forEach(b => {
+    b.classList.remove('ring-2', 'ring-sky-500', 'bg-sky-600', 'text-white');
+  });
+}
+window.clearAmenityHighlightOnMap = clearAmenityHighlightOnMap;
+
+function highlightAmenitiesOnMap(amenityKind, alsoRouteNearest = false) {
+  if (!amenityKind || !mallMap) return;
+
+  if (amenityKind === 'wheelchair') {
+    setRoutePreference('elevator');
+  }
+
+  // Harita üzerinde tüm noktaları net görebilmek için 3B POV açıksa 2B haritaya geç
+  if (window.currentViewMode === 'pov' && typeof window.setMapViewMode === 'function') {
+    window.setMapViewMode('2d');
+  }
+
+  // Eğer bu katta hiç eşleşen servis yoksa (örn. Mescit B1'de, ATM Zemin'de), en yakın kata geç
+  let matchesOnFloor = mallMap.getMatchingAmenitiesOnFloor(currentFloor, amenityKind);
+  if (matchesOnFloor.length === 0) {
+    const nearestAny = findNearestAmenity(amenityKind, currentFloor);
+    if (nearestAny && nearestAny.floor && nearestAny.floor !== currentFloor) {
+      currentFloor = nearestAny.floor;
+      mallMap.loadFloor(currentFloor).then(() => {
+        updateFloorUI(currentFloor);
+        highlightAmenitiesOnMap(amenityKind, alsoRouteNearest);
+      });
+      return;
+    }
+  }
+
+  const matchedList = mallMap.setAmenityHighlight(amenityKind);
+  mallMap.resetView();
+
+  // Aktif çip vurgusu
+  document.querySelectorAll('.amenity-pill[data-amenity]').forEach(b => {
+    const isMatch = b.getAttribute('data-amenity') === amenityKind;
+    b.classList.toggle('ring-2', isMatch);
+    b.classList.toggle('ring-sky-500', isMatch);
+  });
+
+  // Mobilde alt çekmeceyi kapat ki haritadaki tüm işaretli noktalar görünsün
+  if (isMobileOrLandscape() && isBottomSheetExpanded) {
+    collapseBottomSheet();
+  }
+
+  const meta = AMENITY_META_LABELS[amenityKind] || { icon: '📍', label: 'Hizmet Noktası' };
+  const floorLabel = mallData?.floors[currentFloor]?.label || `${currentFloor}. Kat`;
+  const banner = document.getElementById('amenity-highlight-banner');
+  const iconEl = document.getElementById('amenity-banner-icon');
+  const titleEl = document.getElementById('amenity-banner-title');
+  const subEl = document.getElementById('amenity-banner-sub');
+
+  if (banner && titleEl && subEl) {
+    if (iconEl) iconEl.textContent = meta.icon;
+    const count = matchedList.length;
+    const namesStr = matchedList.map(m => m.name).slice(0, 3).join(' • ');
+    titleEl.textContent = `${floorLabel}: ${count} adet ${meta.label} haritada işaretlendi`;
+    subEl.textContent = namesStr || 'Haritadaki işaretli pinlere dokunarak veya sağdaki butonla rota çizebilirsiniz';
+    banner.classList.remove('hidden');
+  }
+
+  showToast(`${meta.icon} ${floorLabel} katındaki tüm ${meta.label} noktaları (${matchedList.length} adet) haritada işaretlendi!`, 'info');
+
+  if (window.speakNavigationText && window.isVoiceEnabled && !alsoRouteNearest) {
+    window.speakNavigationText(`${floorLabel} katında ${matchedList.length} adet ${meta.label} haritada işaretlendi.`);
+  }
+
+  if (alsoRouteNearest) {
+    const targetAmenity = findNearestAmenity(amenityKind, currentFloor);
+    if (targetAmenity) {
+      if (!selectedStartStore) {
+        const defaultEnt = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || (mallData?.entrances || [])[0];
+        if (defaultEnt) setStartLocation(defaultEnt);
+      }
+      setTargetLocation(targetAmenity);
+    }
+  }
+}
+window.highlightAmenitiesOnMap = highlightAmenitiesOnMap;
+
+function setupHorizontalChipScrollers() {
+  // 1. Sol/Sağ [<] [>] ok butonları
+  document.querySelectorAll('.chip-scroll-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const targetId = btn.getAttribute('data-scroll-target');
+      const dir = parseInt(btn.getAttribute('data-scroll-dir') || '1', 10);
+      const row = targetId ? document.getElementById(targetId) : null;
+      if (row) {
+        row.scrollBy({ left: dir * 185, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // 2. Mouse tekerleği (wheel) ve basılı tutup sürükleme (click-and-drag) ile yatay kaydırma
+  document.querySelectorAll('.horizontal-chip-scroller').forEach(row => {
+    row.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        row.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeftStart = 0;
+    let dragged = false;
+
+    row.addEventListener('mousedown', (e) => {
+      isDown = true;
+      dragged = false;
+      startX = e.pageX - row.offsetLeft;
+      scrollLeftStart = row.scrollLeft;
+    });
+
+    row.addEventListener('mouseleave', () => {
+      isDown = false;
+    });
+
+    row.addEventListener('mouseup', () => {
+      isDown = false;
+    });
+
+    row.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      const x = e.pageX - row.offsetLeft;
+      const walk = x - startX;
+      if (Math.abs(walk) > 6) {
+        dragged = true;
+        e.preventDefault();
+        row.scrollLeft = scrollLeftStart - walk * 1.25;
+      }
+    });
+
+    row.addEventListener('click', (e) => {
+      if (dragged) {
+        e.stopPropagation();
+        e.preventDefault();
+        dragged = false;
+      }
+    }, true);
+  });
+}
+
 function setupAmenityPills() {
+  setupHorizontalChipScrollers();
+
   document.querySelectorAll('.amenity-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       const amenityKind = pill.getAttribute('data-amenity');
       if (!amenityKind) return; // e.g. btn-parking-memory or btn-amenity-events handles itself
 
-      // Eğer hareket kabiliyeti kısıtlı / akülü sandalye şarj seçildiyse engelsiz rotayı da aktif et
-      if (amenityKind === 'wheelchair') {
-        setRoutePreference('elevator');
-      }
-
-      const targetAmenity = findNearestAmenity(amenityKind, currentFloor);
-      if (targetAmenity) {
-        // Henüz başlangıç konumu seçilmemişse, hizmet noktasına adım adım rehberliği hemen başlatmak için varsayılan girişi pinle
-        if (!selectedStartStore) {
-          const defaultEnt = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || (mallData?.entrances || [])[0];
-          if (defaultEnt) {
-            setStartLocation(defaultEnt);
-          }
-        }
-        setTargetLocation(targetAmenity);
-        selectStore(targetAmenity);
+      // Aynı çipe tekrar basılırsa vurguyu kapat, değilse kattaki TÜM eşleşen servisleri haritada işaretle!
+      if (mallMap && mallMap.activeAmenityHighlight === amenityKind) {
+        clearAmenityHighlightOnMap();
+      } else {
+        highlightAmenitiesOnMap(amenityKind, false);
       }
     });
+  });
+
+  document.getElementById('btn-amenity-route-nearest')?.addEventListener('click', () => {
+    const activeKind = mallMap?.activeAmenityHighlight;
+    if (!activeKind) return;
+    const targetAmenity = findNearestAmenity(activeKind, currentFloor);
+    if (targetAmenity) {
+      if (!selectedStartStore) {
+        const defaultEnt = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || (mallData?.entrances || [])[0];
+        if (defaultEnt) setStartLocation(defaultEnt);
+      }
+      setTargetLocation(targetAmenity);
+      selectStore(targetAmenity);
+    }
+  });
+
+  document.getElementById('btn-amenity-clear-highlight')?.addEventListener('click', () => {
+    clearAmenityHighlightOnMap();
   });
 }
 
@@ -2462,6 +2663,10 @@ function setStartLocation(loc) {
 
   mallMap.updateActiveStorePolygons();
   mallMap.renderBrandMarkers(mallMap.currentFloor);
+  if (typeof mallMap.updateLiveUserLocation === 'function' && loc.cx !== undefined && loc.cy !== undefined) {
+    const shortLbl = (loc.short_name || loc.name || 'Konumunuz').replace(/^📍\s*/, '').slice(0, 18);
+    mallMap.updateLiveUserLocation(loc.cx, loc.cy, loc.floor || currentFloor, 0, shortLbl);
+  }
 
   // KESİN KURAL: Hedef zaten seçiliyse rota otomatik hesaplansın; değilse 2B haritada kalınarak hedef seçimi beklensin (asla otomatik 3B'ye veya simülasyona geçilmez)
   if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
@@ -4556,8 +4761,13 @@ function executeVoiceCommandText(rawText) {
     }
   }
 
-  // Senaryo D: Yalnızca hızlı ihtiyaç / servis söylendiyse (Örn: "En yakın tuvalete götür")
+  // Senaryo D: Yalnızca hızlı ihtiyaç / servis söylendiyse (Örn: "Asansörler nerede" veya "En yakın tuvalete götür")
   if (matchedAmenityKind) {
+    const wantsRoute = /(gotur|git|rota|yuru|tarif|en yakin)/.test(textNorm);
+    if (typeof window.highlightAmenitiesOnMap === 'function') {
+      window.highlightAmenitiesOnMap(matchedAmenityKind, wantsRoute);
+      return true;
+    }
     const nearest = findNearestAmenity(matchedAmenityKind, currentFloor);
     if (nearest) {
       if (!selectedStartStore) {
@@ -4626,10 +4836,58 @@ function setupVoiceCommandEvents() {
 window.setupVoiceCommandEvents = setupVoiceCommandEvents;
 
 // ========================================================
-// 📡 SITUM-STYLE OTOMATİK KONUM ALGILAMA (GPS + İÇ MEKAN IPS SENSÖRÜ)
+// 📡 SITUM-STYLE OTOMATİK KONUM ALGILAMA (GPS + İÇ MEKAN IPS SENSÖRÜ + CANLI YÜRÜYÜŞ TAKİBİ)
 // ========================================================
 let isGpsLocating = false;
 let gpsBeaconIndex = 0;
+let liveGpsWatchId = null;
+
+// Bakırköy Capacity AVM Merkez Koordinatları (Fişekhane Cad. / Ataköy 1. Kısım)
+const CAPACITY_AVM_LAT = 40.9781;
+const CAPACITY_AVM_LNG = 28.8719;
+
+function calculateHaversineKm(lat1, lon1, lat2, lon2) {
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const R = 6371; // Dünya yarıçapı (km)
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function projectGpsToMallSvg(lat, lng) {
+  // Capacity AVM sınır kutusu: Kuzey 40.9792, Güney 40.9770, Batı 28.8705, Doğu 28.8735
+  const normX = Math.max(0.05, Math.min(0.95, (lng - 28.8705) / (28.8735 - 28.8705)));
+  const normY = Math.max(0.05, Math.min(0.95, 1 - (lat - 40.9770) / (40.9792 - 40.9770)));
+  return {
+    svgX: normX * 1400,
+    svgY: normY * 850
+  };
+}
+
+function startLiveGpsWatchTracking() {
+  if (!('geolocation' in navigator) || !navigator.geolocation) return;
+  if (liveGpsWatchId !== null) return;
+  try {
+    liveGpsWatchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        if (!pos || !pos.coords) return;
+        const { latitude, longitude, heading } = pos.coords;
+        const distKm = calculateHaversineKm(latitude, longitude, CAPACITY_AVM_LAT, CAPACITY_AVM_LNG);
+        // Kullanıcı gerçekten Capacity AVM içindeyse (<= 350m), gerçek yürüyüşünü haritadaki mavi noktaya canlı yansıt
+        if (distKm <= 0.35 && mallMap) {
+          const { svgX, svgY } = projectGpsToMallSvg(latitude, longitude);
+          const activeFl = mallMap.currentFloor || currentFloor || 4;
+          mallMap.updateLiveUserLocation(svgX, svgY, activeFl, heading || 0, 'Canlı GPS Konumunuz');
+        }
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 3000, timeout: 8000 }
+    );
+  } catch (e) {}
+}
 
 function detectUserLocationGPS() {
   if (window.isKioskMode) {
@@ -4656,29 +4914,34 @@ function detectUserLocationGPS() {
     const entrances = mallData?.entrances || [];
 
     let detectedObj = null;
+    let isPhysicallyAtCapacity = false;
+    let outsideDistKm = null;
 
-    // Bakırköy Capacity AVM gerçek coğrafi sınır kutusu (40.9770..40.9792 K, 28.8705..28.8735 D)
-    if (lat && lng && lat >= 40.974 && lat <= 40.983 && lng >= 28.867 && lng <= 28.877) {
-      const normX = Math.max(0.05, Math.min(0.95, (lng - 28.8705) / (28.8735 - 28.8705)));
-      const normY = Math.max(0.05, Math.min(0.95, 1 - (lat - 40.9770) / (40.9792 - 40.9770)));
-      const svgX = normX * 1400;
-      const svgY = normY * 850;
-
-      const pool = activeFl === 4 ? [...entrances, ...floorStores] : floorStores;
-      let bestD = Infinity;
-      for (const item of pool) {
-        const d = Math.hypot((item.cx || 700) - svgX, (item.cy || 425) - svgY);
-        if (d < bestD) {
-          bestD = d;
-          detectedObj = item;
+    if (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng)) {
+      const distKm = calculateHaversineKm(lat, lng, CAPACITY_AVM_LAT, CAPACITY_AVM_LNG);
+      if (distKm <= 0.35) {
+        isPhysicallyAtCapacity = true;
+        const { svgX, svgY } = projectGpsToMallSvg(lat, lng);
+        const pool = activeFl === 4 ? [...entrances, ...floorStores] : floorStores;
+        let bestD = Infinity;
+        for (const item of pool) {
+          const d = Math.hypot((item.cx || 700) - svgX, (item.cy || 425) - svgY);
+          if (d < bestD) {
+            bestD = d;
+            detectedObj = item;
+          }
         }
+        if (mallMap) {
+          mallMap.updateLiveUserLocation(svgX, svgY, activeFl, 0, 'Canlı GPS Konumunuz');
+        }
+      } else {
+        outsideDistKm = distKm;
       }
     }
 
-    // İç Mekan Wi-Fi / BLE Beacon Konumlandırma (IPS)
+    // Kullanıcı şu an Capacity AVM dışındaysa veya iç mekan beacon yedeği kullanılıyorsa:
     if (!detectedObj) {
       if (activeFl === 4 && entrances.length > 0) {
-        // Zemin katta ana giriş / atrium beacon noktalarından birini algıla
         const zeminBeacons = [
           entrances.find(e => e.id === 'ent_fisekhane'),
           entrances.find(e => e.id === 'ent_havuz'),
@@ -4708,14 +4971,36 @@ function detectUserLocationGPS() {
       statusPill.classList.add('inline-flex');
     }
     if (statusText) {
-      statusText.textContent = `${sourceLabel || 'IPS/GPS'} ${accText}`;
+      statusText.textContent = isPhysicallyAtCapacity
+        ? `CANLI GPS ${accText}`
+        : (outsideDistKm !== null ? `AVM Dışı (${outsideDistKm.toFixed(1)} km) • Simüle` : `IPS/GPS ${accText}`);
     }
 
     setStartLocation(detectedObj);
-    showToast(`📡 Konumunuz otomatik algılandı: ${cleanName} (${sourceLabel || 'İç Mekan GPS/IPS'} • Doğruluk ${accText})`, 'success');
+
+    // Harita üzerinde mavi canlı kullanıcı noktasını (#live-user-gps-dot) hemen göster
+    if (mallMap && !isPhysicallyAtCapacity) {
+      mallMap.updateLiveUserLocation(
+        detectedObj.cx || 1245,
+        detectedObj.cy || 410,
+        detectedObj.floor || activeFl,
+        0,
+        `Konumunuz: ${cleanName}`
+      );
+    }
+
+    startLiveGpsWatchTracking();
+
+    if (isPhysicallyAtCapacity) {
+      showToast(`📡 Capacity AVM içi canlı GPS konumunuz algılandı: ${cleanName} (Doğruluk ${accText}). Yürürken haritada canlı takip edilir!`, 'success');
+    } else if (outsideDistKm !== null) {
+      showToast(`📍 Şu an Capacity AVM dışındasınız (${outsideDistKm.toFixed(1)} km uzakta). Test için ${cleanName} seçildi — Capacity AVM'ye gittiğinizde gerçek GPS konumunuz otomatik algılanır!`, 'info');
+    } else {
+      showToast(`📡 Konumunuz algılandı: ${cleanName} (Capacity AVM'ye gittiğinizde gerçek GPS/IPS konumunuz ve yürüyüşünüz haritada canlı takip edilir)`, 'success');
+    }
 
     if (window.speakNavigationText && isVoiceEnabled) {
-      window.speakNavigationText(`Konumunuz ${cleanName} önünde otomatik olarak algılandı.`, true);
+      window.speakNavigationText(`Konumunuz ${cleanName} önünde algılandı.`, true);
     }
   };
 
@@ -4726,7 +5011,7 @@ function detectUserLocationGPS() {
         settled = true;
         finalizeLocation(null, null, '1.8', 'IPS/GPS');
       }
-    }, 1200);
+    }, 1500);
 
     try {
       navigator.geolocation.getCurrentPosition(
@@ -4743,7 +5028,7 @@ function detectUserLocationGPS() {
           clearTimeout(fallbackTimer);
           finalizeLocation(null, null, '1.8', 'IPS/GPS');
         },
-        { enableHighAccuracy: true, timeout: 1000, maximumAge: 15000 }
+        { enableHighAccuracy: true, timeout: 1400, maximumAge: 15000 }
       );
     } catch (e) {
       clearTimeout(fallbackTimer);

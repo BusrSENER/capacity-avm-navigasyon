@@ -159,11 +159,12 @@ class NavigationEngine {
         // Havuz Bypass Koruması: Zemin katta (Floor 4) 'Müzikli Gösteri Havuzu' su poligonunun üzerinden transit geçişi engelle
         const isPoolTransit = (nid) => {
           if (nid === startNodeId || nid === targetNodeId) return false;
+          if (nid.startsWith('c_4_wp_pool_')) return false;
           if (nid === 'c_4_m_700') return true;
           const nd = this.nodes[nid];
           if (nd && nd.floor === 4) {
-            const dx = (nd.x - 700) / 75;
-            const dy = (nd.y - 440) / 50;
+            const dx = (nd.x - 700) / 72;
+            const dy = (nd.y - 425) / 36;
             if (dx * dx + dy * dy < 1.0) return true;
           }
           return false;
@@ -393,19 +394,73 @@ class NavigationEngine {
     let currentFloor = pathNodes[0].floor;
     let accumulatedWalk = 0;
     let walkStartIndex = 0;
+    let pendingTurn = null; // { isRight: boolean, landmark: string|null, nodeIndex: number }
 
-    const startText = `${this._getFloorLabel(currentFloor)} üzerinde harekete başlayın.`;
-    instructions.push({
-      step: stepNum++,
-      nodeIndex: 0,
-      type: 'start',
-      icon: 'map-pin',
-      emoji: '📍',
-      floor: currentFloor,
-      passingStores: [],
-      text: startText,
-      voiceText: startText
-    });
+    const buildSegmentInstruction = (startIdx, endIdx, walkMeters, isFinalStretch, upcomingTurn = null) => {
+      const passedObjs = this._getPassingStoresForRange(pathNodes, startIdx, endIdx, excludeEndpoints);
+      const passedNames = recordPassingStores(passedObjs);
+      const picked = passedNames.slice(0, 3);
+      const distPhrase = isFinalStretch ? `son ${walkMeters} m` : `${walkMeters} m`;
+
+      let storeClause = '';
+      if (picked.length === 3) {
+        storeClause = `${picked[0]}, ${picked[1]} ve ${picked[2]} mağazalarını sırasıyla geçerek `;
+      } else if (picked.length === 2) {
+        storeClause = `${picked[0]} ve ${picked[1]} mağazalarını sırasıyla geçerek `;
+      } else if (picked.length === 1) {
+        storeClause = `${picked[0]} mağazasını geçerek `;
+      }
+
+      const upcomingSuffix = upcomingTurn
+        ? `, ardından ${upcomingTurn.landmark ? upcomingTurn.landmark + ' hizasından ' : ''}${upcomingTurn.isRight ? 'sağa' : 'sola'} dönün.`
+        : '.';
+
+      if (pendingTurn) {
+        const dirWord = pendingTurn.isRight ? 'sağa' : 'sola';
+        const dirCap = pendingTurn.isRight ? 'Sağa' : 'Sola';
+        const turnPrefix = pendingTurn.landmark
+          ? `${pendingTurn.landmark} hizasından ${dirWord} dönün`
+          : `${dirCap} dönün`;
+
+        const text = `${turnPrefix}; ${storeClause}${distPhrase} düz ilerleyin${upcomingSuffix}`;
+        const allPassing = pendingTurn.landmark
+          ? [pendingTurn.landmark, ...picked.filter(n => n !== pendingTurn.landmark)].slice(0, 3)
+          : picked;
+
+        const ins = {
+          step: stepNum++,
+          nodeIndex: pendingTurn.nodeIndex,
+          type: pendingTurn.isRight ? 'turn_right' : 'turn_left',
+          icon: pendingTurn.isRight ? 'corner-up-right' : 'corner-up-left',
+          emoji: pendingTurn.isRight ? '↪️' : '↩️',
+          floor: currentFloor,
+          meters: walkMeters,
+          landmark: pendingTurn.landmark,
+          passingStores: allPassing,
+          text,
+          voiceText: text
+        };
+        pendingTurn = null;
+        return ins;
+      }
+
+      const startPrefix = startIdx === 0 ? `${this._getFloorLabel(currentFloor)} üzerinde ` : '';
+      const rawBody = `${startPrefix}${storeClause}${distPhrase} düz ilerleyin${upcomingSuffix}`;
+      const text = rawBody.charAt(0).toUpperCase() + rawBody.slice(1);
+
+      return {
+        step: stepNum++,
+        nodeIndex: startIdx,
+        type: upcomingTurn && walkMeters <= 18 ? (upcomingTurn.isRight ? 'turn_right' : 'turn_left') : 'straight',
+        icon: upcomingTurn && walkMeters <= 18 ? (upcomingTurn.isRight ? 'corner-up-right' : 'corner-up-left') : 'arrow-up',
+        emoji: upcomingTurn && walkMeters <= 18 ? (upcomingTurn.isRight ? '↪️' : '↩️') : '⬆️',
+        floor: currentFloor,
+        meters: walkMeters,
+        passingStores: picked,
+        text,
+        voiceText: text
+      };
+    };
 
     for (let i = 0; i < pathNodes.length - 1; i++) {
       const u = pathNodes[i];
@@ -413,23 +468,9 @@ class NavigationEngine {
 
       // Kat Değişimi
       if (u.floor !== v.floor) {
-        if (accumulatedWalk > 5) {
-          const walkMeters = Math.round(accumulatedWalk * this.mPerUnit);
-          const passedObjs = this._getPassingStoresForRange(pathNodes, walkStartIndex, i, excludeEndpoints);
-          const passedNames = recordPassingStores(passedObjs);
-          const stepText = formatPassingPhrase(passedNames, walkMeters, false);
-          instructions.push({
-            step: stepNum++,
-            nodeIndex: walkStartIndex,
-            type: 'straight',
-            icon: 'arrow-up',
-            emoji: '⬆️',
-            floor: u.floor,
-            meters: walkMeters,
-            passingStores: passedNames.slice(0, 3),
-            text: stepText,
-            voiceText: stepText
-          });
+        if (accumulatedWalk > 5 || pendingTurn) {
+          const walkMeters = Math.max(4, Math.round(accumulatedWalk * this.mPerUnit));
+          instructions.push(buildSegmentInstruction(walkStartIndex, i, walkMeters, false, null));
           accumulatedWalk = 0;
         }
 
@@ -454,6 +495,7 @@ class NavigationEngine {
 
         currentFloor = v.floor;
         walkStartIndex = i + 1;
+        pendingTurn = null;
         continue;
       }
 
@@ -486,69 +528,38 @@ class NavigationEngine {
         while (diff > 180) diff -= 360;
         while (diff < -180) diff += 360;
 
-        if (Math.abs(diff) >= 40) {
-          if (accumulatedWalk > 5) {
-            const walkMeters = Math.round(accumulatedWalk * this.mPerUnit);
-            const passedObjs = this._getPassingStoresForRange(pathNodes, walkStartIndex, i + 1, excludeEndpoints);
-            const passedNames = recordPassingStores(passedObjs);
-            const stepText = formatPassingPhrase(passedNames, walkMeters, false);
-            instructions.push({
-              step: stepNum++,
-              nodeIndex: walkStartIndex,
-              type: 'straight',
-              icon: 'arrow-up',
-              emoji: '⬆️',
-              floor: currentFloor,
-              meters: walkMeters,
-              passingStores: passedNames.slice(0, 3),
-              text: stepText,
-              voiceText: stepText
-            });
+        if (Math.abs(diff) >= 35) {
+          const isRight = diff > 0;
+          const nearbyLandmark = getNearbyStoreName(currentFloor, v.x, v.y);
+          const upcomingTurn = { isRight, landmark: nearbyLandmark, nodeIndex: i + 1 };
+
+          if (accumulatedWalk > 5 || pendingTurn) {
+            const walkMeters = Math.max(4, Math.round(accumulatedWalk * this.mPerUnit));
+            instructions.push(buildSegmentInstruction(walkStartIndex, i + 1, walkMeters, false, upcomingTurn));
             accumulatedWalk = 0;
           }
 
-          const isRight = diff > 0;
-          const nearbyLandmark = getNearbyStoreName(currentFloor, v.x, v.y);
-          const landmarkSuffix = nearbyLandmark ? ` (${nearbyLandmark})` : '';
-          const turnText = isRight ? `Sağa dönün${landmarkSuffix}.` : `Sola dönün${landmarkSuffix}.`;
-          const turnVoice = nearbyLandmark
-            ? `${nearbyLandmark} hizasından ${isRight ? 'sağa' : 'sola'} dönün.`
-            : `${isRight ? 'Sağa' : 'Sola'} dönün.`;
-
-          instructions.push({
-            step: stepNum++,
-            nodeIndex: i + 1,
-            type: isRight ? 'turn_right' : 'turn_left',
-            icon: isRight ? 'corner-up-right' : 'corner-up-left',
-            emoji: isRight ? '↪️' : '↩️',
-            floor: currentFloor,
-            landmark: nearbyLandmark,
-            passingStores: nearbyLandmark ? [nearbyLandmark] : [],
-            text: turnText,
-            voiceText: turnVoice
-          });
-
+          pendingTurn = upcomingTurn;
           walkStartIndex = i + 1;
         }
       }
     }
 
-    if (accumulatedWalk > 5) {
-      const walkMeters = Math.round(accumulatedWalk * this.mPerUnit);
-      const passedObjs = this._getPassingStoresForRange(pathNodes, walkStartIndex, pathNodes.length - 1, excludeEndpoints);
-      const passedNames = recordPassingStores(passedObjs);
-      const stepText = formatPassingPhrase(passedNames, walkMeters, true);
+    if (accumulatedWalk > 5 || pendingTurn) {
+      const walkMeters = Math.max(4, Math.round(accumulatedWalk * this.mPerUnit));
+      instructions.push(buildSegmentInstruction(walkStartIndex, pathNodes.length - 1, walkMeters, true, null));
+    } else if (instructions.length === 0) {
+      const startText = `${this._getFloorLabel(currentFloor)} üzerinde hedefe doğru ilerleyin.`;
       instructions.push({
         step: stepNum++,
-        nodeIndex: walkStartIndex,
+        nodeIndex: 0,
         type: 'straight',
         icon: 'arrow-up',
         emoji: '⬆️',
         floor: currentFloor,
-        meters: walkMeters,
-        passingStores: passedNames.slice(0, 3),
-        text: stepText,
-        voiceText: stepText
+        passingStores: [],
+        text: startText,
+        voiceText: startText
       });
     }
 
