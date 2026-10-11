@@ -558,13 +558,31 @@ function setupLanguageToggle() {
 window.setupLanguageToggle = setupLanguageToggle;
 
 
-// Açılış Ekranı (Splash Screen): Minimalist Logo Reveal & Zarif Çanta Geçişi (Toplam ~1.85s)
+// Açılış Ekranı (Splash Screen): Temiz ve Minimalist Mimari Logo & Harita Pini Reveal (1.8s)
 const splashStartTime = Date.now();
 window.splashStartedAt = splashStartTime;
-const MIN_SPLASH_DURATION = 1850; // ms (~1.85s lüks logo parlaması ve zarif çanta süzülmesi)
-const SPLASH_FADE_OUT_MS = 250;   // ms (pürüzsüz fade-out ile doğrudan haritaya geçiş)
+const MIN_SPLASH_DURATION = 1800; // ms (1.8s yumuşak scale: 0.96 -> 1.0 ve fade-in reveal)
+const SPLASH_FADE_OUT_MS = 300;   // ms (pürüzsüz fade-out ile doğrudan haritaya geçiş)
+
+function setupMinimalistSplashLockup() {
+  const bagTrack = document.getElementById('splash-bag-track');
+  if (bagTrack) bagTrack.remove();
+  const slideBag = document.getElementById('splash-slide-bag');
+  if (slideBag) slideBag.remove();
+
+  const logoContainer = document.getElementById('splash-logo-container');
+  if (logoContainer && !document.getElementById('splash-pin-badge')) {
+    const pinWrap = document.createElement('div');
+    pinWrap.id = 'splash-pin-badge';
+    pinWrap.className = 'splash-pin-icon-wrap';
+    pinWrap.innerHTML = `<img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor Harita Pini" class="w-9 h-9 object-contain select-none" draggable="false" />`;
+    logoContainer.insertBefore(pinWrap, logoContainer.firstChild);
+  }
+}
+setupMinimalistSplashLockup();
 
 function hideSplashScreen() {
+  setupMinimalistSplashLockup();
   const elapsed = Date.now() - splashStartTime;
   const remaining = Math.max(0, MIN_SPLASH_DURATION - elapsed);
   setTimeout(() => {
@@ -919,8 +937,77 @@ function initApp() {
   }
   window.updateVoiceSubtitleUI = updateVoiceSubtitleUI;
 
-  function speakNavigationText(text, force = false, isStoreCue = false) {
+  window.wasArrivalSpeechQueued = false;
+  window.queuedArrivalDelayMs = 0;
+  window.queuedArrivalTimer = null;
+
+  function isSpeechEngineCurrentlyBusy() {
+    const now = performance.now();
+    const synthSpeaking = Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking);
+    const audioSpeaking = Boolean(window.activeTtsAudio && !window.activeTtsAudio.paused && !window.activeTtsAudio.ended);
+    const mainBusy = now < (window.speechMainBusyUntil || 0);
+    return synthSpeaking || audioSpeaking || mainBusy;
+  }
+  window.isSpeechEngineCurrentlyBusy = isSpeechEngineCurrentlyBusy;
+
+  function queueArrivalAnnouncement(arrMsg) {
+    if (!arrMsg) return;
+    if (window.queuedArrivalTimer) {
+      clearTimeout(window.queuedArrivalTimer);
+      window.queuedArrivalTimer = null;
+      window.arrivalSpeechQueueTimer = null;
+    }
+
+    const now = performance.now();
+    const busyRemaining = Math.max(0, (window.speechMainBusyUntil || 0) - now);
+    const isBusy = isSpeechEngineCurrentlyBusy();
+
+    if (!isBusy) {
+      window.wasArrivalSpeechQueued = false;
+      window.queuedArrivalDelayMs = 0;
+      updateVoiceSubtitleUI(arrMsg, true);
+      if (isVoiceEnabled && typeof window.speakNavigationText === 'function') {
+        window.speakNavigationText(arrMsg, false, false, true);
+      }
+      return;
+    }
+
+    // Önceki yönlendirme cümlesi ('Dürümle mağazasını geçerek...') hala okunuyorsa KESME;
+    // speechSynthesis.speaking veya window.speechMainBusyUntil bitene kadar + 450ms kuyrukta beklet!
+    const queueWaitMs = Math.max(450, Math.min(4000, Math.round(busyRemaining + 450)));
+    window.wasArrivalSpeechQueued = true;
+    window.queuedArrivalDelayMs = queueWaitMs;
+
+    const checkAndSpeak = () => {
+      const stillSpeaking = Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking) ||
+                            (performance.now() < (window.speechMainBusyUntil || 0));
+      if (stillSpeaking) {
+        window.queuedArrivalTimer = setTimeout(checkAndSpeak, 450);
+        window.arrivalSpeechQueueTimer = window.queuedArrivalTimer;
+        return;
+      }
+      window.queuedArrivalTimer = null;
+      window.arrivalSpeechQueueTimer = null;
+      updateVoiceSubtitleUI(arrMsg, true);
+      if (isVoiceEnabled && typeof window.speakNavigationText === 'function') {
+        window.speakNavigationText(arrMsg, false, false, true);
+      }
+    };
+
+    window.queuedArrivalTimer = setTimeout(checkAndSpeak, queueWaitMs);
+    window.arrivalSpeechQueueTimer = window.queuedArrivalTimer;
+  }
+  window.queueArrivalAnnouncement = queueArrivalAnnouncement;
+
+  function speakNavigationText(text, force = false, isStoreCue = false, isArrival = false) {
     if (!text) return;
+
+    // Eğer bu bir varış anonsuysa ve konuşma motoru hala önceki cümleyi okuyorsa kuyruğa al (önceki cümleyi yutma)
+    if (isArrival && isSpeechEngineCurrentlyBusy()) {
+      queueArrivalAnnouncement(text);
+      return;
+    }
+
     updateVoiceSubtitleUI(text, true);
     if (!isVoiceEnabled && !force) return;
     window.lastSpokenNavigationText = text;
@@ -1065,6 +1152,10 @@ function initApp() {
       }
       if (iconEl) iconEl.textContent = '🔇';
       if (labelEl) labelEl.textContent = 'Sessiz';
+      if (window.queuedArrivalTimer) {
+        clearTimeout(window.queuedArrivalTimer);
+        window.queuedArrivalTimer = null;
+      }
       try {
         if (window.activeTtsAudio) {
           window.activeTtsAudio.pause();
@@ -1099,7 +1190,7 @@ function initApp() {
       return;
     }
 
-    // 1. Hedefe Ulaşıldı Durumu
+    // 1. Hedefe Ulaşıldı Durumu (Önceki sesli yönlendirme aktifse kesmeden kuyruğa al)
     if (nodeIndex === -1 || progressPct >= 100) {
       banner.classList.remove('hidden');
       iconEl.textContent = '🎉';
@@ -1108,10 +1199,9 @@ function initApp() {
       subEl.textContent = `${destName} önündesiniz`;
       landmarksWrap?.classList.add('hidden');
       const arrMsg = `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
-      updateVoiceSubtitleUI(arrMsg, true);
-      if (isVoiceEnabled && lastSpokenStepIndex !== -1) {
+      if (lastSpokenStepIndex !== -1) {
         lastSpokenStepIndex = -1;
-        speakNavigationText(arrMsg);
+        queueArrivalAnnouncement(arrMsg);
       }
       return;
     }
@@ -1176,7 +1266,27 @@ function initApp() {
   window.updateLiveNavHUD = updateLiveNavHUD;
   window.resetVoiceStepTracker = () => {
     lastSpokenStepIndex = -999;
+    if (window.queuedArrivalTimer) {
+      clearTimeout(window.queuedArrivalTimer);
+      window.queuedArrivalTimer = null;
+    }
   };
+
+  // Tamamlanan Rotayı Haritada Mat Gri-Mavi (opacity: 0.5, .route-completed) Olarak Bırakan Yardımcı Fonksiyon
+  function markRouteAsCompletedOnMap() {
+    window.isRouteCompletedState = true;
+    if (!mallMap || !mallMap.routeSvg) return;
+    mallMap.routeSvg.classList.add('route-completed');
+    mallMap.routeSvg.querySelectorAll('.route-group, path').forEach(el => {
+      el.classList.add('route-completed');
+    });
+    const routeGroup = mallMap.routeSvg.querySelector('.route-group');
+    if (routeGroup) {
+      routeGroup.style.transition = 'none';
+      routeGroup.style.opacity = '0.5';
+    }
+  }
+  window.markRouteAsCompletedOnMap = markRouteAsCompletedOnMap;
 
   cartSimulator = new CartSimulator(
     mallMap,
@@ -1200,8 +1310,8 @@ function initApp() {
       updateFloorUI(newFloor);
     },
     () => {
-      // 1. Başarı Bildirimi Göster ve Sesli Varış Anonsunu Tetikle
-      showToast('🎉 Hedefe ulaştınız! Rota sıfırlanıyor ve 2B haritaya dönülüyor...', 'success');
+      // 1. Başarı Bildirimi Göster ve Sesli Varış Anonsunu Kuyruklu Olarak Tetikle
+      showToast('🎉 Hedefe ulaştınız! Tamamlanan rota haritada işaretlendi.', 'success');
       resetSimControls();
 
       // 3B Gözümden Motorunu da varış durumuna senkronize et
@@ -1213,8 +1323,11 @@ function initApp() {
         window.pov3dEngine._updateHUDTexts();
       }
 
-      // Canlı HUD bildirimini "Hedefe Ulaştınız" olarak güncelle
+      // Canlı HUD bildirimini "Hedefe Ulaştınız" olarak güncelle (aktif konuşma varsa kesmeden kuyruğa alır)
       updateLiveNavHUD(-1, 100);
+
+      // Rota çizgisini silmeden 'route-completed' sınıfıyla mat gri-mavi (opacity: 0.5) olarak haritada bırak
+      markRouteAsCompletedOnMap();
 
       // Az önce varılan hedef mağazayı sakla
       const reachedStore = selectedTargetStore;
@@ -1227,18 +1340,19 @@ function initApp() {
         cartSimulator.stop();
       }
 
-      // Kısa bir varış kutlaması (1.6 sn) ardından rotayı tamamen sıfırla ve 2B Haritaya dön
+      // Kısa bir varış kutlaması ardından 2B Haritaya dön ve rotayı 'route-completed' olarak ekranda tut
       if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
+      const extraSpeechDelay = window.wasArrivalSpeechQueued ? Math.min(1500, window.queuedArrivalDelayMs || 500) : 0;
       window.arrivalResetTimer = setTimeout(() => {
         if (typeof window.completeAndResetRouteTo2D === 'function') {
           window.completeAndResetRouteTo2D(reachedStore);
         }
-      }, 1600);
+      }, 1600 + extraSpeechDelay);
     }
   );
   window.cartSimulator = cartSimulator;
 
-  // Hedefe Varıldığında Rotayı Sıfırlayıp 2B Haritaya Dönen Merkezi Fonksiyon
+  // Hedefe Varıldığında Rota Çizgisini Haritada ('route-completed', opacity: 0.5) Bırakarak 2B Haritaya Dönen Merkezi Fonksiyon
   window.completeAndResetRouteTo2D = (reachedStore) => {
     if (window.arrivalResetTimer) {
       clearTimeout(window.arrivalResetTimer);
@@ -1251,25 +1365,44 @@ function initApp() {
       window.setMapViewMode('2d');
     }
 
-    // 2. Rotayı, HUD çubuklarını, inputları, mağaza detay panelini ve rota çizgisini tamamen sıfırla
-    clearCurrentRoute();
+    // 2. Simülatörü durdur ve detay kartını kapat, ancak ROTA ÇİZGİSİNİ HARİTADAN SİLME (.route-completed olarak bırak)
+    if (cartSimulator) {
+      if (cartSimulator.cartEl) {
+        cartSimulator.cartEl.classList.add('hidden');
+      }
+      cartSimulator.stop();
+    }
+    if (typeof stopLiveGpsRouteWalk === 'function') {
+      stopLiveGpsRouteWalk();
+    }
     if (typeof closePoiDetail === 'function') {
       closePoiDetail();
     }
 
-    // 3. 3B POV motorunun aktif rotasını da temizle
+    // 3. 3B POV motorunun yürüyüşünü durdur
     if (window.pov3dEngine) {
-      window.pov3dEngine.route = null;
-      window.pov3dEngine.totalProgressPct = 0;
       window.pov3dEngine.isWalking = false;
+      window.pov3dEngine.totalProgressPct = 100;
     }
 
-    // 4. Varılan katın 2B haritasını göster ve kamerayı genel görünüme odakla
+    // 4. Varılan katın 2B haritasını göster ve rota çizgisini 'route-completed' (mat gri-mavi, opacity: 0.5) olarak koru
+    const applyCompletedRouteState = () => {
+      if (mallMap && lastCalculatedRoute) {
+        if (!mallMap.routeSvg?.querySelector('.route-group')) {
+          mallMap.renderRoute(lastCalculatedRoute);
+        }
+        markRouteAsCompletedOnMap();
+      }
+    };
+
+    applyCompletedRouteState();
+
     if (mallMap && targetFloor) {
       currentFloor = targetFloor;
       updateFloorUI(targetFloor);
       if (mallMap.currentFloor !== targetFloor) {
         mallMap.loadFloor(targetFloor).then(() => {
+          applyCompletedRouteState();
           if (typeof mallMap.resetView === 'function') mallMap.resetView();
         });
       } else {
@@ -1474,7 +1607,11 @@ function setupUIEventListeners() {
   document.querySelectorAll('.floor-pill').forEach(btn => {
     btn.addEventListener('click', () => {
       const fl = parseInt(btn.getAttribute('data-floor'), 10);
-      mallMap.loadFloor(fl);
+      mallMap.loadFloor(fl).then(() => {
+        if (window.isRouteCompletedState && typeof window.markRouteAsCompletedOnMap === 'function') {
+          window.markRouteAsCompletedOnMap();
+        }
+      });
       updateFloorUI(fl);
       if (window.pov3dEngine && window.pov3dEngine.isActive && typeof window.pov3dEngine.switchFloorInFreeRoam === 'function') {
         window.pov3dEngine.switchFloorInFreeRoam(fl);
@@ -1674,36 +1811,24 @@ function setupUIEventListeners() {
   // Simülatör Olayları (Hem büyük panel hem de 64px HUD için senkron)
   document.getElementById('sim-play-btn')?.addEventListener('click', () => {
     document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+    if (window.activeTravelNavigationMode === 'gps') {
+      setTravelNavigationMode('sim');
+      return;
+    }
     toggleCartSimulation();
   });
 
   document.getElementById('btn-hud-sim-play')?.addEventListener('click', () => {
     document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+    if (window.activeTravelNavigationMode === 'gps') {
+      setTravelNavigationMode('sim');
+      return;
+    }
     toggleCartSimulation();
   });
 
-  // Rota Çizildiğinde Çıkan "Nasıl İlerlemek İstersiniz?" Seçim Kartı Butonları
-  document.getElementById('btn-choose-mode-2d')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
-    if (window.setMapViewMode) {
-      window.setMapViewMode('2d');
-    }
-    if (window.resetVoiceStepTracker) {
-      window.resetVoiceStepTracker();
-    }
-    if (cartSimulator && !cartSimulator.isPlaying) {
-      toggleCartSimulation();
-    }
-  });
-
-  document.getElementById('btn-choose-mode-pov')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
-    if (window.setMapViewMode) {
-      window.setMapViewMode('pov');
-    }
-  });
+  // GPS Kullanımı İçin Seçim Modu (📍 Canlı Konumla Git vs. 🎬 Önizle / Simülasyon) UI Enjeksiyonu ve Olayları
+  setupTravelModeSelectorUI();
 
   document.getElementById('btn-choose-mode-close')?.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2172,7 +2297,7 @@ function setupSearchEngine() {
     updateStartBadgeUI('');
     mallMap.activeStartStore = null;
     mallMap.updateActiveStorePolygons();
-    if (mallMap.activeRoute) {
+    if (mallMap.activeRoute || window.isRouteCompletedState || lastCalculatedRoute) {
       clearCurrentRoute();
     }
     autoList?.classList.add('hidden');
@@ -2213,6 +2338,9 @@ function setupSearchEngine() {
       clearTargetBtn?.classList.remove('hidden');
     } else {
       clearTargetBtn?.classList.add('hidden');
+      if (window.isRouteCompletedState || mallMap.activeRoute) {
+        clearCurrentRoute();
+      }
     }
 
     clearTimeout(debounceTimer);
@@ -2232,7 +2360,7 @@ function setupSearchEngine() {
     selectedTargetStore = null;
     mallMap.activeTargetStore = null;
     mallMap.updateActiveStorePolygons();
-    if (mallMap.activeRoute) {
+    if (mallMap.activeRoute || window.isRouteCompletedState || lastCalculatedRoute) {
       clearCurrentRoute();
     }
     autoList?.classList.add('hidden');
@@ -3449,15 +3577,29 @@ function calculateAndDisplayRoute() {
     }).join('');
   }
 
+  // Yeni rota çizilirken önceki tamamlanmış rota (.route-completed) durumunu ve GPS yürüyüşünü sıfırla
+  window.isRouteCompletedState = false;
+  if (typeof stopLiveGpsRouteWalk === 'function') {
+    stopLiveGpsRouteWalk();
+  }
+
   // Haritada Rota Çiz
   mallMap.activeStartStore = selectedStartStore;
   mallMap.activeTargetStore = selectedTargetStore;
   mallMap.renderRoute(result);
   mallMap.updateActiveStorePolygons();
 
-  // Rota çizgisinin opaklığını tam opak yap (önceki tamamlanan rotanın 0.6 matlığından kurtar)
+  // Rota çizgisinin opaklığını tam opak yap ve route-completed sınıfını temizle
+  if (mallMap && mallMap.routeSvg) {
+    mallMap.routeSvg.classList.remove('route-completed');
+    mallMap.routeSvg.querySelectorAll('.route-completed').forEach(el => {
+      el.classList.remove('route-completed');
+      el.style.opacity = '';
+    });
+  }
   const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
   if (routeGroup) {
+    routeGroup.classList.remove('route-completed');
     routeGroup.style.opacity = '1';
   }
 
@@ -3480,7 +3622,13 @@ function calculateAndDisplayRoute() {
 
   cartSimulator.setRoute(result);
   cartSimulator.resetToStart();
+  if (cartSimulator.cartEl) {
+    cartSimulator.cartEl.style.display = (window.activeTravelNavigationMode === 'gps') ? 'none' : 'block';
+  }
   resetSimControls();
+  if (typeof updateTravelModeButtonsUI === 'function') {
+    updateTravelModeButtonsUI();
+  }
 
   // Başlangıç Katına Odaklan ve Rotayı Kadrajla
   updateFloorUI(selectedStartStore.floor);
@@ -3519,9 +3667,13 @@ function calculateAndDisplayRoute() {
 }
 
 function clearCurrentRoute() {
+  window.isRouteCompletedState = false;
   if (window.arrivalResetTimer) {
     clearTimeout(window.arrivalResetTimer);
     window.arrivalResetTimer = null;
+  }
+  if (typeof stopLiveGpsRouteWalk === 'function') {
+    stopLiveGpsRouteWalk();
   }
   document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
   document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
@@ -3530,6 +3682,13 @@ function clearCurrentRoute() {
   }
   if (window.pov3dEngine && window.pov3dEngine.isActive) {
     window.setMapViewMode('2d');
+  }
+  if (mallMap && mallMap.routeSvg) {
+    mallMap.routeSvg.classList.remove('route-completed');
+    mallMap.routeSvg.querySelectorAll('.route-completed').forEach(el => {
+      el.classList.remove('route-completed');
+      el.style.opacity = '';
+    });
   }
   if (window.isKioskMode) {
     selectedTargetStore = null;
@@ -3540,6 +3699,7 @@ function clearCurrentRoute() {
     mallMap.clearRoute();
     const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
     if (routeGroup) {
+      routeGroup.classList.remove('route-completed');
       routeGroup.style.opacity = '1';
     }
     document.getElementById('header-live-nav-banner')?.classList.add('hidden');
@@ -3611,6 +3771,7 @@ function clearCurrentRoute() {
 
   const routeGroup = mallMap?.routeSvg?.querySelector('.route-group') || mallMap?.routeSvg;
   if (routeGroup) {
+    routeGroup.classList.remove('route-completed');
     routeGroup.style.opacity = '1';
   }
   document.getElementById('header-live-nav-banner')?.classList.add('hidden');
@@ -5161,6 +5322,335 @@ function setupGpsAutoLocationEvents() {
   });
 }
 window.setupGpsAutoLocationEvents = setupGpsAutoLocationEvents;
+
+// ========================================================
+// 🧭 1. GPS KULLANIMI İÇİN SEÇİM MODU (📍 CANLI KONUMLA GİT VS. 🎬 ÖNİZLE / SİMÜLASYON)
+// ========================================================
+window.activeTravelNavigationMode = 'sim'; // 'gps' | 'sim'
+let routeGpsWatchId = null;
+let liveGpsSimulatedWalkTimer = null;
+let liveGpsRouteWalkIndex = 0;
+
+function stopLiveGpsRouteWalk() {
+  if (routeGpsWatchId !== null && 'geolocation' in navigator && navigator.geolocation) {
+    try {
+      navigator.geolocation.clearWatch(routeGpsWatchId);
+    } catch (e) {}
+    routeGpsWatchId = null;
+  }
+  if (liveGpsSimulatedWalkTimer) {
+    clearInterval(liveGpsSimulatedWalkTimer);
+    liveGpsSimulatedWalkTimer = null;
+  }
+}
+window.stopLiveGpsRouteWalk = stopLiveGpsRouteWalk;
+
+function updateTravelModeButtonsUI() {
+  const mode = window.activeTravelNavigationMode || 'sim';
+  const gpsBtns = document.querySelectorAll('[data-travel-mode="gps"], #btn-choose-mode-gps, #btn-hud-mode-gps');
+  const simBtns = document.querySelectorAll('[data-travel-mode="sim"], #btn-choose-mode-2d, #btn-hud-mode-sim');
+
+  gpsBtns.forEach(btn => {
+    btn.classList.toggle('is-active-mode', mode === 'gps');
+    btn.setAttribute('aria-pressed', mode === 'gps' ? 'true' : 'false');
+  });
+  simBtns.forEach(btn => {
+    btn.classList.toggle('is-active-mode', mode === 'sim');
+    btn.setAttribute('aria-pressed', mode === 'sim' ? 'true' : 'false');
+  });
+}
+window.updateTravelModeButtonsUI = updateTravelModeButtonsUI;
+
+function startLiveGpsRouteWalk() {
+  stopLiveGpsRouteWalk();
+  if (!lastCalculatedRoute || !Array.isArray(lastCalculatedRoute.pathNodes) || lastCalculatedRoute.pathNodes.length === 0) {
+    return;
+  }
+
+  const cKapisiRef = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || {
+    id: 'ent_fisekhane',
+    name: 'C Kapısı (Fişekhane Cad.)',
+    short_name: 'C Kapısı',
+    floor: 4,
+    cx: 1245.0,
+    cy: 410.0,
+    nav_node: 'n_ent_fisekhane'
+  };
+
+  const pathNodes = lastCalculatedRoute.pathNodes;
+  liveGpsRouteWalkIndex = 0;
+
+  // İlk düğümü hemen #live-user-gps-dot olarak haritada göster
+  const firstNode = pathNodes[0] || {
+    x: selectedStartStore?.cx || cKapisiRef.cx,
+    y: selectedStartStore?.cy || cKapisiRef.cy,
+    floor: selectedStartStore?.floor || 4
+  };
+  const secondNode = pathNodes[1] || firstNode;
+  const initHeading = (Math.atan2(secondNode.y - firstNode.y, secondNode.x - firstNode.x) * 180) / Math.PI;
+
+  if (mallMap && typeof mallMap.updateLiveUserLocation === 'function') {
+    if (mallMap.currentFloor !== firstNode.floor) {
+      mallMap.loadFloor(firstNode.floor).then(() => {
+        updateFloorUI(firstNode.floor);
+        mallMap.updateLiveUserLocation(firstNode.x, firstNode.y, firstNode.floor, initHeading, '📍 Canlı Konumla Git (C Kapısı Referansı)');
+      });
+    } else {
+      mallMap.updateLiveUserLocation(firstNode.x, firstNode.y, firstNode.floor, initHeading, '📍 Canlı Konumla Git (C Kapısı Referansı)');
+    }
+  }
+
+  let hasHandledOutsideNotice = false;
+  const triggerOutsideReferenceWalk = (distKmVal) => {
+    if (hasHandledOutsideNotice) return;
+    hasHandledOutsideNotice = true;
+
+    const statusPill = document.getElementById('gps-live-status-pill');
+    const statusText = document.getElementById('gps-live-status-text');
+    if (statusPill) {
+      statusPill.classList.remove('hidden');
+      statusPill.classList.add('inline-flex');
+    }
+    if (statusText) {
+      statusText.textContent = 'CANLI KONUM • C KAPISI REF.';
+    }
+
+    const distInfo = typeof distKmVal === 'number' && !isNaN(distKmVal) ? ` (${distKmVal.toFixed(1)} km)` : ' (>350m)';
+    showToast(`📍 AVM dışındasınız${distInfo}. C Kapısı referansıyla canlı konum (#live-user-gps-dot) yürüyüş takibi başlatıldı.`, 'info');
+
+    // Harita üzerinde #live-user-gps-dot noktasını rota boyunca adım adım ilerlet
+    if (liveGpsSimulatedWalkTimer) clearInterval(liveGpsSimulatedWalkTimer);
+    liveGpsSimulatedWalkTimer = setInterval(() => {
+      if (window.activeTravelNavigationMode !== 'gps' || !lastCalculatedRoute) {
+        stopLiveGpsRouteWalk();
+        return;
+      }
+      const nodes = lastCalculatedRoute.pathNodes || [];
+      if (nodes.length === 0) return;
+
+      liveGpsRouteWalkIndex = Math.min(nodes.length - 1, liveGpsRouteWalkIndex + 1);
+      const cur = nodes[liveGpsRouteWalkIndex];
+      const prev = nodes[Math.max(0, liveGpsRouteWalkIndex - 1)];
+      const headingDeg = (Math.atan2(cur.y - prev.y, cur.x - prev.x) * 180) / Math.PI;
+      const ratio = nodes.length > 1 ? liveGpsRouteWalkIndex / (nodes.length - 1) : 1;
+
+      if (mallMap) {
+        if (mallMap.currentFloor !== cur.floor) {
+          mallMap.loadFloor(cur.floor).then(() => {
+            updateFloorUI(cur.floor);
+            mallMap.updateLiveUserLocation(cur.x, cur.y, cur.floor, headingDeg, '📍 Canlı Konumunuz');
+          });
+        } else {
+          mallMap.updateLiveUserLocation(cur.x, cur.y, cur.floor, headingDeg, '📍 Canlı Konumunuz');
+        }
+      }
+
+      const insCount = (lastCalculatedRoute.instructions || []).length;
+      const stepIdx = insCount > 1 ? Math.min(insCount - 1, Math.floor(ratio * insCount)) : 0;
+      updateLiveNavHUD(stepIdx, ratio);
+
+      if (liveGpsRouteWalkIndex >= nodes.length - 1) {
+        clearInterval(liveGpsSimulatedWalkTimer);
+        liveGpsSimulatedWalkTimer = null;
+        if (typeof markRouteAsCompletedOnMap === 'function') {
+          markRouteAsCompletedOnMap();
+        }
+        if (selectedTargetStore && typeof queueArrivalAnnouncement === 'function') {
+          queueArrivalAnnouncement(`Hedefiniz ${selectedTargetStore.name} mağazasına ulaştınız.`);
+        }
+      }
+    }, 950);
+  };
+
+  if ('geolocation' in navigator && navigator.geolocation) {
+    const watchFallbackTimer = setTimeout(() => {
+      if (!hasHandledOutsideNotice && window.activeTravelNavigationMode === 'gps') {
+        triggerOutsideReferenceWalk(null);
+      }
+    }, 1200);
+
+    try {
+      routeGpsWatchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          clearTimeout(watchFallbackTimer);
+          if (!pos || !pos.coords || window.activeTravelNavigationMode !== 'gps') return;
+          const { latitude, longitude, heading } = pos.coords;
+          const distKm = calculateHaversineKm(latitude, longitude, CAPACITY_AVM_LAT, CAPACITY_AVM_LNG);
+
+          if (distKm <= 0.35 && mallMap) {
+            hasHandledOutsideNotice = true;
+            const { svgX, svgY } = projectGpsToMallSvg(latitude, longitude);
+            const activeFl = mallMap.currentFloor || currentFloor || 4;
+            const proj = (navEngine && typeof navEngine.projectPointOntoRoute === 'function')
+              ? navEngine.projectPointOntoRoute(lastCalculatedRoute, svgX, svgY, activeFl)
+              : null;
+            const dotX = proj ? proj.x : svgX;
+            const dotY = proj ? proj.y : svgY;
+            const dotFloor = proj ? proj.floor : activeFl;
+            const dotHeading = typeof heading === 'number' && !isNaN(heading) ? heading : (proj ? proj.heading : 0);
+
+            mallMap.updateLiveUserLocation(dotX, dotY, dotFloor, dotHeading, '📍 Canlı GPS Konumunuz');
+            if (proj) {
+              const insCount = (lastCalculatedRoute.instructions || []).length;
+              const stepIdx = insCount > 1 ? Math.min(insCount - 1, Math.floor(proj.progressRatio * insCount)) : 0;
+              updateLiveNavHUD(stepIdx, proj.progressRatio);
+            }
+          } else {
+            triggerOutsideReferenceWalk(distKm);
+          }
+        },
+        () => {
+          clearTimeout(watchFallbackTimer);
+          triggerOutsideReferenceWalk(null);
+        },
+        { enableHighAccuracy: true, maximumAge: 2500, timeout: 5000 }
+      );
+    } catch (e) {
+      clearTimeout(watchFallbackTimer);
+      triggerOutsideReferenceWalk(null);
+    }
+  } else {
+    triggerOutsideReferenceWalk(null);
+  }
+}
+window.startLiveGpsRouteWalk = startLiveGpsRouteWalk;
+
+function setTravelNavigationMode(mode) {
+  const targetMode = mode === 'gps' ? 'gps' : 'sim';
+  window.activeTravelNavigationMode = targetMode;
+
+  document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+
+  if (window.pov3dEngine && window.pov3dEngine.isActive) {
+    window.setMapViewMode('2d');
+  }
+
+  // Eğer rota daha önce tamamlanmışsa (.route-completed), tekrar yürüyüş/önizleme için aktif görünüme döndür
+  if (window.isRouteCompletedState && mallMap && mallMap.routeSvg) {
+    window.isRouteCompletedState = false;
+    mallMap.routeSvg.classList.remove('route-completed');
+    mallMap.routeSvg.querySelectorAll('.route-completed').forEach(el => {
+      el.classList.remove('route-completed');
+      el.style.opacity = '';
+    });
+    const routeGroup = mallMap.routeSvg.querySelector('.route-group') || mallMap.routeSvg;
+    if (routeGroup) routeGroup.style.opacity = '1';
+  }
+
+  const playText = document.getElementById('sim-play-text');
+  const hudPlayText = document.getElementById('hud-sim-text');
+
+  if (targetMode === 'gps') {
+    if (cartSimulator) {
+      cartSimulator.pause();
+      if (cartSimulator.cartEl) {
+        cartSimulator.cartEl.style.display = 'none';
+      }
+    }
+    if (playText) playText.textContent = 'Canlı GPS Aktif';
+    if (hudPlayText) hudPlayText.textContent = 'Canlı GPS';
+    startLiveGpsRouteWalk();
+  } else {
+    stopLiveGpsRouteWalk();
+    if (cartSimulator) {
+      if (cartSimulator.cartEl) {
+        cartSimulator.cartEl.style.display = 'block';
+      }
+      if (cartSimulator.currentIndex >= (cartSimulator.route?.pathNodes?.length || 1) - 1) {
+        cartSimulator.resetToStart();
+      }
+      cartSimulator.start();
+    }
+    if (playText) playText.textContent = 'Duraklat';
+    if (hudPlayText) hudPlayText.textContent = 'Duraklat';
+    const hudPlayBtn = document.getElementById('btn-hud-sim-play');
+    if (hudPlayBtn) {
+      hudPlayBtn.className = 'flex-1 min-w-[96px] h-10 sm:h-11 min-h-[40px] px-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-amber-500/25 active:scale-95 shrink-0';
+    }
+  }
+
+  updateTravelModeButtonsUI();
+}
+window.setTravelNavigationMode = setTravelNavigationMode;
+
+function setupTravelModeSelectorUI() {
+  // 1. Rota Hazır Kartındaki (#route-mode-choice-modal) butonları iki belirgin seçenek + 3B olarak yapılandır
+  const choiceModal = document.getElementById('route-mode-choice-modal');
+  if (choiceModal) {
+    const gridContainer = choiceModal.querySelector('.grid');
+    if (gridContainer) {
+      gridContainer.className = 'flex flex-col gap-2';
+      gridContainer.innerHTML = `
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btn-choose-mode-gps" data-travel-mode="gps" class="nav-travel-mode-btn py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-emerald-600/25 active:scale-95 transition-all cursor-pointer">
+            <span class="text-sm sm:text-base leading-none">📍 Canlı Konumla Git</span>
+            <span class="text-[10px] font-semibold text-emerald-100">Gerçek GPS ile Adım Adım</span>
+          </button>
+          <button type="button" id="btn-choose-mode-2d" data-travel-mode="sim" class="nav-travel-mode-btn is-active-mode py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-cyan-600/25 active:scale-95 transition-all cursor-pointer">
+            <span class="text-sm sm:text-base leading-none">🎬 Önizle / Simülasyon</span>
+            <span class="text-[10px] font-semibold text-cyan-100">Sanal Torba ile Prova</span>
+          </button>
+        </div>
+        <button type="button" id="btn-choose-mode-pov" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer">
+          <span class="text-sm leading-none">👁️ 3B Gözümden</span>
+          <span class="text-[10px] font-semibold text-orange-100">• Canlı 3B Koridorda Yürü</span>
+        </button>
+      `;
+    }
+  }
+
+  // 2. Başlat butonunun yanına (#nav-hud-bar içine) tek tıkla geçiş sağlayan GPS / Simülasyon mod seçici butonları ekle
+  const hudPlayBtn = document.getElementById('btn-hud-sim-play');
+  if (hudPlayBtn && hudPlayBtn.parentElement && !document.getElementById('hud-travel-mode-switch')) {
+    const modeSwitchWrap = document.createElement('div');
+    modeSwitchWrap.id = 'hud-travel-mode-switch';
+    modeSwitchWrap.className = 'flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 shrink-0';
+    modeSwitchWrap.innerHTML = `
+      <button type="button" id="btn-hud-mode-gps" data-travel-mode="gps" class="nav-travel-mode-btn h-8 px-2 sm:px-2.5 rounded-lg text-[10.5px] sm:text-xs font-extrabold bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 flex items-center gap-1 cursor-pointer transition-all" title="📍 Canlı Konumla Git (Gerçek Cihaz GPS'i ile Takip)">
+        <span>📍</span>
+        <span class="hidden md:inline">Canlı Konumla Git</span>
+        <span class="md:hidden">Canlı GPS</span>
+      </button>
+      <button type="button" id="btn-hud-mode-sim" data-travel-mode="sim" class="nav-travel-mode-btn is-active-mode h-8 px-2 sm:px-2.5 rounded-lg text-[10.5px] sm:text-xs font-extrabold bg-cyan-600/15 hover:bg-cyan-600/25 text-cyan-700 dark:text-cyan-300 flex items-center gap-1 cursor-pointer transition-all" title="🎬 Önizle / Simülasyon (Sanal Torba ile Adım Adım Prova)">
+        <span>🎬</span>
+        <span class="hidden md:inline">Önizle / Simülasyon</span>
+        <span class="md:hidden">Önizle</span>
+      </button>
+    `;
+    hudPlayBtn.parentElement.insertBefore(modeSwitchWrap, hudPlayBtn);
+  }
+
+  // Olay dinleyicilerini bağla
+  document.getElementById('btn-choose-mode-gps')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setTravelNavigationMode('gps');
+  });
+
+  document.getElementById('btn-choose-mode-2d')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setTravelNavigationMode('sim');
+  });
+
+  document.getElementById('btn-choose-mode-pov')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+    window.setMapViewMode('pov');
+  });
+
+  document.getElementById('btn-hud-mode-gps')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setTravelNavigationMode('gps');
+  });
+
+  document.getElementById('btn-hud-mode-sim')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setTravelNavigationMode('sim');
+  });
+
+  updateTravelModeButtonsUI();
+}
+window.setupTravelModeSelectorUI = setupTravelModeSelectorUI;
+
 
 // ========================================================
 // 📅 TAKVİMİNİZDE YER ALAN ETKİNLİKLERİN KONUMLARI (SITUM EVENTS CALENDAR)

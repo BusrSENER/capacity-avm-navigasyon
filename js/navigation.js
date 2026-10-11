@@ -571,6 +571,8 @@ class NavigationEngine {
       emoji: '🎯',
       floor: pathNodes[pathNodes.length - 1].floor,
       passingStores: [],
+      queueAfterPrevious: true,
+      minQueueDelayMs: 450,
       text: 'Hedefinize ulaştınız.',
       voiceText: 'Hedefinize ulaştınız. Keyifli alışverişler dileriz.'
     });
@@ -582,8 +584,61 @@ class NavigationEngine {
     };
   }
 
+  /**
+   * Canlı GPS yürüyüş modunda kullanıcının (x, y, floor) koordinatını aktif rotanın en yakın segmentine izdüşürür
+   */
+  projectPointOntoRoute(routeData, x, y, floor) {
+    if (!routeData || !routeData.pathNodes || routeData.pathNodes.length < 2) {
+      return null;
+    }
+    const nodes = routeData.pathNodes;
+    let bestDist = Infinity;
+    let bestSegIdx = 0;
+    let bestT = 0;
+    let bestX = nodes[0].x;
+    let bestY = nodes[0].y;
+    let bestHeading = 0;
+
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const u = nodes[i];
+      const v = nodes[i + 1];
+      if (floor !== undefined && floor !== null && u.floor !== floor && v.floor !== floor) continue;
+      const dx = v.x - u.x;
+      const dy = v.y - u.y;
+      const lenSq = dx * dx + dy * dy;
+      let t = 0;
+      if (lenSq > 0.001) {
+        t = Math.max(0, Math.min(1, ((x - u.x) * dx + (y - u.y) * dy) / lenSq));
+      }
+      const px = u.x + dx * t;
+      const py = u.y + dy * t;
+      const d = Math.hypot(x - px, y - py);
+      if (d < bestDist) {
+        bestDist = d;
+        bestSegIdx = i;
+        bestT = t;
+        bestX = px;
+        bestY = py;
+        bestHeading = (Math.atan2(dy, dx) * 180) / Math.PI;
+      }
+    }
+
+    const totalSegs = Math.max(1, nodes.length - 1);
+    const progressPct = Math.min(100, Math.max(0, ((bestSegIdx + bestT) / totalSegs) * 100));
+    return {
+      segIndex: bestSegIdx,
+      segProgress: bestT,
+      progressPct,
+      snappedX: bestX,
+      snappedY: bestY,
+      headingDeg: bestHeading,
+      distanceFromRoute: bestDist
+    };
+  }
+
   _getFloorLabel(floorNum) {
     return this.floors[floorNum]?.label || `${floorNum}. Kat`;
   }
 }
+
 

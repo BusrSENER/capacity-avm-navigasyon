@@ -59,6 +59,20 @@ class Pov3DEngine {
     this.ctx = null;
     this.animFrameId = null;
     this.lastFrameTime = 0;
+    this.renderedFrameCount = 0;
+    this.loadingCurtainEl = null;
+    this.opaqueWallSegments = [];
+
+    // 3B Panoramik Asansör Kabini Şeffaf Cam Materyali (Canvas Clipping & Z-Fighting Önleme)
+    this.elevatorGlassMaterial = {
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -4,
+      opacity: 0.24
+    };
 
     // Drag / Look-around durumu
     this.isDragging = false;
@@ -140,6 +154,21 @@ class Pov3DEngine {
     if (!this.canvas || !this.container) return;
 
     this.ctx = this.canvas.getContext('2d');
+
+    // 3B Açılışındaki Sarı Boşluk (Void Glitch) İçin Yükleme Perdesi
+    let curtain = document.getElementById('pov-3d-loading-curtain');
+    if (!curtain) {
+      curtain = document.createElement('div');
+      curtain.id = 'pov-3d-loading-curtain';
+      curtain.className = 'is-hidden';
+      curtain.innerHTML = `
+        <div class="pov-curtain-spinner"></div>
+        <div class="text-white font-extrabold text-sm tracking-wide">3B Görünüm Hazırlanıyor...</div>
+        <div class="text-sky-300/80 text-[11px] font-semibold">Mimari koridor ve mağaza cepheleri yükleniyor</div>
+      `;
+      this.container.appendChild(curtain);
+    }
+    this.loadingCurtainEl = curtain;
 
     // Boyutlandırma
     const resizeObserver = new ResizeObserver(() => {
@@ -812,6 +841,11 @@ class Pov3DEngine {
   activate() {
     if (!this.container) return;
     this.isActive = true;
+    this.renderedFrameCount = 0;
+    this.activatedAtTime = performance.now();
+    if (this.loadingCurtainEl) {
+      this.loadingCurtainEl.classList.remove('is-hidden');
+    }
     this.container.classList.remove('hidden');
     document.body.classList.add('has-pov-3d-active');
     this._resizeCanvas();
@@ -836,7 +870,11 @@ class Pov3DEngine {
   deactivate() {
     this.isActive = false;
     this.isWalking = false;
+    this.renderedFrameCount = 0;
     this.closeStorePopup();
+    if (this.loadingCurtainEl) {
+      this.loadingCurtainEl.classList.add('is-hidden');
+    }
     if (this.container) {
       this.container.classList.add('hidden');
     }
@@ -1144,7 +1182,7 @@ class Pov3DEngine {
         if (window.showToast && !isQrOpen) {
           const targetLabel = this.targetStore ? this.targetStore.name : 'Hedef';
           const noun = isServiceTarget ? 'noktasına' : 'mağazasına';
-          window.showToast(`🎉 ${targetLabel} ${noun} ulaştınız! Rota sıfırlanıyor ve 2B haritaya dönülüyor...`, 'success');
+          window.showToast(`🎉 ${targetLabel} ${noun} ulaştınız! Tamamlanan rota haritada işaretlendi.`, 'success');
         }
         const reached = this.targetStore;
         if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
@@ -1152,7 +1190,7 @@ class Pov3DEngine {
           if (typeof window.completeAndResetRouteTo2D === 'function') {
             window.completeAndResetRouteTo2D(reached);
           }
-        }, 1600);
+        }, 1800);
         return;
       }
       const nu = nodes[this.segIndex];
@@ -1464,6 +1502,7 @@ class Pov3DEngine {
     const ctx = this.ctx;
     const W = this.canvas.width;
     const H = this.canvas.height;
+    if (W < 10 || H < 10) return;
     const cx = W * 0.5;
     const horizonY = H * 0.49;
     const fovScale = W * 0.56;
@@ -1477,6 +1516,7 @@ class Pov3DEngine {
     this.hotspotHitBoxes = [];
     this.portalHitBoxes = [];
     this.placedAmenitySignRects = [];
+    this.opaqueWallSegments = [];
     ctx.clearRect(0, 0, W, H);
 
     // 1. GERÇEK CAPACITY AVM MİMARİ BEJ/KREM ALÇIPAN TAVAN & GÖMME ANTRASİT BAFFLE LED KANALLARI (0 .. horizonY)
@@ -1706,6 +1746,15 @@ class Pov3DEngine {
 
     // 10. ÜST ORTA 360° DİJİTAL PUSULA & GALERİ SOKAK GÖRÜNÜMÜ BAŞLIĞI
     this._renderTopCompassBar(ctx, W, H, effectiveYaw);
+
+    // 11. 3B SAHNE GEOMETRİSİ İLK 2 FRAME ÇİZİLDİĞİNDE YÜKLEME PERDESİNİ YUMUŞAKÇA (FADE-OUT) KALDIR
+    this.renderedFrameCount = (this.renderedFrameCount || 0) + 1;
+    if (this.renderedFrameCount >= 2 && this.loadingCurtainEl && !this.loadingCurtainEl.classList.contains('is-hidden')) {
+      const elapsedSinceActivate = now - (this.activatedAtTime || 0);
+      if (elapsedSinceActivate >= 140) {
+        this.loadingCurtainEl.classList.add('is-hidden');
+      }
+    }
   }
 
   _render3DFloorRoute(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W) {
@@ -2447,26 +2496,67 @@ class Pov3DEngine {
 
   /**
    * 3B Panoramik Cam Asansör Kulesi Çizimi
+   * Materyal: transparent: true, depthWrite: false, depthTest: true, polygonOffset: true
    */
   _draw3DElevatorUnit(ctx, ax, ay, isRoutePortal, destLabel, cx, horizonY, fovScale, cosYaw, sinYaw, now, W) {
-    const cCenter = this._worldToCamera(ax, ay, 30, cosYaw, sinYaw);
-    if (cCenter.rx < 10 || cCenter.rx > 370 || Math.abs(cCenter.ry) > cCenter.rx * 1.1) return;
+    const mat = this.elevatorGlassMaterial || {
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -4,
+      opacity: 0.24
+    };
 
-    const hw = 8.5;
-    const zTop = 58;
+    const cCenter = this._worldToCamera(ax, ay, 30, cosYaw, sinYaw);
+    // Yakın düzlemde (rx < 18) dikey sütun yırtılması (canvas clipping) oluşmaması için güvenli kırpma eşiği
+    if (cCenter.rx < 18 || cCenter.rx > 370 || Math.abs(cCenter.ry) > cCenter.rx * 1.05) return;
+
+    // polygonOffset: true -> Z-fighting'i önlemek için derinlik ofseti uygula
+    const polyOffsetRx = mat.polygonOffset ? (mat.polygonOffsetUnits || -4) * -0.45 : 0;
+    const effectiveRx = Math.max(18, cCenter.rx + polyOffsetRx);
+
+    // depthTest: true -> Önünde daha yakın opak mağaza duvarı varsa çizimi engelle (depthWrite: false olduğu için duvar derinliğini ezmez)
+    const projCenter = this._projectCamVerts([{ rx: effectiveRx, ry: cCenter.ry, rz: 0 }], cx, horizonY, fovScale)[0];
+    if (mat.depthTest && this.opaqueWallSegments && this.opaqueWallSegments.length > 0) {
+      const occludedByWall = this.opaqueWallSegments.some(
+        seg => projCenter.x >= seg.minX + 4 && projCenter.x <= seg.maxX - 4 && seg.rx < effectiveRx - 8
+      );
+      if (occludedByWall) return;
+    }
+
+    // Kameraya dik (billboarded) silindirik/panoramik kabin genişliği (yaklaştıkça ekranı 3 dikey sütuna bölmemesi için açısal sınır)
+    const hw = 7.2;
+    const zBot = 2.0;
+    const zTop = 52.0;
+    const rightX = -sinYaw * hw;
+    const rightY = cosYaw * hw;
+
     const frontQuad = [
-      this._worldToCamera(ax - hw, ay - hw, 0, cosYaw, sinYaw),
-      this._worldToCamera(ax + hw, ay - hw, 0, cosYaw, sinYaw),
-      this._worldToCamera(ax + hw, ay - hw, zTop, cosYaw, sinYaw),
-      this._worldToCamera(ax - hw, ay - hw, zTop, cosYaw, sinYaw)
-    ];
-    const clip = this._clipPolygonNear(frontQuad, 5.5);
+      this._worldToCamera(ax - rightX, ay - rightY, zBot, cosYaw, sinYaw),
+      this._worldToCamera(ax + rightX, ay + rightY, zBot, cosYaw, sinYaw),
+      this._worldToCamera(ax + rightX, ay + rightY, zTop, cosYaw, sinYaw),
+      this._worldToCamera(ax - rightX, ay - rightY, zTop, cosYaw, sinYaw)
+    ].map(v => ({
+      rx: Math.max(18.0, v.rx + polyOffsetRx),
+      ry: v.ry,
+      rz: v.rz
+    }));
+
+    const clip = this._clipPolygonNear(frontQuad, 18.0);
     ctx.save();
-    if (clip.length >= 3) {
+    if (clip.length >= 3 && mat.transparent) {
       const pQ = this._projectCamVerts(clip, cx, horizonY, fovScale);
-      ctx.fillStyle = 'rgba(14, 165, 233, 0.28)';
-      ctx.strokeStyle = isRoutePortal ? '#38bdf8' : '#bae6fd';
-      ctx.lineWidth = Math.max(1.8, (220 / cCenter.rx) * (W / 1000));
+      // Asansöre yaklaşırken yumuşak alpha sönümlemesi (dikey sütun dilimlenmesini tamamen ortadan kaldırır)
+      const distFade = cCenter.rx < 34 ? Math.max(0.08, (cCenter.rx - 18) / 16) : 1.0;
+      const glassAlpha = (mat.opacity || 0.24) * distFade;
+
+      ctx.fillStyle = `rgba(14, 165, 233, ${glassAlpha.toFixed(3)})`;
+      ctx.strokeStyle = isRoutePortal
+        ? `rgba(56, 189, 248, ${(0.75 * distFade).toFixed(3)})`
+        : `rgba(186, 230, 253, ${(0.55 * distFade).toFixed(3)})`;
+      ctx.lineWidth = Math.min(2.2, Math.max(1.2, (160 / effectiveRx) * (W / 1000)));
       ctx.beginPath();
       ctx.moveTo(pQ[0].x, pQ[0].y);
       for (let k = 1; k < pQ.length; k++) ctx.lineTo(pQ[k].x, pQ[k].y);
@@ -2475,10 +2565,10 @@ class Pov3DEngine {
       ctx.stroke();
     }
 
-    const cSign = this._worldToCamera(ax, ay, 56, cosYaw, sinYaw);
-    if (cSign.rx > 10 && Math.abs(cSign.ry) < cSign.rx * 0.95) {
+    const cSign = this._worldToCamera(ax, ay, 54, cosYaw, sinYaw);
+    if (cSign.rx > 16 && Math.abs(cSign.ry) < cSign.rx * 0.95) {
       const pS = this._projectCamVerts([cSign], cx, horizonY, fovScale)[0];
-      const sc = Math.max(0.6, Math.min(1.35, 100 / cSign.rx)) * (W / 1150 + 0.32);
+      const sc = Math.max(0.6, Math.min(1.3, 96 / cSign.rx)) * (W / 1150 + 0.32);
       const fSize = Math.round(Math.max(9, Math.min(15, 11 * sc)));
       ctx.font = `800 ${fSize}px "Plus Jakarta Sans", sans-serif`;
       const text = isRoutePortal && destLabel ? `🛗 ASANSÖR • ${destLabel}` : '🛗 PANORAMİK ASANSÖR';
@@ -2767,6 +2857,16 @@ class Pov3DEngine {
       ctx.fill();
       ctx.stroke();
 
+      // Opak vitrin duvarının ekran X aralığını ve derinliğini kaydet (depthWrite: true) -> Şeffaf cam asansör kabini depthTest için kullanır
+      let wMinX = Infinity, wMaxX = -Infinity;
+      for (const pt of scrWall) {
+        if (pt.x < wMinX) wMinX = pt.x;
+        if (pt.x > wMaxX) wMaxX = pt.x;
+      }
+      if (wMaxX > wMinX) {
+        this.opaqueWallSegments.push({ minX: wMinX, maxX: wMaxX, rx: wallDist });
+      }
+
       if (faceLen >= 20) {
         // 1B. Sıcak Aydınlatmalı Cam Vitrin & Çift Kanatlı Cam Kapı Doğramaları (Tüm Koridor ve Ara Yol Cephelerinde)
         const glassA = { x: cA.x + (cB.x - cA.x) * 0.07, y: cA.y + (cB.y - cA.y) * 0.07 };
@@ -2960,8 +3060,8 @@ class Pov3DEngine {
       ctx.restore();
     }
 
-    // 3. Yalnızca Hedef/Başlangıç Noktası veya Vitrin Panosu Henüz Çizilmemiş Çok Uzak Anchor Mağazalar İçin Üst Tabela
-    // (Böylece koridorun ortasında üst üste binen siyah kutular oluşmaz; tüm mağaza logoları doğrudan kendi vitrin duvarında parlar!)
+    // 3. Yalnızca Hedef/Başlangıç Noktası İçin Üst Tabela (İlk 2 frame ve duvar geometrisi hazır olmadan çizilmez)
+    if ((this.renderedFrameCount || 0) < 1 || wallQuads.length === 0) return;
     storeSignAnchors.sort((a, b) => b.dist - a.dist);
 
     for (const item of storeSignAnchors) {
@@ -3217,10 +3317,13 @@ class Pov3DEngine {
       ctx.lineTo(cx + farHalfW, topY);
       ctx.stroke();
     } else {
-      // === 3B PANORAMİK CAM ASANSÖR KABİN ÇERÇEVESİ ===
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(W * 0.12, H * 0.10, W * 0.76, H * 0.80);
+      // === 3B PANORAMİK CAM ASANSÖR KABİNİ (Dikey sütun yırtılması olmadan kesintisiz panoramik cam vinyet) ===
+      const elevGlow = ctx.createRadialGradient(cx, H * 0.5, Math.min(W, H) * 0.25, cx, H * 0.5, Math.max(W, H) * 0.65);
+      elevGlow.addColorStop(0, 'rgba(56, 189, 248, 0.02)');
+      elevGlow.addColorStop(0.75, 'rgba(14, 165, 233, 0.12)');
+      elevGlow.addColorStop(1, 'rgba(2, 132, 199, 0.28)');
+      ctx.fillStyle = elevGlow;
+      ctx.fillRect(0, 0, W, H);
     }
 
     // 2. Üst Orta Bilgi Kartı (Kat Geçiş Durumu + Canlı İlerleme Çubuğu)
