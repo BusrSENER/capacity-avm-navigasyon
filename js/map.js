@@ -20,13 +20,14 @@ class MallMap {
     this.displayMode = 'anchor';
     this.activeCategoryFilter = 'all';
 
-    // Pan, Zoom & Rotation State
+    // Pan, Zoom, Rotation & 2.5D/3D Perspective State
     this.scale = 1.0;
     this.minScale = 0.25;
     this.maxScale = 8.0; // 8x Derin Yakınlaşma (Koridor, Kapı ve Düğüm Detay İnceleme)
     this.panX = 0;
     this.panY = 0;
     this.rotation = 0; // İki parmakla harita döndürme açısı (derece)
+    this.is3DMode = false; // 2.5D/3D İzometrik Perspektif Kamera Modu
     this.isDragging = false;
     this.startX = 0;
     this.startY = 0;
@@ -215,6 +216,23 @@ class MallMap {
   resetRotation(duration = 0) {
     this.rotation = 0;
     this.applyTransform();
+  }
+
+  set3DMode(enabled) {
+    this.is3DMode = !!enabled;
+    if (this.container) {
+      this.container.classList.toggle('is-3d-perspective', this.is3DMode);
+    }
+    const btn3d = document.getElementById('btn-3d-toggle');
+    if (btn3d) {
+      btn3d.classList.toggle('is-active', this.is3DMode);
+    }
+    this.applyTransform();
+    return this.is3DMode;
+  }
+
+  toggle3DMode() {
+    return this.set3DMode(!this.is3DMode);
   }
 
   initMap() {
@@ -417,11 +435,13 @@ class MallMap {
     const isZoomed = this.scale >= 1.35;
     const isFiltered = this.activeCategoryFilter && this.activeCategoryFilter !== 'all';
     const showAll = this.displayMode === 'all' || isZoomed || isFiltered;
+    const enRouteIds = new Set(this.activeRoute?.enRouteStoreIds || []);
 
-    // Hedef ve Başlangıç en öncelikli, sonra Anchor ve logolu kurumsal mağazalar
+    // Hedef ve Başlangıç en öncelikli, sonra Yol Üstü (En-Route) ve Anchor mağazalar
     const sortedStores = [...stores].sort((a, b) => {
       const getPrio = (s) => {
-        if (this.activeTargetStore?.id === s.id || this.activeStartStore?.id === s.id) return 4;
+        if (this.activeTargetStore?.id === s.id || this.activeStartStore?.id === s.id) return 5;
+        if (enRouteIds.has(s.id)) return 4;
         if (s.is_anchor) return 3;
         if (typeof hasBrandLogo === 'function' && hasBrandLogo(s)) return 2;
         return 1;
@@ -435,15 +455,16 @@ class MallMap {
     sortedStores.forEach(store => {
       const isTarget = this.activeTargetStore && this.activeTargetStore.id === store.id;
       const isStart = this.activeStartStore && this.activeStartStore.id === store.id;
+      const isEnRoute = enRouteIds.has(store.id) && !isTarget && !isStart;
       const isAnchor = !!store.is_anchor;
       const hasLogo = (typeof hasBrandLogo === 'function' && hasBrandLogo(store));
 
-      if (!showAll && !isAnchor && !isTarget && !isStart && !hasLogo) {
+      if (!showAll && !isAnchor && !isTarget && !isStart && !isEnRoute && !hasLogo) {
         return;
       }
 
-      // Çakışma kontrolü (Hedef ve başlangıç hariç)
-      if (!isTarget && !isStart) {
+      // Çakışma kontrolü (Hedef, başlangıç ve yol üstü referanslar öncelikli)
+      if (!isTarget && !isStart && !isEnRoute) {
         const collides = placedPositions.some(p => Math.hypot(p.x - store.cx, p.y - store.cy) < minDistance);
         if (collides) return;
       }
@@ -458,7 +479,7 @@ class MallMap {
       const offsetY = (!isAnchor && !isTargetOrStart && (isFoodCourtShop || isTallShop)) ? -22 : 0;
 
       const marker = document.createElement('div');
-      marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : (hasLogo ? 'is-brand-store' : 'is-secondary')} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''}`;
+      marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : (hasLogo ? 'is-brand-store' : 'is-secondary')} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''} ${isEnRoute ? 'is-enroute-landmark' : ''}`;
       marker.style.left = `${store.cx}px`;
       marker.style.top = `${store.cy + offsetY}px`;
       marker.setAttribute('data-store-id', store.id);
@@ -475,8 +496,8 @@ class MallMap {
             ${isStart ? '📍 Başlangıç: ' : '🎯 Hedef: '}${store.name}
           </span>
         ` : `
-          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} text-sm font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 cursor-pointer absolute top-full z-40">
-            ${store.name}
+          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} ${isEnRoute ? 'marker-name-enroute' : ''} text-sm font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 cursor-pointer absolute top-full z-40">
+            ${isEnRoute ? '👀 ' : ''}${store.name}
           </span>
         `}
       `;
@@ -576,7 +597,8 @@ class MallMap {
       prayer: '🕌',
       baby: '🍼',
       taxi: '🚕',
-      valet: '🚘'
+      valet: '🚘',
+      wheelchair: '♿'
     };
 
     amenities.forEach(am => {
@@ -761,26 +783,43 @@ class MallMap {
   updateActiveStorePolygons() {
     if (!this.svgLayer) return;
     const allPolys = this.svgLayer.querySelectorAll('.store-polygon');
+    const enRouteIds = new Set(this.activeRoute?.enRouteStoreIds || []);
+    const hasRoute = !!(this.activeRoute && this.activeRoute.pathNodes && this.activeRoute.pathNodes.length > 1);
+
     allPolys.forEach(p => {
-      p.classList.remove('store-active', 'store-target', 'store-start', 'store-selected');
+      p.classList.remove('store-active', 'store-target', 'store-start', 'store-selected', 'store-enroute', 'store-offroute-dimmed');
+      const pid = p.getAttribute('data-id') || p.id;
+      if (hasRoute) {
+        if (enRouteIds.has(pid)) {
+          p.classList.add('store-enroute');
+        } else {
+          p.classList.add('store-offroute-dimmed');
+        }
+      }
     });
 
     if (this.selectedStore && this.selectedStore.floor === this.currentFloor) {
       const p = this.getStorePolygon(this.selectedStore);
       if (p) {
-        // İçi boş mavi kutu kaldırıldı
+        p.classList.remove('store-offroute-dimmed');
         p.classList.add('store-selected');
       }
     }
 
     if (this.activeStartStore && this.activeStartStore.floor === this.currentFloor) {
       const p = this.getStorePolygon(this.activeStartStore);
-      if (p) p.classList.add('store-start');
+      if (p) {
+        p.classList.remove('store-offroute-dimmed', 'store-enroute');
+        p.classList.add('store-start');
+      }
     }
 
     if (this.activeTargetStore && this.activeTargetStore.floor === this.currentFloor) {
       const p = this.getStorePolygon(this.activeTargetStore);
-      if (p) p.classList.add('store-target', 'store-active');
+      if (p) {
+        p.classList.remove('store-offroute-dimmed', 'store-enroute');
+        p.classList.add('store-target', 'store-active');
+      }
     }
   }
 
@@ -917,14 +956,19 @@ class MallMap {
     if (!this.viewport) return;
     this.viewport.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.scale})`;
 
-    // Harita Rotasyonu (SVG ve tüm katmanlar için merkezden 700x425 dönüş)
+    // Harita Rotasyonu & 2.5D/3D İzometrik Perspektif Eğimi (Merkezden 700x425 dönüş)
     if (this.rotator) {
-      this.rotator.style.transform = `rotate(${this.rotation}deg)`;
+      if (this.is3DMode) {
+        this.rotator.style.transform = `perspective(1100px) rotateX(28deg) rotate(${this.rotation}deg)`;
+      } else {
+        this.rotator.style.transform = `rotate(${this.rotation}deg)`;
+      }
     }
 
     // Billboard Etkisi: Tüm HTML marker ve ikonların dik kalmasını sağla
     if (this.container) {
       this.container.style.setProperty('--billboard-rot', `${-this.rotation}deg`);
+      this.container.style.setProperty('--billboard-tilt', this.is3DMode ? '-28deg' : '0deg');
 
       // Mobil ve Masaüstü Dinamik Logo Ölçekleme (Zoom'a göre dengeli boyut)
       const isMobile = window.innerWidth <= 768;

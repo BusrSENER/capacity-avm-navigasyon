@@ -268,14 +268,20 @@
         </div>
       </div>
 
-      <!-- 3 Hızlı Başlangıç Noktası (1-Tıkla Anında Seçim) -->
+      <!-- Hızlı Başlangıç & Konum Pinleme Çipleri (1-Tıkla "Şu An Buradayım" Seçimi) -->
       <div id="quick-start-chips-row" class="flex items-center gap-1.5 mb-2 overflow-x-auto no-scrollbar py-0.5 shrink-0">
-        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Giriş:</span>
-        <button id="btn-quick-fisekhane" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="fisekhane" title="Fişekhane Ana Giriş (x: 1245, y: 410)">
-          <span>🚪 Fişekhane</span>
+        <button id="btn-pin-here" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-xs cursor-pointer active:scale-95" title="Şu An Bulunduğunuz Kapı veya Mağazayı Tek Tıkla Pinleyin">
+          <span>📍 Şu An Buradayım</span>
         </button>
-        <button id="btn-quick-carousel" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="carousel" title="Carousel Geçiş Kapısı (x: 680, y: 50)">
-          <span>🚪 Carousel</span>
+        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Kapılar:</span>
+        <button id="btn-quick-fisekhane" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="fisekhane" title="C Kapısı - Fişekhane Ana Giriş (x: 1245, y: 410)">
+          <span>🚪 C Kapısı (Fişekhane)</span>
+        </button>
+        <button id="btn-quick-carousel" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="carousel" title="B Kapısı - Carousel Geçiş Kapısı (x: 680, y: 50)">
+          <span>🚪 B Kapısı (Carousel)</span>
+        </button>
+        <button id="btn-quick-akapisi" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="akapisi" title="A Kapısı - Ataköy / Marks & Spencer Girişi (x: 200, y: 440)">
+          <span>🚪 A Kapısı</span>
         </button>
         <button id="btn-quick-danisma" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="danisma" title="Zemin Kat Danışma (x: 1085, y: 425)">
           <span>ℹ️ Danışma</span>
@@ -316,7 +322,7 @@
         </button>
       </div>
 
-      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: WC, Giriş-Çıkış, Revir, Danışma, ATM, Otopark, Mescit, Bebek Odası -->
+      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: WC, Giriş-Çıkış, Revir, Danışma, ATM, Otopark, Mescit, Bebek Odası, Engelsiz Şarj -->
       <div id="amenity-chips-row" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 shrink-0">
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="wc">
           <span>🚻</span> Tuvalet
@@ -326,6 +332,9 @@
         </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="info">
           <span>🛡️</span> Danışma
+        </button>
+        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="wheelchair">
+          <span>♿</span> Akülü Sandalye Şarj
         </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="atm">
           <span>💳</span> ATM
@@ -455,23 +464,44 @@
         <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Danışma Kiosk Modu</span>
       </div>
 
-      <!-- Sol Üst Yüzen Kat Başlığı Bannerı (cevahir-rehber.web.app birebir) -->
+      <!-- Sol Üst Yüzen Kat Başlığı & Canlı Yönlendirme Bannerı -->
       <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all max-w-[calc(100vw-65px)]">
-        <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
-        <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
-
-        <!-- Canlı Turn-by-Turn Navigasyon Barı (Adım Adım Yönlendirme HUD) -->
-        <div id="header-live-nav-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center gap-2.5 transition-all">
-          <div id="live-nav-icon" class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex items-center justify-center text-base sm:text-lg font-bold shrink-0 shadow-xs select-none">
-            ⬆️
+        <div class="flex items-center justify-between gap-2 min-w-0">
+          <div class="min-w-0 flex-1">
+            <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
+            <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
           </div>
-          <div class="flex flex-col min-w-0 flex-1">
-            <div id="live-nav-text" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-tight truncate">
-              Düz İlerleyin
+          <!-- 1-Tıkla "Şu An Buradayım" Konum Pinleme Çipi (Anneler ve İlk Kez Girenler İçin) -->
+          <button id="btn-header-pin-here" class="header-pin-here-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-emerald-600/20 transition-all active:scale-95 cursor-pointer" title="Şu An Bulunduğunuz Kapı veya Mağazayı Seçin">
+            <span>📍</span>
+            <span id="header-pin-here-text">Buradayım</span>
+          </button>
+        </div>
+
+        <!-- Canlı Turn-by-Turn Navigasyon Barı (Adım Adım Yönlendirme HUD & Yanından Geçilen Mağazalar & Sesli Tarif) -->
+        <div id="header-live-nav-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col gap-1.5 transition-all">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div id="live-nav-icon" class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex items-center justify-center text-base sm:text-lg font-bold shrink-0 shadow-xs select-none">
+              ⬆️
             </div>
-            <div id="live-nav-sub" class="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-400 leading-tight truncate mt-0.5">
-              Rotayı takip edin
+            <div class="flex flex-col min-w-0 flex-1">
+              <div id="live-nav-text" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-tight truncate">
+                Düz İlerleyin
+              </div>
+              <div id="live-nav-sub" class="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-400 leading-tight truncate mt-0.5">
+                Rotayı takip edin
+              </div>
             </div>
+            <!-- Sesli Rehber (Web Speech API - tr-TR) Butonu -->
+            <button id="btn-voice-toggle" class="shrink-0 h-8 px-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sesli Yol Tarifini Aç / Kapat veya Tekrar Dinle">
+              <span id="voice-toggle-icon">🔊</span>
+              <span id="voice-toggle-label" class="hidden sm:inline">Sesli</span>
+            </button>
+          </div>
+          <!-- Yanından Geçilen Mağazalar (Landmark Strip) -->
+          <div id="live-nav-landmarks" class="hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-[10.5px] font-bold text-amber-800 dark:text-amber-300 truncate">
+            <span>👀</span>
+            <span id="live-nav-landmarks-text" class="truncate">Yanından geçilecek: W Collection, Madame Coco</span>
           </div>
         </div>
 
@@ -494,6 +524,11 @@
 
       <!-- İnteraktif SVG Harita Konteyneri -->
       <div id="map-canvas-container" class="w-full h-full relative overflow-hidden select-none cursor-grab active:cursor-grabbing"></div>
+
+      <!-- 2.5D / 3D Perspektif Kamera Açısı Butonu -->
+      <button id="btn-3d-toggle" class="absolute right-28 top-4 z-30 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-[0_8px_25px_rgba(0,0,0,0.08)] border border-slate-200/80 dark:border-slate-800 flex items-center justify-center text-xs font-black text-slate-700 dark:text-slate-200 transition-all hover:scale-105 active:scale-95 cursor-pointer" title="2D / 3D Perspektif Harita Görünümü">
+        <span id="btn-3d-label">3D</span>
+      </button>
 
       <!-- Kuzey Pusulası (Compass) Butonu - Harita döndüğünde açıyı gösterir, tıklandığında 0° (Kuzey) sıfırlar -->
       <button id="btn-compass" class="absolute right-16 top-4 z-30 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-[0_8px_25px_rgba(0,0,0,0.08)] border border-slate-200/80 dark:border-slate-800 flex items-center justify-center transition-all hover:scale-105 active:scale-95 group" title="Kuzeyi Göster / Sıfırla (0°)">

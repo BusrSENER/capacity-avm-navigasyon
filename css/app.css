@@ -1908,4 +1908,159 @@ html.dark .parking-floor-btn.active {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
 }
 
+/* ========================================================
+   12. SAHA ARAŞTIRMASI & "ANNE TESTİ" UX: YOL ÜSTÜ MAĞAZA VURGUSU VE 2.5B / 3B MİMARİ DERİNLİK
+   ======================================================== */
 
+/* 1. 2.5B Mimari Derinlik (Mağaza Blokları Hafif Yükseltilmiş Kabartma Görünümü) */
+.store-polygon rect {
+  filter: drop-shadow(0 2.5px 0 rgba(15, 23, 42, 0.10)) drop-shadow(0 4px 6px rgba(15, 23, 42, 0.05));
+  transition: filter 0.3s ease, fill 0.25s ease, stroke 0.25s ease, opacity 0.3s ease;
+}
+
+html.dark .store-polygon rect {
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.55)) drop-shadow(0 5px 10px rgba(0, 0, 0, 0.35));
+}
+
+/* 2. [ 3D ] Mimari Perspektif Modu (.is-3d-perspective) */
+#map-canvas-container.is-3d-perspective #map-rotator {
+  transform-style: preserve-3d;
+}
+
+#map-canvas-container.is-3d-perspective .store-polygon rect {
+  filter: drop-shadow(0 5px 0 rgba(15, 23, 42, 0.20)) drop-shadow(0 10px 16px rgba(15, 23, 42, 0.14));
+}
+
+html.dark #map-canvas-container.is-3d-perspective .store-polygon rect {
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.78)) drop-shadow(0 12px 20px rgba(0, 0, 0, 0.55));
+}
+
+/* 3B Modda Rozetlerin ve Pinlerin Dik (Billboard) Durması */
+#map-canvas-container.is-3d-perspective .logo-tile-marker {
+  transform: translate(-50%, -50%) scale(var(--marker-scale, 1)) rotate(var(--billboard-rot, 0deg)) rotateX(var(--billboard-tilt, 0deg));
+}
+
+#map-canvas-container.is-3d-perspective .logo-tile-marker:hover {
+  transform: translate(-50%, -50%) scale(calc(var(--marker-scale, 1) * 1.2)) rotate(var(--billboard-rot, 0deg)) rotateX(var(--billboard-tilt, 0deg));
+}
+
+#map-canvas-container.is-3d-perspective .logo-tile-marker.is-active,
+#map-canvas-container.is-3d-perspective .logo-tile-marker.is-target,
+#map-canvas-container.is-3d-perspective .logo-tile-marker.is-start {
+  transform: translate(-50%, -50%) scale(calc(var(--marker-scale, 1) * 1.15)) rotate(var(--billboard-rot, 0deg)) rotateX(var(--billboard-tilt, 0deg));
+}
+
+#map-canvas-container.is-3d-perspective .amenity-marker-wrapper {
+  transform: translate(-50%, -50%) rotate(var(--billboard-rot, 0deg)) rotateX(var(--billboard-tilt, 0deg));
+}
+
+#btn-3d-toggle {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+#btn-3d-toggle.is-active {
+  background: linear-gradient(135deg, #4f46e5, #0284c7) !important;
+  color: #ffffff !important;
+  border-color: #4f46e5 !important;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4) !important;
+}
+
+/* 3. "Yanından Geçtiğim Mağazalar" (En-Route Landmark) Vurgusu & Rota Dışı Mağazaları Sakinleştirme */
+.store-polygon.store-enroute {
+  stroke: #059669 !important;
+  stroke-width: 2.2px !important;
+  fill: #ecfdf5 !important;
+  opacity: 1 !important;
+}
+
+.store-polygon.store-enroute rect {
+  filter: drop-shadow(0 4px 0 rgba(5, 150, 105, 0.28)) drop-shadow(0 6px 12px rgba(16, 185, 129, 0.22)) !important;
+}
+
+html.dark .store-polygon.store-enroute {
+  stroke: #34d399 !important;
+  stroke-width: 2.2px !important;
+  fill: rgba(16, 185, 129, 0.28) !important;
+  opacity: 1 !important;
+}
+
+.store-polygon.store-offroute-dimmed {
+  opacity: 0.44 !important;
+  transition: opacity 0.35s ease !important;
+}
+
+.store-polygon.store-offroute-dimmed:hover {
+  opacity: 0.92 !important;
+}
+
+/* Başlangıç ve Hedef Mağazalarının Üzerinde Zaten Yüzen Hap Etiket Olduğu İçin Altındaki SVG Metni Gizle */
+.store-polygon.store-start text,
+.store-polygon.store-target text {
+  opacity: 0 !important;
+}
+
+.logo-tile-marker.is-enroute-landmark {
+  z-index: 58 !important;
+}
+
+.logo-tile-marker.is-enroute-landmark .logo-tile {
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.32) !important;
+}
+
+/* 4. Masaüstü, Mobil Dikey ve Yatay Modda [ 3D ] Butonu ve Üst Kart Çakışma Koruması */
+@media (min-width: 769px) {
+  #btn-3d-toggle {
+    position: absolute !important;
+    right: 116px !important;
+    left: auto !important;
+    top: 16px !important;
+    bottom: auto !important;
+    z-index: 30 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #btn-3d-toggle {
+    position: fixed !important;
+    left: 12px !important;
+    right: auto !important;
+    bottom: 208px !important;
+    top: auto !important;
+    transform: none !important;
+    z-index: 35 !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+  }
+}
+
+@media screen and (max-width: 950px) and (orientation: landscape) {
+  #btn-3d-toggle {
+    position: fixed !important;
+    left: 150px !important;
+    right: auto !important;
+    bottom: 10px !important;
+    top: auto !important;
+    transform: none !important;
+    z-index: 35 !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    border-radius: 9999px !important;
+  }
+
+  #btn-3d-toggle span {
+    font-size: 9px !important;
+  }
+
+  /* Yatay modda #floor-header-card yüksekliğinin 44px'i aşmaması için ekstra satırları gizle */
+  #floor-header-card #btn-header-pin-here,
+  #floor-header-card #header-live-nav-banner {
+    display: none !important;
+  }
+}

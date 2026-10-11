@@ -305,7 +305,8 @@ const TRANSLATIONS = {
       atm: 'ATM',
       carpark: 'Otopark',
       prayer: 'Mescit',
-      baby: 'Bebek Odası'
+      baby: 'Bebek Odası',
+      wheelchair: 'Akülü Sandalye Şarj'
     },
     parkingMemoryBtn: 'Otopark Konumu Kaydet',
     parkingModalTitle: 'Otopark Hafızası',
@@ -353,7 +354,8 @@ const TRANSLATIONS = {
       atm: 'ATMs',
       carpark: 'Parking',
       prayer: 'Prayer Room',
-      baby: 'Baby Care'
+      baby: 'Baby Care',
+      wheelchair: 'Wheelchair Charger'
     },
     parkingMemoryBtn: 'Save Parking Spot',
     parkingModalTitle: 'Parking Memory',
@@ -638,6 +640,74 @@ function initApp() {
     }
   };
 
+  // Türkçe Sesli Yönlendirme Motoru (Web Speech API - "Yanından Geçtiğim Mağazalar" Destekli)
+  let isVoiceEnabled = false;
+  let lastSpokenStepIndex = -999;
+  window.isVoiceEnabled = false;
+  window.lastSpokenNavigationText = '';
+
+  function speakNavigationText(text, force = false) {
+    if (!text) return;
+    if (!isVoiceEnabled && !force) return;
+    window.lastSpokenNavigationText = text;
+    try {
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = currentLanguage === 'en' ? 'en-US' : 'tr-TR';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (e) {
+      // Headless / kısıtlı tarayıcı ortamlarında sessizce geç
+    }
+  }
+  window.speakNavigationText = speakNavigationText;
+
+  function toggleVoiceNavigation() {
+    isVoiceEnabled = !isVoiceEnabled;
+    window.isVoiceEnabled = isVoiceEnabled;
+    const btn = document.getElementById('btn-voice-toggle');
+    const iconEl = document.getElementById('voice-toggle-icon');
+    const labelEl = document.getElementById('voice-toggle-label');
+
+    if (isVoiceEnabled) {
+      if (btn) {
+        btn.className = 'shrink-0 px-2 py-1 rounded-lg bg-indigo-600 text-white border border-indigo-600 text-[10px] font-extrabold flex items-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer';
+      }
+      if (iconEl) iconEl.textContent = '🔊';
+      if (labelEl) labelEl.textContent = 'Sesli Açık';
+      showToast('🔊 Sesli adım adım yönlendirme açıldı', 'success');
+
+      // Mevcut adımı hemen seslendir
+      if (lastCalculatedRoute && lastCalculatedRoute.instructions && lastCalculatedRoute.instructions.length > 0) {
+        const curIdx = cartSimulator ? cartSimulator.currentIndex : 0;
+        let currentIns = lastCalculatedRoute.instructions[0];
+        for (const ins of lastCalculatedRoute.instructions) {
+          if (ins.nodeIndex !== undefined && curIdx >= ins.nodeIndex) {
+            currentIns = ins;
+          }
+        }
+        lastSpokenStepIndex = currentIns.step;
+        speakNavigationText(currentIns.voiceText || currentIns.text, true);
+      }
+    } else {
+      if (btn) {
+        btn.className = 'shrink-0 px-2 py-1 rounded-lg bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/80 text-[10px] font-extrabold flex items-center gap-1 shadow-xs transition-all active:scale-95 cursor-pointer';
+      }
+      if (iconEl) iconEl.textContent = '🔇';
+      if (labelEl) labelEl.textContent = 'Sesli';
+      try {
+        if ('speechSynthesis' in window && window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      } catch (e) {}
+      showToast('🔇 Sesli yönlendirme kapatıldı', 'info');
+    }
+  }
+  window.toggleVoiceNavigation = toggleVoiceNavigation;
+
   /**
    * Canlı Turn-by-Turn Adım Banner'ı (Adım Adım Yönlendirme HUD)
    * @param {number} nodeIndex - Mevcut düğüm indeksi (-1 ise varış)
@@ -648,6 +718,8 @@ function initApp() {
     const iconEl = document.getElementById('live-nav-icon');
     const textEl = document.getElementById('live-nav-text');
     const subEl = document.getElementById('live-nav-sub');
+    const landmarksWrap = document.getElementById('live-nav-landmarks');
+    const landmarksText = document.getElementById('live-nav-landmarks-text');
     if (!banner || !iconEl || !textEl || !subEl) return;
 
     if (!lastCalculatedRoute || !lastCalculatedRoute.instructions || !lastCalculatedRoute.instructions.length) {
@@ -662,6 +734,11 @@ function initApp() {
       textEl.textContent = 'Hedefe Ulaştınız!';
       const destName = (selectedTargetStore && selectedTargetStore.name) || 'Hedef Mağaza';
       subEl.textContent = `${destName} önündesiniz`;
+      landmarksWrap?.classList.add('hidden');
+      if (isVoiceEnabled && lastSpokenStepIndex !== -1) {
+        lastSpokenStepIndex = -1;
+        speakNavigationText(`Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`);
+      }
       return;
     }
 
@@ -694,7 +771,26 @@ function initApp() {
     iconEl.textContent = emoji;
     textEl.textContent = activeIns.text;
 
-    // 4. Alt Bilgi: Bir sonraki manevra veya kalan ilerleme
+    // 4. Yanından Geçilecek Mağazalar (Referans Noktaları) Rozeti
+    if (landmarksWrap && landmarksText) {
+      const stepStores = (activeIns.passingStores && activeIns.passingStores.length > 0)
+        ? activeIns.passingStores
+        : (lastCalculatedRoute.enRouteStoreNames || []).slice(0, 3);
+      if (stepStores.length > 0) {
+        landmarksText.textContent = stepStores.join(' ➔ ');
+        landmarksWrap.classList.remove('hidden');
+      } else {
+        landmarksWrap.classList.add('hidden');
+      }
+    }
+
+    // 5. Sesli Yönlendirme (Adım Değiştiğinde)
+    if (isVoiceEnabled && activeIns.step !== lastSpokenStepIndex) {
+      lastSpokenStepIndex = activeIns.step;
+      speakNavigationText(activeIns.voiceText || activeIns.text);
+    }
+
+    // 6. Alt Bilgi: Bir sonraki manevra veya kalan ilerleme
     if (nextIns) {
       const nextEmoji = nextIns.emoji || (nextIns.type === 'floor_change' ? '🪜' : (nextIns.type === 'turn_right' ? '↪️' : (nextIns.type === 'turn_left' ? '↩️' : '⬆️')));
       subEl.textContent = `Sonraki: ${nextEmoji} ${nextIns.text}`;
@@ -1013,6 +1109,26 @@ function setupUIEventListeners() {
     mallMap.resetRotation();
   });
 
+  // 2.5B / 3B Mimari Perspektif Görünümü Butonu (#btn-3d-toggle)
+  document.getElementById('btn-3d-toggle')?.addEventListener('click', () => {
+    if (!mallMap) return;
+    const is3D = mallMap.toggle3DMode();
+    showToast(
+      is3D
+        ? '🧊 3B Mimari Perspektif Görünümü Açıldı'
+        : '🗺️ 2B Kuşbakışı Harita Görünümüne Dönüldü',
+      'info'
+    );
+  });
+
+  // Sesli Adım Adım Yönlendirme Butonu (#btn-voice-toggle)
+  document.getElementById('btn-voice-toggle')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (window.toggleVoiceNavigation) {
+      window.toggleVoiceNavigation();
+    }
+  });
+
   // Simülasyonda Sepete Yeniden Odaklan (Recenter Cart)
   document.getElementById('btn-recenter-cart')?.addEventListener('click', () => {
     if (cartSimulator) {
@@ -1107,8 +1223,25 @@ function setupUIEventListeners() {
     });
   });
 
-  // Başlangıç Konumu Seçim Butonları
+  // Başlangıç Konumu Seçim Butonları & 1-Tıkla "📍 Şu An Buradayım" Pinleme
   document.getElementById('input-start-loc')?.addEventListener('click', () => {
+    if (window.isKioskMode) {
+      showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+      return;
+    }
+    openEntranceModal();
+  });
+
+  document.getElementById('btn-pin-here')?.addEventListener('click', () => {
+    if (window.isKioskMode) {
+      showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+      return;
+    }
+    openEntranceModal();
+  });
+
+  document.getElementById('btn-header-pin-here')?.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (window.isKioskMode) {
       showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
       return;
@@ -1125,10 +1258,11 @@ function setupUIEventListeners() {
     openEntranceModal();
   });
 
-  // 3 Hızlı Başlangıç Butonu (1-Tıkla Anında Seçim)
+  // 4 Hızlı Başlangıç Butonu (C Kapısı, B Kapısı, A Kapısı, Danışma - 1-Tıkla Anında Seçim)
   const quickStartMap = {
     'btn-quick-fisekhane': 'ent_fisekhane',
     'btn-quick-carousel': 'ent_carousel',
+    'btn-quick-akapisi': 'ent_a_kapisi',
     'btn-quick-danisma': 'ent_danisma'
   };
 
@@ -1650,6 +1784,9 @@ function findNearestAmenity(amenityKind, floor) {
     }
     if (kind === 'carpark') {
       return aType === 'carpark' || aKind === 'carpark' || aName.includes('otopark') || aName.includes('vale');
+    }
+    if (kind === 'wheelchair') {
+      return aType === 'wheelchair' || aKind === 'wheelchair' || aName.includes('akülü') || aName.includes('sandalye') || aName.includes('engelli');
     }
     return aType === kind || aKind === kind || aName.includes(kind);
   });
@@ -2460,15 +2597,21 @@ function calculateAndDisplayRoute() {
   const hudStepsCount = document.getElementById('hud-steps-count');
   if (hudStepsCount) hudStepsCount.textContent = `${result.instructions?.length || 0} Adım`;
   if (hudStepsList && result.instructions) {
-    hudStepsList.innerHTML = result.instructions.map(ins => `
+    hudStepsList.innerHTML = result.instructions.map(ins => {
+      const passingHtml = (ins.passingStores && ins.passingStores.length > 0)
+        ? `<div class="mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold"><span>👀</span><span>${ins.passingStores.join(' ➔ ')}</span></div>`
+        : '';
+      return `
       <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
         <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
         <div>
           <div class="font-bold text-slate-800 dark:text-slate-200">${ins.text}</div>
+          ${passingHtml}
           <div class="text-[10px] text-slate-400">${mallData.floors[ins.floor]?.label || ins.floor + '. Kat'}</div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   // Haritada Rota Çiz
@@ -2614,6 +2757,7 @@ function clearCurrentRoute() {
 
   document.getElementById('btn-clear-start')?.classList.add('hidden');
   document.getElementById('btn-clear-target')?.classList.add('hidden');
+  updateStartBadgeUI('');
 
   // Hızlı Başlangıç Çiplerini Sıfırla
   document.querySelectorAll('.quick-start-chip').forEach(b => {
@@ -2658,16 +2802,22 @@ function updateStartBadgeUI(name) {
   const startInput = document.getElementById('input-start-loc');
   const clearStartBtn = document.getElementById('btn-clear-start');
   const badge = document.getElementById('start-badge-text');
+  const headerPinText = document.getElementById('header-pin-here-text');
 
   if (name) {
     if (startInput) startInput.value = name;
     if (clearStartBtn) clearStartBtn.classList.remove('hidden');
     if (badge) badge.textContent = name;
+    if (headerPinText) {
+      const cleanShort = name.replace(/^📍\s*/, '').split('(')[0].trim();
+      headerPinText.textContent = cleanShort.length > 14 ? cleanShort.slice(0, 13) + '…' : cleanShort;
+    }
 
-    // 3 Hızlı Başlangıç Çipini Senkronize Et
+    // 4 Hızlı Başlangıç Çipini Senkronize Et
     document.querySelectorAll('.quick-start-chip').forEach(b => {
-      const isMatch = (b.id === 'btn-quick-fisekhane' && name.includes('Fişekhane')) ||
-                      (b.id === 'btn-quick-carousel' && name.includes('Carousel')) ||
+      const isMatch = (b.id === 'btn-quick-fisekhane' && (name.includes('Fişekhane') || name.includes('C Kapısı'))) ||
+                      (b.id === 'btn-quick-carousel' && (name.includes('Carousel') || name.includes('B Kapısı'))) ||
+                      (b.id === 'btn-quick-akapisi' && (name.includes('A Kapısı') || name.includes('Ataköy'))) ||
                       (b.id === 'btn-quick-danisma' && name.includes('Danışma'));
       if (isMatch) {
         b.className = 'quick-start-chip active px-2.5 py-1 rounded-xl bg-emerald-600 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-sm';
@@ -2679,6 +2829,7 @@ function updateStartBadgeUI(name) {
     if (startInput) startInput.value = '';
     if (clearStartBtn) clearStartBtn.classList.add('hidden');
     if (badge) badge.textContent = '';
+    if (headerPinText) headerPinText.textContent = 'Buradayım';
     document.querySelectorAll('.quick-start-chip').forEach(b => {
       b.className = 'quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700';
     });
@@ -3344,6 +3495,19 @@ const ACTIVE_STORE_CAMPAIGNS = {
     couponCode: 'SEPHORA25',
     category: 'Kozmetik',
     badgeClass: 'bg-rose-600'
+  },
+  'store_3_27': {
+    storeId: 'store_3_27',
+    storeName: 'Koton',
+    floor: 3,
+    x: 396.5,
+    y: 550,
+    title: 'Koton Sezon Ortası İndirimi',
+    discount: '%50 İndirim',
+    description: 'Koton Capacity mağazasında seçili kadın, erkek ve çocuk koleksiyonlarında net %50 indirim!',
+    couponCode: 'KOTON50',
+    category: 'Moda',
+    badgeClass: 'bg-red-600'
   },
   'store_5_45': {
     storeId: 'store_5_45',

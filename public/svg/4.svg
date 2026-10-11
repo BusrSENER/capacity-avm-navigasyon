@@ -60,18 +60,18 @@
       <text x="0" y="24" fill="#92400e" font-size="8" font-weight="800" text-anchor="middle">DANIŞMA</text>
     </g>
     
-    <!-- Fişekhane Ana Giriş Portali -->
+    <!-- Fişekhane Ana Giriş Portali (C Kapısı) -->
     <g transform="translate(1245, 410)">
       <rect x="-10" y="-15" width="30" height="30" rx="6" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
       <text x="5" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🚪</text>
-      <text x="5" y="26" fill="#065f46" font-size="8" font-weight="800" text-anchor="middle">FİŞEKHANE</text>
+      <text x="5" y="26" fill="#065f46" font-size="8" font-weight="800" text-anchor="middle">C KAPISI</text>
     </g>
     
-    <!-- Carousel Kuzey Girişi -->
+    <!-- Carousel Kuzey Girişi (B Kapısı) -->
     <g transform="translate(680, 50)">
       <rect x="-15" y="-10" width="30" height="24" rx="5" fill="#0284c7" stroke="#ffffff" stroke-width="2"/>
       <text x="0" y="6" fill="#ffffff" font-size="9" font-weight="900" text-anchor="middle">🚪</text>
-      <text x="0" y="24" fill="#0369a1" font-size="7.5" font-weight="800" text-anchor="middle">CAROUSEL</text>
+      <text x="0" y="24" fill="#0369a1" font-size="7.5" font-weight="800" text-anchor="middle">B KAPISI</text>
     </g>
         
   
@@ -181,9 +181,9 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_11" id="room_4_11" data-name="Divarese">
-      <rect x="815.0" y="560.0" width="75.0" height="170.0" rx="6"
+      <rect x="925.0" y="500.0" width="80.0" height="50.0" rx="6"
             fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="852.5" y="649.0"
+      <text class="pointer-events-none select-none" x="965.0" y="529.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Divarese
       </text>
@@ -197,9 +197,9 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_13" id="room_4_13" data-name="Faik Sönmez">
-      <rect x="735.0" y="560.0" width="70.0" height="170.0" rx="6"
+      <rect x="250.0" y="560.0" width="110.0" height="170.0" rx="6"
             fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="770.0" y="649.0"
+      <text class="pointer-events-none select-none" x="305.0" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Faik Sönmez
       </text>
@@ -213,9 +213,9 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_15" id="room_4_15" data-name="Hotiç">
-      <rect x="900.0" y="560.0" width="70.0" height="170.0" rx="6"
+      <rect x="1000.0" y="140.0" width="80.0" height="90.0" rx="6"
             fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="935.0" y="649.0"
+      <text class="pointer-events-none select-none" x="1040.0" y="189.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Hotiç
       </text>
@@ -237,9 +237,9 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_18" id="room_4_18" data-name="Kemal Tanca">
-      <rect x="980.0" y="560.0" width="60.0" height="170.0" rx="6"
+      <rect x="100.0" y="310.0" width="100.0" height="100.0" rx="6"
             fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1010.0" y="649.0"
+      <text class="pointer-events-none select-none" x="150.0" y="364.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Kemal Tanca
       </text>
@@ -269,9 +269,9 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_22" id="room_4_22" data-name="Madame Coco">
-      <rect x="925.0" y="500.0" width="80.0" height="50.0" rx="6"
+      <rect x="815.0" y="560.0" width="75.0" height="170.0" rx="6"
             fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="965.0" y="529.0"
+      <text class="pointer-events-none select-none" x="852.5" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Madame Coco
       </text>
@@ -309,11 +309,11 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_27" id="room_4_27" data-name="Paşabahçe Mağazaları">
-      <rect x="250.0" y="560.0" width="110.0" height="170.0" rx="6"
+      <rect x="735.0" y="560.0" width="70.0" height="170.0" rx="6"
             fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="305.0" y="649.0"
+      <text class="pointer-events-none select-none" x="770.0" y="649.0"
             fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Paşabahçe Mağazaları
+        Paşabahçe
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_28" id="room_4_28" data-name="Pelit">
@@ -325,9 +325,9 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_29" id="room_4_29" data-name="Pierre Cardin">
-      <rect x="100.0" y="310.0" width="100.0" height="100.0" rx="6"
+      <rect x="980.0" y="560.0" width="60.0" height="170.0" rx="6"
             fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="150.0" y="364.0"
+      <text class="pointer-events-none select-none" x="1010.0" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         Pierre Cardin
       </text>
@@ -437,9 +437,9 @@
       </text>
     </g>
     <g class="store-polygon" data-id="store_4_43" id="room_4_43" data-name="W Collection">
-      <rect x="1000.0" y="140.0" width="80.0" height="90.0" rx="6"
+      <rect x="900.0" y="560.0" width="70.0" height="170.0" rx="6"
             fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1040.0" y="189.0"
+      <text class="pointer-events-none select-none" x="935.0" y="649.0"
             fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
         W Collection
       </text>
