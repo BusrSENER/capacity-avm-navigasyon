@@ -676,14 +676,6 @@ function initApp() {
   function setMapViewMode(mode) {
     document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
 
-    // Yerini pinleyip hedefi seçmeden (aktif bir rota oluşmadan) doğrudan 3B Gözümden veya simülasyona geçilmesini engelle
-    if (mode === 'pov' && (!lastCalculatedRoute || !selectedStartStore || !selectedTargetStore)) {
-      if (window.showToast) {
-        window.showToast('👁️ 3B Gözümden yürüyüş için lütfen önce başlangıç ve hedef mağazayı seçin.', 'info');
-      }
-      mode = '2d';
-    }
-
     window.currentViewMode = mode;
     const modeBtns = document.querySelectorAll('.view-mode-btn');
     modeBtns.forEach(btn => {
@@ -711,23 +703,29 @@ function initApp() {
       const savedProg = cartSimulator ? cartSimulator.subProgress : 0;
       const savedX = cartSimulator ? cartSimulator.currentX : (selectedStartStore?.cx || 0);
       const savedY = cartSimulator ? cartSimulator.currentY : (selectedStartStore?.cy || 0);
-      const savedFloor = cartSimulator ? cartSimulator.currentFloor : (selectedStartStore?.floor || 4);
+      const savedFloor = cartSimulator ? cartSimulator.currentFloor : (selectedStartStore?.floor || currentFloor || 4);
 
       if (cartSimulator && cartSimulator.isPlaying) {
         cartSimulator.pause();
       }
 
-      if (window.pov3dEngine && lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
-        if (savedIdx > 0 || savedProg > 0.02) {
-          window.pov3dEngine.route = lastCalculatedRoute;
-          window.pov3dEngine.startStore = selectedStartStore;
-          window.pov3dEngine.targetStore = selectedTargetStore;
-          window.pov3dEngine.syncFromCart(savedIdx, savedProg, savedX, savedY, savedFloor);
-          window.pov3dEngine.isWalking = true;
-          window.pov3dEngine._syncPlayPauseButton();
-          window.pov3dEngine.activate();
+      if (window.pov3dEngine) {
+        if (lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
+          if (savedIdx > 0 || savedProg > 0.02) {
+            window.pov3dEngine.route = lastCalculatedRoute;
+            window.pov3dEngine.startStore = selectedStartStore;
+            window.pov3dEngine.targetStore = selectedTargetStore;
+            window.pov3dEngine.syncFromCart(savedIdx, savedProg, savedX, savedY, savedFloor);
+            window.pov3dEngine.isWalking = true;
+            window.pov3dEngine._syncPlayPauseButton();
+            window.pov3dEngine.activate();
+          } else {
+            window.pov3dEngine.startRouteWalk(lastCalculatedRoute, selectedStartStore, selectedTargetStore, true, true);
+          }
         } else {
-          window.pov3dEngine.startRouteWalk(lastCalculatedRoute, selectedStartStore, selectedTargetStore, true, true);
+          // Aktif rota yoksa: Google Street View tarzı 3B Serbest AVM Sokak Gezintisi başlat!
+          const focusStore = selectedStartStore || activePoiStore || null;
+          window.pov3dEngine.enterFreeRoam(focusStore?.floor || currentFloor || 4, focusStore);
         }
       }
     } else {
@@ -1252,6 +1250,40 @@ function initApp() {
     }
   };
 
+  // 3B Sokak Görünümü İçinden Tıklanan Bir Mağazaya Anında Rota Çizip 3B Yürüyüş Başlatan Fonksiyon
+  window.startRouteFromCurrentPovToStore = (targetStore) => {
+    if (!targetStore || !window.pov3dEngine) return;
+    const eng = window.pov3dEngine;
+    const curFl = eng.currentFloor || currentFloor || 4;
+    const floorStores = (mallData?.floors[curFl]?.stores || []).filter(s => s.nav_node && s.id !== targetStore.id);
+    let nearestStart = selectedStartStore;
+    if (!nearestStart || nearestStart.id === targetStore.id || nearestStart.floor !== curFl) {
+      let bestDist = Infinity;
+      for (const s of floorStores) {
+        const d = Math.hypot((s.cx || 700) - eng.camX, (s.cy || 425) - eng.camY);
+        if (d < bestDist) {
+          bestDist = d;
+          nearestStart = s;
+        }
+      }
+      if (!nearestStart && mallData?.entrances?.length) {
+        nearestStart = mallData.entrances[0];
+      }
+    }
+    if (!nearestStart) return;
+
+    selectedStartStore = nearestStart;
+    updateStartBadgeUI(nearestStart.name);
+    selectedTargetStore = targetStore;
+    const targetInput = document.getElementById('input-target-loc');
+    if (targetInput) targetInput.value = targetStore.name;
+    document.getElementById('btn-clear-target')?.classList.remove('hidden');
+
+    calculateAndDisplayRoute();
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+    window.setMapViewMode('pov');
+  };
+
   // Yol Üstü Kampanya Sensörü & Rota Sıfırlama Kancaları
   cartSimulator.onProximityCheck = (x, y, floor) => {
     checkEnRouteCampaignProximity(x, y, floor);
@@ -1414,6 +1446,9 @@ function setupUIEventListeners() {
       const fl = parseInt(btn.getAttribute('data-floor'), 10);
       mallMap.loadFloor(fl);
       updateFloorUI(fl);
+      if (window.pov3dEngine && window.pov3dEngine.isActive && typeof window.pov3dEngine.switchFloorInFreeRoam === 'function') {
+        window.pov3dEngine.switchFloorInFreeRoam(fl);
+      }
     });
   });
 
@@ -2689,6 +2724,12 @@ function selectStore(store) {
   // Mobilde veya yatay modda sol çekmece / alt çekmece açıksa haritayı rahat görebilmek için kapat
   if (isMobileOrLandscape() && isBottomSheetExpanded) {
     collapseBottomSheet();
+  }
+
+  // Eğer 3B Sokak Görünümü (Gözümden 3B) açıksa, kamerayı doğrudan mağazanın 3B vitrini önüne götür!
+  if (window.pov3dEngine && window.pov3dEngine.isActive && typeof window.pov3dEngine.teleportInFrontOfStore === 'function') {
+    window.pov3dEngine.teleportInFrontOfStore(store);
+    return;
   }
 
   // Ekranın altında kompakt etkileşimli pinleme kartı (Peek Mode) gösterilir:
