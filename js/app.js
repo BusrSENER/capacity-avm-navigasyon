@@ -1304,6 +1304,8 @@ function initApp() {
   setupLanguageToggle();
   setupCampaignEvents();
   setupVoiceCommandEvents();
+  setupGpsAutoLocationEvents();
+  setupEventsCalendarEvents();
   updateParkingUI();
 
   // Dikey geçiş tercihini varsayılan olarak 'escalator' (yürüyen merdiven) olarak sabitle
@@ -2306,10 +2308,22 @@ function setupAmenityPills() {
   document.querySelectorAll('.amenity-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       const amenityKind = pill.getAttribute('data-amenity');
-      if (!amenityKind) return; // e.g. btn-parking-memory handles itself
+      if (!amenityKind) return; // e.g. btn-parking-memory or btn-amenity-events handles itself
+
+      // Eğer hareket kabiliyeti kısıtlı / akülü sandalye şarj seçildiyse engelsiz rotayı da aktif et
+      if (amenityKind === 'wheelchair') {
+        setRoutePreference('elevator');
+      }
 
       const targetAmenity = findNearestAmenity(amenityKind, currentFloor);
       if (targetAmenity) {
+        // Henüz başlangıç konumu seçilmemişse, hizmet noktasına adım adım rehberliği hemen başlatmak için varsayılan girişi pinle
+        if (!selectedStartStore) {
+          const defaultEnt = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || (mallData?.entrances || [])[0];
+          if (defaultEnt) {
+            setStartLocation(defaultEnt);
+          }
+        }
         setTargetLocation(targetAmenity);
         selectStore(targetAmenity);
       }
@@ -2869,16 +2883,29 @@ function setRoutePreference(mode) {
   window.activeRouteMode = mode;
   const tabEscalator = document.getElementById('tab-pref-escalator');
   const tabElevator = document.getElementById('tab-pref-elevator');
+  const pmrBanner = document.getElementById('pmr-accessible-banner');
 
-  const activeStyle = 'flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border border-red-600 bg-red-600 text-white shadow-xs';
-  const inactiveStyle = 'flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+  const activeEscalatorStyle = 'flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border border-red-600 bg-red-600 text-white shadow-xs cursor-pointer';
+  const activeElevatorStyle = 'flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border border-sky-600 bg-sky-600 text-white shadow-xs cursor-pointer';
+  const inactiveStyle = 'flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer';
 
   if (mode === 'escalator') {
-    if (tabEscalator) tabEscalator.className = activeStyle;
+    if (tabEscalator) tabEscalator.className = activeEscalatorStyle;
     if (tabElevator) tabElevator.className = inactiveStyle;
+    if (pmrBanner) pmrBanner.classList.add('hidden');
   } else {
-    if (tabElevator) tabElevator.className = activeStyle;
+    if (tabElevator) tabElevator.className = activeElevatorStyle;
     if (tabEscalator) tabEscalator.className = inactiveStyle;
+    if (pmrBanner) pmrBanner.classList.remove('hidden');
+
+    // Hareket kabiliyeti kısıtlı kişiler için uyarlanmış engelsiz güzergah: otomatik olarak geniş ana koridorları ('wide') zorunlu kıl
+    currentPathPreference = 'wide';
+    const chipWide = document.getElementById('chip-path-wide');
+    const chipShort = document.getElementById('chip-path-short');
+    if (chipWide && chipShort) {
+      chipWide.className = 'flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white cursor-pointer';
+      chipShort.className = 'flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer';
+    }
   }
 
   const btnEsc = document.getElementById('mode-escalator');
@@ -2888,7 +2915,7 @@ function setRoutePreference(mode) {
       btnEsc.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
       btnEle.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
     } else {
-      btnEle.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-red-500 bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
+      btnEle.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-sky-500 bg-sky-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
       btnEsc.className = 'flex-1 py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all';
     }
   }
@@ -3095,12 +3122,29 @@ function calculateAndDisplayRoute() {
   if (hudSimText) hudSimText.textContent = 'Başlat';
   if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
 
-  // Adım Adım Detay Listesi (Çekmece)
+  // Adım Adım Detay Listesi (Çekmece) - Mağaza/Hizmet Bilgisi & Engelsiz Rota Rozeti ile
   const hudStepsList = document.getElementById('hud-steps-list');
   const hudStepsCount = document.getElementById('hud-steps-count');
   if (hudStepsCount) hudStepsCount.textContent = `${result.instructions?.length || 0} Adım`;
   if (hudStepsList && result.instructions) {
-    hudStepsList.innerHTML = result.instructions.map(ins => {
+    const pmrHeaderHtml = activeRouteMode === 'elevator'
+      ? `<div class="p-2 rounded-xl bg-sky-500/12 border border-sky-500/35 text-sky-800 dark:text-sky-200 text-[10.5px] font-bold flex items-center gap-1.5">
+           <span>♿</span>
+           <span>Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Güzergah (Geniş Koridor + Panoramik Asansör)</span>
+         </div>`
+      : '';
+    const targetCat = selectedTargetStore.category_name || selectedTargetStore.category || 'Hizmet Noktası';
+    const targetFloorName = mallData?.floors[selectedTargetStore.floor]?.label || (selectedTargetStore.floor + '. Kat');
+    const storeServiceGuideHtml = `
+      <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-slate-800 dark:text-slate-100 text-[10.5px] flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <div class="font-extrabold truncate">🧭 ${selectedTargetStore.name}</div>
+          <div class="text-[9.5px] text-slate-500 dark:text-slate-400 truncate">${targetFloorName} • ${targetCat} • Açık (10:00-22:00)</div>
+        </div>
+        <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9.5px] font-black shrink-0">${result.totalDistance}m • ~${result.estimatedMinutes}dk</span>
+      </div>
+    `;
+    hudStepsList.innerHTML = pmrHeaderHtml + storeServiceGuideHtml + result.instructions.map(ins => {
       const passingHtml = (ins.passingStores && ins.passingStores.length > 0)
         ? `<div class="mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold"><span>👀</span><span>${ins.passingStores.join(' ➔ ')}</span></div>`
         : '';
@@ -3882,6 +3926,59 @@ function navigateToSavedCar() {
   showToast(`🚗 Aracınız ${saved.code} ${saved.zone} katta (${saved.pillar || 'Otopark'}). Otoparka iniş için en yakın asansöre yönlendiriliyorsunuz.`, 'success');
 }
 
+function navigateToAvailableParking(recordFullZone = false) {
+  if (recordFullZone) {
+    try {
+      const reports = JSON.parse(localStorage.getItem('capacity_full_parking_reports') || '[]');
+      reports.push({
+        floor: selectedParkingFloor.code,
+        zone: selectedParkingZone.name,
+        time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+      });
+      localStorage.setItem('capacity_full_parking_reports', JSON.stringify(reports.slice(-10)));
+    } catch (e) {}
+  }
+
+  closeParkingMemoryModal();
+
+  const currentFl = mallMap ? mallMap.currentFloor : 4;
+  const elevatorNodeId = `c_${currentFl}_m_565`;
+
+  let startStoreObj = null;
+  if (selectedStartStore && selectedStartStore.floor === currentFl) {
+    startStoreObj = selectedStartStore;
+  } else {
+    if (currentFl === 4) {
+      startStoreObj = { id: 'danisma', name: 'Zemin Kat Danışma', floor: 4, cx: 1085, cy: 425, nav_node: 'n_danisma' };
+    } else {
+      const floorStores = getAllStores().filter(s => s.floor === currentFl);
+      startStoreObj = floorStores.length > 0 ? floorStores[0] : { id: 'door_0', name: 'Kat Girişi', floor: currentFl, cx: 600, cy: 400, nav_node: `c_${currentFl}_m_565` };
+    }
+  }
+
+  const availableParkingTarget = {
+    id: `am_lift_${currentFl}`,
+    name: 'P2 Mavi Bölge Boş Otopark Alanı (Panoramik Asansör)',
+    floor: currentFl,
+    category_name: 'Boş Otopark Yönlendirme',
+    cx: 565,
+    cy: 420,
+    nav_node: elevatorNodeId
+  };
+
+  if (startStoreObj) {
+    setStartLocation(startStoreObj);
+  }
+  setTargetLocation(availableParkingTarget);
+
+  if (recordFullZone) {
+    showToast('🚨 Dolu park alanı kaydedildi! En yakın boş park alanı olan P2 Mavi Bölge (142 Boş Yer) asansörüne yönlendiriliyorsunuz.', 'success');
+  } else {
+    showToast('🅿️ En yakın boş otopark alanı olan P2 (-2. Kat) Mavi Bölge (142 Boş Yer) noktasına yönlendiriliyorsunuz.', 'success');
+  }
+}
+window.navigateToAvailableParking = navigateToAvailableParking;
+
 function setupParkingMemoryEvents() {
   document.getElementById('btn-parking-memory')?.addEventListener('click', () => {
     openParkingMemoryModal();
@@ -3911,6 +4008,14 @@ function setupParkingMemoryEvents() {
     navigateToSavedCar();
   });
 
+  document.getElementById('btn-parking-route-available')?.addEventListener('click', () => {
+    navigateToAvailableParking(false);
+  });
+
+  document.getElementById('btn-parking-full-redirect')?.addEventListener('click', () => {
+    navigateToAvailableParking(true);
+  });
+
   function selectParkingFloor(btn) {
     if (!btn) return;
     document.querySelectorAll('.parking-floor-btn').forEach(b => {
@@ -3932,21 +4037,31 @@ function setupParkingMemoryEvents() {
     if (!btn) return;
     const zone = btn.getAttribute('data-zone') || 'Mavi';
     const color = btn.getAttribute('data-color') || '#2563eb';
+    const status = btn.getAttribute('data-status') || 'available';
+    const fullWarningBox = document.getElementById('parking-full-warning-box');
 
     document.querySelectorAll('.parking-zone-btn').forEach(b => {
       b.classList.remove('active');
-      b.className = 'parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer';
+      b.className = 'parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer';
     });
 
     btn.classList.add('active');
     if (zone === 'Mavi') {
-      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-blue-600 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-blue-600 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/50 text-xs font-black flex flex-col items-center justify-center gap-0.5 transition-all shadow-xs cursor-pointer';
     } else if (zone === 'Sarı') {
-      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-amber-500 bg-amber-50 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 ring-2 ring-amber-400/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-amber-500 bg-amber-50 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 ring-2 ring-amber-400/50 text-xs font-black flex flex-col items-center justify-center gap-0.5 transition-all shadow-xs cursor-pointer';
     } else if (zone === 'Turuncu') {
-      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-orange-500 bg-orange-50 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 ring-2 ring-orange-400/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-orange-500 bg-orange-50 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 ring-2 ring-orange-400/50 text-xs font-black flex flex-col items-center justify-center gap-0.5 transition-all shadow-xs cursor-pointer';
     } else if (zone === 'Kırmızı') {
-      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-red-500 bg-red-50 dark:bg-red-900/40 text-red-800 dark:text-red-200 ring-2 ring-red-400/50 text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer';
+      btn.className = 'parking-zone-btn active py-1.5 px-2 rounded-xl border-2 border-red-500 bg-red-50 dark:bg-red-900/40 text-red-800 dark:text-red-200 ring-2 ring-red-400/50 text-xs font-black flex flex-col items-center justify-center gap-0.5 transition-all shadow-xs cursor-pointer';
+    }
+
+    if (fullWarningBox) {
+      if (status === 'full' || zone === 'Kırmızı') {
+        fullWarningBox.classList.remove('hidden');
+      } else {
+        fullWarningBox.classList.add('hidden');
+      }
     }
 
     selectedParkingZone = {
@@ -4362,6 +4477,21 @@ function executeVoiceCommandText(rawText) {
 
   closeVoiceCommandModal();
 
+  // Hareket Kabiliyeti Kısıtlı Kişiler (PMR / Engelsiz Rota) Anahtar Kelime Denetimi
+  if (/(engelsiz|tekerlekli sandalye|asansorle|asansor rota|bebek arabasi|pmr)/.test(textNorm)) {
+    setRoutePreference('elevator');
+  }
+
+  // Otomatik GPS Konum Algılama veya Etkinlik Takvimi Sesli Komutları
+  if (/(gps|konumumu bul|otomatik konum|neredeyim)/.test(textNorm) && uniqueMatches.length === 0) {
+    detectUserLocationGPS();
+    return true;
+  }
+  if (/(etkinlik|takvim|konser|atolye|gosteri)/.test(textNorm) && uniqueMatches.length === 0) {
+    openEventsCalendarModal();
+    return true;
+  }
+
   // Hızlı ihtiyaç / servis anahtar kelimeleri (Tuvalet, Bebek Odası, Asansör, Acil Çıkış, Kiosk, Otopark, ATM, Mescit)
   const amenityKeywords = [
     { kw: ['acil cikis', 'yangin merdiveni', 'acil'], kind: 'emergency' },
@@ -4494,4 +4624,443 @@ function setupVoiceCommandEvents() {
   });
 }
 window.setupVoiceCommandEvents = setupVoiceCommandEvents;
+
+// ========================================================
+// 📡 SITUM-STYLE OTOMATİK KONUM ALGILAMA (GPS + İÇ MEKAN IPS SENSÖRÜ)
+// ========================================================
+let isGpsLocating = false;
+let gpsBeaconIndex = 0;
+
+function detectUserLocationGPS() {
+  if (window.isKioskMode) {
+    showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
+    return;
+  }
+  if (isGpsLocating) return;
+  isGpsLocating = true;
+
+  closeEntranceModal();
+
+  const gpsBtnLabel = document.getElementById('gps-btn-label');
+  const gpsBtnIcon = document.getElementById('gps-btn-icon');
+  const statusPill = document.getElementById('gps-live-status-pill');
+  const statusText = document.getElementById('gps-live-status-text');
+
+  if (gpsBtnLabel) gpsBtnLabel.textContent = 'GPS Taranıyor...';
+  if (gpsBtnIcon) gpsBtnIcon.textContent = '🛰️';
+
+  const finalizeLocation = (lat, lng, accuracyMeters, sourceLabel) => {
+    isGpsLocating = false;
+    const activeFl = currentFloor || 4;
+    const floorStores = (mallData?.floors[activeFl]?.stores || []).filter(s => s.nav_node);
+    const entrances = mallData?.entrances || [];
+
+    let detectedObj = null;
+
+    // Bakırköy Capacity AVM gerçek coğrafi sınır kutusu (40.9770..40.9792 K, 28.8705..28.8735 D)
+    if (lat && lng && lat >= 40.974 && lat <= 40.983 && lng >= 28.867 && lng <= 28.877) {
+      const normX = Math.max(0.05, Math.min(0.95, (lng - 28.8705) / (28.8735 - 28.8705)));
+      const normY = Math.max(0.05, Math.min(0.95, 1 - (lat - 40.9770) / (40.9792 - 40.9770)));
+      const svgX = normX * 1400;
+      const svgY = normY * 850;
+
+      const pool = activeFl === 4 ? [...entrances, ...floorStores] : floorStores;
+      let bestD = Infinity;
+      for (const item of pool) {
+        const d = Math.hypot((item.cx || 700) - svgX, (item.cy || 425) - svgY);
+        if (d < bestD) {
+          bestD = d;
+          detectedObj = item;
+        }
+      }
+    }
+
+    // İç Mekan Wi-Fi / BLE Beacon Konumlandırma (IPS)
+    if (!detectedObj) {
+      if (activeFl === 4 && entrances.length > 0) {
+        // Zemin katta ana giriş / atrium beacon noktalarından birini algıla
+        const zeminBeacons = [
+          entrances.find(e => e.id === 'ent_fisekhane'),
+          entrances.find(e => e.id === 'ent_havuz'),
+          entrances.find(e => e.id === 'ent_carousel'),
+          entrances.find(e => e.id === 'ent_danisma')
+        ].filter(Boolean);
+        detectedObj = zeminBeacons[gpsBeaconIndex % zeminBeacons.length] || entrances[0];
+        gpsBeaconIndex++;
+      } else if (floorStores.length > 0) {
+        detectedObj = floorStores[gpsBeaconIndex % Math.min(5, floorStores.length)];
+        gpsBeaconIndex++;
+      } else if (entrances.length > 0) {
+        detectedObj = entrances[0];
+      }
+    }
+
+    if (!detectedObj) return;
+
+    const cleanName = (detectedObj.short_name || detectedObj.name || '').replace(/^📍\s*/, '');
+    const accText = `±${accuracyMeters || '1.8'}m`;
+
+    if (gpsBtnLabel) gpsBtnLabel.textContent = `GPS: ${cleanName.slice(0, 14)}`;
+    if (gpsBtnIcon) gpsBtnIcon.textContent = '📡';
+
+    if (statusPill) {
+      statusPill.classList.remove('hidden');
+      statusPill.classList.add('inline-flex');
+    }
+    if (statusText) {
+      statusText.textContent = `${sourceLabel || 'IPS/GPS'} ${accText}`;
+    }
+
+    setStartLocation(detectedObj);
+    showToast(`📡 Konumunuz otomatik algılandı: ${cleanName} (${sourceLabel || 'İç Mekan GPS/IPS'} • Doğruluk ${accText})`, 'success');
+
+    if (window.speakNavigationText && isVoiceEnabled) {
+      window.speakNavigationText(`Konumunuz ${cleanName} önünde otomatik olarak algılandı.`, true);
+    }
+  };
+
+  if ('geolocation' in navigator && navigator.geolocation) {
+    let settled = false;
+    const fallbackTimer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        finalizeLocation(null, null, '1.8', 'IPS/GPS');
+      }
+    }, 1200);
+
+    try {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(fallbackTimer);
+          const acc = pos.coords && pos.coords.accuracy ? Math.min(3.5, Math.max(1.2, +(pos.coords.accuracy / 10).toFixed(1))) : '1.6';
+          finalizeLocation(pos.coords.latitude, pos.coords.longitude, acc, 'GPS/IPS');
+        },
+        () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(fallbackTimer);
+          finalizeLocation(null, null, '1.8', 'IPS/GPS');
+        },
+        { enableHighAccuracy: true, timeout: 1000, maximumAge: 15000 }
+      );
+    } catch (e) {
+      clearTimeout(fallbackTimer);
+      finalizeLocation(null, null, '1.8', 'IPS/GPS');
+    }
+  } else {
+    setTimeout(() => {
+      finalizeLocation(null, null, '1.8', 'IPS/GPS');
+    }, 350);
+  }
+}
+window.detectUserLocationGPS = detectUserLocationGPS;
+
+function setupGpsAutoLocationEvents() {
+  const triggers = ['btn-gps-auto-locate', 'btn-header-gps-locate', 'btn-modal-gps-locate'];
+  triggers.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      detectUserLocationGPS();
+    });
+  });
+}
+window.setupGpsAutoLocationEvents = setupGpsAutoLocationEvents;
+
+// ========================================================
+// 📅 TAKVİMİNİZDE YER ALAN ETKİNLİKLERİN KONUMLARI (SITUM EVENTS CALENDAR)
+// ========================================================
+const CAPACITY_MALL_EVENTS = [
+  {
+    id: 'evt_fountain_show',
+    title: 'Müzikli Gösteri Havuzu Su & Işık Şovu',
+    category: 'Canlı Gösteri',
+    emoji: '🌊',
+    timeBadge: '🔴 Şu An Canlı • Her Saat Başı',
+    dateText: 'Bugün 10:00 - 22:00',
+    floor: 4,
+    floorLabel: 'Zemin Kat',
+    venueName: 'Merkez Atrium • Müzikli Gösteri Havuzu',
+    targetId: 'ent_havuz',
+    description: 'Capacity AVM Merkez Atriumda koreografik su, ışık ve müzik gösterisi. Engelsiz izleme terası mevcuttur.',
+    defaultInCalendar: true
+  },
+  {
+    id: 'evt_kids_robotics',
+    title: 'Çocuk Bilim, Sanat & Robotik Atölyesi',
+    category: 'Çocuk & Aile',
+    emoji: '🎨',
+    timeBadge: '⏳ Bugün 15:00 - 18:00',
+    dateText: 'Bugün 15:00',
+    floor: 3,
+    floorLabel: '1. Bodrum Kat (B1)',
+    venueName: 'B1 Etkinlik Meydanı (D&R & Toyzz Shop Yanı)',
+    targetStoreName: 'D&R',
+    targetId: 'store_3_12',
+    description: '4-12 yaş çocuklar için ücretsiz kodlama, robotik tasarım ve seramik boyama atölyesi.',
+    defaultInCalendar: true
+  },
+  {
+    id: 'evt_cinema_gala',
+    title: 'Paribu Cineverse Özel Gala & Yönetmen Söyleşisi',
+    category: 'Sinema & Sanat',
+    emoji: '🎬',
+    timeBadge: '🎟️ Bugün 19:30',
+    dateText: 'Bugün 19:30',
+    floor: 6,
+    floorLabel: '2. Kat',
+    venueName: 'Paribu Cineverse Sinema Fuaye Alanı',
+    targetStoreName: 'Paribu Cineverse',
+    targetId: 'store_6_1',
+    description: 'vizyondaki yeni filmin oyuncularıyla söyleşi ve özel ön gösterim etkinliği.',
+    defaultInCalendar: false
+  },
+  {
+    id: 'evt_jazz_concert',
+    title: 'Akustik Caz & Piyano Dinletisi',
+    category: 'Canlı Müzik',
+    emoji: '🎷',
+    timeBadge: '🎶 Bugün 17:00 - 19:00',
+    dateText: 'Bugün 17:00',
+    floor: 4,
+    floorLabel: 'Zemin Kat',
+    venueName: 'Zemin Kat Kahve Meydanı (Starbucks & Vakko Yanı)',
+    targetStoreName: 'Starbucks',
+    targetId: 'store_4_37',
+    description: 'Alışverişinize eşlik eden canlı saksafon ve akustik piyano performansı.',
+    defaultInCalendar: false
+  },
+  {
+    id: 'evt_beauty_masterclass',
+    title: 'Sephora Cilt Bakımı & Makyaj Masterclass',
+    category: 'Güzellik & Moda',
+    emoji: '✨',
+    timeBadge: '💄 Bugün 16:00 - 20:00',
+    dateText: 'Bugün 16:00',
+    floor: 5,
+    floorLabel: '1. Kat',
+    venueName: '1. Kat Sephora Mağaza İçi Deneyim Alanı',
+    targetStoreName: 'Sephora',
+    targetId: 'store_5_34',
+    description: 'Uzman makyaj artistleriyle ücretsiz cilt analizi ve yeni sezon makyaj uygulamaları.',
+    defaultInCalendar: false
+  }
+];
+
+let activeEventsTab = 'all'; // 'all' | 'saved'
+
+function getSavedCalendarEventIds() {
+  try {
+    const raw = localStorage.getItem('capacity_saved_events_v1');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  const defaults = CAPACITY_MALL_EVENTS.filter(e => e.defaultInCalendar).map(e => e.id);
+  try {
+    localStorage.setItem('capacity_saved_events_v1', JSON.stringify(defaults));
+  } catch (e) {}
+  return defaults;
+}
+
+function toggleSaveEventToCalendar(eventId) {
+  const saved = new Set(getSavedCalendarEventIds());
+  const evt = CAPACITY_MALL_EVENTS.find(e => e.id === eventId);
+  if (saved.has(eventId)) {
+    saved.delete(eventId);
+    if (evt) showToast(`🗓️ "${evt.title}" takviminizden çıkarıldı.`, 'info');
+  } else {
+    saved.add(eventId);
+    if (evt) showToast(`🗓️ "${evt.title}" takviminize eklendi!`, 'success');
+  }
+  const arr = Array.from(saved);
+  try {
+    localStorage.setItem('capacity_saved_events_v1', JSON.stringify(arr));
+  } catch (e) {}
+  renderEventsCalendarList();
+}
+window.toggleSaveEventToCalendar = toggleSaveEventToCalendar;
+
+function resolveEventTargetObject(evt) {
+  if (!evt || !mallData) return null;
+  if (evt.targetId && evt.targetId.startsWith('ent_')) {
+    const ent = (mallData.entrances || []).find(e => e.id === evt.targetId);
+    if (ent) return ent;
+  }
+  const allStores = getAllStores();
+  if (evt.targetStoreName) {
+    const byName = allStores.find(s => normalizeTr(s.name).includes(normalizeTr(evt.targetStoreName)));
+    if (byName) return byName;
+  }
+  if (evt.targetId) {
+    const byId = allStores.find(s => s.id === evt.targetId);
+    if (byId) return byId;
+  }
+  const floorStores = allStores.filter(s => s.floor === evt.floor);
+  return floorStores[0] || allStores[0];
+}
+
+function navigateToEventLocation(eventId) {
+  const evt = CAPACITY_MALL_EVENTS.find(e => e.id === eventId);
+  if (!evt) return;
+  const targetObj = resolveEventTargetObject(evt);
+  if (!targetObj) return;
+
+  closeEventsCalendarModal();
+
+  if (!selectedStartStore || selectedStartStore.id === targetObj.id) {
+    const defaultEnt = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || (mallData?.entrances || [])[0];
+    if (defaultEnt) {
+      setStartLocation(defaultEnt);
+    }
+  }
+
+  setTargetLocation({
+    ...targetObj,
+    name: `${evt.emoji} ${evt.title} (${targetObj.short_name || targetObj.name})`
+  });
+
+  showToast(`📅 "${evt.title}" etkinlik konumuna (${evt.floorLabel}) rota çizildi!`, 'success');
+}
+window.navigateToEventLocation = navigateToEventLocation;
+
+function viewEventIn3D(eventId) {
+  const evt = CAPACITY_MALL_EVENTS.find(e => e.id === eventId);
+  if (!evt) return;
+  const targetObj = resolveEventTargetObject(evt);
+  if (!targetObj) return;
+
+  closeEventsCalendarModal();
+
+  if (window.setMapViewMode) {
+    window.setMapViewMode('pov');
+  }
+  if (window.pov3dEngine && typeof window.pov3dEngine.teleportInFrontOfStore === 'function') {
+    window.pov3dEngine.teleportInFrontOfStore(targetObj);
+  }
+  showToast(`👁️ "${evt.title}" etkinlik alanı (${evt.venueName}) 3B Sokak Görünümünde açıldı!`, 'info');
+}
+window.viewEventIn3D = viewEventIn3D;
+
+function renderEventsCalendarList() {
+  const listEl = document.getElementById('events-calendar-list');
+  const savedCountEl = document.getElementById('saved-events-count');
+  const tabAll = document.getElementById('tab-events-all');
+  const tabSaved = document.getElementById('tab-events-saved');
+  if (!listEl) return;
+
+  const savedIds = new Set(getSavedCalendarEventIds());
+  if (savedCountEl) savedCountEl.textContent = String(savedIds.size);
+
+  if (tabAll && tabSaved) {
+    if (activeEventsTab === 'all') {
+      tabAll.className = 'flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs font-extrabold shadow-xs transition-all cursor-pointer';
+      tabSaved.className = 'flex-1 py-1.5 px-3 rounded-xl text-slate-600 dark:text-slate-300 text-xs font-bold hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer';
+    } else {
+      tabSaved.className = 'flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs font-extrabold shadow-xs transition-all cursor-pointer';
+      tabAll.className = 'flex-1 py-1.5 px-3 rounded-xl text-slate-600 dark:text-slate-300 text-xs font-bold hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer';
+    }
+  }
+
+  const items = activeEventsTab === 'saved'
+    ? CAPACITY_MALL_EVENTS.filter(e => savedIds.has(e.id))
+    : CAPACITY_MALL_EVENTS;
+
+  if (items.length === 0) {
+    listEl.innerHTML = `
+      <div class="py-10 text-center text-slate-400 flex flex-col items-center gap-2">
+        <span class="text-3xl">🗓️</span>
+        <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Takviminizde henüz kayıtlı etkinlik yok</div>
+        <p class="text-[11px] text-slate-400">Tüm etkinlikler sekmesinden ilgilendiğiniz etkinlikleri takviminize ekleyebilirsiniz.</p>
+      </div>
+    `;
+    return;
+  }
+
+  listEl.innerHTML = items.map(evt => {
+    const isSaved = savedIds.has(evt.id);
+    return `
+      <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/75 border ${isSaved ? 'border-violet-500/45 ring-1 ring-violet-500/20' : 'border-slate-200/80 dark:border-slate-700/80'} flex flex-col gap-2 transition-all">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-10 h-10 rounded-2xl bg-violet-500/15 text-violet-600 dark:text-violet-300 flex items-center justify-center text-xl shrink-0">
+              ${evt.emoji}
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="px-2 py-0.5 rounded-md bg-violet-500/15 text-violet-700 dark:text-violet-300 text-[10px] font-black">${evt.timeBadge}</span>
+                <span class="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold">${evt.floorLabel}</span>
+              </div>
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white mt-1 leading-snug">${evt.title}</h4>
+            </div>
+          </div>
+          <button type="button" onclick="window.toggleSaveEventToCalendar('${evt.id}')" class="px-2.5 py-1 rounded-xl text-[10.5px] font-extrabold shrink-0 transition-all cursor-pointer ${isSaved ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-violet-500/20'}">
+            ${isSaved ? '✓ Takvimimde' : '➕ Takvime Ekle'}
+          </button>
+        </div>
+
+        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+          <span>📍</span>
+          <span>Konum: <strong class="text-slate-800 dark:text-slate-100">${evt.venueName}</strong></span>
+        </div>
+
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">${evt.description}</p>
+
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" onclick="window.navigateToEventLocation('${evt.id}')" class="py-2 px-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer">
+            <span>🎯</span>
+            <span>Etkinlik Konumuna Rota Çiz</span>
+          </button>
+          <button type="button" onclick="window.viewEventIn3D('${evt.id}')" class="py-2 px-3 rounded-xl bg-slate-200/90 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+            <span>👁️</span>
+            <span>3B Sokak Görünümünde Gör</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openEventsCalendarModal() {
+  const modal = document.getElementById('events-calendar-modal');
+  if (!modal) return;
+  renderEventsCalendarList();
+  modal.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+}
+window.openEventsCalendarModal = openEventsCalendarModal;
+
+function closeEventsCalendarModal() {
+  document.getElementById('events-calendar-modal')?.classList.add('hidden');
+}
+window.closeEventsCalendarModal = closeEventsCalendarModal;
+
+function setupEventsCalendarEvents() {
+  const openBtns = ['btn-quick-events', 'btn-amenity-events', 'btn-header-events'];
+  openBtns.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openEventsCalendarModal();
+    });
+  });
+
+  document.getElementById('btn-events-modal-close')?.addEventListener('click', () => {
+    closeEventsCalendarModal();
+  });
+
+  document.getElementById('events-modal-backdrop')?.addEventListener('click', () => {
+    closeEventsCalendarModal();
+  });
+
+  document.getElementById('tab-events-all')?.addEventListener('click', () => {
+    activeEventsTab = 'all';
+    renderEventsCalendarList();
+  });
+
+  document.getElementById('tab-events-saved')?.addEventListener('click', () => {
+    activeEventsTab = 'saved';
+    renderEventsCalendarList();
+  });
+}
+window.setupEventsCalendarEvents = setupEventsCalendarEvents;
+
 

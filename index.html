@@ -278,23 +278,39 @@
           </button>
         </div>
 
-        <!-- Rota Tercih Sekmeleri: [ 🚶 Yürüyen Merdiven ] ve [ 🛗 Asansör / Bebek Arabası ] -->
+        <!-- Rota Tercih Sekmeleri: [ 🚶 Yürüyen Merdiven ] ve [ ♿ Engelsiz / Asansör ] -->
         <div class="flex items-center gap-1.5 pt-0.5">
-          <button id="tab-pref-escalator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-red-600 bg-red-600 text-white shadow-xs" data-mode="escalator" title="Yürüyen Merdiven ve Merdivenleri Tercih Et">
+          <button id="tab-pref-escalator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-red-600 bg-red-600 text-white shadow-xs cursor-pointer" data-mode="escalator" title="Yürüyen Merdiven ve Merdivenleri Tercih Et">
             <span>🚶</span>
             <span>Yürüyen Merdiven</span>
           </button>
-          <button id="tab-pref-elevator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700" data-mode="elevator" title="Panoramik Asansörleri Tercih Et (Bebek Arabası & Engelsiz)">
-            <span>🛗</span>
-            <span>Asansör / Bebek</span>
+          <button id="tab-pref-elevator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-mode="elevator" title="Hareket Kabiliyeti Kısıtlı Kişiler, Tekerlekli Sandalye ve Bebek Arabası İçin Uyarlanmış Engelsiz Güzergah">
+            <span>♿🛗</span>
+            <span>Engelsiz / Asansör</span>
           </button>
+        </div>
+
+        <!-- ♿ Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Rota Bilgi Şeridi -->
+        <div id="pmr-accessible-banner" class="hidden mt-1 px-2.5 py-1.5 rounded-xl bg-sky-500/12 dark:bg-sky-500/20 border border-sky-500/35 text-[10.5px] font-bold text-sky-800 dark:text-sky-200 flex items-center justify-between gap-1.5 animate-in fade-in duration-150">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="text-sm shrink-0">♿</span>
+            <span class="truncate">Engelsiz Güzergah: Geniş koridor + Panoramik asansör</span>
+          </div>
+          <span class="px-1.5 py-0.5 rounded bg-sky-600 text-white text-[9px] font-black uppercase shrink-0">PMR Aktif</span>
         </div>
       </div>
 
-      <!-- Hızlı Başlangıç & Konum Pinleme Çipleri (1-Tıkla "Şu An Buradayım" Seçimi) -->
+      <!-- Hızlı Başlangıç, GPS Otomatik Konum & Etkinlik Takvimi Çipleri -->
       <div id="quick-start-chips-row" class="flex items-center gap-1.5 mb-2 overflow-x-auto no-scrollbar py-0.5 shrink-0">
+        <button id="btn-gps-auto-locate" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all shadow-sm shadow-sky-600/25 cursor-pointer active:scale-95" title="GPS ve İç Mekan Konumlandırma (IPS) ile Konumunuzu Otomatik Algıla">
+          <span id="gps-btn-icon">📡</span>
+          <span id="gps-btn-label">GPS Konumumu Bul</span>
+        </button>
         <button id="btn-pin-here" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-xs cursor-pointer active:scale-95" title="Şu An Bulunduğunuz Kapı veya Mağazayı Tek Tıkla Pinleyin">
           <span>📍 Şu An Buradayım</span>
+        </button>
+        <button id="btn-quick-events" class="px-2.5 py-1 rounded-xl bg-violet-600/15 hover:bg-violet-600/25 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/35 text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all cursor-pointer active:scale-95" title="Takviminizde Yer Alan AVM Etkinlikleri ve Konumları">
+          <span>📅 Etkinlik Takvimi</span>
         </button>
         <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Kapılar:</span>
         <button id="btn-quick-fisekhane" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700" data-point="fisekhane" title="C Kapısı - Fişekhane Ana Giriş (x: 1245, y: 410)">
@@ -345,8 +361,14 @@
         </button>
       </div>
 
-      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: WC, Asansör, Bebek Odası, Acil Çıkış, Otopark, Kiosk Harita, Giriş-Çıkış, Danışma, ATM, Mescit, Engelsiz Şarj -->
+      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: Otopark Doluluk, Etkinlikler, WC, Asansör, Bebek Odası, Acil Çıkış, Kiosk, Danışma, ATM, Mescit, Engelsiz -->
       <div id="amenity-chips-row" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 shrink-0">
+        <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Dolu/Boş Park Alanı Takibi, Park Yeri Kaydı ve Araca Yönlendirme">
+          <span>🅿️🚗</span> <span id="parking-memory-btn-text">Otopark &amp; Park Kaydı</span>
+        </button>
+        <button id="btn-amenity-events" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-violet-500/15 hover:bg-violet-500/25 dark:bg-violet-400/20 text-violet-800 dark:text-violet-200 border border-violet-500/30 shrink-0 flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs" title="AVM Etkinlik Takvimi ve Etkinlik Konumlarına Yönlendirme">
+          <span>📅</span> <span>Etkinlikler</span>
+        </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="wc">
           <span>🚻</span> Tuvalet
         </button>
@@ -360,10 +382,7 @@
           <span>🚨</span> Acil Çıkış
         </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="carpark">
-          <span>🅿️</span> Otopark
-        </button>
-        <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Otopark Katı ve Konumunu Kaydet / Bul">
-          <span>🚗</span> <span id="parking-memory-btn-text">Otopark Konumu Kaydet</span>
+          <span>🅿️</span> Otopark Girişi
         </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="kiosk">
           <span>🖥️</span> Kiosk Harita
@@ -500,9 +519,25 @@
       <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all max-w-[calc(100vw-65px)]">
         <div class="flex items-center justify-between gap-1.5 sm:gap-2 min-w-0">
           <div class="min-w-0 flex-1">
-            <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
+            <div class="flex items-center gap-1.5 min-w-0">
+              <h2 id="current-floor-title" class="text-sm sm:text-base font-extrabold font-heading text-slate-900 dark:text-white leading-tight truncate">Zemin Kat</h2>
+              <span id="gps-live-status-pill" class="hidden px-1.5 py-0.5 rounded-md bg-sky-500/15 border border-sky-500/35 text-sky-700 dark:text-sky-300 text-[9.5px] font-black uppercase tracking-wider shrink-0 items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-ping"></span>
+                <span id="gps-live-status-text">IPS ±1.8m</span>
+              </span>
+            </div>
             <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
           </div>
+          <!-- 📡 GPS / İç Mekan Otomatik Konum Çipi -->
+          <button id="btn-header-gps-locate" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-sky-600/20 transition-all active:scale-95 cursor-pointer" title="📡 GPS / İç Mekan Sensörü ile Konumumu Otomatik Algıla">
+            <span>📡</span>
+            <span class="hidden lg:inline">GPS Konum</span>
+          </button>
+          <!-- 📅 Etkinlik Takvimi Çipi -->
+          <button id="btn-header-events" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-violet-600/20 transition-all active:scale-95 cursor-pointer" title="📅 AVM Etkinlik Takvimi ve Etkinlik Konumları">
+            <span>📅</span>
+            <span class="hidden lg:inline">Etkinlikler</span>
+          </button>
           <!-- 🎙️ Sesli Komut (Mikrofon) Çipi -->
           <button id="btn-header-voice-command" class="header-voice-cmd-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-orange-500/25 transition-all active:scale-95 cursor-pointer" title="🎙️ Sesli Komut: Konuşarak Konumunu Pinle ve Rota Çiz">
             <span>🎙️</span>
@@ -513,7 +548,7 @@
             <span id="header-pov-icon">👁️</span>
             <span id="header-pov-text" class="hidden sm:inline">Gözümden 3B</span>
           </button>
-          <!-- 1-Tıkla "Şu An Buradayım" Konum Pinleme Çipi (Anneler ve İlk Kez Girenler İçin) -->
+          <!-- 1-Tıkla "Şu An Buradayım" Konum Pinleme Çipi -->
           <button id="btn-header-pin-here" class="header-pin-here-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-emerald-600/20 transition-all active:scale-95 cursor-pointer" title="Şu An Bulunduğunuz Kapı veya Mağazayı Seçin">
             <span>📍</span>
             <span id="header-pin-here-text">Buradayım</span>
@@ -872,7 +907,20 @@
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <p class="text-xs text-slate-500 dark:text-slate-400 shrink-0">Giriş kapılarını, danışmayı veya bulunduğunuz mağazayı seçin:</p>
+
+      <!-- 📡 Otomatik GPS / IPS Konum Algılama Butonu -->
+      <button type="button" id="btn-modal-gps-locate" class="w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-xs font-extrabold flex items-center justify-between gap-2 shadow-md shadow-sky-600/25 transition-all active:scale-98 cursor-pointer shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="text-base">📡</span>
+          <div class="text-left">
+            <div class="leading-tight">GPS / İç Mekan Sensörü ile Otomatik Bul</div>
+            <div class="text-[10px] font-medium text-sky-100">Bulunduğunuz katı ve en yakın mağazayı algılar</div>
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded-lg bg-white/20 text-[10px] font-black uppercase">Otomatik</span>
+      </button>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400 shrink-0">Veya giriş kapılarını, danışmayı ya da bulunduğunuz mağazayı seçin:</p>
 
       <!-- Canlı Arama Inputu -->
       <div class="relative shrink-0">
@@ -1006,23 +1054,70 @@
   <!-- YATAY MOD MENÜ ÇEKMECESİ ARKA PLAN KARARTMASI (LANDSCAPE DRAWER BACKDROP) -->
   <div id="landscape-drawer-backdrop" class="fixed inset-0 z-50 bg-slate-950/45 backdrop-blur-xs hidden transition-opacity duration-300"></div>
 
-  <!-- OTOPARK HAFIZASI MODALI (PARKING MEMORY MODAL) -->
+  <!-- 🅿️🚗 AKILLI OTOPARK DOLULUK TAKİBİ, PARK KAYDI VE YÖNLENDİRME MODALI (SITUM SMART PARKING) -->
   <div id="parking-memory-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
     <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" id="parking-modal-backdrop"></div>
-    <div class="relative w-full max-w-md rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-4">
+    <div class="relative w-full max-w-md rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-3.5 max-h-[90vh] overflow-y-auto">
       <!-- Header -->
-      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
-            🚗
+            🅿️
           </div>
           <div>
-            <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-heading">Otopark Hafızası</h3>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400">Park yerinizi kaydedin, dönüşte tek tıkla rotanızı çizin</p>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-heading">Akıllı Otopark &amp; Doluluk Rehberi</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Canlı doluluk takibi, boş alana yönlendirme ve araç konum kaydı</p>
           </div>
         </div>
         <button id="btn-parking-modal-close" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95" title="Kapat">
           <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Canlı Otopark Doluluk Durumu (Dolu / Boş Park Alanları Özeti) -->
+      <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[10.5px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Canlı Otopark Doluluk Sensörü</span>
+          </span>
+          <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">402 Boş Park Yeri</span>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5 text-[10px]">
+          <div class="p-2 rounded-xl bg-rose-500/10 border border-rose-500/25 flex flex-col gap-0.5">
+            <div class="flex items-center justify-between font-black text-rose-700 dark:text-rose-300">
+              <span>P1 (-1)</span>
+              <span>%96 Dolu</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full bg-rose-200 dark:bg-rose-950 overflow-hidden">
+              <div class="h-full bg-rose-600 rounded-full" style="width: 96%;"></div>
+            </div>
+            <span class="text-[9px] text-rose-600 dark:text-rose-400 font-bold">🔴 Neredeyse Dolu</span>
+          </div>
+          <div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex flex-col gap-0.5">
+            <div class="flex items-center justify-between font-black text-emerald-700 dark:text-emerald-300">
+              <span>P2 (-2)</span>
+              <span>%62 Dolu</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full bg-emerald-200 dark:bg-emerald-950 overflow-hidden">
+              <div class="h-full bg-emerald-500 rounded-full" style="width: 62%;"></div>
+            </div>
+            <span class="text-[9px] text-emerald-700 dark:text-emerald-300 font-bold">🟢 142 Boş Yer</span>
+          </div>
+          <div class="p-2 rounded-xl bg-sky-500/10 border border-sky-500/25 flex flex-col gap-0.5">
+            <div class="flex items-center justify-between font-black text-sky-700 dark:text-sky-300">
+              <span>P3 (-3)</span>
+              <span>%38 Dolu</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full bg-sky-200 dark:bg-sky-950 overflow-hidden">
+              <div class="h-full bg-sky-500 rounded-full" style="width: 38%;"></div>
+            </div>
+            <span class="text-[9px] text-sky-700 dark:text-sky-300 font-bold">🟢 260 Boş Yer</span>
+          </div>
+        </div>
+        <button type="button" id="btn-parking-route-available" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer">
+          <span>🅿️</span>
+          <span>En Yakın Boş Otopark Alanına Yönlendir (P2 Mavi Bölge)</span>
         </button>
       </div>
 
@@ -1046,47 +1141,66 @@
             <div id="parking-saved-time-text" class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Kaydedildi</div>
           </div>
         </div>
-        <button id="btn-parking-navigate-car" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all active:scale-95">
+        <button id="btn-parking-navigate-car" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
           <span>🚗</span>
           <span>Arabama Git (En Yakın Asansöre Yönlendir)</span>
         </button>
       </div>
 
-      <!-- Yeni Park Konumu Kaydet Formu -->
+      <!-- Yeni Park Konumu Kaydet & Dolu Park Alanı Bildirimi Formu -->
       <div id="parking-form" class="flex flex-col gap-3">
         <!-- Kat Seçimi -->
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hangi Kat?</label>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hangi Otopark Katındasınız?</label>
           <div class="grid grid-cols-3 gap-2" id="parking-floor-options">
             <button type="button" class="parking-floor-btn py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold text-center transition-all cursor-pointer" data-floor="3" data-code="P1" data-name="P1 (1. Bodrum Kat)">
-              P1 (-1)
+              P1 (-1) • 🔴 %96
             </button>
             <button type="button" class="parking-floor-btn active py-2 px-2.5 rounded-xl border border-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-xs font-bold text-center transition-all shadow-xs cursor-pointer" data-floor="2" data-code="P2" data-name="P2 (2. Bodrum Kat)">
-              P2 (-2)
+              P2 (-2) • 🟢 %62
             </button>
             <button type="button" class="parking-floor-btn py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold text-center transition-all cursor-pointer" data-floor="1" data-code="P3" data-name="P3 (3. Bodrum Kat)">
-              P3 (-3)
+              P3 (-3) • 🟢 %38
             </button>
           </div>
         </div>
 
         <!-- Bölge / Renk Seçimi -->
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hangi Bölge / Renk?</label>
-          <div class="grid grid-cols-4 gap-2" id="parking-zone-options">
-            <button type="button" class="parking-zone-btn active py-1.5 px-2 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer" data-zone="Mavi" data-color="#2563eb">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></span> Mavi
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hangi Bölge / Renk? (Dolu/Boş Durumu)</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="parking-zone-options">
+            <button type="button" class="parking-zone-btn active py-1.5 px-2 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-xs font-bold flex flex-col items-center justify-center gap-0.5 transition-all shadow-xs cursor-pointer" data-zone="Mavi" data-color="#2563eb" data-status="available">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></span> Mavi</span>
+              <span class="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">🟢 Boş (%58)</span>
             </button>
-            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer" data-zone="Sarı" data-color="#eab308">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span> Sarı
+            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer" data-zone="Sarı" data-color="#eab308" data-status="available">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span> Sarı</span>
+              <span class="text-[9px] font-semibold text-amber-600 dark:text-amber-400">🟡 Müsait (%76)</span>
             </button>
-            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer" data-zone="Turuncu" data-color="#f97316">
-              <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span> Turuncu
+            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer" data-zone="Turuncu" data-color="#f97316" data-status="busy">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span> Turuncu</span>
+              <span class="text-[9px] font-semibold text-orange-600 dark:text-orange-400">🟠 Yoğun (%92)</span>
             </button>
-            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer" data-zone="Kırmızı" data-color="#ef4444">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span> Kırmızı
+            <button type="button" class="parking-zone-btn py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer" data-zone="Kırmızı" data-color="#ef4444" data-status="full">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span> Kırmızı</span>
+              <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400">🔴 Dolu (%100)</span>
             </button>
           </div>
+        </div>
+
+        <!-- 🔴 Dolu Park Alanı Uyarısı veAlternatif Boş Alana Yönlendirme Kutusu -->
+        <div id="parking-full-warning-box" class="hidden p-3 rounded-2xl bg-rose-500/12 border border-rose-500/35 text-xs text-rose-800 dark:text-rose-200 flex flex-col gap-2 animate-in fade-in duration-150">
+          <div class="flex items-start gap-2">
+            <span class="text-base leading-none shrink-0">🚨</span>
+            <div>
+              <div class="font-extrabold">Seçilen Park Bölgesi Dolu (%100)!</div>
+              <p class="text-[11px] text-rose-700/90 dark:text-rose-300 mt-0.5">Bu park alanı dolu olarak kaydedildi. Sizi hemen en yakın boş park alanı olan <strong>P2 Mavi Bölge (Asansör Yanı)</strong> noktasına yönlendirebiliriz.</p>
+            </div>
+          </div>
+          <button type="button" id="btn-parking-full-redirect" class="w-full py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-extrabold flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:scale-95 transition-all">
+            <span>🧭</span>
+            <span>Dolu Alanı Kaydet &amp; En Yakın Boş Park Alanına Yönlendir</span>
+          </button>
         </div>
 
         <!-- Sütun / Direk / Not Girişi -->
@@ -1103,8 +1217,45 @@
         <!-- Kaydet Butonu -->
         <button id="btn-parking-save" type="button" class="w-full py-2.5 px-4 mt-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-extrabold text-xs shadow-md shadow-amber-500/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
           <span>💾</span>
-          <span>Otopark Konumunu Kaydet</span>
+          <span>Otopark Konumumu Kaydet</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📅 TAKVİMİNİZDE YER ALAN ETKİNLİKLER VE KONUMLARI MODALI (SITUM EVENTS CALENDAR & WAYFINDING) -->
+  <div id="events-calendar-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" id="events-modal-backdrop"></div>
+    <div class="relative w-full max-w-lg rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-3.5 max-h-[88vh]">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-violet-500/15 text-violet-600 dark:text-violet-400 flex items-center justify-center text-xl">
+            📅
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-heading">Capacity Etkinlik Takvimi &amp; Konumları</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Takviminizdeki etkinlikleri görüntüleyin ve tek tıkla etkinlik alanına yürüyün</p>
+          </div>
+        </div>
+        <button id="btn-events-modal-close" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Kapat">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Sekmeler: Tüm Etkinlikler | Takvimimdekiler -->
+      <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl shrink-0">
+        <button type="button" id="tab-events-all" class="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs font-extrabold shadow-xs transition-all cursor-pointer">
+          🌟 Tüm AVM Etkinlikleri (5)
+        </button>
+        <button type="button" id="tab-events-saved" class="flex-1 py-1.5 px-3 rounded-xl text-slate-600 dark:text-slate-300 text-xs font-bold hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer">
+          🗓️ Takvimimdekiler (<span id="saved-events-count">2</span>)
+        </button>
+      </div>
+
+      <!-- Etkinlik Kartları Listesi -->
+      <div id="events-calendar-list" class="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-[240px]">
+        <!-- JS tarafından doldurulacak -->
       </div>
     </div>
   </div>
@@ -1251,6 +1402,10 @@
             <span>🗣️ "B Kapısındayım, Müzikli Havuz'a götür"</span>
             <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">👁️ Gözümden</span>
           </button>
+          <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="C Kapısındayım, engelsiz rota ile Zara'ya götür">
+            <span>🗣️ "C Kapısındayım, engelsiz rota ile Zara'ya götür"</span>
+            <span class="text-[10px] font-extrabold text-sky-600 dark:text-sky-400 shrink-0">♿ Engelsiz</span>
+          </button>
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="C Kapısındayım, en yakın bebek odasına götür">
             <span>🗣️ "C Kapısındayım, en yakın bebek odasına götür"</span>
             <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">🍼 Bebek Odası</span>
@@ -1268,12 +1423,12 @@
   <div id="toast-container" class="fixed z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
 
   <!-- JavaScript Modülleri (Cache-Busted) -->
-  <script src="js/logos.js?v=20261011_v3"></script>
-  <script src="js/qrcode.js?v=20261011_v3"></script>
-  <script src="js/navigation.js?v=20261011_v3"></script>
-  <script src="js/simulator.js?v=20261011_v3"></script>
-  <script src="js/map.js?v=20261011_v3"></script>
-  <script src="js/pov3d.js?v=20261011_v3"></script>
-  <script src="js/app.js?v=20261011_v3"></script>
+  <script src="js/logos.js?v=20261011_v4"></script>
+  <script src="js/qrcode.js?v=20261011_v4"></script>
+  <script src="js/navigation.js?v=20261011_v4"></script>
+  <script src="js/simulator.js?v=20261011_v4"></script>
+  <script src="js/map.js?v=20261011_v4"></script>
+  <script src="js/pov3d.js?v=20261011_v4"></script>
+  <script src="js/app.js?v=20261011_v4"></script>
 </body>
 </html>
