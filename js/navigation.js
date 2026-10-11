@@ -341,30 +341,27 @@ class NavigationEngine {
     const excludeEndpoints = new Set([startNodeId, targetNodeId].filter(Boolean));
 
     const recordPassingStores = (stores) => {
-      const majorNames = [];
-      const allNames = [];
+      const orderedNames = [];
       for (const s of stores) {
         if (!s || !s.id) continue;
         if (!enRouteStoreIdSet.has(s.id)) {
           enRouteStoreIdSet.add(s.id);
           enRouteStoreNames.push(s.name);
         }
-        if (!allNames.includes(s.name)) {
-          allNames.push(s.name);
-        }
-        const area = (s.w || 60) * (s.h || 60);
-        if (area >= 4500 && !majorNames.includes(s.name)) {
-          majorNames.push(s.name);
+        if (!orderedNames.includes(s.name)) {
+          orderedNames.push(s.name);
         }
       }
-      return majorNames.length > 0 ? majorNames : allNames;
+      return orderedNames;
     };
 
     const formatPassingPhrase = (storeNames, walkMeters, isFinalStretch = false) => {
       const picked = storeNames.slice(0, 3);
       const prefix = isFinalStretch ? `Son ${walkMeters} m` : `${walkMeters} m`;
-      if (picked.length >= 2) {
-        return `${picked.slice(0, 2).join(' ve ')} mağazalarını geçerek ${prefix} düz ilerleyin.`;
+      if (picked.length === 3) {
+        return `${picked[0]}, ${picked[1]} ve ${picked[2]} mağazalarını sırasıyla geçerek ${prefix} düz ilerleyin.`;
+      } else if (picked.length === 2) {
+        return `${picked[0]} ve ${picked[1]} mağazalarını sırasıyla geçerek ${prefix} düz ilerleyin.`;
       } else if (picked.length === 1) {
         return `${picked[0]} mağazasını geçerek ${prefix} düz ilerleyin.`;
       }
@@ -503,7 +500,7 @@ class NavigationEngine {
               emoji: '⬆️',
               floor: currentFloor,
               meters: walkMeters,
-              passingStores: passedNames.slice(-3),
+              passingStores: passedNames.slice(0, 3),
               text: stepText,
               voiceText: stepText
             });
@@ -549,7 +546,7 @@ class NavigationEngine {
         emoji: '⬆️',
         floor: currentFloor,
         meters: walkMeters,
-        passingStores: passedNames.slice(-3),
+        passingStores: passedNames.slice(0, 3),
         text: stepText,
         voiceText: stepText
       });

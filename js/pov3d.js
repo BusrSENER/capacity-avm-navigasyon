@@ -315,6 +315,42 @@ class Pov3DEngine {
     this.deactivate();
   }
 
+  /**
+   * 2B Çanta (CartSimulator) ilerlerken 3B Gözümden (POV) kamerasını birebir aynı konum ve yönde senkronize tutar
+   */
+  syncFromCart(segIndex, segProgress, curX, curY, floor) {
+    if (!this.route || !this.route.pathNodes || this.route.pathNodes.length < 2) return;
+    const nodes = this.route.pathNodes;
+    this.segIndex = Math.max(0, Math.min(nodes.length - 2, segIndex));
+    this.segProgress = Math.max(0, Math.min(1, segProgress));
+    this.camX = curX;
+    this.camY = curY;
+    this.currentFloor = floor;
+
+    const curU = nodes[this.segIndex];
+    const curV = nodes[Math.min(nodes.length - 1, this.segIndex + 1)];
+    if (curU && curV && curU.floor === curV.floor) {
+      let lookX = curV.x;
+      let lookY = curV.y;
+      if (this.segIndex + 2 < nodes.length && nodes[this.segIndex + 2].floor === this.currentFloor && this.segProgress > 0.65) {
+        const nextV = nodes[this.segIndex + 2];
+        const blend = (this.segProgress - 0.65) / 0.35;
+        lookX = curV.x + (nextV.x - curV.x) * blend * 0.45;
+        lookY = curV.y + (nextV.y - curV.y) * blend * 0.45;
+      }
+      if (Math.hypot(lookX - this.camX, lookY - this.camY) > 1.5) {
+        this.targetYaw = Math.atan2(lookY - this.camY, lookX - this.camX);
+        this.camYaw = this.targetYaw;
+      }
+    }
+
+    const totalSegs = Math.max(1, nodes.length - 1);
+    this.totalProgressPct = Math.min(99, Math.round(((this.segIndex + this.segProgress) / totalSegs) * 100));
+    this.remainingMeters = Math.max(1, Math.round((this.route.totalDistance || 50) * (1 - this.totalProgressPct / 100)));
+    this._detectPassingStore(false);
+    this._updateHUDTexts();
+  }
+
   toggleWalk() {
     if (!this.route || !this.route.pathNodes || this.route.pathNodes.length < 2) {
       if (window.showToast) {
@@ -350,6 +386,9 @@ class Pov3DEngine {
     this.targetYaw = this.camYaw;
     this.isWalking = true;
     this._syncPlayPauseButton();
+    if (window.cartSimulator && typeof window.cartSimulator.syncFromPov === 'function') {
+      window.cartSimulator.syncFromPov(0, 0, n0.x, n0.y, n0.floor);
+    }
     if (window.mallMap && window.mallMap.currentFloor !== n0.floor) {
       window.mallMap.loadFloor(n0.floor);
     }
@@ -408,6 +447,10 @@ class Pov3DEngine {
       this.totalProgressPct = 100;
       this.remainingMeters = 0;
       this.camZ = 26;
+      if (this.targetStore) {
+        this.currentlyPassingStore = this.targetStore;
+        this.currentlyPassingSide = 'Tam Karşınızda';
+      }
       this._syncPlayPauseButton();
       this._updateHUDTexts();
       if (window.updateLiveNavHUD) window.updateLiveNavHUD(-1, 100);
@@ -434,16 +477,14 @@ class Pov3DEngine {
       return;
     }
 
-    // SESLİ KOMUT İLE YÜRÜME HIZI SENKRONİZASYONU:
-    // Ana sesli komut okunurken yürüyüş hızını %42'ye, mağaza geçiş anonsunda %62'ye yumuşatarak
-    // yürüyüşün sesli komutla birebir aynı tempoda ilerlemesini sağlar.
+    // SESLİ KOMUT VE 2B ÇANTA İLE BİREBİR AYNI YÜRÜME HIZI SENKRONİZASYONU:
     const nowPerf = performance.now();
     const isMainSpeechSpeaking = nowPerf < (window.speechMainBusyUntil || 0);
     const isStoreSpeechSpeaking = nowPerf < (window.speechBusyUntil || 0);
-    const speechSyncFactor = isMainSpeechSpeaking ? 0.42 : (isStoreSpeechSpeaking ? 0.62 : 1.0);
+    const speechSyncFactor = isMainSpeechSpeaking ? 0.50 : (isStoreSpeechSpeaking ? 0.65 : 1.0);
 
     const segLen = Math.max(1, Math.hypot(v.x - u.x, v.y - u.y));
-    const baseSpeedUnitsPerSec = 28 * this.walkSpeed * speechSyncFactor;
+    const baseSpeedUnitsPerSec = 34 * this.walkSpeed * speechSyncFactor;
     this.segProgress += (baseSpeedUnitsPerSec * dt) / segLen;
 
     // Doğal insan yürüyüşü kafa salınımı (Head-Bob)
@@ -455,16 +496,28 @@ class Pov3DEngine {
       this.segIndex++;
       if (this.segIndex >= nodes.length - 1) {
         this.segProgress = 0;
-        this.camX = nodes[nodes.length - 1].x;
-        this.camY = nodes[nodes.length - 1].y;
+        const lastNode = nodes[nodes.length - 1];
+        this.camX = lastNode.x;
+        this.camY = lastNode.y;
         this.camZ = 26;
         // Hedef mağazanın içine/cephesine doğru dön
         if (this.targetStore && this.targetStore.cx !== undefined) {
           this.targetYaw = Math.atan2(this.targetStore.cy - this.camY, this.targetStore.cx - this.camX);
         }
+        if (this.targetStore) {
+          this.currentlyPassingStore = this.targetStore;
+          this.currentlyPassingSide = 'Tam Karşınızda';
+        }
         this.isWalking = false;
         this.totalProgressPct = 100;
         this.remainingMeters = 0;
+        if (window.cartSimulator && typeof window.cartSimulator.syncFromPov === 'function') {
+          window.cartSimulator.syncFromPov(nodes.length - 1, 0, this.camX, this.camY, this.currentFloor);
+        }
+        const hudBar = document.getElementById('hud-progress-bar');
+        const hudPct = document.getElementById('hud-progress-text');
+        if (hudBar) hudBar.style.width = '100%';
+        if (hudPct) hudPct.textContent = '100%';
         this._syncPlayPauseButton();
         this._updateHUDTexts();
         if (window.updateLiveNavHUD) window.updateLiveNavHUD(-1, 100);
@@ -505,13 +558,23 @@ class Pov3DEngine {
 
     this.camYaw = this._lerpAngle(this.camYaw, this.targetYaw, dt * 6.5);
 
+    // 2B Çanta Simülatörünü arka planda birebir aynı koordinat ve segmentte tut
+    if (window.cartSimulator && typeof window.cartSimulator.syncFromPov === 'function') {
+      window.cartSimulator.syncFromPov(this.segIndex, this.segProgress, this.camX, this.camY, this.currentFloor);
+    }
+
     // İlerleme yüzdesi ve kalan mesafe
     const totalSegs = Math.max(1, nodes.length - 1);
     this.totalProgressPct = Math.min(99, Math.round(((this.segIndex + this.segProgress) / totalSegs) * 100));
     this.remainingMeters = Math.max(1, Math.round((this.route.totalDistance || 50) * (1 - this.totalProgressPct / 100)));
 
+    const hudBar = document.getElementById('hud-progress-bar');
+    const hudPct = document.getElementById('hud-progress-text');
+    if (hudBar) hudBar.style.width = `${this.totalProgressPct}%`;
+    if (hudPct) hudPct.textContent = `${this.totalProgressPct}%`;
+
     // Şu an yanından geçilen mağazayı tespit et (En-Route Proximity + Sağ/Sol Yön Algısı)
-    this._detectPassingStore();
+    this._detectPassingStore(true);
 
     // Üst HUD ve Ana Harita HUD senkronu (Yalnızca düğüm değiştiğinde ve rota aktifken)
     this._updateHUDTexts();
@@ -521,8 +584,16 @@ class Pov3DEngine {
     }
   }
 
-  _detectPassingStore() {
+  _detectPassingStore(allowSpeak = true) {
+    // Hedefe ulaşıldığında veya son birkaç metrede doğrudan hedef mağazayı göster (komşu mağaza karışıklığını önle)
+    if (this.targetStore && this.totalProgressPct >= 95) {
+      this.currentlyPassingStore = this.targetStore;
+      this.currentlyPassingSide = 'Tam Karşınızda';
+      return;
+    }
+
     const floorStores = this.mallData?.floors[this.currentFloor]?.stores || [];
+    const enRouteIds = new Set(this.route?.enRouteStoreIds || []);
     let closest = null;
     let bestScore = 72;
     let closestSide = 'Yanınızda';
@@ -544,7 +615,9 @@ class Pov3DEngine {
         const rightProj = -dx * sinYaw + dy * cosYaw;
         if (forwardProj > -14 && forwardProj < 68) {
           const area = (s.w || 60) * (s.h || 60);
-          const score = area >= 4500 ? d * 0.48 : d * 1.15;
+          const isEnRoute = enRouteIds.has(s.id);
+          // Rota listesindeki (enRouteStoreIds) mağazalara öncelik vererek sesli komut sırasıyla %100 uyum sağla
+          const score = isEnRoute ? d * 0.42 : (area >= 4500 ? d * 0.65 : d * 1.25);
           if (score < bestScore) {
             bestScore = score;
             closest = s;
@@ -559,7 +632,7 @@ class Pov3DEngine {
       this.currentlyPassingStore = closest;
       this.currentlyPassingSide = closestSide;
       const mainSpeaking = performance.now() < (window.speechMainBusyUntil || 0);
-      if (!this.announcedPassingStores.has(closest.id) && Math.abs(closestForwardProj) <= 26 && !mainSpeaking) {
+      if (allowSpeak && !this.announcedPassingStores.has(closest.id) && Math.abs(closestForwardProj) <= 26 && !mainSpeaking) {
         this.announcedPassingStores.add(closest.id);
         if (window.isVoiceEnabled && window.speakNavigationText && this.totalProgressPct > 5 && this.totalProgressPct < 92) {
           window.speakNavigationText(`${closestSide} ${closest.name}`, false, true);
@@ -618,7 +691,16 @@ class Pov3DEngine {
     }
 
     if (passingBadge && passingText) {
-      if (this.currentlyPassingStore) {
+      if (this.totalProgressPct >= 95 && this.targetStore) {
+        const s = this.targetStore;
+        if (passingLogoEl && typeof window.getStoreLogo === 'function') {
+          passingLogoEl.innerHTML = window.getStoreLogo(s, 18);
+          passingLogoEl.classList.remove('hidden');
+        }
+        const unitStr = s.unit ? ` (${s.unit})` : '';
+        passingText.textContent = `🎯 Hedefiniz Tam Karşınızda: ${s.name}${unitStr}`;
+        passingBadge.classList.remove('hidden');
+      } else if (this.currentlyPassingStore) {
         const s = this.currentlyPassingStore;
         if (passingLogoEl && typeof window.getStoreLogo === 'function') {
           passingLogoEl.innerHTML = window.getStoreLogo(s, 18);
@@ -628,7 +710,6 @@ class Pov3DEngine {
         passingText.textContent = `👀 ${this.currentlyPassingSide || 'Yanınızda'}: ${s.name}${unitStr}`;
         passingBadge.classList.remove('hidden');
       } else if (this.route && this.route.enRouteStoreNames && this.route.enRouteStoreNames.length > 0) {
-        // Rota üzerindeki ilk mağazanın logosunu da göster
         const floorStores = this.mallData?.floors[this.currentFloor]?.stores || [];
         const firstEnRouteStore = floorStores.find(st => st.name === this.route.enRouteStoreNames[0]) || this.targetStore;
         if (passingLogoEl && firstEnRouteStore && typeof window.getStoreLogo === 'function') {
@@ -1181,6 +1262,7 @@ class Pov3DEngine {
       }
 
       let bestSignFace = null;
+      const storeFaces = [];
       for (const face of candidateFaces) {
         const midX = (face.cA.x + face.cB.x) * 0.5;
         const midY = (face.cA.y + face.cB.y) * 0.5;
@@ -1188,7 +1270,7 @@ class Pov3DEngine {
         const faceLen = Math.hypot(face.cB.x - face.cA.x, face.cB.y - face.cA.y);
         if (wallDist > 400) continue;
 
-        wallQuads.push({
+        const wqItem = {
           store: s,
           cA: face.cA,
           cB: face.cB,
@@ -1198,15 +1280,22 @@ class Pov3DEngine {
           faceLen,
           isFrontFacade: face.isDoorFace || faceLen >= 38,
           isDoorFace: face.isDoorFace,
+          isPrimaryFace: false,
           isStart,
           isTarget,
           isEnRoute,
           isPassingNow
-        });
+        };
+        storeFaces.push(wqItem);
+        wallQuads.push(wqItem);
 
         if (!bestSignFace || (face.isDoorFace && !bestSignFace.isDoorFace) || (face.isDoorFace === bestSignFace.isDoorFace && wallDist < bestSignFace.dist)) {
-          bestSignFace = { midX, midY, dist: wallDist, isDoorFace: face.isDoorFace };
+          bestSignFace = { midX, midY, dist: wallDist, isDoorFace: face.isDoorFace, wqItem };
         }
+      }
+
+      if (bestSignFace && bestSignFace.wqItem) {
+        bestSignFace.wqItem.isPrimaryFace = true;
       }
 
       if (bestSignFace && bestSignFace.dist <= 380) {
@@ -1227,8 +1316,39 @@ class Pov3DEngine {
     // Uzaktan yakına sırala (Painter's Algorithm)
     wallQuads.sort((a, b) => b.wallDist - a.wallDist);
 
+    // Her mağaza için koridora bakan ana vitrin cephesini (isDoorFace) önceliklendirerek TEK cephe belirle
+    const bestFaceByStore = new Map();
     for (const wq of wallQuads) {
-      const { store, cA, cB, midX, midY, faceLen, isFrontFacade, isDoorFace, isStart, isTarget, isEnRoute, isPassingNow, wallDist } = wq;
+      if (wq.faceLen < 20 || wq.wallDist >= 360) continue;
+      const cw = [
+        this._worldToCamera(wq.cA.x, wq.cA.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(wq.cB.x, wq.cB.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(wq.cB.x, wq.cB.y, wallHeight, cosYaw, sinYaw),
+        this._worldToCamera(wq.cA.x, wq.cA.y, wallHeight, cosYaw, sinYaw)
+      ];
+      const cl = this._clipPolygonNear(cw, 6.0);
+      if (cl.length < 3) continue;
+      const sw = this._projectCamVerts(cl, cx, horizonY, fovScale);
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (const p of sw) {
+        if (p.x < minX) minX = p.x;
+        if (p.x > maxX) maxX = p.x;
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+      }
+      const visW = Math.min(W - 6, maxX) - Math.max(6, minX);
+      const visH = maxY - minY;
+      const minReqW = wq.isDoorFace ? 14 : 28;
+      if (visW >= minReqW && visH >= 18) {
+        const prev = bestFaceByStore.get(wq.store.id);
+        if (!prev || (wq.isDoorFace && !prev.isDoorFace) || (wq.isDoorFace === prev.isDoorFace && visW > prev.visW)) {
+          bestFaceByStore.set(wq.store.id, { wq, visW, isDoorFace: wq.isDoorFace });
+        }
+      }
+    }
+
+    for (const wq of wallQuads) {
+      const { store, cA, cB, midX, midY, faceLen, isFrontFacade, isDoorFace, isPrimaryFace, isStart, isTarget, isEnRoute, isPassingNow, wallDist } = wq;
       const catStyle = this._getCategoryColors(store.category);
 
       // 1. Ana Vitrin Duvarı (z = 0 .. wallHeight)
@@ -1244,7 +1364,6 @@ class Pov3DEngine {
       const scrWall = this._projectCamVerts(clippedWall, cx, horizonY, fovScale);
 
       ctx.save();
-      const fogAlpha = Math.max(0.35, Math.min(0.98, 1 - wallDist / 540));
 
       if (isTarget) {
         ctx.fillStyle = '#fee2e2';
@@ -1264,7 +1383,8 @@ class Pov3DEngine {
         ctx.lineWidth = 1.6;
       }
 
-      ctx.globalAlpha = fogAlpha;
+      // Vitrin duvarları %100 opak çizilir; böylece arka koridordaki mağazalar ön duvarın içinden görünmez
+      ctx.globalAlpha = 1.0;
       ctx.beginPath();
       ctx.moveTo(scrWall[0].x, scrWall[0].y);
       for (let k = 1; k < scrWall.length; k++) ctx.lineTo(scrWall[k].x, scrWall[k].y);
@@ -1272,8 +1392,8 @@ class Pov3DEngine {
       ctx.fill();
       ctx.stroke();
 
-      if (isDoorFace) {
-        // 1B. Sıcak Aydınlatmalı Cam Vitrin & Çift Kanatlı Cam Kapı Doğramaları (z = 2 .. fasciaBottom - 2)
+      if (faceLen >= 20) {
+        // 1B. Sıcak Aydınlatmalı Cam Vitrin & Çift Kanatlı Cam Kapı Doğramaları (Tüm Koridor ve Ara Yol Cephelerinde)
         const glassA = { x: cA.x + (cB.x - cA.x) * 0.06, y: cA.y + (cB.y - cA.y) * 0.06 };
         const glassB = { x: cA.x + (cB.x - cA.x) * 0.94, y: cA.y + (cB.y - cA.y) * 0.94 };
         const camGlass = [
@@ -1285,7 +1405,7 @@ class Pov3DEngine {
         const clippedGlass = this._clipPolygonNear(camGlass, 6.0);
         if (clippedGlass.length >= 3) {
           const scrGlass = this._projectCamVerts(clippedGlass, cx, horizonY, fovScale);
-          ctx.fillStyle = isPassingNow ? 'rgba(254, 249, 195, 0.82)' : 'rgba(255, 251, 235, 0.68)';
+          ctx.fillStyle = isPassingNow ? 'rgba(254, 249, 195, 0.94)' : 'rgba(255, 251, 235, 0.92)';
           ctx.strokeStyle = 'rgba(100, 116, 139, 0.55)';
           ctx.lineWidth = 1.4;
           ctx.beginPath();
@@ -1314,33 +1434,7 @@ class Pov3DEngine {
           }
         }
 
-        // 1C. Vitrin Camı Üzerinde Büyük Kurumsal Marka Logosu Amblemi (z = 21)
-        if (wallDist < 310) {
-          const cWindowLogo = this._worldToCamera(midX, midY, 21, cosYaw, sinYaw);
-          if (cWindowLogo.rx > 8 && Math.abs(cWindowLogo.ry) < cWindowLogo.rx * 1.08) {
-            const pWinLogo = this._projectCamVerts([cWindowLogo], cx, horizonY, fovScale)[0];
-            const logoImg = this._getStoreLogoImage(store);
-            const winLogoSize = Math.max(36, Math.min(82, (2650 / cWindowLogo.rx) * (W / 1100)));
-            if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-              ctx.save();
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.98)';
-              ctx.strokeStyle = isPassingNow ? '#10b981' : (isTarget ? '#ef4444' : catStyle.fascia);
-              ctx.lineWidth = isPassingNow || isTarget ? 3.0 : 2.0;
-              const lx = pWinLogo.x - winLogoSize / 2;
-              const ly = pWinLogo.y - winLogoSize / 2;
-              ctx.beginPath();
-              if (ctx.roundRect) ctx.roundRect(lx, ly, winLogoSize, winLogoSize, 11);
-              else ctx.rect(lx, ly, winLogoSize, winLogoSize);
-              ctx.fill();
-              ctx.stroke();
-              ctx.drawImage(logoImg, lx + 3, ly + 3, winLogoSize - 6, winLogoSize - 6);
-              this.logosRenderedLastFrame++;
-              ctx.restore();
-            }
-          }
-        }
-
-        // 2. Ön Cephe Üst Işıklı Mağaza Tabelası Şeridi (Fascia Header: z = fasciaBottom .. wallHeight)
+        // 2. Üst Işıklı Mağaza Tabelası Şeridi (Fascia Header: z = fasciaBottom .. wallHeight)
         const camFascia = [
           this._worldToCamera(cA.x, cA.y, fasciaBottom, cosYaw, sinYaw),
           this._worldToCamera(cB.x, cB.y, fasciaBottom, cosYaw, sinYaw),
@@ -1357,38 +1451,112 @@ class Pov3DEngine {
           ctx.closePath();
           ctx.fill();
         }
+
+        // 1C. Her Mağazanın Koridora Bakan Ana Vitrin Cephesinde + Köşe Mağazaların Ön Plan Yan Vitrinlerinde Büyük Işıklı Kurumsal Marka Logosu
+        const isBestCorridorFace = bestFaceByStore.get(store.id)?.wq === wq;
+        const isForegroundCornerWindow = !wq.isDoorFace && wallDist < 190;
+        if (isBestCorridorFace || isForegroundCornerWindow) {
+          let minWallX = Infinity, maxWallX = -Infinity;
+          let minWallY = Infinity, maxWallY = -Infinity;
+          for (const sp of scrWall) {
+            if (sp.x < minWallX) minWallX = sp.x;
+            if (sp.x > maxWallX) maxWallX = sp.x;
+            if (sp.y < minWallY) minWallY = sp.y;
+            if (sp.y > maxWallY) maxWallY = sp.y;
+          }
+          const clampedMinX = Math.max(6, minWallX);
+          const clampedMaxX = Math.min(W - 6, maxWallX);
+          const visWallW = clampedMaxX - clampedMinX;
+          const visWallH = maxWallY - minWallY;
+
+          let avgRx = 0;
+          for (const cv of clippedWall) avgRx += cv.rx;
+          avgRx /= clippedWall.length;
+
+          const minPlaqueW = isBestCorridorFace ? 14 : 64;
+          if (visWallW >= minPlaqueW && visWallH >= 18 && avgRx > 6) {
+            const plaqueCx = (clampedMinX + clampedMaxX) * 0.5;
+            const plaqueCy = minWallY + visWallH * 0.54;
+            const logoImg = this._getStoreLogoImage(store);
+            const winLogoSize = Math.max(22, Math.min(82, Math.min(visWallW * 0.78, (2800 / avgRx) * (W / 1050))));
+
+            if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+              ctx.save();
+              const nameFontSz = Math.max(8, Math.min(13, Math.round(winLogoSize * 0.22)));
+              ctx.font = `800 ${nameFontSz}px "Plus Jakarta Sans", sans-serif`;
+              const shortName = (store.name || '').length > 15 ? (store.name.slice(0, 14) + '…') : (store.name || '');
+              const nameW = Math.min(visWallW - 4, Math.max(winLogoSize + 8, ctx.measureText(shortName).width + 12));
+              const totalPlaqueH = winLogoSize + nameFontSz + 10;
+              const px = plaqueCx - nameW / 2;
+              const py = plaqueCy - totalPlaqueH / 2;
+
+              // Dış ışıklı vitrin panosu
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.97)';
+              ctx.strokeStyle = isPassingNow ? '#10b981' : (isTarget ? '#ef4444' : catStyle.fascia);
+              ctx.lineWidth = isPassingNow || isTarget ? 3.2 : 2.2;
+              ctx.beginPath();
+              if (ctx.roundRect) ctx.roundRect(px, py, nameW, totalPlaqueH, 10);
+              else ctx.rect(px, py, nameW, totalPlaqueH);
+              ctx.fill();
+              ctx.stroke();
+
+              // Büyük Kurumsal Marka Logosu
+              const lx = plaqueCx - (winLogoSize - 4) / 2;
+              const ly = py + 3;
+              ctx.drawImage(logoImg, lx, ly, winLogoSize - 4, winLogoSize - 4);
+              this.logosRenderedLastFrame++;
+
+              // Alt Şerit: Mağaza İsmi Bandı
+              const bannerH = nameFontSz + 5;
+              const bannerY = py + totalPlaqueH - bannerH;
+              ctx.fillStyle = isTarget ? '#dc2626' : (isPassingNow ? '#059669' : '#0f172a');
+              ctx.beginPath();
+              if (ctx.roundRect) ctx.roundRect(px + 1.5, bannerY - 1, nameW - 3, bannerH, 5);
+              else ctx.rect(px + 1.5, bannerY - 1, nameW - 3, bannerH);
+              ctx.fill();
+
+              ctx.fillStyle = '#ffffff';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(shortName, plaqueCx, bannerY + bannerH / 2 - 0.5);
+              ctx.restore();
+            }
+          }
+        }
       }
       ctx.restore();
     }
 
-    // 3. Mağaza Işıklı Tabelaları: [KURUMSAL LOGO] + Kapı Numarası (Z-15..Z-18) + Mağaza Adı
+    // 3. Yalnızca Hedef/Başlangıç Noktası veya Vitrin Panosu Henüz Çizilmemiş Çok Uzak Anchor Mağazalar İçin Üst Tabela
+    // (Böylece koridorun ortasında üst üste binen siyah kutular oluşmaz; tüm mağaza logoları doğrudan kendi vitrin duvarında parlar!)
     storeSignAnchors.sort((a, b) => b.dist - a.dist);
 
     for (const item of storeSignAnchors) {
       const { store, signX, signY, signZ, isStart, isTarget, isEnRoute, isPassingNow } = item;
+      if (!isTarget && !isStart) continue;
       const cSign = this._worldToCamera(signX, signY, signZ, cosYaw, sinYaw);
       if (cSign.rx < 9 || cSign.rx > 360) continue;
       if (Math.abs(cSign.ry) > cSign.rx * 1.05) continue;
 
       const isImportant = isStart || isTarget || isEnRoute || isPassingNow || store.is_anchor;
-      if (!isImportant && cSign.rx > 225) continue;
+      if (!isImportant && cSign.rx > 240) continue;
 
       const pSign = this._projectCamVerts([cSign], cx, horizonY, fovScale)[0];
-      const scaleFactor = Math.max(0.58, Math.min(1.52, 118 / cSign.rx)) * (W / 1100 + 0.36);
+      const scaleFactor = Math.max(0.62, Math.min(1.56, 122 / cSign.rx)) * (W / 1100 + 0.38);
 
       ctx.save();
       const unitStr = store.unit ? `${store.unit} • ` : '';
       const labelText = `${unitStr}${store.name}`;
-      const fontSize = Math.round(Math.max(10, Math.min(19, 12.5 * scaleFactor)));
+      const fontSize = Math.round(Math.max(10.5, Math.min(19.5, 13 * scaleFactor)));
       ctx.font = `800 ${fontSize}px "Plus Jakarta Sans", sans-serif`;
 
       const logoImg = this._getStoreLogoImage(store);
       const hasReadyLogo = !!(logoImg && logoImg.complete && logoImg.naturalWidth > 0);
-      const logoSize = hasReadyLogo ? Math.round(fontSize * 1.72) : 0;
-      const logoGap = hasReadyLogo ? Math.round(6 * scaleFactor) : 0;
+      const logoSize = hasReadyLogo ? Math.round(fontSize * 1.85) : 0;
+      const logoGap = hasReadyLogo ? Math.round(6.5 * scaleFactor) : 0;
 
       const textMetrics = ctx.measureText(labelText);
-      const padX = 9 * scaleFactor;
+      const padX = 9.5 * scaleFactor;
       const boxW = logoSize + logoGap + textMetrics.width + padX * 2;
       const boxH = Math.max(logoSize + 6, fontSize + 10 * scaleFactor);
 
@@ -1412,9 +1580,9 @@ class Pov3DEngine {
         ctx.strokeStyle = '#10b981';
         ctx.lineWidth = 2.4;
       } else {
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.42)';
-        ctx.lineWidth = 1.4;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.48)';
+        ctx.lineWidth = 1.5;
       }
 
       ctx.beginPath();
@@ -1516,10 +1684,10 @@ class Pov3DEngine {
    */
   _renderMiniRadar(ctx, W, H, effectiveYaw) {
     const isMobile = W < 650;
-    const rW = isMobile ? Math.min(135, W * 0.34) : Math.min(210, W * 0.20);
+    const rW = isMobile ? Math.min(130, W * 0.32) : Math.min(210, W * 0.20);
     const rH = rW * (850 / 1400);
     const pad = isMobile ? 12 : 18;
-    const bottomOffset = isMobile ? 76 : 78;
+    const bottomOffset = isMobile ? 212 : 78;
     const rx = W - rW - pad;
     const ry = H - rH - bottomOffset;
 

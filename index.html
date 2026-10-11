@@ -262,19 +262,19 @@
           <div id="search-autocomplete-list" class="hidden absolute top-0 left-0 right-0 max-h-60 sm:max-h-72 overflow-y-auto bg-white/98 dark:bg-slate-900/98 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 divide-y divide-slate-100 dark:divide-slate-800"></div>
         </div>
 
-        <!-- 👁️ GÖRÜNÜM MODU SEÇİCİ: [👁️ Gözümden (3B)] | [🧊 3B Maket] | [🗺️ 2B Plan] -->
+        <!-- 👁️ GÖRÜNÜM MODU SEÇİCİ: [🗺️ 2B Plan] | [🧊 3B Maket] | [👁️ Gözümden (3B)] -->
         <div id="view-mode-switcher-bar" class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 mt-0.5">
-          <button type="button" id="btn-mode-pov" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-extrabold flex items-center justify-center gap-1 transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-sm" data-view-mode="pov" title="X Kişisinin Gözünden 3B Canlı AVM Koridor Yürüyüşü">
-            <span>👁️</span>
-            <span class="truncate">Gözümden 3B</span>
+          <button type="button" id="btn-mode-2d" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-extrabold flex items-center justify-center gap-1 transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-sm" data-view-mode="2d" title="2B Kuşbakışı Kat Planı">
+            <span>🗺️</span>
+            <span class="truncate">2B Plan</span>
           </button>
           <button type="button" id="btn-mode-3d" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700/60" data-view-mode="3d" title="3B Perspektif Kat Maketi">
             <span>🧊</span>
             <span class="truncate">3B Maket</span>
           </button>
-          <button type="button" id="btn-mode-2d" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700/60" data-view-mode="2d" title="2B Kuşbakışı Kat Planı">
-            <span>🗺️</span>
-            <span class="truncate">2B Plan</span>
+          <button type="button" id="btn-mode-pov" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700/60" data-view-mode="pov" title="X Kişisinin Gözünden 3B Canlı AVM Koridor Yürüyüşü">
+            <span>👁️</span>
+            <span class="truncate">Gözümden 3B</span>
           </button>
         </div>
 
@@ -546,22 +546,6 @@
             <span id="live-nav-landmarks-text" class="truncate">Yanından geçilecek: W Collection, Madame Coco</span>
           </div>
         </div>
-
-        <!-- Rota Aktifken Görünen Koridor Tercih Çipleri: [🛣️ Geniş Yol], [✂️ Kısa Yol] ve [📲 Rotayı Cebine Al] -->
-        <div id="route-path-chips" class="hidden flex items-center flex-nowrap overflow-x-auto no-scrollbar gap-1.5 pt-2">
-          <button id="chip-path-wide" class="shrink-0 min-h-[38px] px-3 py-1.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white cursor-pointer" data-path="wide" title="Geniş ve Ferah Koridorları Tercih Et">
-            <span class="text-sm">🛣️</span>
-            <span>Geniş Yol</span>
-          </button>
-          <button id="chip-path-short" class="shrink-0 min-h-[38px] px-3 py-1.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-path="short" title="En Kısa Mesafeli Koridorları Tercih Et">
-            <span class="text-sm">✂️</span>
-            <span>Kısa Yol</span>
-          </button>
-          <button id="btn-route-qr" class="shrink-0 min-h-[38px] px-3 py-1.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white cursor-pointer" title="Rotayı Telefona Aktar">
-            <span class="text-sm">📲</span>
-            <span>Rotayı Cebine Al</span>
-          </button>
-        </div>
       </div>
 
       <!-- İnteraktif SVG Harita Konteyneri -->
@@ -571,14 +555,14 @@
       <div id="pov-3d-container" class="hidden absolute inset-0 z-25 bg-slate-950 overflow-hidden select-none">
         <canvas id="pov-3d-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
 
-        <!-- 3B Gözümden Visor HUD (Sağ Üst / Orta Bilgi Kartı) -->
-        <div id="pov-hud-overlay" class="absolute bottom-20 left-3 right-3 sm:right-auto sm:left-4 sm:bottom-16 sm:w-[420px] z-30 pointer-events-auto">
-          <div class="backdrop-blur-xl bg-slate-900/90 text-white border border-orange-500/40 rounded-2xl p-3 sm:p-3.5 shadow-[0_15px_40px_rgba(0,0,0,0.55)] flex flex-col gap-2">
+        <!-- 3B Gözümden Visor HUD (Kompakt Mobil & Masaüstü Bilgi Kartı) -->
+        <div id="pov-hud-overlay" class="absolute bottom-3 left-3 right-3 sm:right-auto sm:left-4 sm:bottom-16 sm:w-[410px] z-30 pointer-events-auto">
+          <div class="backdrop-blur-xl bg-slate-900/92 text-white border border-orange-500/40 rounded-2xl p-2.5 sm:p-3.5 shadow-[0_15px_40px_rgba(0,0,0,0.55)] flex flex-col gap-1.5">
             <!-- Üst Etiket ve Mesafe -->
             <div class="flex items-center justify-between gap-2">
               <span class="px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-rose-600 text-[9.5px] font-black uppercase tracking-wider text-white flex items-center gap-1 shadow-xs">
                 <span>👁️</span>
-                <span>X Kişisinin Gözü • Canlı 3B Koridor</span>
+                <span>Gözümden 3B • Canlı Koridor</span>
               </span>
               <span id="pov-hud-distance" class="text-[11px] font-extrabold text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded-md">
                 Zemin Kat
@@ -608,18 +592,20 @@
 
             <!-- 3B Kontrol Butonları -->
             <div class="flex items-center justify-between gap-1.5 pt-0.5">
-              <button type="button" id="btn-pov-play-pause" class="flex-1 py-1.5 px-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shadow-sm">
-                ⏸ Duraklat
+              <button type="button" id="btn-pov-play-pause" class="flex-1 min-w-[96px] py-1.5 px-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center gap-1">
+                <span>⏸</span>
+                <span>Duraklat</span>
               </button>
-              <button type="button" id="btn-pov-speed" class="py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-extrabold transition-all active:scale-95 cursor-pointer" title="Yürüyüş Hızı">
+              <button type="button" id="btn-pov-speed" class="py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shrink-0" title="Yürüyüş Hızı">
                 ⚡ 1x
               </button>
-              <button type="button" id="btn-pov-voice-cmd" class="py-1.5 px-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-xs font-extrabold transition-all active:scale-95 cursor-pointer flex items-center gap-1" title="Sesli Komut Ver">
+              <button type="button" id="btn-pov-voice-cmd" class="py-1.5 px-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-xs font-extrabold transition-all active:scale-95 cursor-pointer flex items-center gap-1 shrink-0" title="Sesli Komut Ver">
                 <span>🎙️</span>
                 <span class="hidden sm:inline">Sesli</span>
               </button>
-              <button type="button" id="btn-pov-exit-2d" class="py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all active:scale-95 cursor-pointer" title="2B Kuşbakışı Haritaya Dön">
-                🗺️ 2B Plan
+              <button type="button" id="btn-pov-exit-2d" class="py-1.5 px-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shrink-0 flex items-center gap-1" title="Aynı Konumda 2B Çanta Görünümüne Geç">
+                <span>🛍️</span>
+                <span>2B Çanta</span>
               </button>
             </div>
           </div>
@@ -714,57 +700,103 @@
     </div>
   </div>
 
+  <!-- 🧭 ROTA ÇİZİLDİĞİNDE ÇIKAN "NASIL İLERLEMEK İSTERSİNİZ?" SEÇİM KARTI -->
+  <div id="route-mode-choice-modal" style="z-index: 65;" class="hidden fixed bottom-20 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-20 sm:w-[410px] z-50 pointer-events-auto animate-in fade-in slide-in-from-bottom-3 duration-200">
+    <div class="bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl rounded-2xl border-2 border-indigo-500/40 shadow-[0_18px_45px_rgba(15,23,42,0.28)] p-3.5 flex flex-col gap-2.5">
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5">
+            <span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">Rota Hazır</span>
+            <span id="route-choice-meta" class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400">67 m • ~2 dk</span>
+          </div>
+          <h4 id="route-choice-title" class="text-sm font-extrabold text-slate-900 dark:text-white mt-0.5 truncate">Nasıl ilerlemek istersiniz?</h4>
+        </div>
+        <button type="button" id="btn-choose-mode-close" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 flex items-center justify-center shrink-0 cursor-pointer" title="Sadece Haritada Gör">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" id="btn-choose-mode-2d" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-cyan-600/25 active:scale-95 transition-all cursor-pointer">
+          <span class="text-base leading-none">🛍️ 2B Harita</span>
+          <span class="text-[10px] font-semibold text-cyan-100">Çanta ile İlerle</span>
+        </button>
+        <button type="button" id="btn-choose-mode-pov" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer">
+          <span class="text-base leading-none">👁️ 3B Gözümden</span>
+          <span class="text-[10px] font-semibold text-orange-100">Canlı Koridorda Yürü</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MİNİMAL HUD (NAVİGASYON ÇUBUĞU) - 64px İnce Yönlendirme Çubuğu -->
-  <div id="nav-hud-bar" class="fixed bottom-0 left-0 right-0 h-16 sm:h-[68px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-8px_30px_rgba(0,0,0,0.14)] z-50 flex items-center justify-between px-3 sm:px-6 transition-all duration-300 translate-y-full opacity-0 pointer-events-none flex-nowrap overflow-hidden">
-    <!-- Yan Yana Sadece 5 Kontrol: [⇅] + [⚡ 1x] + [📋 Detay] + [▶ Başlat / ⏸ Duraklat] + [✖] -->
+  <div id="nav-hud-bar" class="fixed bottom-0 left-0 right-0 h-16 sm:h-[68px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-8px_30px_rgba(0,0,0,0.14)] z-50 flex items-center justify-between px-2.5 sm:px-6 transition-all duration-300 translate-y-full opacity-0 pointer-events-none flex-nowrap overflow-hidden">
+    <!-- Yan Yana Kompakt Kontroller: [⇅] + [⚡ 1x] + [📋 Detay] + [📲 QR] + [▶ Başlat / ⏸ Duraklat] + [✖] -->
     <div class="w-full flex items-center justify-between gap-1.5 sm:gap-2 flex-nowrap overflow-hidden max-w-lg mx-auto">
       <!-- 1. Takas İkonu [ ⇅ ] -->
-      <button id="btn-hud-swap" class="h-11 w-11 min-h-[44px] min-w-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Tersine Çevir (⇄)">
+      <button id="btn-hud-swap" class="h-10 w-10 sm:h-11 sm:w-11 min-h-[40px] min-w-[40px] rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Tersine Çevir (⇄)">
         <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
       </button>
 
       <!-- 2. Hız [ ⚡ 1x ] -->
-      <button id="btn-hud-speed" class="h-11 min-h-[44px] px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 font-extrabold text-sm flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Simülasyon Hızı (1x ➔ 2x ➔ 4x)">
+      <button id="btn-hud-speed" class="h-10 sm:h-11 min-h-[40px] px-2 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-0.5 shrink-0 transition-all active:scale-95" title="Simülasyon Hızı (1x ➔ 2x ➔ 4x)">
         <span class="text-xs">⚡</span>
         <span id="hud-speed-text">1x</span>
       </button>
 
       <!-- 3. Çekmece Tetikleyici [ 📋 Detay ] -->
-      <button id="btn-hud-steps-toggle" class="h-11 min-h-[44px] px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Adım Adım Yol Tarifini Göster/Gizle">
-        <i data-lucide="list" class="w-4 h-4"></i>
-        <span class="text-xs font-bold">Detay</span>
+      <button id="btn-hud-steps-toggle" class="h-10 sm:h-11 min-h-[40px] px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Adım Adım Yol Tarifi ve Geniş/Kısa Yol Ayarları">
+        <i data-lucide="list" class="w-4 h-4 shrink-0"></i>
+        <span>Detay</span>
       </button>
 
       <!-- 4. QR Kodu [ 📲 QR ] -->
-      <button id="btn-hud-qr" class="h-11 min-h-[44px] px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-extrabold text-xs flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Rotayı Telefona Aktar (QR)">
+      <button id="btn-hud-qr" class="h-10 sm:h-11 min-h-[40px] px-2 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-extrabold text-xs flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Rotayı Telefona Aktar (QR)">
         <span class="text-sm">📲</span>
         <span class="text-xs font-bold hidden sm:inline">QR</span>
       </button>
 
-      <!-- 5. Ana Buton [ ▶ Başlat / ⏸ Duraklat ] -->
-      <button id="btn-hud-sim-play" class="flex-1 min-w-0 h-11 min-h-[44px] px-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-cyan-500/25 active:scale-95 shrink">
+      <!-- 5. Ana Buton [ ▶ Başlat / ⏸ Duraklat ] (Mobilde Asla Kesilmez!) -->
+      <button id="btn-hud-sim-play" class="flex-1 min-w-[104px] h-10 sm:h-11 min-h-[40px] px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-cyan-500/25 active:scale-95 shrink-0">
         <i data-lucide="play" id="hud-sim-icon" class="w-4 h-4 fill-current shrink-0"></i>
-        <span id="hud-sim-text" class="truncate font-extrabold">Başlat</span>
+        <span id="hud-sim-text" class="whitespace-nowrap font-extrabold">Başlat</span>
       </button>
 
       <!-- 6. Rotayı İptal Etme Kompakt İkon [ ✖ ] -->
-      <button id="btn-hud-finish" class="h-11 w-11 min-h-[44px] min-w-[44px] rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Bitir">
+      <button id="btn-hud-finish" class="h-10 w-10 sm:h-11 sm:w-11 min-h-[40px] min-w-[40px] rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Bitir">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
     </div>
   </div>
 
-  <!-- AÇILIR ADIM ADIM TALİMATLAR ÇEKMECESİ (HUD ÜZERİNDE, İSTEĞE BAĞLI AÇILIR) -->
-  <div id="hud-steps-drawer" class="fixed bottom-16 left-2 right-2 sm:left-auto sm:right-6 sm:w-96 max-h-56 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800 p-3 shadow-2xl z-40 hidden overflow-y-auto space-y-1.5 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200">
+  <!-- AÇILIR ADIM ADIM TALİMATLAR & ROTA TERCİH ÇEKMECESİ (HUD ÜZERİNDE, DETAY BUTONU İLE AÇILIR) -->
+  <div id="hud-steps-drawer" class="fixed bottom-16 left-2 right-2 sm:left-auto sm:right-6 sm:w-96 max-h-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800 p-3 shadow-2xl z-40 hidden overflow-y-auto space-y-2 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200">
     <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-slate-800">
       <div class="flex items-center gap-1.5">
-        <span class="text-xs font-extrabold text-slate-800 dark:text-slate-200">Adım Adım Yol Tarifi</span>
+        <span class="text-xs font-extrabold text-slate-800 dark:text-slate-200">Adım Adım Yol Tarifi &amp; Ayarlar</span>
         <span id="hud-steps-count" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">3 Adım</span>
       </div>
       <button id="btn-hud-steps-close" class="w-6 h-6 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800" title="Detayları Kapat (Rota Korunur)">
         <i data-lucide="x" class="w-3.5 h-3.5"></i>
       </button>
     </div>
+
+    <!-- Rota Koridor Tercih Çipleri: [🛣️ Geniş Yol], [✂️ Kısa Yol] ve [📲 Rotayı Cebine Al] (Artık Detay Çekmecesi İçinde!) -->
+    <div id="route-path-chips" class="flex items-center justify-between gap-1.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
+      <button id="chip-path-wide" class="flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white cursor-pointer" data-path="wide" title="Geniş ve Ferah Koridorları Tercih Et">
+        <span>🛣️</span>
+        <span>Geniş Yol</span>
+      </button>
+      <button id="chip-path-short" class="flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-path="short" title="En Kısa Mesafeli Koridorları Tercih Et">
+        <span>✂️</span>
+        <span>Kısa Yol</span>
+      </button>
+      <button id="btn-route-qr" class="flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 shadow-sm bg-gradient-to-r from-indigo-600 to-violet-600 text-white cursor-pointer" title="Rotayı Telefona Aktar">
+        <span>📲</span>
+        <span>Cebine Al</span>
+      </button>
+    </div>
+
     <div id="hud-steps-list" class="space-y-1.5 text-xs"></div>
   </div>
 

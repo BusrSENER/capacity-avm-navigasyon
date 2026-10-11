@@ -123,8 +123,7 @@ html.dark .route__flow {
 /* Tek Satırda Yatay Kaydırılabilir Kategori ve Servis Çipleri (Single-row Horizontal Swipe) */
 #category-pills-row,
 #amenity-chips-row,
-#quick-start-chips-row,
-#route-path-chips {
+#quick-start-chips-row {
   display: flex !important;
   flex-direction: row !important;
   flex-wrap: nowrap !important;
@@ -487,26 +486,26 @@ html.dark .store-card__name {
 }
 
 .logo-tile {
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1.5px solid rgba(15, 23, 42, 0.14);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 2.5px;
+  padding: 2px;
   transition: all 0.2s ease;
 }
 
 .logo-tile-marker.is-anchor .logo-tile {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   border: 2px solid #f59e0b;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25), 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.28), 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .logo-tile-marker.is-brand-store {
@@ -514,12 +513,12 @@ html.dark .store-card__name {
 }
 
 .logo-tile-marker.is-brand-store .logo-tile {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(15, 23, 42, 0.15);
   background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
 }
 
 html.dark .logo-tile-marker.is-brand-store .logo-tile {
@@ -2082,16 +2081,68 @@ html.dark .store-polygon.store-enroute {
 body.has-pov-3d-active .zoom-bar,
 body.has-pov-3d-active #btn-compass,
 body.has-pov-3d-active #btn-3d-toggle,
-body.has-pov-3d-active #map-cardinal-compass {
+body.has-pov-3d-active #map-cardinal-compass,
+body.has-pov-3d-active #nav-hud-bar,
+body.has-pov-3d-active #header-live-nav-banner,
+body.has-pov-3d-active #floating-view-toggle {
   display: none !important;
 }
 
+/* Tailwind .hidden güvencesi */
+.hidden {
+  display: none !important;
+}
+
+/* 3B Gözümden HUD Paneli: Açık ve koyu temada her zaman yüksek kontrastlı koyu lacivert arka plan */
+#pov-hud-overlay {
+  background: rgba(15, 23, 42, 0.94) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+#pov-hud-overlay #pov-step-box {
+  background: rgba(30, 41, 59, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Genel bakışta (.lod-far) Anchor etiketlerinin birbirine girmesini önleyen kompakt stil */
+.lod-far .marker-name-anchor {
+  font-size: 10.5px !important;
+  padding: 1.5px 5px !important;
+  max-width: 84px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Mobil Dikey Modda Kusursuz Buton & POV HUD Ergonomisi */
 @media (max-width: 768px) {
+  .lod-far .marker-name-anchor {
+    font-size: 8.5px !important;
+    padding: 1px 4px !important;
+    max-width: 66px !important;
+  }
+
+  #btn-hud-sim-play {
+    min-width: 102px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
   #pov-hud-overlay {
-    bottom: 74px !important;
+    bottom: 68px !important;
     left: 10px !important;
-    right: 158px !important;
+    right: 10px !important;
     width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+  }
+
+  body.has-active-route #pov-hud-overlay {
+    bottom: 12px !important;
   }
 }
+
 

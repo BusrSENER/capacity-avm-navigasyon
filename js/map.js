@@ -970,12 +970,14 @@ class MallMap {
       this.container.style.setProperty('--billboard-rot', `${-this.rotation}deg`);
       this.container.style.setProperty('--billboard-tilt', this.is3DMode ? '-28deg' : '0deg');
 
-      // Mobil ve Masaüstü Dinamik Logo Ölçekleme (Zoom'a göre dengeli boyut)
+      // Mobil ve Masaüstü Dinamik Logo Ölçekleme (Yakınlaşınca büyük & net, uzakta çakışmasız)
       const isMobile = window.innerWidth <= 768;
-      const targetScreenSize = isMobile ? 26 : 30;
-      const baseMarkerSize = 30;
+      const targetScreenSize = isMobile ? 32 : 36;
+      const baseMarkerSize = 36;
       const rawScale = (targetScreenSize / baseMarkerSize) / this.scale;
-      const clampedScale = Math.min(isMobile ? 3.4 : 2.2, Math.max(0.45, rawScale));
+      const minScaleLimit = this.is3DMode ? 1.05 : 0.88;
+      const maxScaleLimit = isMobile ? 1.85 : 1.75;
+      const clampedScale = Math.min(maxScaleLimit, Math.max(minScaleLimit, rawScale));
       this.container.style.setProperty('--marker-scale', clampedScale.toFixed(3));
 
       // Kademeli Zoom Rozet Gösterimi (LOD):

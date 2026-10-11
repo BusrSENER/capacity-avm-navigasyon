@@ -516,94 +516,109 @@ const BrandLogos = {
 
   ipekyol: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#18181b"/>
-    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="800" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">İPEKYOL</text>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#eab308" stroke-width="2.5"/>
+    <text x="50" y="46" font-family="'Times New Roman', serif" font-weight="900" font-size="28" fill="#eab308" text-anchor="middle">İY</text>
+    <text x="50" y="72" font-family="'Times New Roman', serif" font-weight="900" font-size="14.5" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">İPEKYOL</text>
   </svg>`,
 
   kemaltanca: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#1c1917"/>
-    <circle cx="50" cy="38" r="14" fill="none" stroke="#eab308" stroke-width="1.8"/>
-    <text x="50" y="44" font-family="'Times New Roman', serif" font-weight="900" font-size="14" fill="#eab308" text-anchor="middle">KT</text>
-    <text x="50" y="68" font-family="'Times New Roman', serif" font-weight="800" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1">KEMAL TANCA</text>
+    <rect width="100" height="100" rx="20" fill="#7c2d12"/>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#facc15" stroke-width="2.5"/>
+    <text x="50" y="46" font-family="'Times New Roman', serif" font-weight="900" font-size="26" fill="#facc15" text-anchor="middle">KT</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="11.5" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">KEMAL</text>
+    <text x="50" y="82" font-family="sans-serif" font-weight="900" font-size="11.5" fill="#fde047" text-anchor="middle" letter-spacing="1">TANCA</text>
   </svg>`,
 
   lizay: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#0f172a"/>
-    <polygon points="50,22 62,34 50,48 38,34" fill="#f59e0b"/>
-    <text x="50" y="68" font-family="'Times New Roman', serif" font-weight="800" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">LİZAY</text>
+    <polygon points="50,18 66,34 50,50 34,34" fill="#f59e0b"/>
+    <text x="50" y="74" font-family="'Times New Roman', serif" font-weight="900" font-size="17" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">LİZAY</text>
   </svg>`,
 
   mac: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#000000"/>
-    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="3">M·A·C</text>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <text x="50" y="60" font-family="sans-serif" font-weight="900" font-size="23" fill="#ffffff" text-anchor="middle" letter-spacing="2">M·A·C</text>
   </svg>`,
 
   madamecoco: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#3b0764"/>
-    <text x="50" y="48" font-family="'Times New Roman', serif" font-weight="800" font-size="10" fill="#f5d0fe" text-anchor="middle" letter-spacing="1">MADAME</text>
-    <text x="50" y="68" font-family="'Times New Roman', serif" font-weight="800" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">COCO</text>
+    <rect width="100" height="100" rx="20" fill="#581c87"/>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#f5d0fe" stroke-width="2"/>
+    <text x="50" y="45" font-family="'Times New Roman', serif" font-weight="900" font-size="13.5" fill="#f5d0fe" text-anchor="middle" letter-spacing="1">MADAME</text>
+    <text x="50" y="69" font-family="'Times New Roman', serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">COCO</text>
   </svg>`,
 
   pelit: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#451a03"/>
-    <text x="50" y="54" font-family="'Times New Roman', serif" font-weight="900" font-size="20" fill="#fef08a" text-anchor="middle" letter-spacing="1">PELİT</text>
-    <text x="50" y="70" font-family="sans-serif" font-weight="600" font-size="7" fill="#ffffff" text-anchor="middle" letter-spacing="2">1957</text>
+    <rect width="100" height="100" rx="20" fill="#78350f"/>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#fef08a" stroke-width="2"/>
+    <text x="50" y="55" font-family="'Times New Roman', serif" font-weight="900" font-size="22" fill="#fef08a" text-anchor="middle" letter-spacing="1">PELİT</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="800" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="2">1957</text>
   </svg>`,
 
   pierrecardin: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#1e293b"/>
-    <path d="M42 26 L42 74 M42 26 C56 26 62 34 62 46 C62 58 56 64 42 64" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>
-    <text x="50" y="84" font-family="sans-serif" font-weight="700" font-size="6.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">PIERRE CARDIN</text>
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <circle cx="50" cy="38" r="18" fill="#dc2626"/>
+    <text x="50" y="45" font-family="'Times New Roman', serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle">PC</text>
+    <text x="50" y="75" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">PIERRE CARDIN</text>
   </svg>`,
 
   ramsey: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#0f172a"/>
-    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">RAMSEY</text>
+    <rect width="100" height="100" rx="20" fill="#1e293b"/>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#38bdf8" stroke-width="2"/>
+    <text x="50" y="45" font-family="'Times New Roman', serif" font-weight="900" font-size="26" fill="#38bdf8" text-anchor="middle">R</text>
+    <text x="50" y="72" font-family="'Times New Roman', serif" font-weight="900" font-size="15.5" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">RAMSEY</text>
   </svg>`,
 
   saatsaat: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#0c4a6e"/>
-    <circle cx="50" cy="38" r="14" fill="none" stroke="#ffffff" stroke-width="2"/>
-    <path d="M50 38 L50 30 M50 38 L56 38" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
-    <text x="50" y="68" font-family="sans-serif" font-weight="800" font-size="8.5" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">SAAT&amp;SAAT</text>
+    <rect width="100" height="100" rx="20" fill="#0369a1"/>
+    <circle cx="50" cy="36" r="15" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <path d="M50 36 L50 27 M50 36 L57 36" stroke="#fde047" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">SAAT&amp;SAAT</text>
   </svg>`,
 
   sochic: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#701a75"/>
-    <text x="50" y="48" font-family="'Times New Roman', serif" font-weight="700" font-size="14" fill="#f5d0fe" text-anchor="middle">SO</text>
-    <text x="50" y="66" font-family="'Times New Roman', serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1">CHIC...</text>
+    <rect width="100" height="100" rx="20" fill="#86198f"/>
+    <text x="50" y="46" font-family="'Times New Roman', serif" font-weight="900" font-size="18" fill="#f5d0fe" text-anchor="middle">SO</text>
+    <text x="50" y="68" font-family="'Times New Roman', serif" font-weight="900" font-size="17" fill="#ffffff" text-anchor="middle" letter-spacing="1">CHIC</text>
   </svg>`,
 
   stefanel: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#1c1917"/>
-    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="800" font-size="15" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">STEFANEL</text>
+    <rect width="100" height="100" rx="20" fill="#991b1b"/>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#fca5a5" stroke-width="2"/>
+    <text x="50" y="45" font-family="'Times New Roman', serif" font-weight="900" font-size="26" fill="#ffffff" text-anchor="middle">S</text>
+    <text x="50" y="72" font-family="'Times New Roman', serif" font-weight="900" font-size="13.5" fill="#fef08a" text-anchor="middle" letter-spacing="1">STEFANEL</text>
   </svg>`,
 
   storksdiamond: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#1e1b4b"/>
-    <polygon points="50,20 64,34 50,50 36,34" fill="#eab308"/>
-    <text x="50" y="68" font-family="'Times New Roman', serif" font-weight="800" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="1">STORKS</text>
+    <polygon points="50,18 66,34 50,50 34,34" fill="#eab308"/>
+    <text x="50" y="72" font-family="'Times New Roman', serif" font-weight="900" font-size="15" fill="#ffffff" text-anchor="middle" letter-spacing="1">STORKS</text>
   </svg>`,
 
   thehunger: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#991b1b"/>
-    <text x="50" y="48" font-family="sans-serif" font-weight="900" font-size="12" fill="#fef08a" text-anchor="middle" letter-spacing="1">THE</text>
-    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle" letter-spacing="1">HUNGER</text>
+    <rect width="100" height="100" rx="20" fill="#b91c1c"/>
+    <text x="50" y="46" font-family="sans-serif" font-weight="900" font-size="15" fill="#fef08a" text-anchor="middle" letter-spacing="1">THE</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="15.5" fill="#ffffff" text-anchor="middle" letter-spacing="1">HUNGER</text>
   </svg>`,
 
   tobaccoshop: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#27272a"/>
-    <text x="50" y="58" font-family="sans-serif" font-weight="800" font-size="11" fill="#facc15" text-anchor="middle" letter-spacing="1">TOBACCO</text>
+    <rect width="100" height="100" rx="20" fill="#451a03"/>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#facc15" stroke-width="2"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="13.5" fill="#facc15" text-anchor="middle" letter-spacing="0.5">TOBACCO</text>
   </svg>`,
 
   tuzun: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="20" fill="#1e1b4b"/>
-    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="800" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">TÜZÜN</text>
+    <rect width="100" height="100" rx="20" fill="#312e81"/>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#a5b4fc" stroke-width="2.5"/>
+    <text x="50" y="45" font-family="'Times New Roman', serif" font-weight="900" font-size="26" fill="#fde047" text-anchor="middle">T</text>
+    <text x="50" y="72" font-family="'Times New Roman', serif" font-weight="900" font-size="17" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">TÜZÜN</text>
   </svg>`,
 
   wcollection: `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill="#09090b"/>
-    <text x="50" y="52" font-family="'Times New Roman', serif" font-weight="900" font-size="28" fill="#ffffff" text-anchor="middle">W</text>
-    <text x="50" y="70" font-family="sans-serif" font-weight="700" font-size="7" fill="#d4af37" text-anchor="middle" letter-spacing="1.5">COLLECTION</text>
+    <rect x="5" y="5" width="90" height="90" rx="16" fill="none" stroke="#d4af37" stroke-width="2.5"/>
+    <text x="50" y="52" font-family="'Times New Roman', serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle">W</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="800" font-size="9.5" fill="#eab308" text-anchor="middle" letter-spacing="1">COLLECTION</text>
   </svg>`,
 
   // --- B1, B2, 1. KAT & B3 EKLENEN YENİ KURUMSAL LOGOLAR ---
@@ -1303,4 +1318,37 @@ function getStoreMonogram(name, category, size = 38) {
   `;
 }
 
+// Tüm vektörel logolarda yüksek kontrastlı iç çerçeve ve okunabilir font ölçeklendirmesi uygula
+(function enhanceBrandLogosReadability() {
+  for (const key of Object.keys(BrandLogos)) {
+    let svg = BrandLogos[key];
+    if (!svg || typeof svg !== 'string') continue;
+
+    // 1. İç çerçevesi olmayan koyu zeminli rozetlere zarif parlak çerçeve ekle
+    if (!svg.includes('x="5" y="5"') && !svg.includes('x="4" y="4"')) {
+      svg = svg.replace(
+        /(<rect width="100" height="100"[^>]*\/>)/i,
+        '$1\n    <rect x="4" y="4" width="92" height="92" rx="16" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>'
+      );
+    }
+
+    // 2. Küçük font-size değerlerini net okunabilirlik için %15 büyüt (taşmayı önleyerek)
+    svg = svg.replace(/font-size="([0-9.]+)"([^>]*>([^<]+)<\/text>)/gi, (match, fsStr, rest, textContent) => {
+      const fs = parseFloat(fsStr);
+      const cleanLen = (textContent || '').trim().length;
+      if (isNaN(fs)) return match;
+      let newFs = fs;
+      if (fs < 15 && cleanLen <= 10) {
+        newFs = Math.min(16, +(fs * 1.18).toFixed(1));
+      } else if (fs < 11 && cleanLen <= 14) {
+        newFs = Math.min(11.5, +(fs * 1.12).toFixed(1));
+      }
+      return `font-size="${newFs}"${rest}`;
+    });
+
+    BrandLogos[key] = svg;
+  }
+})();
+
 window.BrandLogos = BrandLogos;
+

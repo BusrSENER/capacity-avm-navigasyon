@@ -674,6 +674,16 @@ function initApp() {
   }
 
   function setMapViewMode(mode) {
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+
+    // Yerini pinleyip hedefi seçmeden (aktif bir rota oluşmadan) doğrudan 3B Gözümden veya simülasyona geçilmesini engelle
+    if (mode === 'pov' && (!lastCalculatedRoute || !selectedStartStore || !selectedTargetStore)) {
+      if (window.showToast) {
+        window.showToast('👁️ 3B Gözümden yürüyüş için lütfen önce başlangıç ve hedef mağazayı seçin.', 'info');
+      }
+      mode = '2d';
+    }
+
     window.currentViewMode = mode;
     const modeBtns = document.querySelectorAll('.view-mode-btn');
     modeBtns.forEach(btn => {
@@ -696,44 +706,66 @@ function initApp() {
       if (headerPovIcon) headerPovIcon.textContent = '🗺️';
       if (headerPovText) headerPovText.textContent = '2B Harita';
 
-      if (window.pov3dEngine) {
-        if (lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
-          window.pov3dEngine.startRouteWalk(lastCalculatedRoute, selectedStartStore, selectedTargetStore, true, true);
-        } else if (selectedStartStore) {
-          window.pov3dEngine.enterAtStartLocation(selectedStartStore);
+      // 2B Çanta çalışıyorsa duraklat ve kaldığı segmenti (currentIndex, subProgress) 3B Gözümden kamerasına aktar
+      const savedIdx = cartSimulator ? cartSimulator.currentIndex : 0;
+      const savedProg = cartSimulator ? cartSimulator.subProgress : 0;
+      const savedX = cartSimulator ? cartSimulator.currentX : (selectedStartStore?.cx || 0);
+      const savedY = cartSimulator ? cartSimulator.currentY : (selectedStartStore?.cy || 0);
+      const savedFloor = cartSimulator ? cartSimulator.currentFloor : (selectedStartStore?.floor || 4);
+
+      if (cartSimulator && cartSimulator.isPlaying) {
+        cartSimulator.pause();
+      }
+
+      if (window.pov3dEngine && lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
+        if (savedIdx > 0 || savedProg > 0.02) {
+          window.pov3dEngine.route = lastCalculatedRoute;
+          window.pov3dEngine.startStore = selectedStartStore;
+          window.pov3dEngine.targetStore = selectedTargetStore;
+          window.pov3dEngine.syncFromCart(savedIdx, savedProg, savedX, savedY, savedFloor);
+          window.pov3dEngine.isWalking = true;
+          window.pov3dEngine._syncPlayPauseButton();
+          window.pov3dEngine.activate();
         } else {
-          const defaultStart = (mallData.floors[4]?.stores || []).find(s => s.id === 'store_4_15') ||
-                               (mallData.entrances || []).find(e => e.id === 'ent_fisekhane');
-          if (defaultStart) {
-            window.pov3dEngine.enterAtStartLocation(defaultStart);
-          }
+          window.pov3dEngine.startRouteWalk(lastCalculatedRoute, selectedStartStore, selectedTargetStore, true, true);
         }
       }
-    } else if (mode === '3d') {
-      if (window.pov3dEngine && window.pov3dEngine.isActive) {
-        window.pov3dEngine.exit();
-      }
-      if (mallMap) {
-        mallMap.set3DMode(true);
-      }
-      if (headerPovBtn) {
-        headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer';
-      }
-      if (headerPovIcon) headerPovIcon.textContent = '👁️';
-      if (headerPovText) headerPovText.textContent = 'Gözümden 3B';
     } else {
-      // '2d'
+      // '2d' veya '3d' moduna geçiş: 3B Gözümden aktifse kaldığı noktayı 2B/3B Çanta Simülatörüne kesintisiz aktar
+      let shouldResumeCart = false;
       if (window.pov3dEngine && window.pov3dEngine.isActive) {
+        shouldResumeCart = Boolean(window.pov3dEngine.isWalking && window.pov3dEngine.totalProgressPct < 99);
+        const povIdx = window.pov3dEngine.segIndex;
+        const povProg = window.pov3dEngine.segProgress;
+        const povX = window.pov3dEngine.camX;
+        const povY = window.pov3dEngine.camY;
+        const povFloor = window.pov3dEngine.currentFloor;
         window.pov3dEngine.exit();
+
+        if (cartSimulator && lastCalculatedRoute) {
+          cartSimulator.syncFromPov(povIdx, povProg, povX, povY, povFloor);
+        }
       }
+
       if (mallMap) {
-        mallMap.set3DMode(false);
+        mallMap.set3DMode(mode === '3d');
       }
       if (headerPovBtn) {
         headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer';
       }
       if (headerPovIcon) headerPovIcon.textContent = '👁️';
       if (headerPovText) headerPovText.textContent = 'Gözümden 3B';
+
+      if (shouldResumeCart && cartSimulator && !cartSimulator.isPlaying) {
+        cartSimulator.start();
+        const playText = document.getElementById('sim-play-text');
+        if (playText) playText.textContent = 'Duraklat';
+        const hudSimText = document.getElementById('hud-sim-text');
+        if (hudSimText) hudSimText.textContent = 'Duraklat';
+        const hudSimIcon = document.getElementById('hud-sim-icon');
+        if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'pause');
+        if (window.lucide) lucide.createIcons();
+      }
     }
   }
   window.setMapViewMode = setMapViewMode;
@@ -742,6 +774,27 @@ function initApp() {
   window.speechMainBusyUntil = 0;
   window.activeTtsAudio = null;
   window.lastVoiceLanguage = 'tr-TR';
+
+  function getTurkishPossessiveSuffix(name) {
+    if (!name) return "'nın";
+    const spoken = toTurkishPhoneticSpeech(name).toLowerCase().trim();
+    if (!spoken) return "'nın";
+    const vowels = 'aeıioöuü';
+    let lastVowel = 'a';
+    for (let i = spoken.length - 1; i >= 0; i--) {
+      if (vowels.includes(spoken[i])) {
+        lastVowel = spoken[i];
+        break;
+      }
+    }
+    const endsWithVowel = vowels.includes(spoken[spoken.length - 1]);
+    const prefix = endsWithVowel ? 'n' : '';
+    if (lastVowel === 'e' || lastVowel === 'i') return `'${prefix}in`;
+    if (lastVowel === 'o' || lastVowel === 'u') return `'${prefix}un`;
+    if (lastVowel === 'ö' || lastVowel === 'ü') return `'${prefix}ün`;
+    return `'${prefix}ın`;
+  }
+  window.getTurkishPossessiveSuffix = getTurkishPossessiveSuffix;
 
   function toTurkishPhoneticSpeech(rawText) {
     if (!rawText) return '';
@@ -757,7 +810,7 @@ function initApp() {
       .replace(/Madame\s*Coco/gi, 'Madam Koko')
       .replace(/Marks\s*&\s*Spencer/gi, 'Marks end Spensır')
       .replace(/Tommy\s*Hilfiger/gi, 'Tomi Hilfigır')
-      .replace(/US\s*Polo\s*Assn\.?/gi, 'Yu Es Polo')
+      .replace(/U\.?S\.?\s*Polo\s*Assn\.?/gi, 'Yu Es Polo')
       .replace(/Yves\s*Rocher/gi, 'İv Roşe')
       .replace(/L'Occitane/gi, 'Loksitan')
       .replace(/Sephora/gi, 'Sefora')
@@ -766,6 +819,73 @@ function initApp() {
       .replace(/H&M/gi, 'Eyç end Em')
       .replace(/D&R/gi, 'Di end Ar')
       .replace(/B&G\s*Store/gi, 'Bi end Ci Stor')
+      .replace(/Pull\s*&\s*Bear/gi, 'Pul end Ber')
+      .replace(/Jack\s*&\s*Jones/gi, 'Cek end Cons')
+      .replace(/Saat\s*&\s*Saat/gi, 'Saat ve Saat')
+      .replace(/Victoria's\s*Secret/gi, 'Viktoryaz Sikrıt')
+      .replace(/Stradivarius/gi, 'Stradivaryus')
+      .replace(/Bershka/gi, 'Berşka')
+      .replace(/Oysho/gi, 'Oyşo')
+      .replace(/Massimo\s*Dutti/gi, 'Massimo Dutti')
+      .replace(/Beymen\s*Club/gi, 'Beymen Klab')
+      .replace(/paribu\s*cineverse/gi, 'Paribu Sinevörs')
+      .replace(/HD\s*İskender/gi, 'Eyç Di İskender')
+      .replace(/\bKFC\b/gi, 'Key Ef Si')
+      .replace(/Arby's/gi, 'Arbis')
+      .replace(/Popeyes/gi, 'Popays')
+      .replace(/Carl's\s*Jr\.?/gi, 'Karls Cunyır')
+      .replace(/McDonald's/gi, 'Mekdanılds')
+      .replace(/Burger\s*King/gi, 'Börgır King')
+      .replace(/Green\s*Salads/gi, 'Grin Salads')
+      .replace(/Subway/gi, 'Sabvey')
+      .replace(/Starbucks/gi, 'Starbaks')
+      .replace(/Caribou\s*Coffee/gi, 'Karibu Kofi')
+      .replace(/Caff[eé]\s*Nero/gi, 'Kafe Nero')
+      .replace(/tchibo/gi, 'Çibo')
+      .replace(/Cold\s*Stone/gi, 'Kold Ston')
+      .replace(/Krispy\s*Kreme/gi, 'Krispi Krim')
+      .replace(/Rossmann/gi, 'Rosman')
+      .replace(/Watsons/gi, 'Vatsıns')
+      .replace(/M·A·C|\bMAC\b/g, 'Mek Kozmetik')
+      .replace(/Golden\s*Rose/gi, 'Goldın Roz')
+      .replace(/Hairist/gi, 'Heyrist')
+      .replace(/Skechers/gi, 'Skeçırs')
+      .replace(/Columbia/gi, 'Kolombiya')
+      .replace(/The\s*North\s*Face/gi, 'Dı Nort Feys')
+      .replace(/Timberland/gi, 'Timbırlend')
+      .replace(/Sneaks\s*Up/gi, 'Sniks Ap')
+      .replace(/New\s*Balance/gi, 'Niv Balans')
+      .replace(/Under\s*Armour/gi, 'Andır Armır')
+      .replace(/Harley\s*Davidson/gi, 'Harli Devidsın')
+      .replace(/Hummel/gi, 'Humel')
+      .replace(/\bCamper\b/gi, 'Kempır')
+      .replace(/\bCrocs\b/gi, 'Kroks')
+      .replace(/\bEcco\b/gi, 'Eko')
+      .replace(/Nine\s*West/gi, 'Nayn Vest')
+      .replace(/MediaMarkt/gi, 'Medya Markt')
+      .replace(/Mi\s*Store/gi, 'Mi Stor')
+      .replace(/\bApple\b/gi, 'Epıl')
+      .replace(/\bDyson\b/gi, 'Daysın')
+      .replace(/Swarovski/gi, 'Svarovski')
+      .replace(/Swatch/gi, 'Svoç')
+      .replace(/Tobacco\s*Shop/gi, 'Tobako Şop')
+      .replace(/Dry\s*Center/gi, 'Dray Sentır')
+      .replace(/Pets\s*Club/gi, 'Pets Klab')
+      .replace(/FunTime/gi, 'Fan Taym')
+      .replace(/Toyzz\s*Shop/gi, 'Toyz Şop')
+      .replace(/Mothercare/gi, 'Madırkeyr')
+      .replace(/Chicco/gi, 'Kiko')
+      .replace(/Flying\s*Tiger/gi, 'Flaying Taygır')
+      .replace(/Samsonite/gi, 'Semsonayt')
+      .replace(/Levi's/gi, 'Livays')
+      .replace(/Lee\s*Wrangler/gi, 'Li Renglır')
+      .replace(/Calvin\s*Klein/gi, 'Kalvin Klayn')
+      .replace(/\bGuess\b/gi, 'Ges')
+      .replace(/Lacoste/gi, 'Lakost')
+      .replace(/Nautica/gi, 'Notika')
+      .replace(/\bGant\b/gi, 'Gent')
+      .replace(/Calzedonia/gi, 'Kalzedonya')
+      .replace(/Suwen/gi, 'Suven')
       .replace(/Cookshop/gi, 'Kukşop')
       .replace(/SuperStep/gi, 'Süper Step')
       .replace(/The\s*Hunger/gi, 'Dı Hangır')
@@ -1461,11 +1581,41 @@ function setupUIEventListeners() {
 
   // Simülatör Olayları (Hem büyük panel hem de 64px HUD için senkron)
   document.getElementById('sim-play-btn')?.addEventListener('click', () => {
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
     toggleCartSimulation();
   });
 
   document.getElementById('btn-hud-sim-play')?.addEventListener('click', () => {
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
     toggleCartSimulation();
+  });
+
+  // Rota Çizildiğinde Çıkan "Nasıl İlerlemek İstersiniz?" Seçim Kartı Butonları
+  document.getElementById('btn-choose-mode-2d')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+    if (window.setMapViewMode) {
+      window.setMapViewMode('2d');
+    }
+    if (window.resetVoiceStepTracker) {
+      window.resetVoiceStepTracker();
+    }
+    if (cartSimulator && !cartSimulator.isPlaying) {
+      toggleCartSimulation();
+    }
+  });
+
+  document.getElementById('btn-choose-mode-pov')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+    if (window.setMapViewMode) {
+      window.setMapViewMode('pov');
+    }
+  });
+
+  document.getElementById('btn-choose-mode-close')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
   });
 
   // Minimal HUD Simülasyon Hız Kontrolü (1x ➔ 2x ➔ 4x ➔ 1x)
@@ -2253,7 +2403,7 @@ function setStartLocation(loc) {
   mallMap.updateActiveStorePolygons();
   mallMap.renderBrandMarkers(mallMap.currentFloor);
 
-  // KESİN KURAL: Hedef zaten seçiliyse rota otomatik hesaplansın; değilse hedef seçimi beklensin ve X kişisinin gözünden başlangıç noktası gösterilsin
+  // KESİN KURAL: Hedef zaten seçiliyse rota otomatik hesaplansın; değilse 2B haritada kalınarak hedef seçimi beklensin (asla otomatik 3B'ye veya simülasyona geçilmez)
   if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
     calculateAndDisplayRoute();
     setActiveFocusSlot(null);
@@ -2267,10 +2417,6 @@ function setStartLocation(loc) {
       });
     } else {
       mallMap.flyTo(loc.cx, loc.cy, 1.35);
-    }
-    // 👁️ X kişisi yerini pinlediğinde doğrudan onun gözüne geç (3B Koridor Görünümü)
-    if (window.setMapViewMode) {
-      window.setMapViewMode('pov');
     }
   }
 
@@ -2941,11 +3087,19 @@ function calculateAndDisplayRoute() {
   updateFloatingToggleVisibility();
   closePoiPeekCard(); // Rota başlayınca peek card gizlenir, tekil 64px HUD kalır
 
-  // ROTA ÖNİZLEME (MANUEL BAŞLATMA):
-  // Sepet başlangıç noktasına yerleştirilir ve durdurulur; ASLA otomatik başlatılmaz!
+  // ROTA ÖNİZLEME (KULLANICI SEÇİMİYLE BAŞLATMA):
+  // Önceki bir 3B yürüyüş açıksa 2B haritaya dönülsün; çanta ve 3B motor başlangıç noktasına senkronize yerleştirilsin
+  if (window.pov3dEngine && window.pov3dEngine.isActive) {
+    window.pov3dEngine.exit();
+    window.currentViewMode = '2d';
+  }
   cartSimulator.setRoute(result);
   cartSimulator.resetToStart();
   resetSimControls();
+
+  if (window.pov3dEngine) {
+    window.pov3dEngine.startRouteWalk(result, selectedStartStore, selectedTargetStore, false, false);
+  }
 
   // Başlangıç Katına Odaklan ve Rotayı Kadrajla
   updateFloorUI(selectedStartStore.floor);
@@ -2957,16 +3111,27 @@ function calculateAndDisplayRoute() {
     mallMap.fitRoute(result);
   }
 
-  // 👁️ X Kişisinin Gözüne Geç ve 3B AVM Koridorunda Hedefe Doğru İlerle!
-  if (window.setMapViewMode) {
-    window.setMapViewMode('pov');
+  // Kullanıcıya "Nasıl ilerlemek istersiniz? (🛍️ 2B Harita | 👁️ 3B Gözümden)" seçim kartını göster
+  const choiceModal = document.getElementById('route-mode-choice-modal');
+  const choiceMeta = document.getElementById('route-choice-meta');
+  const choiceTitle = document.getElementById('route-choice-title');
+  if (choiceMeta) {
+    choiceMeta.textContent = `${result.totalDistance} m • ~${result.estimatedMinutes} dk`;
+  }
+  if (choiceTitle) {
+    const cleanStart = (selectedStartStore.short_name || selectedStartStore.name || '').replace(/^📍\s*/, '');
+    choiceTitle.textContent = `${cleanStart} ➔ ${selectedTargetStore.name}`;
+  }
+  if (choiceModal) {
+    choiceModal.classList.remove('hidden');
   }
 
+  hideToast();
   if (window.lucide) lucide.createIcons();
-  showToast(`Rota hazır (${result.totalDistance} m, ~${result.estimatedMinutes} dk). 👁️ Gözünüzden 3B koridor yürüyüşü başladı!`, 'success');
 }
 
 function clearCurrentRoute() {
+  document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
   if (window.pov3dEngine && window.pov3dEngine.isActive) {
     window.setMapViewMode('2d');
   }
@@ -3841,6 +4006,10 @@ let activeCampaignToastTimeout = null;
 let currentActiveCampaign = null;
 
 function checkEnRouteCampaignProximity(curX, curY, curFloor) {
+  // Aktif yürüyüş / simülasyon sırasında ekranı kaplayan kampanya bildirimini bastır (yalnızca duraklatıldığında veya manuel çağrıda göster)
+  if ((cartSimulator && cartSimulator.isPlaying) || (window.pov3dEngine && window.pov3dEngine.isActive)) {
+    return;
+  }
   for (const campaign of Object.values(ACTIVE_STORE_CAMPAIGNS)) {
     if (campaign.floor !== curFloor) continue;
     if (triggeredCampaignsThisRun.has(campaign.storeId)) continue;
@@ -3868,7 +4037,8 @@ function showEnRouteCampaignToast(campaign) {
   const discountEl = document.getElementById('campaign-toast-discount');
 
   if (textEl) {
-    textEl.textContent = `Şu an ${campaign.storeName}'nın yanından geçiyorsunuz.`;
+    const suffix = window.getTurkishPossessiveSuffix ? window.getTurkishPossessiveSuffix(campaign.storeName) : "'nın";
+    textEl.textContent = `Şu an ${campaign.storeName}${suffix} yanından geçiyorsunuz.`;
   }
   if (discountEl) {
     discountEl.textContent = campaign.discount;
