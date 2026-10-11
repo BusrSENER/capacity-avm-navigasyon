@@ -369,6 +369,27 @@ class MallMap {
         });
       }
     });
+
+    // 1. Bodrum Kat (B1) Kiosk ATM / Bankamatikler ortak alanı (#kiosk-atm-bay) tıklanabilirliği
+    const atmBay = svgEl.querySelector('#kiosk-atm-bay');
+    if (atmBay) {
+      atmBay.style.cursor = 'pointer';
+      atmBay.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const atmItem = (this.mallData?.amenities || []).find(a => a.kind === 'atm' && a.floor === floorNum) ||
+                        (floorInfo?.amenities || []).find(a => a.kind === 'atm');
+        if (atmItem && this.onStoreClick) {
+          this.onStoreClick(atmItem);
+        }
+      });
+    }
+  }
+
+  _storeMatchesCategory(store, category) {
+    if (!store || !category || category === 'all') return true;
+    if (store.category === category) return true;
+    if (Array.isArray(store.subcategories) && store.subcategories.includes(category)) return true;
+    return false;
   }
 
   /**
@@ -431,7 +452,7 @@ class MallMap {
     // 1. Mağazalar: Sıralama & Akıllı Çakışma Önleme (Spatial Collision Avoidance)
     let stores = floorInfo.stores || [];
     if (this.activeCategoryFilter && this.activeCategoryFilter !== 'all') {
-      stores = stores.filter(s => s.category === this.activeCategoryFilter || s.id === this.activeTargetStore?.id || s.id === this.activeStartStore?.id);
+      stores = stores.filter(s => this._storeMatchesCategory(s, this.activeCategoryFilter) || s.id === this.activeTargetStore?.id || s.id === this.activeStartStore?.id);
     }
 
     const isZoomed = this.scale >= 1.35;
@@ -819,13 +840,27 @@ class MallMap {
     const allPolys = this.svgLayer.querySelectorAll('.store-polygon');
     const enRouteIds = new Set(this.activeRoute?.enRouteStoreIds || []);
     const hasRoute = !!(this.activeRoute && this.activeRoute.pathNodes && this.activeRoute.pathNodes.length > 1);
+    const hasCatFilter = !!(this.activeCategoryFilter && this.activeCategoryFilter !== 'all');
+    const floorStores = this.mallData?.floors?.[this.currentFloor]?.stores || [];
+    const storeById = new Map();
+    floorStores.forEach(s => {
+      storeById.set(s.id, s);
+      if (s.room_id) storeById.set(s.room_id, s);
+    });
 
     allPolys.forEach(p => {
-      p.classList.remove('store-active', 'store-target', 'store-start', 'store-selected', 'store-enroute', 'store-offroute-dimmed');
+      p.classList.remove('store-active', 'store-target', 'store-start', 'store-selected', 'store-enroute', 'store-offroute-dimmed', 'store-highlight');
       const pid = p.getAttribute('data-id') || p.id;
       if (hasRoute) {
         if (enRouteIds.has(pid)) {
           p.classList.add('store-enroute');
+        } else {
+          p.classList.add('store-offroute-dimmed');
+        }
+      } else if (hasCatFilter) {
+        const st = storeById.get(pid);
+        if (st && this._storeMatchesCategory(st, this.activeCategoryFilter)) {
+          p.classList.add('store-highlight');
         } else {
           p.classList.add('store-offroute-dimmed');
         }
@@ -1220,6 +1255,7 @@ class MallMap {
 
   setCategoryFilter(category) {
     this.activeCategoryFilter = category;
+    this.updateActiveStorePolygons();
     this.renderBrandMarkers(this.currentFloor);
   }
 

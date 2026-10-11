@@ -384,6 +384,66 @@ class Pov3DEngine {
   }
 
   /**
+   * Bir mağazanın 3B vitrinini ve koridor perspektifini duvara sıfır girmeden (~60 birim mesafeden, ~32° doğal açıyla) kadrajlayan kamera pozisyonunu hesaplar
+   */
+  _getOptimalStoreViewPose(store, approachDx = 0, approachDy = 0) {
+    const fl = store?.floor || this.currentFloor || 4;
+    const scx = store?.cx ?? 700;
+    const scy = store?.cy ?? 425;
+    const doorX = store?.door_x ?? scx;
+    const doorY = store?.door_y ?? scy;
+    let corridorX = doorX;
+    let corridorY = doorY;
+    if (store?.nav_node && this.mallData?.graph?.nodes?.[store.nav_node]) {
+      const nd = this.mallData.graph.nodes[store.nav_node];
+      corridorX = nd.x;
+      corridorY = nd.y;
+    }
+
+    let outDx = corridorX - doorX;
+    let outDy = corridorY - doorY;
+    if (Math.hypot(outDx, outDy) < 2) {
+      outDx = corridorX - scx;
+      outDy = corridorY - scy;
+    }
+
+    let rawCamX = corridorX;
+    let rawCamY = corridorY;
+    let lookX = doorX;
+    let lookY = doorY;
+
+    // 1. Koridor sonu (End-Cap) mağazası (Örn: Z-18 Paşabahçe Mağazaları, x=1142, koridor y=570)
+    if (Math.abs(outDx) > Math.abs(outDy) && Math.abs(corridorY - 570) < 12 && scx > 1100) {
+      rawCamX = doorX - 64;
+      rawCamY = 570;
+      lookX = doorX;
+      lookY = 570;
+    }
+    // 2. Yatay koridora bakan mağaza (Kuzey/Orta/Güney Koridor: y=310, 440, 570)
+    else if (Math.abs(outDy) >= Math.abs(outDx)) {
+      const signY = outDy >= 0 ? 1 : -1;
+      const alongDir = Math.abs(approachDx) > 3 ? Math.sign(approachDx) : (corridorX > 520 ? -1 : 1);
+      rawCamX = corridorX - alongDir * 48;
+      rawCamY = corridorY + signY * 9;
+      lookX = doorX;
+      lookY = doorY + signY * 8;
+    }
+    // 3. Dikey koridora bakan mağaza (Batı/Doğu Koridor: x=240, 760)
+    else {
+      const signX = outDx >= 0 ? 1 : -1;
+      const alongDir = Math.abs(approachDy) > 3 ? Math.sign(approachDy) : (corridorY > 440 ? -1 : 1);
+      rawCamX = corridorX + signX * 9;
+      rawCamY = corridorY - alongDir * 48;
+      lookX = doorX + signX * 8;
+      lookY = doorY;
+    }
+
+    const safePt = this._clampToWalkableCorridor(rawCamX, rawCamY, fl);
+    const yaw = Math.atan2(lookY - safePt.y, lookX - safePt.x);
+    return { x: safePt.x, y: safePt.y, yaw };
+  }
+
+  /**
    * Kamerayı seçilen mağazanın 3B vitrininin tam önündeki koridora ışınlar ve vitrine doğru döndürür
    */
   teleportInFrontOfStore(store, showPopup = true) {
@@ -398,24 +458,14 @@ class Pov3DEngine {
       }
     }
 
-    const scx = store.cx || 700;
-    const scy = store.cy || 425;
-    // Mağaza kuzey bloğundaysa (cy < 380) koridor güneyindedir (y ~ 415); güney bloğundaysa koridor kuzeyindedir (y ~ 445)
-    let targetCorridorX = scx;
-    let targetCorridorY = scy < 410 ? Math.min(435, (store.y || scy) + (store.h || 80) + 28) : Math.max(415, (store.y || scy) - 28);
-    if (store.nav_node && this.mallData?.graph?.nodes?.[store.nav_node]) {
-      const nd = this.mallData.graph.nodes[store.nav_node];
-      targetCorridorX = nd.x;
-      targetCorridorY = nd.y;
-    }
-    const safePt = this._clampToWalkableCorridor(targetCorridorX, targetCorridorY, this.currentFloor);
+    const pose = this._getOptimalStoreViewPose(store, 0, 0);
     this.isWalking = false;
     this.glideState = null;
-    this.camX = safePt.x;
-    this.camY = safePt.y;
+    this.camX = pose.x;
+    this.camY = pose.y;
     this.camZ = 26;
-    this.camYaw = Math.atan2(scy - this.camY, scx - this.camX);
-    this.targetYaw = this.camYaw;
+    this.camYaw = pose.yaw;
+    this.targetYaw = pose.yaw;
     this.userYawOffset = 0;
     this.currentlyPassingStore = store;
     this.currentlyPassingSide = 'Tam Karşınızda';
@@ -525,12 +575,13 @@ class Pov3DEngine {
     const unitEl = document.getElementById('pov-popup-unit');
     const catEl = document.getElementById('pov-popup-cat');
     const nameEl = document.getElementById('pov-popup-name');
+    const isService = (typeof window.isServiceOrAmenityItem === 'function') && window.isServiceOrAmenityItem(store);
 
     if (logoEl && typeof window.getStoreLogo === 'function') {
       logoEl.innerHTML = window.getStoreLogo(store, 36);
     }
-    if (unitEl) unitEl.textContent = store.unit || 'Z-10';
-    if (catEl) catEl.textContent = store.category_name || store.category || 'Mağaza';
+    if (unitEl) unitEl.textContent = store.unit || (isService ? 'Hizmet' : 'Z-10');
+    if (catEl) catEl.textContent = store.category_name || store.category || (isService ? 'Ortak Hizmet Alanı' : 'Mağaza');
     if (nameEl) nameEl.textContent = store.name;
     popup.classList.remove('hidden');
   }
@@ -1054,22 +1105,31 @@ class Pov3DEngine {
       if (this.segIndex >= nodes.length - 1) {
         this.segProgress = 0;
         const lastNode = nodes[nodes.length - 1];
-        this.camX = lastNode.x;
-        this.camY = lastNode.y;
-        this.camZ = 26;
-        // Hedef mağazanın içine/cephesine doğru dön
-        if (this.targetStore && this.targetStore.cx !== undefined) {
-          this.targetYaw = Math.atan2(this.targetStore.cy - this.camY, this.targetStore.cx - this.camX);
-        }
+        const prevNode = nodes.length >= 2 ? nodes[nodes.length - 2] : lastNode;
+        const approachDx = lastNode.x - prevNode.x;
+        const approachDy = lastNode.y - prevNode.y;
+
         if (this.targetStore) {
+          const pose = this._getOptimalStoreViewPose(this.targetStore, approachDx, approachDy);
+          this.camX = pose.x;
+          this.camY = pose.y;
+          this.camZ = 26;
+          this.camYaw = pose.yaw;
+          this.targetYaw = pose.yaw;
+          this.userYawOffset = 0;
           this.currentlyPassingStore = this.targetStore;
           this.currentlyPassingSide = 'Tam Karşınızda';
+        } else {
+          const safeArrival = this._clampToWalkableCorridor(lastNode.x, lastNode.y, this.currentFloor);
+          this.camX = safeArrival.x;
+          this.camY = safeArrival.y;
+          this.camZ = 26;
         }
         this.isWalking = false;
         this.totalProgressPct = 100;
         this.remainingMeters = 0;
         if (window.cartSimulator && typeof window.cartSimulator.syncFromPov === 'function') {
-          window.cartSimulator.syncFromPov(nodes.length - 1, 0, this.camX, this.camY, this.currentFloor);
+          window.cartSimulator.syncFromPov(nodes.length - 1, 0, lastNode.x, lastNode.y, this.currentFloor);
         }
         const hudBar = document.getElementById('hud-progress-bar');
         const hudPct = document.getElementById('hud-progress-text');
@@ -1080,8 +1140,11 @@ class Pov3DEngine {
         if (window.updateLiveNavHUD) window.updateLiveNavHUD(-1, 100);
         const qrModal = document.getElementById('route-qr-modal');
         const isQrOpen = qrModal && !qrModal.classList.contains('hidden');
+        const isServiceTarget = (typeof window.isServiceOrAmenityItem === 'function') && window.isServiceOrAmenityItem(this.targetStore);
         if (window.showToast && !isQrOpen) {
-          window.showToast(`🎉 ${this.targetStore ? this.targetStore.name : 'Hedef'} mağazasına ulaştınız! Rota sıfırlanıyor ve 2B haritaya dönülüyor...`, 'success');
+          const targetLabel = this.targetStore ? this.targetStore.name : 'Hedef';
+          const noun = isServiceTarget ? 'noktasına' : 'mağazasına';
+          window.showToast(`🎉 ${targetLabel} ${noun} ulaştınız! Rota sıfırlanıyor ve 2B haritaya dönülüyor...`, 'success');
         }
         const reached = this.targetStore;
         if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
@@ -1504,7 +1567,7 @@ class Pov3DEngine {
     }
 
     // Capacity AVM Gerçek Fotoğrafındaki (`media_1791722602735.jpg`) Gömme Koyu Antrasit Izgaralı Tavan Kanalı + Lineer Beyaz LED Bantları
-    const corridorAxesY = [325, 388, 462, 526];
+    const corridorAxesY = [310, 440, 570];
     for (const corrY of corridorAxesY) {
       // Zemin karamel-kahve mermer bordür şeridi
       const b1 = this._worldToCamera(140, corrY, 0.2, cosYaw, sinYaw);
@@ -1560,8 +1623,8 @@ class Pov3DEngine {
       }
     }
 
-    // Dikey (Kuzey-Güney) yan koridorlar için gömme antrasit tavan kanalı & lineer LED (x = 420, 600, 800, 980)
-    for (const corrX of [420, 600, 800, 980]) {
+    // Dikey (Kuzey-Güney) yan koridorlar için gömme antrasit tavan kanalı & lineer LED (x = 240, 430, 590, 760)
+    for (const corrX of [240, 430, 590, 760]) {
       const chA1 = this._worldToCamera(corrX - 7, 160, 67.5, cosYaw, sinYaw);
       const chA2 = this._worldToCamera(corrX - 7, 700, 67.5, cosYaw, sinYaw);
       const chB2 = this._worldToCamera(corrX + 7, 700, 67.5, cosYaw, sinYaw);
@@ -1932,10 +1995,10 @@ class Pov3DEngine {
   }
 
   _render3DFountainPool(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W) {
-    const poolX = 700;
-    const poolY = 425;
-    const rxPool = 75;
-    const ryPool = 46;
+    const poolX = 338;
+    const poolY = 504;
+    const rxPool = 42;
+    const ryPool = 24;
     const pts = [];
     const segs = 24;
     for (let i = 0; i < segs; i++) {
@@ -1959,10 +2022,10 @@ class Pov3DEngine {
       // Animasyonlu Fıskiye Su Sütunları (5 adet dans eden su jeti)
       const jets = [
         { dx: 0, dy: 0, phase: 0, maxH: 26 },
-        { dx: -28, dy: 0, phase: 1.2, maxH: 19 },
-        { dx: 28, dy: 0, phase: 2.4, maxH: 19 },
-        { dx: 0, dy: -18, phase: 3.6, maxH: 17 },
-        { dx: 0, dy: 18, phase: 4.8, maxH: 17 }
+        { dx: -16, dy: 0, phase: 1.2, maxH: 19 },
+        { dx: 16, dy: 0, phase: 2.4, maxH: 19 },
+        { dx: 0, dy: -11, phase: 3.6, maxH: 17 },
+        { dx: 0, dy: 11, phase: 4.8, maxH: 17 }
       ];
       for (const j of jets) {
         const jetH = 10 + Math.abs(Math.sin(now * 0.0045 + j.phase)) * j.maxH;
@@ -2013,8 +2076,8 @@ class Pov3DEngine {
   _render3DAmenitiesAndDecor(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W) {
     // 1. Koridor Peyzaj Saksıları & Oturma Bankları (Koridor ve Ara Yol Kavşaklarında, Mağaza Dışında)
     const decorPoints = [
-      { x: 370, y: 398 }, { x: 565, y: 398 }, { x: 800, y: 398 }, { x: 1005, y: 398 },
-      { x: 370, y: 482 }, { x: 565, y: 482 }, { x: 800, y: 482 }, { x: 1005, y: 482 }
+      { x: 240, y: 310 }, { x: 430, y: 310 }, { x: 590, y: 310 }, { x: 760, y: 310 },
+      { x: 240, y: 570 }, { x: 430, y: 570 }, { x: 590, y: 570 }, { x: 760, y: 570 }
     ];
 
     ctx.save();

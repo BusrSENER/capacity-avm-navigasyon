@@ -1,144 +1,152 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850" width="100%" height="100%" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background-color: transparent;">
-  <!-- ================= BİNA TABANI VE MİMARİ OMURGA (1400 x 850) ================= -->
-  <path d="M 88,130 L 650,130 L 650,45 L 710,45 L 710,130 L 1110,130 C 1210,130 1285,220 1285,440 C 1285,660 1210,750 1110,750 L 88,750 C 58,750 58,130 88,130 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" />
+  <!-- ================= CAPACITY AVM GERÇEK KİOSK MİMARİ TABANI (1400 x 850) ================= -->
+  <path d="M 76,120 L 760,120 C 855,120 925,190 925,280 L 925,405 L 1280,405 C 1300,405 1310,420 1310,440 L 1310,720 C 1310,738 1295,748 1275,748 L 76,748 C 58,748 52,732 52,712 L 52,145 C 52,128 62,120 76,120 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.4" />
 
-  <!-- ================= ANA YATAY KORİDORLAR VE ARA YOLLAR (OPEN CORRIDORS) ================= -->
+  <!-- ================= KİOSK ANA YÜRÜME KORİDORLARI VE ARA YOLLAR ================= -->
   <g id="corridors-layer" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1">
-    <!-- Kuzey Ana Koridoru (y=330) -->
-    <rect x="178" y="304" width="934" height="50" rx="8" />
-    <!-- Merkez Ana Koridoru (y=440) -->
-    <rect x="178" y="414" width="1075" height="52" rx="8" />
-    <!-- Güney Ana Koridoru (y=550) -->
-    <rect x="178" y="526" width="934" height="48" rx="8" />
-    <!-- Dikey Ara Yollar (x=200, 370, 565, 680, 800, 1005, 1090) -->
-    <rect x="178" y="135" width="44" height="605" rx="6" />
-    <rect x="348" y="304" width="44" height="270" rx="6" />
-    <rect x="542" y="304" width="46" height="436" rx="6" />
-    <rect x="654" y="48" width="52" height="282" rx="6" />
-    <rect x="778" y="304" width="44" height="270" rx="6" />
-    <rect x="982" y="304" width="46" height="270" rx="6" />
-    <rect x="1068" y="135" width="44" height="605" rx="6" />
+    <!-- Kuzey Ana Koridoru (y=310, NW Merdiven x=240 -> NE Merdiven x=760) -->
+    <rect x="135" y="284" width="653" height="52" rx="10" />
+    <!-- Merkez Ada Koridoru (y=440, Batı x=240 -> Doğu x=760) -->
+    <rect x="214" y="416" width="574" height="48" rx="8" />
+    <!-- Güney Ana Koridoru & Doğu Kanadı (y=570, B Kapısı x=240 -> C Kapısı x=760 -> Paşabahçe/Anchor x=1140) -->
+    <rect x="214" y="544" width="930" height="52" rx="10" />
+    <!-- Batı Ana Koridoru (x=240, A Kapısı/NW Merdiven -> B Kapısı/Danışma) -->
+    <rect x="214" y="284" width="52" height="410" rx="10" />
+    <!-- Doğu Ana Koridoru (x=760, NE Merdiven -> Güney Merdiven -> C Kapısı) -->
+    <rect x="734" y="284" width="52" height="410" rx="10" />
+    <!-- Merkez Ada Dikey Ara Yolları (x=430 ve x=590) -->
+    <rect x="410" y="284" width="40" height="312" rx="6" />
+    <rect x="570" y="284" width="40" height="312" rx="6" />
   </g>
-  <!-- Koridor Merkez Yürüme Çizgileri (Rehber İzleri) -->
+  <!-- Koridor Merkez Yürüme İzleri -->
   <g id="corridor-guides" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="5 5" fill="none" opacity="0.75">
-    <line x1="200" y1="330" x2="1090" y2="330" />
-    <line x1="200" y1="440" x2="600" y2="440" />
-    <line x1="800" y1="440" x2="1245" y2="440" />
-    <line x1="200" y1="550" x2="1090" y2="550" />
-    <line x1="200" y1="330" x2="200" y2="550" />
-    <line x1="370" y1="330" x2="370" y2="550" />
-    <line x1="565" y1="330" x2="565" y2="550" />
-    <line x1="680" y1="55"  x2="680" y2="330" />
-    <line x1="800" y1="330" x2="800" y2="550" />
-    <line x1="1005" y1="330" x2="1005" y2="550" />
-    <line x1="1090" y1="330" x2="1090" y2="550" />
+    <line x1="155" y1="310" x2="760" y2="310" />
+    <line x1="240" y1="440" x2="760" y2="440" />
+    <line x1="240" y1="570" x2="1130" y2="570" />
+    <line x1="240" y1="310" x2="240" y2="680" />
+    <line x1="430" y1="310" x2="430" y2="570" />
+    <line x1="590" y1="310" x2="590" y2="570" />
+    <line x1="760" y1="310" x2="760" y2="680" />
   </g>
 
   <!-- Dış Cadde / Yön Bilgilendirmeleri -->
-  <text x="680" y="32" fill="#0284c7" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">▲ HALİT ZİYA UŞAKLIGİL CADDESİ (CAROUSEL GEÇİŞİ)</text>
-  <text x="1355" y="440" fill="#d97706" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(90 1355 440)" letter-spacing="2">▲ FİŞEKHANE CADDESİ (ANA GİRİŞ / MEYDAN)</text>
-  <text x="700" y="795" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">▼ DADYAN SOKAK / ACIBADEM BAKIRKÖY HASTANESİ</text>
-  <text x="35" y="440" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 35 440)" letter-spacing="1">◄ ZEBERCET SOKAK / ATAKÖY YÖNÜ</text>
-  <!-- Atrium Galeri Boşluğu -->
-  <ellipse cx="700" cy="440" rx="85" ry="42" fill="#eef2f6" stroke="#cbd5e1" stroke-width="2.2" stroke-dasharray="6 3"/>
-  <text x="700" y="444" fill="#94a3b8" font-size="9.5" font-weight="700" text-anchor="middle">GALERİ BOŞLUĞU (ATRİUM)</text>
-  <!-- Batı Yürüyen Merdiven Grubu -->
-  <g transform="translate(245, 420)">
-    <rect width="42" height="36" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
-    <text x="21" y="23" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
-    <text x="21" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+  <text x="480" y="102" fill="#0284c7" font-size="11.5" font-weight="800" text-anchor="middle" letter-spacing="1">▲ ATAKÖY / ZEBERCET SOKAK YÖNÜ</text>
+  <text x="760" y="782" fill="#059669" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1.2">▼ FİŞEKHANE CADDESİ (C KAPISI ANA GİRİŞ) &amp; DADYAN SOKAK (B KAPISI)</text>
+  <!-- 3. Bodrum Kat (B3) Kiosk Mescit (Prayer Room) ve Sağlık Odası -->
+  <g id="b3-mescit-block">
+    <rect x="270" y="340" width="136" height="72" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.2" />
+    <text x="338" y="372" fill="#5b21b6" font-size="10.5" font-weight="900" text-anchor="middle">🕌 MESCİT</text>
+    <text x="338" y="388" fill="#6d28d9" font-size="8.5" font-weight="700" text-anchor="middle">PRAYER ROOM (B3)</text>
   </g>
-  <!-- Doğu Yürüyen Merdiven Grubu -->
-  <g transform="translate(984, 420)">
-    <rect width="42" height="36" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
-    <text x="21" y="23" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
-    <text x="21" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+  <g id="b3-medical-block">
+    <rect x="110" y="455" width="98" height="72" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2" />
+    <text x="159" y="488" fill="#b91c1c" font-size="9.5" font-weight="900" text-anchor="middle">🏥 SAĞLIK</text>
+    <text x="159" y="502" fill="#dc2626" font-size="8.5" font-weight="800" text-anchor="middle">ODASI</text>
   </g>
-  <!-- Panoramik Cam Asansörler -->
-  <g transform="translate(551, 420)">
-    <rect width="28" height="36" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
-    <text x="14" y="23" fill="#0284c7" font-size="12" text-anchor="middle">🛗</text>
-    <text x="14" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">ASANSÖR</text>
+  <g class="kiosk-escalator-rotunda" transform="translate(240, 310)">
+    <circle cx="0" cy="0" r="24" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+    <circle cx="0" cy="0" r="18" fill="#f8fafc" stroke="#3b82f6" stroke-width="2" />
+    <text x="0" y="4" fill="#1d4ed8" font-size="11" font-weight="900" text-anchor="middle">🪜</text>
   </g>
-
-  <!-- ================= MAĞAZALAR ================= -->
+  <g class="kiosk-escalator-rotunda" transform="translate(760, 310)">
+    <circle cx="0" cy="0" r="24" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+    <circle cx="0" cy="0" r="18" fill="#f8fafc" stroke="#3b82f6" stroke-width="2" />
+    <text x="0" y="4" fill="#1d4ed8" font-size="11" font-weight="900" text-anchor="middle">🪜</text>
+  </g>
+  <g class="kiosk-escalator-rotunda" transform="translate(760, 570)">
+    <circle cx="0" cy="0" r="24" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+    <circle cx="0" cy="0" r="18" fill="#f8fafc" stroke="#3b82f6" stroke-width="2" />
+    <text x="0" y="4" fill="#1d4ed8" font-size="11" font-weight="900" text-anchor="middle">🪜</text>
+  </g>
+  <g transform="translate(418, 283)">
+    <rect width="24" height="24" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.8" />
+    <text x="12" y="16" fill="#0284c7" font-size="11" text-anchor="middle">🛗</text>
+  </g>
+  <g transform="translate(208, 428)">
+    <rect width="24" height="24" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.8" />
+    <text x="12" y="16" fill="#0284c7" font-size="11" text-anchor="middle">🛗</text>
+  </g>
+  <g transform="translate(768, 428)">
+    <rect width="24" height="24" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.8" />
+    <text x="12" y="16" fill="#0284c7" font-size="11" text-anchor="middle">🛗</text>
+  </g>
+  <!-- ================= MAĞAZALAR (GERÇEK KİOSK KONUMLARI VE KAPI NUMARALARI) ================= -->
   <g id="stores-layer">
-    <g class="store-polygon" data-id="store_1_1" id="room_1_1" data-name="Altın İğne Terzi">
-      <rect x="222.0" y="140.0" width="105.0" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="274.5" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Altın İğne Terzi</text>
+    <g class="store-polygon" data-id="store_1_1" id="room_1_1" data-name="Altın İğne Terzi" data-unit="B3-06">
+      <rect x="790.0" y="430.0" width="130.0" height="110.0" rx="5" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="795.0" y="441.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-06</text>
+      <text class="pointer-events-none select-none" x="855.0" y="505.0" fill="#0f172a" font-size="8.2" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Altın İğne Terzi</text>
     </g>
-    <g class="store-polygon" data-id="store_1_2" id="room_1_2" data-name="Başak Lostra">
-      <rect x="331.0" y="140.0" width="105.0" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="383.5" y="243.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Başak Lostra</text>
+    <g class="store-polygon" data-id="store_1_2" id="room_1_2" data-name="Başak Lostra" data-unit="B3-10">
+      <rect x="454.0" y="160.0" width="112.0" height="120.0" rx="5" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="459.0" y="171.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-10</text>
+      <text class="pointer-events-none select-none" x="510.0" y="240.0" fill="#0f172a" font-size="9.5" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Başak Lostra</text>
     </g>
-    <g class="store-polygon" data-id="store_1_3" id="room_1_3" data-name="Body Therapy Pilates Stüdyo">
-      <rect x="440.0" y="140.0" width="105.0" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="492.5" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Body Therapy Pilates Stüdyo</text>
+    <g class="store-polygon" data-id="store_1_3" id="room_1_3" data-name="Body Therapy Pilates Stüdyo" data-unit="B3-03">
+      <rect x="270.0" y="468.0" width="136.0" height="72.0" rx="5" fill="#dcfce7" stroke="#22c55e" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="275.0" y="479.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-03</text>
+      <text class="pointer-events-none select-none" x="338.0" y="521.3" fill="#0f172a" font-size="8.2" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Body Therapy Pilates Stüdyo</text>
     </g>
-    <g class="store-polygon" data-id="store_1_4" id="room_1_4" data-name="Dry Clean Express">
-      <rect x="549.0" y="140.0" width="105.0" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="601.5" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Dry Clean Express</text>
+    <g class="store-polygon" data-id="store_1_4" id="room_1_4" data-name="Dry Clean Express" data-unit="B3-05">
+      <rect x="790.0" y="310.0" width="130.0" height="110.0" rx="5" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="795.0" y="321.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-05</text>
+      <text class="pointer-events-none select-none" x="855.0" y="385.0" fill="#0f172a" font-size="8.2" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Dry Clean Express</text>
     </g>
-    <g class="store-polygon" data-id="store_1_5" id="room_1_5" data-name="Nail Up">
-      <rect x="706.0" y="140.0" width="87.5" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="749.8" y="243.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Nail Up</text>
+    <g class="store-polygon" data-id="store_1_5" id="room_1_5" data-name="Nail Up" data-unit="B3-07">
+      <rect x="614.0" y="600.0" width="136.0" height="110.0" rx="5" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="619.0" y="611.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-07</text>
+      <text class="pointer-events-none select-none" x="682.0" y="675.0" fill="#0f172a" font-size="9.5" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Nail Up</text>
     </g>
-    <g class="store-polygon" data-id="store_1_6" id="room_1_6" data-name="PetBox">
-      <rect x="797.5" y="140.0" width="87.5" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="841.2" y="243.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">PetBox</text>
+    <g class="store-polygon" data-id="store_1_6" id="room_1_6" data-name="Petfiks" data-unit="B3-08">
+      <rect x="270.0" y="600.0" width="136.0" height="110.0" rx="5" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="275.0" y="611.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-08</text>
+      <text class="pointer-events-none select-none" x="338.0" y="675.0" fill="#0f172a" font-size="9.5" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Petfiks</text>
     </g>
-    <g class="store-polygon" data-id="store_1_7" id="room_1_7" data-name="Simurg Sanat Evi">
-      <rect x="889.0" y="140.0" width="87.5" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="932.8" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Simurg Sanat Evi</text>
+    <g class="store-polygon" data-id="store_1_7" id="room_1_7" data-name="Simurg Sanat Evi" data-unit="B3-04">
+      <rect x="614.0" y="140.0" width="118.0" height="140.0" rx="5" fill="#f3e8ff" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="619.0" y="151.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-04</text>
+      <text class="pointer-events-none select-none" x="673.0" y="230.0" fill="#0f172a" font-size="8.2" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Simurg Sanat Evi</text>
     </g>
-    <g class="store-polygon" data-id="store_1_8" id="room_1_8" data-name="Vodafone">
-      <rect x="980.5" y="140.0" width="87.5" height="162.0" rx="6" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1024.2" y="243.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Vodafone</text>
+    <g class="store-polygon" data-id="store_1_8" id="room_1_8" data-name="Vodafone" data-unit="B3-01">
+      <rect x="270.0" y="140.0" width="136.0" height="140.0" rx="5" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="275.0" y="151.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B3-01</text>
+      <text class="pointer-events-none select-none" x="338.0" y="230.0" fill="#0f172a" font-size="9.5" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Vodafone</text>
     </g>
   </g>
   <!-- ================= GÖMÜLÜ KURUMSAL MAĞAZA LOGOLARI ================= -->
   <g id="store-logos-svg-layer" style="pointer-events: none;">
-    <g class="svg-store-brand-badge" data-store-id="store_1_1"><rect x="249.5" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="251.5" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_1_1"><rect x="831.0" y="459.0" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#14b8a6" stroke-width="0.9" /><svg x="833.0" y="460.5" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#1e293b"/>
     <text x="50" y="50" font-family="'Times New Roman', serif" font-weight="900" font-size="12" fill="#eab308" text-anchor="middle">ALTIN İĞNE</text>
     <text x="50" y="68" font-family="sans-serif" font-weight="700" font-size="8" fill="#ffffff" text-anchor="middle" letter-spacing="2">TERZİ</text>
   </svg></g>
-    <g class="svg-store-brand-badge" data-store-id="store_1_2"><rect x="358.5" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="360.5" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_1_2"><rect x="486.0" y="194.0" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#14b8a6" stroke-width="0.9" /><svg x="488.0" y="195.5" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#7c2d12"/>
     <text x="50" y="48" font-family="'Times New Roman', serif" font-weight="800" font-size="13" fill="#fed7aa" text-anchor="middle">BAŞAK</text>
     <text x="50" y="68" font-family="sans-serif" font-weight="700" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1">LOSTRA</text>
   </svg></g>
-    <g class="svg-store-brand-badge" data-store-id="store_1_3"><rect x="467.5" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="469.5" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_1_3"><rect x="314.0" y="481.9" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#22c55e" stroke-width="0.9" /><svg x="316.0" y="483.4" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#047857"/>
     <text x="50" y="48" font-family="sans-serif" font-weight="800" font-size="8.5" fill="#ffffff" text-anchor="middle">BODY THERAPY</text>
     <text x="50" y="66" font-family="sans-serif" font-weight="700" font-size="7" fill="#a7f3d0" text-anchor="middle" letter-spacing="1">PİLATES</text>
   </svg></g>
-    <g class="svg-store-brand-badge" data-store-id="store_1_4"><rect x="576.5" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="578.5" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_1_4"><rect x="831.0" y="339.0" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#14b8a6" stroke-width="0.9" /><svg x="833.0" y="340.5" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#0369a1"/>
     <path d="M50 30 C53 26, 47 22, 50 20 C54 22, 52 26, 50 30 L30 46 L70 46 Z" fill="none" stroke="#ffffff" stroke-width="2.5"/>
     <text x="50" y="66" font-family="sans-serif" font-weight="900" font-size="8" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">DRY CLEAN</text>
     <text x="50" y="78" font-family="sans-serif" font-weight="900" font-size="8" fill="#38bdf8" text-anchor="middle" letter-spacing="1">EXPRESS</text>
   </svg></g>
-    <g class="svg-store-brand-badge" data-store-id="store_1_5"><rect x="724.8" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="726.8" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_1_5"><rect x="658.0" y="629.0" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#ec4899" stroke-width="0.9" /><svg x="660.0" y="630.5" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#be185d"/>
     <text x="50" y="48" font-family="sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle">NAIL</text>
     <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="14" fill="#fbcfe8" text-anchor="middle">UP</text>
   </svg></g>
-    <g class="svg-store-brand-badge" data-store-id="store_1_6"><rect x="816.2" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="818.2" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
-    <rect width="100" height="100" rx="20" fill="#d97706"/>
-    <circle cx="50" cy="46" r="8" fill="#ffffff"/>
-    <circle cx="40" cy="34" r="4" fill="#ffffff"/>
-    <circle cx="60" cy="34" r="4" fill="#ffffff"/>
-    <circle cx="34" cy="44" r="3.5" fill="#ffffff"/>
-    <circle cx="66" cy="44" r="3.5" fill="#ffffff"/>
-    <text x="50" y="74" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="1">PETBOX</text>
-  </svg></g>
-    <g class="svg-store-brand-badge" data-store-id="store_1_7"><rect x="907.8" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="909.8" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_1_7"><rect x="649.0" y="184.0" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#a855f7" stroke-width="0.9" /><svg x="651.0" y="185.5" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#115e59"/>
     <text x="50" y="50" font-family="'Times New Roman', serif" font-weight="900" font-size="14" fill="#ccfbf1" text-anchor="middle">SİMURG</text>
     <text x="50" y="68" font-family="sans-serif" font-weight="600" font-size="7" fill="#ffffff" text-anchor="middle" letter-spacing="1">SANAT EVİ</text>
   </svg></g>
-    <g class="svg-store-brand-badge" data-store-id="store_1_8"><rect x="999.2" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#818cf8" stroke-width="0.9" /><svg x="1001.2" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_1_8"><rect x="314.0" y="184.0" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#6366f1" stroke-width="0.9" /><svg x="316.0" y="185.5" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#e60000"/>
     <circle cx="50" cy="42" r="16" fill="#ffffff"/>
     <circle cx="50" cy="42" r="9" fill="#e60000"/>

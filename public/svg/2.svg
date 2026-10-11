@@ -1,76 +1,87 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850" width="100%" height="100%" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background-color: transparent;">
-  <!-- ================= BİNA TABANI VE MİMARİ OMURGA (1400 x 850) ================= -->
-  <path d="M 88,130 L 650,130 L 650,45 L 710,45 L 710,130 L 1110,130 C 1210,130 1285,220 1285,440 C 1285,660 1210,750 1110,750 L 88,750 C 58,750 58,130 88,130 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" />
+  <!-- ================= CAPACITY AVM GERÇEK KİOSK MİMARİ TABANI (1400 x 850) ================= -->
+  <path d="M 76,120 L 760,120 C 855,120 925,190 925,280 L 925,405 L 1280,405 C 1300,405 1310,420 1310,440 L 1310,720 C 1310,738 1295,748 1275,748 L 76,748 C 58,748 52,732 52,712 L 52,145 C 52,128 62,120 76,120 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.4" />
 
-  <!-- ================= ANA YATAY KORİDORLAR VE ARA YOLLAR (OPEN CORRIDORS) ================= -->
+  <!-- ================= KİOSK ANA YÜRÜME KORİDORLARI VE ARA YOLLAR ================= -->
   <g id="corridors-layer" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1">
-    <!-- Kuzey Ana Koridoru (y=330) -->
-    <rect x="178" y="304" width="934" height="50" rx="8" />
-    <!-- Merkez Ana Koridoru (y=440) -->
-    <rect x="178" y="414" width="1075" height="52" rx="8" />
-    <!-- Güney Ana Koridoru (y=550) -->
-    <rect x="178" y="526" width="934" height="48" rx="8" />
-    <!-- Dikey Ara Yollar (x=200, 370, 565, 680, 800, 1005, 1090) -->
-    <rect x="178" y="135" width="44" height="605" rx="6" />
-    <rect x="348" y="304" width="44" height="270" rx="6" />
-    <rect x="542" y="304" width="46" height="436" rx="6" />
-    <rect x="654" y="48" width="52" height="282" rx="6" />
-    <rect x="778" y="304" width="44" height="270" rx="6" />
-    <rect x="982" y="304" width="46" height="270" rx="6" />
-    <rect x="1068" y="135" width="44" height="605" rx="6" />
+    <!-- Kuzey Ana Koridoru (y=310, NW Merdiven x=240 -> NE Merdiven x=760) -->
+    <rect x="135" y="284" width="653" height="52" rx="10" />
+    <!-- Merkez Ada Koridoru (y=440, Batı x=240 -> Doğu x=760) -->
+    <rect x="214" y="416" width="574" height="48" rx="8" />
+    <!-- Güney Ana Koridoru & Doğu Kanadı (y=570, B Kapısı x=240 -> C Kapısı x=760 -> Paşabahçe/Anchor x=1140) -->
+    <rect x="214" y="544" width="930" height="52" rx="10" />
+    <!-- Batı Ana Koridoru (x=240, A Kapısı/NW Merdiven -> B Kapısı/Danışma) -->
+    <rect x="214" y="284" width="52" height="410" rx="10" />
+    <!-- Doğu Ana Koridoru (x=760, NE Merdiven -> Güney Merdiven -> C Kapısı) -->
+    <rect x="734" y="284" width="52" height="410" rx="10" />
+    <!-- Merkez Ada Dikey Ara Yolları (x=430 ve x=590) -->
+    <rect x="410" y="284" width="40" height="312" rx="6" />
+    <rect x="570" y="284" width="40" height="312" rx="6" />
   </g>
-  <!-- Koridor Merkez Yürüme Çizgileri (Rehber İzleri) -->
+  <!-- Koridor Merkez Yürüme İzleri -->
   <g id="corridor-guides" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="5 5" fill="none" opacity="0.75">
-    <line x1="200" y1="330" x2="1090" y2="330" />
-    <line x1="200" y1="440" x2="600" y2="440" />
-    <line x1="800" y1="440" x2="1245" y2="440" />
-    <line x1="200" y1="550" x2="1090" y2="550" />
-    <line x1="200" y1="330" x2="200" y2="550" />
-    <line x1="370" y1="330" x2="370" y2="550" />
-    <line x1="565" y1="330" x2="565" y2="550" />
-    <line x1="680" y1="55"  x2="680" y2="330" />
-    <line x1="800" y1="330" x2="800" y2="550" />
-    <line x1="1005" y1="330" x2="1005" y2="550" />
-    <line x1="1090" y1="330" x2="1090" y2="550" />
+    <line x1="155" y1="310" x2="760" y2="310" />
+    <line x1="240" y1="440" x2="760" y2="440" />
+    <line x1="240" y1="570" x2="1130" y2="570" />
+    <line x1="240" y1="310" x2="240" y2="680" />
+    <line x1="430" y1="310" x2="430" y2="570" />
+    <line x1="590" y1="310" x2="590" y2="570" />
+    <line x1="760" y1="310" x2="760" y2="680" />
   </g>
 
   <!-- Dış Cadde / Yön Bilgilendirmeleri -->
-  <text x="680" y="32" fill="#0284c7" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">▲ HALİT ZİYA UŞAKLIGİL CADDESİ (CAROUSEL GEÇİŞİ)</text>
-  <text x="1355" y="440" fill="#d97706" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(90 1355 440)" letter-spacing="2">▲ FİŞEKHANE CADDESİ (ANA GİRİŞ / MEYDAN)</text>
-  <text x="700" y="795" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">▼ DADYAN SOKAK / ACIBADEM BAKIRKÖY HASTANESİ</text>
-  <text x="35" y="440" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 35 440)" letter-spacing="1">◄ ZEBERCET SOKAK / ATAKÖY YÖNÜ</text>
-  <!-- Atrium Galeri Boşluğu -->
-  <ellipse cx="700" cy="440" rx="85" ry="42" fill="#eef2f6" stroke="#cbd5e1" stroke-width="2.2" stroke-dasharray="6 3"/>
-  <text x="700" y="444" fill="#94a3b8" font-size="9.5" font-weight="700" text-anchor="middle">GALERİ BOŞLUĞU (ATRİUM)</text>
-  <!-- Batı Yürüyen Merdiven Grubu -->
-  <g transform="translate(245, 420)">
-    <rect width="42" height="36" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
-    <text x="21" y="23" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
-    <text x="21" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+  <text x="480" y="102" fill="#0284c7" font-size="11.5" font-weight="800" text-anchor="middle" letter-spacing="1">▲ ATAKÖY / ZEBERCET SOKAK YÖNÜ</text>
+  <text x="760" y="782" fill="#059669" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1.2">▼ FİŞEKHANE CADDESİ (C KAPISI ANA GİRİŞ) &amp; DADYAN SOKAK (B KAPISI)</text>
+  <!-- 2. Bodrum Kat (B2) Kiosk Koton & LC Waikiki Alt Kat Blokları -->
+  <g opacity="0.88">
+    <rect x="270" y="140" width="136" height="140" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.8" />
+    <text x="338" y="208" fill="#334155" font-size="12" font-weight="900" text-anchor="middle">KOTON</text>
+    <text x="338" y="224" fill="#64748b" font-size="8.5" font-weight="700" text-anchor="middle">(ALT KAT • B2)</text>
+    <rect x="270" y="340" width="136" height="72" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.8" />
+    <text x="338" y="374" fill="#334155" font-size="11" font-weight="900" text-anchor="middle">LC WAIKIKI</text>
+    <text x="338" y="389" fill="#64748b" font-size="8" font-weight="700" text-anchor="middle">(ALT KAT • B2)</text>
+    <rect x="795" y="420" width="460" height="290" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 4" />
+    <text x="1025" y="555" fill="#475569" font-size="15" font-weight="900" text-anchor="middle">🅿️ P2 KAPALI OTOPARK &amp; VALE ALANI</text>
+    <text x="1025" y="578" fill="#64748b" font-size="10.5" font-weight="700" text-anchor="middle">A1-A4 • B1-B4 • C1-C4 (E-ŞARJ) • D1-D4 (VALE &amp; OTO YIKAMA)</text>
   </g>
-  <!-- Doğu Yürüyen Merdiven Grubu -->
-  <g transform="translate(984, 420)">
-    <rect width="42" height="36" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
-    <text x="21" y="23" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
-    <text x="21" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+  <g class="kiosk-escalator-rotunda" transform="translate(240, 310)">
+    <circle cx="0" cy="0" r="24" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+    <circle cx="0" cy="0" r="18" fill="#f8fafc" stroke="#3b82f6" stroke-width="2" />
+    <text x="0" y="4" fill="#1d4ed8" font-size="11" font-weight="900" text-anchor="middle">🪜</text>
   </g>
-  <!-- Panoramik Cam Asansörler -->
-  <g transform="translate(551, 420)">
-    <rect width="28" height="36" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
-    <text x="14" y="23" fill="#0284c7" font-size="12" text-anchor="middle">🛗</text>
-    <text x="14" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">ASANSÖR</text>
+  <g class="kiosk-escalator-rotunda" transform="translate(760, 310)">
+    <circle cx="0" cy="0" r="24" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+    <circle cx="0" cy="0" r="18" fill="#f8fafc" stroke="#3b82f6" stroke-width="2" />
+    <text x="0" y="4" fill="#1d4ed8" font-size="11" font-weight="900" text-anchor="middle">🪜</text>
   </g>
-
-  <!-- ================= MAĞAZALAR ================= -->
+  <g class="kiosk-escalator-rotunda" transform="translate(760, 570)">
+    <circle cx="0" cy="0" r="24" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+    <circle cx="0" cy="0" r="18" fill="#f8fafc" stroke="#3b82f6" stroke-width="2" />
+    <text x="0" y="4" fill="#1d4ed8" font-size="11" font-weight="900" text-anchor="middle">🪜</text>
+  </g>
+  <g transform="translate(418, 283)">
+    <rect width="24" height="24" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.8" />
+    <text x="12" y="16" fill="#0284c7" font-size="11" text-anchor="middle">🛗</text>
+  </g>
+  <g transform="translate(208, 428)">
+    <rect width="24" height="24" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.8" />
+    <text x="12" y="16" fill="#0284c7" font-size="11" text-anchor="middle">🛗</text>
+  </g>
+  <g transform="translate(768, 428)">
+    <rect width="24" height="24" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.8" />
+    <text x="12" y="16" fill="#0284c7" font-size="11" text-anchor="middle">🛗</text>
+  </g>
+  <!-- ================= MAĞAZALAR (GERÇEK KİOSK KONUMLARI VE KAPI NUMARALARI) ================= -->
   <g id="stores-layer">
-    <g class="store-polygon" data-id="store_2_1" id="room_2_1" data-name="Hibatech Oto Yıkama">
-      <rect x="420.0" y="140.0" width="120.0" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="480.0" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Hibatech Oto Yıkama</text>
+    <g class="store-polygon" data-id="store_2_1" id="room_2_1" data-name="Hibatech Oto Yıkama" data-unit="B2-03">
+      <rect x="614.0" y="468.0" width="116.0" height="72.0" rx="5" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="619.0" y="479.0" fill="#475569" font-size="7" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">B2-03</text>
+      <text class="pointer-events-none select-none" x="672.0" y="521.3" fill="#0f172a" font-size="8.2" font-weight="800" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Hibatech Oto Yıkama</text>
     </g>
   </g>
   <!-- ================= GÖMÜLÜ KURUMSAL MAĞAZA LOGOLARI ================= -->
   <g id="store-logos-svg-layer" style="pointer-events: none;">
-    <g class="svg-store-brand-badge" data-store-id="store_2_1"><rect x="455.0" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="457.0" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <g class="svg-store-brand-badge" data-store-id="store_2_1"><rect x="648.0" y="481.9" width="48.0" height="24.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#14b8a6" stroke-width="0.9" /><svg x="650.0" y="483.4" width="44.0" height="21.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
     <rect width="100" height="100" rx="20" fill="#090d16"/>
     <path d="M28 48 C32 40, 68 40, 72 48 L76 56 C76 60, 24 60, 24 56 Z" fill="#06b6d4"/>
     <circle cx="34" cy="56" r="4" fill="#ffffff"/>
