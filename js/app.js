@@ -640,11 +640,81 @@ function initApp() {
     }
   };
 
-  // Türkçe Sesli Yönlendirme Motoru (Web Speech API - "Yanından Geçtiğim Mağazalar" Destekli)
-  let isVoiceEnabled = false;
+  // Türkçe Sesli Yönlendirme Motoru (Web Speech API - Varsayılan Açık & "Yanından Geçtiğim Mağazalar" Destekli)
+  let isVoiceEnabled = true;
   let lastSpokenStepIndex = -999;
-  window.isVoiceEnabled = false;
+  window.isVoiceEnabled = true;
   window.lastSpokenNavigationText = '';
+
+  // 👁️ Birinci Şahıs (X Kişisinin Gözü) 3B Koridor Motoru Başlatma
+  if (typeof Pov3DEngine !== 'undefined') {
+    window.pov3dEngine = new Pov3DEngine(mallData);
+  }
+
+  function setMapViewMode(mode) {
+    window.currentViewMode = mode;
+    const modeBtns = document.querySelectorAll('.view-mode-btn');
+    modeBtns.forEach(btn => {
+      const bMode = btn.getAttribute('data-view-mode');
+      if (bMode === mode) {
+        btn.className = 'view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-extrabold flex items-center justify-center gap-1 transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-sm';
+      } else {
+        btn.className = 'view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700/60';
+      }
+    });
+
+    const headerPovBtn = document.getElementById('btn-header-pov-toggle');
+    const headerPovIcon = document.getElementById('header-pov-icon');
+    const headerPovText = document.getElementById('header-pov-text');
+
+    if (mode === 'pov') {
+      if (headerPovBtn) {
+        headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-400/40 text-[11px] font-extrabold flex items-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer';
+      }
+      if (headerPovIcon) headerPovIcon.textContent = '🗺️';
+      if (headerPovText) headerPovText.textContent = '2B Harita';
+
+      if (window.pov3dEngine) {
+        if (lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
+          window.pov3dEngine.startRouteWalk(lastCalculatedRoute, selectedStartStore, selectedTargetStore, true, true);
+        } else if (selectedStartStore) {
+          window.pov3dEngine.enterAtStartLocation(selectedStartStore);
+        } else {
+          const defaultStart = (mallData.floors[4]?.stores || []).find(s => s.id === 'store_4_15') ||
+                               (mallData.entrances || []).find(e => e.id === 'ent_fisekhane');
+          if (defaultStart) {
+            window.pov3dEngine.enterAtStartLocation(defaultStart);
+          }
+        }
+      }
+    } else if (mode === '3d') {
+      if (window.pov3dEngine && window.pov3dEngine.isActive) {
+        window.pov3dEngine.exit();
+      }
+      if (mallMap) {
+        mallMap.set3DMode(true);
+      }
+      if (headerPovBtn) {
+        headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer';
+      }
+      if (headerPovIcon) headerPovIcon.textContent = '👁️';
+      if (headerPovText) headerPovText.textContent = 'Gözümden 3B';
+    } else {
+      // '2d'
+      if (window.pov3dEngine && window.pov3dEngine.isActive) {
+        window.pov3dEngine.exit();
+      }
+      if (mallMap) {
+        mallMap.set3DMode(false);
+      }
+      if (headerPovBtn) {
+        headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer';
+      }
+      if (headerPovIcon) headerPovIcon.textContent = '👁️';
+      if (headerPovText) headerPovText.textContent = 'Gözümden 3B';
+    }
+  }
+  window.setMapViewMode = setMapViewMode;
 
   function speakNavigationText(text, force = false) {
     if (!text) return;
@@ -674,7 +744,7 @@ function initApp() {
 
     if (isVoiceEnabled) {
       if (btn) {
-        btn.className = 'shrink-0 px-2 py-1 rounded-lg bg-indigo-600 text-white border border-indigo-600 text-[10px] font-extrabold flex items-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer';
+        btn.className = 'shrink-0 h-8 px-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer';
       }
       if (iconEl) iconEl.textContent = '🔊';
       if (labelEl) labelEl.textContent = 'Sesli Açık';
@@ -694,10 +764,10 @@ function initApp() {
       }
     } else {
       if (btn) {
-        btn.className = 'shrink-0 px-2 py-1 rounded-lg bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/80 text-[10px] font-extrabold flex items-center gap-1 shadow-xs transition-all active:scale-95 cursor-pointer';
+        btn.className = 'shrink-0 h-8 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer';
       }
       if (iconEl) iconEl.textContent = '🔇';
-      if (labelEl) labelEl.textContent = 'Sesli';
+      if (labelEl) labelEl.textContent = 'Sessiz';
       try {
         if ('speechSynthesis' in window && window.speechSynthesis) {
           window.speechSynthesis.cancel();
@@ -826,6 +896,15 @@ function initApp() {
       showToast('🎉 Hedefe ulaştınız! Keyifli alışverişler dileriz.', 'success');
       resetSimControls();
 
+      // 3B Gözümden Motorunu da varış durumuna senkronize et
+      if (window.pov3dEngine) {
+        window.pov3dEngine.isWalking = false;
+        window.pov3dEngine.totalProgressPct = 100;
+        window.pov3dEngine.remainingMeters = 0;
+        window.pov3dEngine._syncPlayPauseButton();
+        window.pov3dEngine._updateHUDTexts();
+      }
+
       // Canlı HUD bildirimini "Hedefe Ulaştınız" olarak güncelle
       updateLiveNavHUD(-1, 100);
 
@@ -899,6 +978,7 @@ function initApp() {
   setupParkingMemoryEvents();
   setupLanguageToggle();
   setupCampaignEvents();
+  setupVoiceCommandEvents();
   updateParkingUI();
 
   // Dikey geçiş tercihini varsayılan olarak 'escalator' (yürüyen merdiven) olarak sabitle
@@ -1113,12 +1193,43 @@ function setupUIEventListeners() {
   document.getElementById('btn-3d-toggle')?.addEventListener('click', () => {
     if (!mallMap) return;
     const is3D = mallMap.toggle3DMode();
+    if (window.setMapViewMode) {
+      window.setMapViewMode(is3D ? '3d' : '2d');
+    }
     showToast(
       is3D
         ? '🧊 3B Mimari Perspektif Görünümü Açıldı'
         : '🗺️ 2B Kuşbakışı Harita Görünümüne Dönüldü',
       'info'
     );
+  });
+
+  // 👁️ [Gözümden 3B | 3B Maket | 2B Plan] Görünüm Modu Seçici Butonları
+  document.querySelectorAll('.view-mode-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const mode = btn.getAttribute('data-view-mode') || '2d';
+      if (window.setMapViewMode) {
+        window.setMapViewMode(mode);
+      }
+    });
+  });
+
+  // Üst Başlık [👁️ Gözümden 3B / 🗺️ 2B Harita] Geçiş Çipi
+  document.getElementById('btn-header-pov-toggle')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isCurrentlyPov = window.pov3dEngine && window.pov3dEngine.isActive;
+    if (window.setMapViewMode) {
+      window.setMapViewMode(isCurrentlyPov ? '2d' : 'pov');
+    }
+  });
+
+  // 3B Gözümden İçinden [🗺️ 2B Plan] Çıkış Butonu
+  document.getElementById('btn-pov-exit-2d')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (window.setMapViewMode) {
+      window.setMapViewMode('2d');
+    }
   });
 
   // Sesli Adım Adım Yönlendirme Butonu (#btn-voice-toggle)
@@ -1955,13 +2066,12 @@ function setStartLocation(loc) {
   mallMap.updateActiveStorePolygons();
   mallMap.renderBrandMarkers(mallMap.currentFloor);
 
-  // KESİN KURAL: Hedef zaten seçiliyse rota otomatik hesaplansın; değilse hedef seçimi beklensin
+  // KESİN KURAL: Hedef zaten seçiliyse rota otomatik hesaplansın; değilse hedef seçimi beklensin ve X kişisinin gözünden başlangıç noktası gösterilsin
   if (selectedTargetStore && selectedTargetStore.id !== selectedStartStore.id) {
     calculateAndDisplayRoute();
     setActiveFocusSlot(null);
   } else {
     setActiveFocusSlot('target');
-    // Bilgi kutusu kaldırıldı
     // Başlangıç katına ve koordinatına odaklan
     if (mallMap.currentFloor !== loc.floor) {
       mallMap.loadFloor(loc.floor).then(() => {
@@ -1970,6 +2080,10 @@ function setStartLocation(loc) {
       });
     } else {
       mallMap.flyTo(loc.cx, loc.cy, 1.35);
+    }
+    // 👁️ X kişisi yerini pinlediğinde doğrudan onun gözüne geç (3B Koridor Görünümü)
+    if (window.setMapViewMode) {
+      window.setMapViewMode('pov');
     }
   }
 
@@ -2653,11 +2767,19 @@ function calculateAndDisplayRoute() {
     mallMap.fitRoute(result);
   }
 
+  // 👁️ X Kişisinin Gözüne Geç ve 3B AVM Koridorunda Hedefe Doğru İlerle!
+  if (window.setMapViewMode) {
+    window.setMapViewMode('pov');
+  }
+
   if (window.lucide) lucide.createIcons();
-  showToast(`Rota hazır (${result.totalDistance} m, ~${result.estimatedMinutes} dk). Başlat'a basarak simülasyonu başlatabilirsiniz.`, 'success');
+  showToast(`Rota hazır (${result.totalDistance} m, ~${result.estimatedMinutes} dk). 👁️ Gözünüzden 3B koridor yürüyüşü başladı!`, 'success');
 }
 
 function clearCurrentRoute() {
+  if (window.pov3dEngine && window.pov3dEngine.isActive) {
+    window.setMapViewMode('2d');
+  }
   if (window.isKioskMode) {
     selectedTargetStore = null;
     lastCalculatedRoute = null;
@@ -3655,3 +3777,284 @@ window.closeCampaignModal = closeCampaignModal;
 window.showEnRouteCampaignToast = showEnRouteCampaignToast;
 window.dismissEnRouteCampaignToast = dismissEnRouteCampaignToast;
 window.checkEnRouteCampaignProximity = checkEnRouteCampaignProximity;
+
+// ========================================================
+// 🎙️ SESLİ KOMUT ASİSTANI (WEB SPEECH RECOGNITION & TÜRKÇE NLP)
+// ========================================================
+let activeSpeechRecognition = null;
+let isListeningVoice = false;
+
+function openVoiceCommandModal() {
+  const modal = document.getElementById('voice-command-modal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+
+  // Modalı açarken mikrofonu otomatik dinlemeye başlat (destekleniyorsa)
+  startVoiceRecognition();
+}
+window.openVoiceCommandModal = openVoiceCommandModal;
+
+function closeVoiceCommandModal() {
+  const modal = document.getElementById('voice-command-modal');
+  if (modal) modal.classList.add('hidden');
+  stopVoiceRecognition();
+}
+window.closeVoiceCommandModal = closeVoiceCommandModal;
+
+function stopVoiceRecognition() {
+  isListeningVoice = false;
+  const pulse = document.getElementById('voice-mic-pulse');
+  const statusEl = document.getElementById('voice-listen-status');
+  if (pulse) pulse.classList.add('hidden');
+  if (statusEl) {
+    statusEl.textContent = 'Konuşmak için mikrofona dokunun veya aşağıdaki hazır sesli komutlardan birini seçin';
+  }
+  if (activeSpeechRecognition) {
+    try {
+      activeSpeechRecognition.stop();
+    } catch (e) {}
+    activeSpeechRecognition = null;
+  }
+}
+
+function startVoiceRecognition() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const pulse = document.getElementById('voice-mic-pulse');
+  const statusEl = document.getElementById('voice-listen-status');
+  const inputEl = document.getElementById('voice-command-input');
+
+  if (!SpeechRec) {
+    if (statusEl) {
+      statusEl.textContent = '🎙️ Sesli komutunuzu kutuya yazabilir veya örnek komutlara tek tıkla dokunabilirsiniz:';
+    }
+    inputEl?.focus();
+    return;
+  }
+
+  try {
+    if (activeSpeechRecognition) {
+      activeSpeechRecognition.stop();
+    }
+    const rec = new SpeechRec();
+    rec.lang = 'tr-TR';
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+    activeSpeechRecognition = rec;
+    isListeningVoice = true;
+
+    if (pulse) pulse.classList.remove('hidden');
+    if (statusEl) {
+      statusEl.textContent = '🔴 Dinleniyor... Lütfen bulunduğunuz yeri ve gitmek istediğiniz mağazayı söyleyin';
+    }
+
+    rec.onresult = (event) => {
+      let transcript = '';
+      let isFinal = false;
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+        if (event.results[i].isFinal) isFinal = true;
+      }
+      if (inputEl) inputEl.value = transcript.trim();
+      if (isFinal && transcript.trim().length > 1) {
+        stopVoiceRecognition();
+        executeVoiceCommandText(transcript.trim());
+      }
+    };
+
+    rec.onerror = () => {
+      stopVoiceRecognition();
+      if (statusEl) {
+        statusEl.textContent = '🗣️ Hazır sesli komutlardan birine dokunabilir veya aşağıya yazabilirsiniz:';
+      }
+    };
+
+    rec.onend = () => {
+      isListeningVoice = false;
+      if (pulse) pulse.classList.add('hidden');
+    };
+
+    rec.start();
+  } catch (e) {
+    stopVoiceRecognition();
+  }
+}
+window.startVoiceRecognition = startVoiceRecognition;
+
+/**
+ * Türkçe Sesli Komut Cümlesini Çözümler ve X Kişisinin Gözünden 3B Rotayı Başlatır
+ * Örn: "Pierre Cardin'deyim, Paşabahçe'ye götür" -> Başlangıç: Pierre Cardin, Hedef: Paşabahçe Mağazaları
+ */
+function executeVoiceCommandText(rawText) {
+  if (!rawText || !rawText.trim()) return false;
+  const textNorm = normalizeTr(rawText);
+
+  // 1. Tüm Kapı, Buluşma Noktası ve 173 Mağaza Adaylarını Oluştur
+  const allStores = getAllStores();
+  const candidates = [];
+
+  // Kapılar ve Özel Noktalar
+  const gateAliases = [
+    { keywords: ['c kapisi', 'c kapisindayim', 'fisekhane'], obj: (mallData.entrances || []).find(e => e.id === 'ent_fisekhane') },
+    { keywords: ['b kapisi', 'b kapisindayim', 'carousel'], obj: (mallData.entrances || []).find(e => e.id === 'ent_carousel') },
+    { keywords: ['a kapisi', 'a kapisindayim', 'atakoy kapisi'], obj: (mallData.entrances || []).find(e => e.id === 'ent_a_kapisi') },
+    { keywords: ['danisma', 'kiosk'], obj: (mallData.entrances || []).find(e => e.id === 'ent_danisma') },
+    { keywords: ['muzikli havuz', 'gosteri havuzu', 'havuz'], obj: (mallData.entrances || []).find(e => e.id === 'ent_havuz') }
+  ];
+
+  gateAliases.forEach(ga => {
+    if (!ga.obj) return;
+    for (const kw of ga.keywords) {
+      const idx = textNorm.indexOf(kw);
+      if (idx !== -1) {
+        candidates.push({ index: idx, len: kw.length, item: ga.obj });
+        break;
+      }
+    }
+  });
+
+  // Mağazalar
+  allStores.forEach(s => {
+    const fullNorm = normalizeTr(s.name);
+    // "Paşabahçe Mağazaları" -> "pasabahce" gibi kısa kökleri de yakala
+    const firstWord = fullNorm.split(/\s+/)[0];
+    let matchedIdx = textNorm.indexOf(fullNorm);
+    let matchedLen = fullNorm.length;
+
+    if (matchedIdx === -1 && firstWord.length >= 4 && !['kapi', 'kat', 'cafe', 'kafe'].includes(firstWord)) {
+      matchedIdx = textNorm.indexOf(firstWord);
+      matchedLen = firstWord.length;
+    }
+
+    if (matchedIdx !== -1) {
+      candidates.push({ index: matchedIdx, len: matchedLen, item: s });
+    }
+  });
+
+  // Aynı başlangıç indeksindeki çakışmalarda en uzun eşleşmeyi koru ve cümle içi sıraya diz
+  candidates.sort((a, b) => a.index - b.index || b.len - a.len);
+  const uniqueMatches = [];
+  for (const c of candidates) {
+    if (!uniqueMatches.some(u => u.item.id === c.item.id || Math.abs(u.index - c.index) < 4)) {
+      uniqueMatches.push(c);
+    }
+  }
+
+  closeVoiceCommandModal();
+
+  // Senaryo A: Cümlede hem Başlangıç hem Hedef geçtiyse (Örn: "Pierre Cardin'deyim, Paşabahçe'ye götür")
+  if (uniqueMatches.length >= 2) {
+    const startItem = uniqueMatches[0].item;
+    const targetItem = uniqueMatches[1].item;
+    setStartLocation(startItem);
+    setTargetLocation(targetItem);
+    if (window.speakNavigationText) {
+      window.speakNavigationText(
+        `${startItem.name.replace(/^📍\s*/, '')} konumundan ${targetItem.name} mağazasına gözünüzden 3 boyutlu yürüyüş başlatıldı.`,
+        true
+      );
+    }
+    return true;
+  }
+
+  // Senaryo B: Cümlede tek bir mağaza/kapı geçtiyse
+  if (uniqueMatches.length === 1) {
+    const singleItem = uniqueMatches[0].item;
+    const isStartIntent = /(deyim|dayim|teyim|tayim|onundeyim|yanindayim|buradayim|girisindeyim)/.test(textNorm) &&
+                          !/(gotur|git|nerede|tarif)/.test(textNorm);
+
+    if (isStartIntent) {
+      setStartLocation(singleItem);
+      if (window.speakNavigationText) {
+        window.speakNavigationText(`Konumunuz ${singleItem.name.replace(/^📍\s*/, '')} olarak pinlendi. Gözünüzden 3 boyutlu koridor görünümü açıldı.`, true);
+      }
+      return true;
+    } else {
+      if (!selectedStartStore) {
+        const defaultStart = (mallData.entrances || []).find(e => e.id === 'ent_fisekhane') || allStores[0];
+        if (defaultStart) setStartLocation(defaultStart);
+      }
+      setTargetLocation(singleItem);
+      return true;
+    }
+  }
+
+  // Senaryo C: Hızlı ihtiyaç / servis (Tuvalet, Bebek Odası, Otopark, ATM, Mescit)
+  const amenityKeywords = [
+    { kw: ['tuvalet', 'lavabo', 'wc'], kind: 'wc' },
+    { kw: ['bebek', 'emzirme'], kind: 'baby' },
+    { kw: ['mescit', 'namaz'], kind: 'prayer' },
+    { kw: ['atm', 'banka'], kind: 'atm' },
+    { kw: ['otopark', 'araba', 'vale'], kind: 'carpark' },
+    { kw: ['sandalye', 'sarj', 'engelli'], kind: 'wheelchair' }
+  ];
+  for (const ak of amenityKeywords) {
+    if (ak.kw.some(k => textNorm.includes(k))) {
+      const nearest = findNearestAmenity(ak.kind, currentFloor);
+      if (nearest) {
+        if (!selectedStartStore) {
+          const defaultStart = (mallData.entrances || []).find(e => e.id === 'ent_fisekhane') || allStores[0];
+          if (defaultStart) setStartLocation(defaultStart);
+        }
+        setTargetLocation(nearest);
+        return true;
+      }
+    }
+  }
+
+  showToast(`🎙️ "${rawText}" komutu için mağaza bulunamadı. Lütfen tekrar deneyin.`, 'warning');
+  return false;
+}
+window.executeVoiceCommandText = executeVoiceCommandText;
+
+function setupVoiceCommandEvents() {
+  const openTriggers = ['btn-sidebar-voice-cmd', 'btn-header-voice-command', 'btn-pov-voice-cmd'];
+  openTriggers.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openVoiceCommandModal();
+    });
+  });
+
+  document.getElementById('btn-voice-modal-close')?.addEventListener('click', () => {
+    closeVoiceCommandModal();
+  });
+
+  document.getElementById('voice-modal-backdrop')?.addEventListener('click', () => {
+    closeVoiceCommandModal();
+  });
+
+  document.getElementById('btn-voice-mic-listen')?.addEventListener('click', () => {
+    if (isListeningVoice) {
+      stopVoiceRecognition();
+    } else {
+      startVoiceRecognition();
+    }
+  });
+
+  const voiceInput = document.getElementById('voice-command-input');
+  document.getElementById('btn-voice-command-run')?.addEventListener('click', () => {
+    if (voiceInput && voiceInput.value.trim()) {
+      executeVoiceCommandText(voiceInput.value.trim());
+    }
+  });
+
+  voiceInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && voiceInput.value.trim()) {
+      e.preventDefault();
+      executeVoiceCommandText(voiceInput.value.trim());
+    }
+  });
+
+  document.querySelectorAll('.voice-sample-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const cmd = chip.getAttribute('data-voice-cmd');
+      if (cmd) {
+        if (voiceInput) voiceInput.value = cmd;
+        executeVoiceCommandText(cmd);
+      }
+    });
+  });
+}
+window.setupVoiceCommandEvents = setupVoiceCommandEvents;
+

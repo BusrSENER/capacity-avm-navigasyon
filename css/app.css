@@ -2060,7 +2060,33 @@ html.dark .store-polygon.store-enroute {
 
   /* Yatay modda #floor-header-card yüksekliğinin 44px'i aşmaması için ekstra satırları gizle */
   #floor-header-card #btn-header-pin-here,
+  #floor-header-card #btn-header-voice-command,
+  #floor-header-card #btn-header-pov-toggle,
   #floor-header-card #header-live-nav-banner {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   👁️ BİRİNCİ ŞAHIS (X KİŞİSİNİN GÖZÜ) 3B KORİDOR GÖRÜNÜMÜ (#pov-3d-container)
+   ========================================================================== */
+#pov-3d-container {
+  z-index: 25 !important;
+}
+
+body.has-pov-3d-active .zoom-bar,
+body.has-pov-3d-active #btn-compass,
+body.has-pov-3d-active #btn-3d-toggle,
+body.has-pov-3d-active #map-cardinal-compass {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  #pov-hud-overlay {
+    bottom: 74px !important;
+    left: 10px !important;
+    right: 158px !important;
+    width: auto !important;
+  }
+}
+

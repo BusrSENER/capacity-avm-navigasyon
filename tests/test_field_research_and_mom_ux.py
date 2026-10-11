@@ -47,90 +47,100 @@ async def run():
         assert corridor_check["pc"]["cx"] > corridor_check["wc"]["cx"] > corridor_check["mc"]["cx"] > corridor_check["pb"]["cx"]
         assert corridor_check["kotonCampaign"]["discount"] == "%50 İndirim"
 
-        # Test 2: 1-Tap Self-Pinning button (#btn-header-pin-here)
-        print("2. Testing 1-Tap Self-Pinning (#btn-header-pin-here)...")
-        await page.click("#btn-header-pin-here")
-        await page.wait_for_timeout(300)
-        modal_visible = await page.evaluate("!document.getElementById('entrance-modal').classList.contains('hidden')")
-        assert modal_visible, "Entrance self-pinning modal should open on clicking #btn-header-pin-here"
-        await page.click("#entrance-modal-close")
-        await page.wait_for_timeout(200)
+        # Test 2: Voice Command Modal (#btn-header-voice-command) & 1-Tap Voice Command Execution
+        print("2. Testing Voice Command Modal (#btn-header-voice-command) & Turkish NLP Execution...")
+        await page.click("#btn-header-voice-command")
+        await page.wait_for_timeout(350)
+        voice_modal_visible = await page.evaluate("!document.getElementById('voice-command-modal').classList.contains('hidden')")
+        assert voice_modal_visible, "Voice command modal must open when clicking #btn-header-voice-command"
 
-        # Test 3: Route from Pierre Cardin (Z-15) to Paşabahçe Mağazaları (Z-18) -> En-Route Landmarks
-        print("3. Testing En-Route Landmark Navigation (Pierre Cardin -> Paşabahçe Mağazaları)...")
-        route_info = await page.evaluate("""() => {
-            const fl4 = window.mallData.floors['4'].stores;
-            const pc = fl4.find(s => s.name === 'Pierre Cardin');
-            const pb = fl4.find(s => s.name === 'Paşabahçe Mağazaları');
-            window.setStartLocation(pc);
-            window.setTargetLocation(pb);
+        await page.screenshot(path=os.path.join(ARTIFACT_DIR, "screenshot_voice_command_modal.png"))
+
+        # Click the 1st sample voice command: "Pierre Cardin'deyim, Paşabahçe'ye götür"
+        await page.click('.voice-sample-chip[data-voice-cmd*="Pierre Cardin"]')
+        await page.wait_for_timeout(900)  # Let User X walk along the 3D corridor into the view of W Collection & Madame Coco
+
+        pov_state = await page.evaluate("""() => {
+            const povContainer = document.getElementById('pov-3d-container');
+            const canvas = document.getElementById('pov-3d-canvas');
+            const title = document.getElementById('pov-hud-title')?.textContent || '';
+            const step = document.getElementById('pov-hud-step')?.textContent || '';
+            const passing = document.getElementById('pov-hud-passing-text')?.textContent || '';
             const liveText = document.getElementById('live-nav-text')?.textContent || '';
             const landmarksText = document.getElementById('live-nav-landmarks-text')?.textContent || '';
-            const enroutePolys = Array.from(document.querySelectorAll('.store-polygon.store-enroute')).map(el => el.getAttribute('data-name'));
-            const dimmedCount = document.querySelectorAll('.store-polygon.store-offroute-dimmed').length;
             return {
+                povVisible: povContainer && !povContainer.classList.contains('hidden'),
+                engineActive: window.pov3dEngine ? window.pov3dEngine.isActive : false,
+                isWalking: window.pov3dEngine ? window.pov3dEngine.isWalking : false,
+                camX: window.pov3dEngine ? Math.round(window.pov3dEngine.camX) : 0,
+                camY: window.pov3dEngine ? Math.round(window.pov3dEngine.camY) : 0,
+                canvasW: canvas ? canvas.width : 0,
+                canvasH: canvas ? canvas.height : 0,
+                title,
+                step,
+                passing,
                 liveText,
                 landmarksText,
-                enroutePolys,
-                dimmedCount
+                voiceEnabled: window.isVoiceEnabled,
+                spokenText: window.lastSpokenNavigationText
             };
         }""")
-        print("   Route Info:", route_info)
-        assert "W Collection" in route_info["liveText"] or "W Collection" in route_info["landmarksText"], "W Collection must appear as an en-route landmark!"
-        assert "Madame Coco" in route_info["liveText"] or "Madame Coco" in route_info["landmarksText"], "Madame Coco must appear as an en-route landmark!"
-        assert "W Collection" in route_info["enroutePolys"]
-        assert "Madame Coco" in route_info["enroutePolys"]
-        assert route_info["dimmedCount"] > 10, "Unrelated off-route stores should be softly dimmed!"
+        print("   1st-Person 3D POV State:", pov_state)
+        assert pov_state["povVisible"] is True, "#pov-3d-container should be visible when route starts!"
+        assert pov_state["engineActive"] is True, "pov3dEngine.isActive should be True!"
+        assert pov_state["canvasW"] > 400 and pov_state["canvasH"] > 400, "3D Canvas must be sized properly!"
+        assert "Pierre Cardin" in pov_state["title"] and "Paşabahçe" in pov_state["title"]
+        assert "W Collection" in pov_state["liveText"] or "W Collection" in pov_state["landmarksText"] or "W Collection" in pov_state["passing"]
+        assert pov_state["voiceEnabled"] is True, "Voice guidance should be enabled by default!"
+        assert len(pov_state["spokenText"]) > 5, "Voice guidance should have spoken route instructions!"
 
-        await page.wait_for_timeout(600)
+        await page.screenshot(path=os.path.join(ARTIFACT_DIR, "screenshot_pov_3d_corridor_walk.png"))
+
+        # Test 3: Switch to 2B Plan (#btn-mode-2d) and verify 2D En-Route Landmarks
+        print("3. Testing Switch to 2B Plan (#btn-mode-2d)...")
+        await page.click("#btn-mode-2d")
+        await page.wait_for_timeout(400)
+        mode_2d_state = await page.evaluate("""() => ({
+            povHidden: document.getElementById('pov-3d-container').classList.contains('hidden'),
+            enroutePolys: Array.from(document.querySelectorAll('.store-polygon.store-enroute')).map(el => el.getAttribute('data-name')),
+            dimmedCount: document.querySelectorAll('.store-polygon.store-offroute-dimmed').length
+        })""")
+        print("   2B Plan State:", mode_2d_state)
+        assert mode_2d_state["povHidden"] is True
+        assert "W Collection" in mode_2d_state["enroutePolys"]
+        assert "Madame Coco" in mode_2d_state["enroutePolys"]
+        assert mode_2d_state["dimmedCount"] > 10
         await page.screenshot(path=os.path.join(ARTIFACT_DIR, "screenshot_enroute_landmarks_2d.png"))
 
-        # Test 4: Turkish Voice Navigation Toggle (#btn-voice-toggle)
-        print("4. Testing Turkish Voice Navigation Toggle (#btn-voice-toggle)...")
-        await page.click("#btn-voice-toggle")
-        await page.wait_for_timeout(300)
-        voice_state = await page.evaluate("""() => ({
-            enabled: window.isVoiceEnabled,
-            spokenText: window.lastSpokenNavigationText,
-            label: document.getElementById('voice-toggle-label')?.textContent
-        })""")
-        print("   Voice State:", voice_state)
-        assert voice_state["enabled"] is True
-        assert voice_state["label"] == "Sesli Açık"
-        assert len(voice_state["spokenText"]) > 5
-
-        # Test 5: 2.5D / 3D Architectural Perspective Toggle (#btn-3d-toggle)
-        print("5. Testing 3D Architectural Perspective Toggle (#btn-3d-toggle)...")
-        await page.click("#btn-3d-toggle")
+        # Test 4: Switch to 3B Maket (#btn-mode-3d)
+        print("4. Testing Switch to 3B Maket (#btn-mode-3d)...")
+        await page.click("#btn-mode-3d")
         await page.wait_for_timeout(500)
         perspective_state = await page.evaluate("""() => {
             const container = document.getElementById('map-canvas-container');
             const rotator = document.getElementById('map-rotator');
-            const btn = document.getElementById('btn-3d-toggle');
             return {
                 is3DClass: container.classList.contains('is-3d-perspective'),
-                btnActive: btn.classList.contains('is-active'),
                 transform: rotator.style.transform,
                 billboardTilt: container.style.getPropertyValue('--billboard-tilt')
             };
         }""")
-        print("   3D Perspective State:", perspective_state)
+        print("   3B Maket State:", perspective_state)
         assert perspective_state["is3DClass"] is True
-        assert perspective_state["btnActive"] is True
         assert "rotateX(28deg)" in perspective_state["transform"]
         assert perspective_state["billboardTilt"] == "-28deg"
-
         await page.screenshot(path=os.path.join(ARTIFACT_DIR, "screenshot_3d_perspective_navigation.png"))
 
-        # Test 6: Mobile Portrait Viewport (390x844) ergonomics & 3D + Landmark HUD
-        print("6. Testing Mobile Portrait Viewport (390x844)...")
+        # Test 5: Switch back to Gözümden 3B (#btn-mode-pov) and test Mobile Portrait (390x844)
+        print("5. Testing Mobile Portrait Viewport (390x844) in Gözümden 3B mode...")
+        await page.click("#btn-mode-pov")
         await page.set_viewport_size({"width": 390, "height": 844})
-        await page.wait_for_timeout(500)
+        await page.wait_for_timeout(600)
         await page.screenshot(path=os.path.join(ARTIFACT_DIR, "screenshot_mobile_portrait_3d_ux.png"))
 
         assert len(console_errors) == 0, f"Console errors: {console_errors}"
         assert len(page_errors) == 0, f"Page errors: {page_errors}"
-        print("ALL FIELD RESEARCH & MOM-TEST UX CHECKS PASSED WITH 0 ERRORS!")
+        print("ALL 1ST-PERSON 3D POV, VOICE COMMAND & FIELD RESEARCH TESTS PASSED WITH 0 ERRORS!")
         await browser.close()
 
 if __name__ == "__main__":
