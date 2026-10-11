@@ -50,7 +50,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Custom CSS (Cache-Busted) -->
-  <link rel="stylesheet" href="css/app.css?v=20261011_pov3d">
+  <link rel="stylesheet" href="css/app.css?v=20261011_v2">
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
 
@@ -344,10 +344,28 @@
         </button>
       </div>
 
-      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: WC, Giriş-Çıkış, Revir, Danışma, ATM, Otopark, Mescit, Bebek Odası, Engelsiz Şarj -->
+      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: WC, Asansör, Bebek Odası, Acil Çıkış, Otopark, Kiosk Harita, Giriş-Çıkış, Danışma, ATM, Mescit, Engelsiz Şarj -->
       <div id="amenity-chips-row" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 shrink-0">
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="wc">
           <span>🚻</span> Tuvalet
+        </button>
+        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="elevator">
+          <span>🛗</span> Asansör
+        </button>
+        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="baby">
+          <span>🍼</span> Bebek Odası
+        </button>
+        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/25 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30 shrink-0 flex items-center gap-1 transition-all" data-amenity="emergency">
+          <span>🚨</span> Acil Çıkış
+        </button>
+        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="carpark">
+          <span>🅿️</span> Otopark
+        </button>
+        <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Otopark Katı ve Konumunu Kaydet / Bul">
+          <span>🚗</span> <span id="parking-memory-btn-text">Otopark Konumu Kaydet</span>
+        </button>
+        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="kiosk">
+          <span>🖥️</span> Kiosk Harita
         </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="entrance">
           <span>🚪</span> Giriş-Çıkış
@@ -361,17 +379,8 @@
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="atm">
           <span>💳</span> ATM
         </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="carpark">
-          <span>🅿️</span> Otopark
-        </button>
-        <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Otopark Katı ve Konumunu Kaydet / Bul">
-          <span>🚗</span> <span id="parking-memory-btn-text">Otopark Konumu Kaydet</span>
-        </button>
         <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="prayer">
           <span>🕌</span> Mescit
-        </button>
-        <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all" data-amenity="baby">
-          <span>🍼</span> Bebek Odası
         </button>
       </div>
 
@@ -585,8 +594,9 @@
               ⬆️ 3B koridorda ilerliyorsunuz...
             </div>
 
-            <!-- Şu An Yanından Geçilen Mağaza (En-Route Live Proximity) -->
-            <div id="pov-hud-passing" class="hidden flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-300 bg-emerald-950/70 border border-emerald-500/30 rounded-xl px-2.5 py-1 truncate">
+            <!-- Şu An Yanından Geçilen Mağaza (En-Route Live Proximity + Kurumsal Marka Logosu) -->
+            <div id="pov-hud-passing" class="hidden flex items-center gap-2 text-[11px] font-extrabold text-emerald-300 bg-emerald-950/75 border border-emerald-500/35 rounded-xl px-2.5 py-1.5 truncate">
+              <span id="pov-hud-passing-logo" class="w-5 h-5 rounded-md bg-white p-0.5 flex items-center justify-center shrink-0 shadow-xs overflow-hidden"></span>
               <span id="pov-hud-passing-text" class="truncate">👀 Şu An Yanınızdan Geçiyor: W Collection (Z-16)</span>
             </div>
 
@@ -1157,6 +1167,14 @@
             <span>🗣️ "B Kapısındayım, Müzikli Havuz'a götür"</span>
             <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">👁️ Gözümden</span>
           </button>
+          <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="C Kapısındayım, en yakın bebek odasına götür">
+            <span>🗣️ "C Kapısındayım, en yakın bebek odasına götür"</span>
+            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">🍼 Bebek Odası</span>
+          </button>
+          <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="Pierre Cardin'deyim, acil çıkışa götür">
+            <span>🗣️ "Pierre Cardin'deyim, acil çıkışa götür"</span>
+            <span class="text-[10px] font-extrabold text-rose-600 dark:text-rose-400 shrink-0">🚨 Acil Çıkış</span>
+          </button>
         </div>
       </div>
     </div>
@@ -1166,12 +1184,12 @@
   <div id="toast-container" class="fixed z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
 
   <!-- JavaScript Modülleri (Cache-Busted) -->
-  <script src="js/logos.js?v=20261011_pov3d"></script>
-  <script src="js/qrcode.js?v=20261011_pov3d"></script>
-  <script src="js/navigation.js?v=20261011_pov3d"></script>
-  <script src="js/simulator.js?v=20261011_pov3d"></script>
-  <script src="js/map.js?v=20261011_pov3d"></script>
-  <script src="js/pov3d.js?v=20261011_pov3d"></script>
-  <script src="js/app.js?v=20261011_pov3d"></script>
+  <script src="js/logos.js?v=20261011_v2"></script>
+  <script src="js/qrcode.js?v=20261011_v2"></script>
+  <script src="js/navigation.js?v=20261011_v2"></script>
+  <script src="js/simulator.js?v=20261011_v2"></script>
+  <script src="js/map.js?v=20261011_v2"></script>
+  <script src="js/pov3d.js?v=20261011_v2"></script>
+  <script src="js/app.js?v=20261011_v2"></script>
 </body>
 </html>

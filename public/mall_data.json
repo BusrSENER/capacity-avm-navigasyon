@@ -82,7 +82,7 @@
   "amenities": [
     {
       "id": "am_wc_1",
-      "name": "3. Bodrum (B3) WC",
+      "name": "3. Bodrum (B3) Bay/Bayan & Engelli WC",
       "floor": 1,
       "type": "wc",
       "kind": "wc",
@@ -92,7 +92,7 @@
     },
     {
       "id": "am_prayer_1",
-      "name": "3. Bodrum (B3) Mescit",
+      "name": "3. Bodrum (B3) Mescit & İbadethane",
       "floor": 1,
       "type": "prayer",
       "kind": "prayer",
@@ -101,8 +101,68 @@
       "nav_node": "c_1_s_1000"
     },
     {
+      "id": "am_lift_1",
+      "name": "3. Bodrum (B3) Panoramik & Otopark Asansörleri",
+      "floor": 1,
+      "type": "elevator",
+      "kind": "elevator",
+      "cx": 565,
+      "cy": 425,
+      "nav_node": "c_1_m_565"
+    },
+    {
+      "id": "am_esc_1",
+      "name": "3. Bodrum (B3) Yürüyen Merdivenler",
+      "floor": 1,
+      "type": "escalator",
+      "kind": "escalator",
+      "cx": 470,
+      "cy": 425,
+      "nav_node": "c_1_m_470"
+    },
+    {
+      "id": "am_carpark_1",
+      "name": "P3 (-3) Kapalı Otopark & Oto Yıkama Alanı",
+      "floor": 1,
+      "type": "carpark",
+      "kind": "carpark",
+      "cx": 700,
+      "cy": 425,
+      "nav_node": "c_1_m_700"
+    },
+    {
+      "id": "am_kiosk_1",
+      "name": "3. Bodrum (B3) Dijital Kiosk Haritası",
+      "floor": 1,
+      "type": "kiosk",
+      "kind": "kiosk",
+      "cx": 600,
+      "cy": 425,
+      "nav_node": "c_1_m_600"
+    },
+    {
+      "id": "am_emerg_1_e",
+      "name": "3. Bodrum (B3) Doğu Acil Çıkış & Yangın Merdiveni",
+      "floor": 1,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 1150,
+      "cy": 325,
+      "nav_node": "c_1_n_1000"
+    },
+    {
+      "id": "am_emerg_1_w",
+      "name": "3. Bodrum (B3) Batı Acil Çıkış & Yangın Merdiveni",
+      "floor": 1,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 210,
+      "cy": 550,
+      "nav_node": "c_1_s_200"
+    },
+    {
       "id": "am_wc_2",
-      "name": "2. Bodrum (B2) Otopark WC",
+      "name": "2. Bodrum (B2) Otopark Bay/Bayan & Engelli WC",
       "floor": 2,
       "type": "wc",
       "kind": "wc",
@@ -111,8 +171,18 @@
       "nav_node": "c_2_s_1000"
     },
     {
+      "id": "am_baby_2",
+      "name": "2. Bodrum (B2) Bebek Bakım Odası",
+      "floor": 2,
+      "type": "baby",
+      "kind": "baby",
+      "cx": 980,
+      "cy": 750,
+      "nav_node": "c_2_s_1000"
+    },
+    {
       "id": "am_carpark_2",
-      "name": "Kapalı Otopark & Vale Noktası",
+      "name": "P2 (-2) Kapalı Otopark, Vale & Voltrun E-Şarj",
       "floor": 2,
       "type": "carpark",
       "kind": "carpark",
@@ -121,8 +191,58 @@
       "nav_node": "n_ent_carpark"
     },
     {
+      "id": "am_lift_2",
+      "name": "2. Bodrum (B2) Panoramik & Otopark Asansörleri",
+      "floor": 2,
+      "type": "elevator",
+      "kind": "elevator",
+      "cx": 565,
+      "cy": 425,
+      "nav_node": "c_2_m_565"
+    },
+    {
+      "id": "am_esc_2",
+      "name": "2. Bodrum (B2) Yürüyen Merdivenler",
+      "floor": 2,
+      "type": "escalator",
+      "kind": "escalator",
+      "cx": 470,
+      "cy": 425,
+      "nav_node": "c_2_m_470"
+    },
+    {
+      "id": "am_kiosk_2",
+      "name": "2. Bodrum (B2) Otopark Lobi Dijital Kiosk Haritası",
+      "floor": 2,
+      "type": "kiosk",
+      "kind": "kiosk",
+      "cx": 600,
+      "cy": 425,
+      "nav_node": "c_2_m_600"
+    },
+    {
+      "id": "am_emerg_2_e",
+      "name": "2. Bodrum (B2) Doğu Acil Çıkış & Yangın Merdiveni",
+      "floor": 2,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 1150,
+      "cy": 325,
+      "nav_node": "c_2_n_1000"
+    },
+    {
+      "id": "am_emerg_2_w",
+      "name": "2. Bodrum (B2) Batı Acil Çıkış & Yangın Merdiveni",
+      "floor": 2,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 210,
+      "cy": 550,
+      "nav_node": "c_2_s_200"
+    },
+    {
       "id": "am_wc_3",
-      "name": "1. Bodrum (B1) WC",
+      "name": "1. Bodrum (B1) Bay/Bayan & Engelli WC",
       "floor": 3,
       "type": "wc",
       "kind": "wc",
@@ -132,23 +252,83 @@
     },
     {
       "id": "am_baby_3",
-      "name": "1. Bodrum (B1) Bebek Bakım Odası",
+      "name": "1. Bodrum (B1) Bebek Bakım & Emzirme Odası",
       "floor": 3,
       "type": "baby",
       "kind": "baby",
-      "cx": 1000,
+      "cx": 1020,
       "cy": 75,
       "nav_node": "c_3_n_1000"
     },
     {
       "id": "am_atm_3",
-      "name": "1. Bodrum (B1) Bankamatikler (ATM)",
+      "name": "1. Bodrum (B1) Bankamatikler (ATM Merkezi)",
       "floor": 3,
       "type": "atm",
       "kind": "atm",
       "cx": 1000,
       "cy": 750,
       "nav_node": "c_3_s_1000"
+    },
+    {
+      "id": "am_lift_3",
+      "name": "1. Bodrum (B1) Panoramik Cam Asansörler",
+      "floor": 3,
+      "type": "elevator",
+      "kind": "elevator",
+      "cx": 565,
+      "cy": 425,
+      "nav_node": "c_3_m_565"
+    },
+    {
+      "id": "am_esc_3",
+      "name": "1. Bodrum (B1) Yürüyen Merdivenler",
+      "floor": 3,
+      "type": "escalator",
+      "kind": "escalator",
+      "cx": 470,
+      "cy": 425,
+      "nav_node": "c_3_m_470"
+    },
+    {
+      "id": "am_carpark_3",
+      "name": "P1 (-1) Otopark Geçişi & Asansör Lobisi",
+      "floor": 3,
+      "type": "carpark",
+      "kind": "carpark",
+      "cx": 565,
+      "cy": 440,
+      "nav_node": "c_3_m_565"
+    },
+    {
+      "id": "am_kiosk_3",
+      "name": "1. Bodrum (B1) Merkez Dijital Kiosk Haritası",
+      "floor": 3,
+      "type": "kiosk",
+      "kind": "kiosk",
+      "cx": 600,
+      "cy": 425,
+      "nav_node": "c_3_m_600"
+    },
+    {
+      "id": "am_emerg_3_e",
+      "name": "1. Bodrum (B1) Doğu Acil Çıkış & Yangın Merdiveni",
+      "floor": 3,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 1150,
+      "cy": 325,
+      "nav_node": "c_3_n_1000"
+    },
+    {
+      "id": "am_emerg_3_w",
+      "name": "1. Bodrum (B1) Batı Acil Çıkış & Yangın Merdiveni",
+      "floor": 3,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 210,
+      "cy": 550,
+      "nav_node": "c_3_s_200"
     },
     {
       "id": "am_info_4",
@@ -161,8 +341,28 @@
       "nav_node": "n_danisma"
     },
     {
+      "id": "am_kiosk_4",
+      "name": "Zemin Kat Ana Giriş Dijital Kiosk Haritası",
+      "floor": 4,
+      "type": "kiosk",
+      "kind": "kiosk",
+      "cx": 1070,
+      "cy": 425,
+      "nav_node": "n_danisma"
+    },
+    {
+      "id": "am_kiosk_4_west",
+      "name": "Zemin Kat Batı Atrium Dijital Kiosk Haritası",
+      "floor": 4,
+      "type": "kiosk",
+      "kind": "kiosk",
+      "cx": 600,
+      "cy": 425,
+      "nav_node": "c_4_m_600"
+    },
+    {
       "id": "am_wc_4_ne",
-      "name": "Kuzeydoğu WC",
+      "name": "Zemin Kat Kuzeydoğu Bay/Bayan & Engelli WC",
       "floor": 4,
       "type": "wc",
       "kind": "wc",
@@ -172,7 +372,7 @@
     },
     {
       "id": "am_wc_4_se",
-      "name": "Güneydoğu WC",
+      "name": "Zemin Kat Güneydoğu Bay/Bayan WC",
       "floor": 4,
       "type": "wc",
       "kind": "wc",
@@ -182,21 +382,21 @@
     },
     {
       "id": "am_wc_4_sw",
-      "name": "Güneybatı WC (Bay/Bayan)",
+      "name": "Zemin Kat Güneybatı Bay/Bayan & Engelli WC",
       "floor": 4,
       "type": "wc",
       "kind": "wc",
-      "cx": 100,
+      "cx": 200,
       "cy": 750,
       "nav_node": "c_4_s_200"
     },
     {
       "id": "am_baby_4",
-      "name": "Zemin Kat Bebek Bakım Odası",
+      "name": "Zemin Kat Bebek Bakım & Emzirme Odası",
       "floor": 4,
       "type": "baby",
       "kind": "baby",
-      "cx": 1000,
+      "cx": 1020,
       "cy": 75,
       "nav_node": "c_4_n_1000"
     },
@@ -206,7 +406,7 @@
       "floor": 4,
       "type": "prayer",
       "kind": "prayer",
-      "cx": 1000,
+      "cx": 1020,
       "cy": 750,
       "nav_node": "c_4_s_1000"
     },
@@ -216,23 +416,73 @@
       "floor": 4,
       "type": "atm",
       "kind": "atm",
-      "cx": 100,
+      "cx": 220,
       "cy": 750,
       "nav_node": "c_4_s_200"
     },
     {
       "id": "am_lift_4",
-      "name": "Panoramik Cam Asansörler",
+      "name": "Zemin Kat Panoramik Cam Asansörler",
       "floor": 4,
       "type": "elevator",
       "kind": "elevator",
       "cx": 565,
-      "cy": 420,
+      "cy": 425,
       "nav_node": "c_4_m_565"
     },
     {
+      "id": "am_esc_4",
+      "name": "Zemin Kat Merkez Yürüyen Merdivenler",
+      "floor": 4,
+      "type": "escalator",
+      "kind": "escalator",
+      "cx": 470,
+      "cy": 425,
+      "nav_node": "c_4_m_470"
+    },
+    {
+      "id": "am_wheelchair_4",
+      "name": "Akülü Sandalye Şarj İstasyonu (C Kapısı / Cacharel Yanı)",
+      "floor": 4,
+      "type": "wheelchair",
+      "kind": "wheelchair",
+      "cx": 1030,
+      "cy": 280,
+      "nav_node": "c_4_n_1000"
+    },
+    {
+      "id": "am_emerg_4_e",
+      "name": "Zemin Kat Doğu Acil Çıkış (C Kapısı Yönü)",
+      "floor": 4,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 1230,
+      "cy": 410,
+      "nav_node": "n_ent_fisekhane"
+    },
+    {
+      "id": "am_emerg_4_n",
+      "name": "Zemin Kat Kuzey Acil Çıkış (B Kapısı Yönü)",
+      "floor": 4,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 680,
+      "cy": 65,
+      "nav_node": "c_4_car_gate"
+    },
+    {
+      "id": "am_emerg_4_w",
+      "name": "Zemin Kat Batı Acil Çıkış (A Kapısı Yönü)",
+      "floor": 4,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 200,
+      "cy": 440,
+      "nav_node": "c_4_m_200"
+    },
+    {
       "id": "am_wc_5",
-      "name": "1. Kat WC",
+      "name": "1. Kat Bay/Bayan & Engelli WC",
       "floor": 5,
       "type": "wc",
       "kind": "wc",
@@ -242,11 +492,11 @@
     },
     {
       "id": "am_baby_5",
-      "name": "1. Kat Bebek Bakım Odası",
+      "name": "1. Kat Bebek Bakım & Emzirme Odası",
       "floor": 5,
       "type": "baby",
       "kind": "baby",
-      "cx": 1000,
+      "cx": 1020,
       "cy": 75,
       "nav_node": "c_5_n_1000"
     },
@@ -261,8 +511,58 @@
       "nav_node": "c_5_s_1000"
     },
     {
+      "id": "am_lift_5",
+      "name": "1. Kat Panoramik Cam Asansörler",
+      "floor": 5,
+      "type": "elevator",
+      "kind": "elevator",
+      "cx": 565,
+      "cy": 425,
+      "nav_node": "c_5_m_565"
+    },
+    {
+      "id": "am_esc_5",
+      "name": "1. Kat Merkez Yürüyen Merdivenler",
+      "floor": 5,
+      "type": "escalator",
+      "kind": "escalator",
+      "cx": 470,
+      "cy": 425,
+      "nav_node": "c_5_m_470"
+    },
+    {
+      "id": "am_kiosk_5",
+      "name": "1. Kat Galeri Dijital Kiosk Haritası",
+      "floor": 5,
+      "type": "kiosk",
+      "kind": "kiosk",
+      "cx": 600,
+      "cy": 425,
+      "nav_node": "c_5_m_600"
+    },
+    {
+      "id": "am_emerg_5_e",
+      "name": "1. Kat Doğu Acil Çıkış & Yangın Merdiveni",
+      "floor": 5,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 1150,
+      "cy": 325,
+      "nav_node": "c_5_n_1000"
+    },
+    {
+      "id": "am_emerg_5_w",
+      "name": "1. Kat Batı Acil Çıkış & Yangın Merdiveni",
+      "floor": 5,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 210,
+      "cy": 550,
+      "nav_node": "c_5_s_200"
+    },
+    {
       "id": "am_wc_6",
-      "name": "2. Kat Food Court WC",
+      "name": "2. Kat Food Court Bay/Bayan & Engelli WC",
       "floor": 6,
       "type": "wc",
       "kind": "wc",
@@ -272,11 +572,11 @@
     },
     {
       "id": "am_baby_6",
-      "name": "2. Kat Bebek Bakım Odası",
+      "name": "2. Kat Bebek Bakım & Emzirme Odası",
       "floor": 6,
       "type": "baby",
       "kind": "baby",
-      "cx": 1000,
+      "cx": 1020,
       "cy": 75,
       "nav_node": "c_6_n_1000"
     },
@@ -291,14 +591,54 @@
       "nav_node": "c_6_s_1000"
     },
     {
-      "id": "am_wheelchair_4",
-      "name": "Akülü Sandalye Şarj İstasyonu (C Kapısı / Cacharel Yanı)",
-      "floor": 4,
-      "type": "wheelchair",
-      "kind": "wheelchair",
-      "cx": 1040,
-      "cy": 315,
-      "nav_node": "c_4_n_1000"
+      "id": "am_lift_6",
+      "name": "2. Kat Sinema & Teras Panoramik Asansörleri",
+      "floor": 6,
+      "type": "elevator",
+      "kind": "elevator",
+      "cx": 565,
+      "cy": 425,
+      "nav_node": "c_6_m_565"
+    },
+    {
+      "id": "am_esc_6",
+      "name": "2. Kat Food Court Yürüyen Merdivenler",
+      "floor": 6,
+      "type": "escalator",
+      "kind": "escalator",
+      "cx": 470,
+      "cy": 425,
+      "nav_node": "c_6_m_470"
+    },
+    {
+      "id": "am_kiosk_6",
+      "name": "2. Kat Food Court Dijital Kiosk Haritası",
+      "floor": 6,
+      "type": "kiosk",
+      "kind": "kiosk",
+      "cx": 600,
+      "cy": 425,
+      "nav_node": "c_6_m_600"
+    },
+    {
+      "id": "am_emerg_6_e",
+      "name": "2. Kat Doğu Acil Çıkış & Yangın Merdiveni",
+      "floor": 6,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 1150,
+      "cy": 325,
+      "nav_node": "c_6_n_1000"
+    },
+    {
+      "id": "am_emerg_6_w",
+      "name": "2. Kat Batı Acil Çıkış & Yangın Merdiveni",
+      "floor": 6,
+      "type": "emergency",
+      "kind": "emergency",
+      "cx": 210,
+      "cy": 550,
+      "nav_node": "c_6_s_200"
     }
   ],
   "floors": {
@@ -560,7 +900,7 @@
       "amenities": [
         {
           "id": "am_wc_1",
-          "name": "3. Bodrum (B3) WC",
+          "name": "3. Bodrum (B3) Bay/Bayan & Engelli WC",
           "floor": 1,
           "type": "wc",
           "kind": "wc",
@@ -570,13 +910,73 @@
         },
         {
           "id": "am_prayer_1",
-          "name": "3. Bodrum (B3) Mescit",
+          "name": "3. Bodrum (B3) Mescit & İbadethane",
           "floor": 1,
           "type": "prayer",
           "kind": "prayer",
           "cx": 1000,
           "cy": 750,
           "nav_node": "c_1_s_1000"
+        },
+        {
+          "id": "am_lift_1",
+          "name": "3. Bodrum (B3) Panoramik & Otopark Asansörleri",
+          "floor": 1,
+          "type": "elevator",
+          "kind": "elevator",
+          "cx": 565,
+          "cy": 425,
+          "nav_node": "c_1_m_565"
+        },
+        {
+          "id": "am_esc_1",
+          "name": "3. Bodrum (B3) Yürüyen Merdivenler",
+          "floor": 1,
+          "type": "escalator",
+          "kind": "escalator",
+          "cx": 470,
+          "cy": 425,
+          "nav_node": "c_1_m_470"
+        },
+        {
+          "id": "am_carpark_1",
+          "name": "P3 (-3) Kapalı Otopark & Oto Yıkama Alanı",
+          "floor": 1,
+          "type": "carpark",
+          "kind": "carpark",
+          "cx": 700,
+          "cy": 425,
+          "nav_node": "c_1_m_700"
+        },
+        {
+          "id": "am_kiosk_1",
+          "name": "3. Bodrum (B3) Dijital Kiosk Haritası",
+          "floor": 1,
+          "type": "kiosk",
+          "kind": "kiosk",
+          "cx": 600,
+          "cy": 425,
+          "nav_node": "c_1_m_600"
+        },
+        {
+          "id": "am_emerg_1_e",
+          "name": "3. Bodrum (B3) Doğu Acil Çıkış & Yangın Merdiveni",
+          "floor": 1,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 1150,
+          "cy": 325,
+          "nav_node": "c_1_n_1000"
+        },
+        {
+          "id": "am_emerg_1_w",
+          "name": "3. Bodrum (B3) Batı Acil Çıkış & Yangın Merdiveni",
+          "floor": 1,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 210,
+          "cy": 550,
+          "nav_node": "c_1_s_200"
         }
       ]
     },
@@ -621,7 +1021,7 @@
       "amenities": [
         {
           "id": "am_wc_2",
-          "name": "2. Bodrum (B2) Otopark WC",
+          "name": "2. Bodrum (B2) Otopark Bay/Bayan & Engelli WC",
           "floor": 2,
           "type": "wc",
           "kind": "wc",
@@ -630,14 +1030,74 @@
           "nav_node": "c_2_s_1000"
         },
         {
+          "id": "am_baby_2",
+          "name": "2. Bodrum (B2) Bebek Bakım Odası",
+          "floor": 2,
+          "type": "baby",
+          "kind": "baby",
+          "cx": 980,
+          "cy": 750,
+          "nav_node": "c_2_s_1000"
+        },
+        {
           "id": "am_carpark_2",
-          "name": "Kapalı Otopark & Vale Noktası",
+          "name": "P2 (-2) Kapalı Otopark, Vale & Voltrun E-Şarj",
           "floor": 2,
           "type": "carpark",
           "kind": "carpark",
           "cx": 1085,
           "cy": 425,
           "nav_node": "n_ent_carpark"
+        },
+        {
+          "id": "am_lift_2",
+          "name": "2. Bodrum (B2) Panoramik & Otopark Asansörleri",
+          "floor": 2,
+          "type": "elevator",
+          "kind": "elevator",
+          "cx": 565,
+          "cy": 425,
+          "nav_node": "c_2_m_565"
+        },
+        {
+          "id": "am_esc_2",
+          "name": "2. Bodrum (B2) Yürüyen Merdivenler",
+          "floor": 2,
+          "type": "escalator",
+          "kind": "escalator",
+          "cx": 470,
+          "cy": 425,
+          "nav_node": "c_2_m_470"
+        },
+        {
+          "id": "am_kiosk_2",
+          "name": "2. Bodrum (B2) Otopark Lobi Dijital Kiosk Haritası",
+          "floor": 2,
+          "type": "kiosk",
+          "kind": "kiosk",
+          "cx": 600,
+          "cy": 425,
+          "nav_node": "c_2_m_600"
+        },
+        {
+          "id": "am_emerg_2_e",
+          "name": "2. Bodrum (B2) Doğu Acil Çıkış & Yangın Merdiveni",
+          "floor": 2,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 1150,
+          "cy": 325,
+          "nav_node": "c_2_n_1000"
+        },
+        {
+          "id": "am_emerg_2_w",
+          "name": "2. Bodrum (B2) Batı Acil Çıkış & Yangın Merdiveni",
+          "floor": 2,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 210,
+          "cy": 550,
+          "nav_node": "c_2_s_200"
         }
       ]
     },
@@ -2232,7 +2692,7 @@
       "amenities": [
         {
           "id": "am_wc_3",
-          "name": "1. Bodrum (B1) WC",
+          "name": "1. Bodrum (B1) Bay/Bayan & Engelli WC",
           "floor": 3,
           "type": "wc",
           "kind": "wc",
@@ -2242,23 +2702,83 @@
         },
         {
           "id": "am_baby_3",
-          "name": "1. Bodrum (B1) Bebek Bakım Odası",
+          "name": "1. Bodrum (B1) Bebek Bakım & Emzirme Odası",
           "floor": 3,
           "type": "baby",
           "kind": "baby",
-          "cx": 1000,
+          "cx": 1020,
           "cy": 75,
           "nav_node": "c_3_n_1000"
         },
         {
           "id": "am_atm_3",
-          "name": "1. Bodrum (B1) Bankamatikler (ATM)",
+          "name": "1. Bodrum (B1) Bankamatikler (ATM Merkezi)",
           "floor": 3,
           "type": "atm",
           "kind": "atm",
           "cx": 1000,
           "cy": 750,
           "nav_node": "c_3_s_1000"
+        },
+        {
+          "id": "am_lift_3",
+          "name": "1. Bodrum (B1) Panoramik Cam Asansörler",
+          "floor": 3,
+          "type": "elevator",
+          "kind": "elevator",
+          "cx": 565,
+          "cy": 425,
+          "nav_node": "c_3_m_565"
+        },
+        {
+          "id": "am_esc_3",
+          "name": "1. Bodrum (B1) Yürüyen Merdivenler",
+          "floor": 3,
+          "type": "escalator",
+          "kind": "escalator",
+          "cx": 470,
+          "cy": 425,
+          "nav_node": "c_3_m_470"
+        },
+        {
+          "id": "am_carpark_3",
+          "name": "P1 (-1) Otopark Geçişi & Asansör Lobisi",
+          "floor": 3,
+          "type": "carpark",
+          "kind": "carpark",
+          "cx": 565,
+          "cy": 440,
+          "nav_node": "c_3_m_565"
+        },
+        {
+          "id": "am_kiosk_3",
+          "name": "1. Bodrum (B1) Merkez Dijital Kiosk Haritası",
+          "floor": 3,
+          "type": "kiosk",
+          "kind": "kiosk",
+          "cx": 600,
+          "cy": 425,
+          "nav_node": "c_3_m_600"
+        },
+        {
+          "id": "am_emerg_3_e",
+          "name": "1. Bodrum (B1) Doğu Acil Çıkış & Yangın Merdiveni",
+          "floor": 3,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 1150,
+          "cy": 325,
+          "nav_node": "c_3_n_1000"
+        },
+        {
+          "id": "am_emerg_3_w",
+          "name": "1. Bodrum (B1) Batı Acil Çıkış & Yangın Merdiveni",
+          "floor": 3,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 210,
+          "cy": 550,
+          "nav_node": "c_3_s_200"
         }
       ]
     },
@@ -3645,8 +4165,28 @@
           "nav_node": "n_danisma"
         },
         {
+          "id": "am_kiosk_4",
+          "name": "Zemin Kat Ana Giriş Dijital Kiosk Haritası",
+          "floor": 4,
+          "type": "kiosk",
+          "kind": "kiosk",
+          "cx": 1070,
+          "cy": 425,
+          "nav_node": "n_danisma"
+        },
+        {
+          "id": "am_kiosk_4_west",
+          "name": "Zemin Kat Batı Atrium Dijital Kiosk Haritası",
+          "floor": 4,
+          "type": "kiosk",
+          "kind": "kiosk",
+          "cx": 600,
+          "cy": 425,
+          "nav_node": "c_4_m_600"
+        },
+        {
           "id": "am_wc_4_ne",
-          "name": "Kuzeydoğu WC",
+          "name": "Zemin Kat Kuzeydoğu Bay/Bayan & Engelli WC",
           "floor": 4,
           "type": "wc",
           "kind": "wc",
@@ -3656,7 +4196,7 @@
         },
         {
           "id": "am_wc_4_se",
-          "name": "Güneydoğu WC",
+          "name": "Zemin Kat Güneydoğu Bay/Bayan WC",
           "floor": 4,
           "type": "wc",
           "kind": "wc",
@@ -3666,21 +4206,21 @@
         },
         {
           "id": "am_wc_4_sw",
-          "name": "Güneybatı WC (Bay/Bayan)",
+          "name": "Zemin Kat Güneybatı Bay/Bayan & Engelli WC",
           "floor": 4,
           "type": "wc",
           "kind": "wc",
-          "cx": 100,
+          "cx": 200,
           "cy": 750,
           "nav_node": "c_4_s_200"
         },
         {
           "id": "am_baby_4",
-          "name": "Zemin Kat Bebek Bakım Odası",
+          "name": "Zemin Kat Bebek Bakım & Emzirme Odası",
           "floor": 4,
           "type": "baby",
           "kind": "baby",
-          "cx": 1000,
+          "cx": 1020,
           "cy": 75,
           "nav_node": "c_4_n_1000"
         },
@@ -3690,7 +4230,7 @@
           "floor": 4,
           "type": "prayer",
           "kind": "prayer",
-          "cx": 1000,
+          "cx": 1020,
           "cy": 750,
           "nav_node": "c_4_s_1000"
         },
@@ -3700,19 +4240,29 @@
           "floor": 4,
           "type": "atm",
           "kind": "atm",
-          "cx": 100,
+          "cx": 220,
           "cy": 750,
           "nav_node": "c_4_s_200"
         },
         {
           "id": "am_lift_4",
-          "name": "Panoramik Cam Asansörler",
+          "name": "Zemin Kat Panoramik Cam Asansörler",
           "floor": 4,
           "type": "elevator",
           "kind": "elevator",
           "cx": 565,
-          "cy": 420,
+          "cy": 425,
           "nav_node": "c_4_m_565"
+        },
+        {
+          "id": "am_esc_4",
+          "name": "Zemin Kat Merkez Yürüyen Merdivenler",
+          "floor": 4,
+          "type": "escalator",
+          "kind": "escalator",
+          "cx": 470,
+          "cy": 425,
+          "nav_node": "c_4_m_470"
         },
         {
           "id": "am_wheelchair_4",
@@ -3720,9 +4270,39 @@
           "floor": 4,
           "type": "wheelchair",
           "kind": "wheelchair",
-          "cx": 1040,
-          "cy": 315,
+          "cx": 1030,
+          "cy": 280,
           "nav_node": "c_4_n_1000"
+        },
+        {
+          "id": "am_emerg_4_e",
+          "name": "Zemin Kat Doğu Acil Çıkış (C Kapısı Yönü)",
+          "floor": 4,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 1230,
+          "cy": 410,
+          "nav_node": "n_ent_fisekhane"
+        },
+        {
+          "id": "am_emerg_4_n",
+          "name": "Zemin Kat Kuzey Acil Çıkış (B Kapısı Yönü)",
+          "floor": 4,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 680,
+          "cy": 65,
+          "nav_node": "c_4_car_gate"
+        },
+        {
+          "id": "am_emerg_4_w",
+          "name": "Zemin Kat Batı Acil Çıkış (A Kapısı Yönü)",
+          "floor": 4,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 200,
+          "cy": 440,
+          "nav_node": "c_4_m_200"
         }
       ]
     },
@@ -5131,7 +5711,7 @@
       "amenities": [
         {
           "id": "am_wc_5",
-          "name": "1. Kat WC",
+          "name": "1. Kat Bay/Bayan & Engelli WC",
           "floor": 5,
           "type": "wc",
           "kind": "wc",
@@ -5141,11 +5721,11 @@
         },
         {
           "id": "am_baby_5",
-          "name": "1. Kat Bebek Bakım Odası",
+          "name": "1. Kat Bebek Bakım & Emzirme Odası",
           "floor": 5,
           "type": "baby",
           "kind": "baby",
-          "cx": 1000,
+          "cx": 1020,
           "cy": 75,
           "nav_node": "c_5_n_1000"
         },
@@ -5158,6 +5738,56 @@
           "cx": 1000,
           "cy": 750,
           "nav_node": "c_5_s_1000"
+        },
+        {
+          "id": "am_lift_5",
+          "name": "1. Kat Panoramik Cam Asansörler",
+          "floor": 5,
+          "type": "elevator",
+          "kind": "elevator",
+          "cx": 565,
+          "cy": 425,
+          "nav_node": "c_5_m_565"
+        },
+        {
+          "id": "am_esc_5",
+          "name": "1. Kat Merkez Yürüyen Merdivenler",
+          "floor": 5,
+          "type": "escalator",
+          "kind": "escalator",
+          "cx": 470,
+          "cy": 425,
+          "nav_node": "c_5_m_470"
+        },
+        {
+          "id": "am_kiosk_5",
+          "name": "1. Kat Galeri Dijital Kiosk Haritası",
+          "floor": 5,
+          "type": "kiosk",
+          "kind": "kiosk",
+          "cx": 600,
+          "cy": 425,
+          "nav_node": "c_5_m_600"
+        },
+        {
+          "id": "am_emerg_5_e",
+          "name": "1. Kat Doğu Acil Çıkış & Yangın Merdiveni",
+          "floor": 5,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 1150,
+          "cy": 325,
+          "nav_node": "c_5_n_1000"
+        },
+        {
+          "id": "am_emerg_5_w",
+          "name": "1. Kat Batı Acil Çıkış & Yangın Merdiveni",
+          "floor": 5,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 210,
+          "cy": 550,
+          "nav_node": "c_5_s_200"
         }
       ]
     },
@@ -5915,7 +6545,7 @@
       "amenities": [
         {
           "id": "am_wc_6",
-          "name": "2. Kat Food Court WC",
+          "name": "2. Kat Food Court Bay/Bayan & Engelli WC",
           "floor": 6,
           "type": "wc",
           "kind": "wc",
@@ -5925,11 +6555,11 @@
         },
         {
           "id": "am_baby_6",
-          "name": "2. Kat Bebek Bakım Odası",
+          "name": "2. Kat Bebek Bakım & Emzirme Odası",
           "floor": 6,
           "type": "baby",
           "kind": "baby",
-          "cx": 1000,
+          "cx": 1020,
           "cy": 75,
           "nav_node": "c_6_n_1000"
         },
@@ -5942,6 +6572,56 @@
           "cx": 1000,
           "cy": 750,
           "nav_node": "c_6_s_1000"
+        },
+        {
+          "id": "am_lift_6",
+          "name": "2. Kat Sinema & Teras Panoramik Asansörleri",
+          "floor": 6,
+          "type": "elevator",
+          "kind": "elevator",
+          "cx": 565,
+          "cy": 425,
+          "nav_node": "c_6_m_565"
+        },
+        {
+          "id": "am_esc_6",
+          "name": "2. Kat Food Court Yürüyen Merdivenler",
+          "floor": 6,
+          "type": "escalator",
+          "kind": "escalator",
+          "cx": 470,
+          "cy": 425,
+          "nav_node": "c_6_m_470"
+        },
+        {
+          "id": "am_kiosk_6",
+          "name": "2. Kat Food Court Dijital Kiosk Haritası",
+          "floor": 6,
+          "type": "kiosk",
+          "kind": "kiosk",
+          "cx": 600,
+          "cy": 425,
+          "nav_node": "c_6_m_600"
+        },
+        {
+          "id": "am_emerg_6_e",
+          "name": "2. Kat Doğu Acil Çıkış & Yangın Merdiveni",
+          "floor": 6,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 1150,
+          "cy": 325,
+          "nav_node": "c_6_n_1000"
+        },
+        {
+          "id": "am_emerg_6_w",
+          "name": "2. Kat Batı Acil Çıkış & Yangın Merdiveni",
+          "floor": 6,
+          "type": "emergency",
+          "kind": "emergency",
+          "cx": 210,
+          "cy": 550,
+          "nav_node": "c_6_s_200"
         }
       ]
     }

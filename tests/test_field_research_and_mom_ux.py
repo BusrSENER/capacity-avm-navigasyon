@@ -22,7 +22,7 @@ async def run():
         await page.goto("http://localhost:3000", wait_until="networkidle")
         await page.wait_for_timeout(2400)  # Wait for splash fade-out
 
-        # Check ground-truth corridor sequence on Floor 4: Pierre Cardin -> W Collection -> Madame Coco -> Paşabahçe Mağazaları
+        # Check ground-truth corridor sequence on Floor 4 & all 6 floors verified amenities
         corridor_check = await page.evaluate("""() => {
             const fl4 = window.mallData.floors['4'].stores;
             const pc = fl4.find(s => s.name === 'Pierre Cardin');
@@ -30,22 +30,49 @@ async def run():
             const mc = fl4.find(s => s.name === 'Madame Coco');
             const pb = fl4.find(s => s.name === 'Paşabahçe Mağazaları');
             const koton = window.mallData.floors['3'].stores.find(s => s.name === 'Koton');
+
+            const floorAmenityCounts = {};
+            for (let f = 1; f <= 6; f++) {
+                floorAmenityCounts[f] = (window.mallData.floors[String(f)].amenities || []).length;
+            }
+            const nearEmergency = window.findNearestAmenity('emergency', 4);
+            const nearElevator = window.findNearestAmenity('elevator', 4);
+            const nearBaby = window.findNearestAmenity('baby', 4);
+            const nearKiosk = window.findNearestAmenity('kiosk', 4);
+            const nearWc = window.findNearestAmenity('wc', 4);
+            const nearCarpark = window.findNearestAmenity('carpark', 2);
+
             return {
                 pc: { unit: pc.unit, cx: pc.cx, cy: pc.cy },
                 wc: { unit: wc.unit, cx: wc.cx, cy: wc.cy },
                 mc: { unit: mc.unit, cx: mc.cx, cy: mc.cy },
                 pb: { unit: pb.unit, cx: pb.cx, cy: pb.cy },
                 kotonCampaign: koton ? koton.campaign : null,
-                entrances: window.mallData.entrances.map(e => e.short_name)
+                entrances: window.mallData.entrances.map(e => e.short_name),
+                totalAmenities: (window.mallData.amenities || []).length,
+                floorAmenityCounts,
+                nearEmergency: nearEmergency ? nearEmergency.name : null,
+                nearElevator: nearElevator ? nearElevator.name : null,
+                nearBaby: nearBaby ? nearBaby.name : null,
+                nearKiosk: nearKiosk ? nearKiosk.name : null,
+                nearWc: nearWc ? nearWc.name : null,
+                nearCarpark: nearCarpark ? nearCarpark.name : null
             };
         }""")
-        print("   Field Data Check:", corridor_check)
+        print("   Field Data & Amenity Verification Check:", corridor_check)
         assert corridor_check["pc"]["unit"] == "Z-15"
         assert corridor_check["wc"]["unit"] == "Z-16"
         assert corridor_check["mc"]["unit"] == "Z-17"
         assert corridor_check["pb"]["unit"] == "Z-18"
         assert corridor_check["pc"]["cx"] > corridor_check["wc"]["cx"] > corridor_check["mc"]["cx"] > corridor_check["pb"]["cx"]
         assert corridor_check["kotonCampaign"]["discount"] == "%50 İndirim"
+        assert corridor_check["totalAmenities"] >= 50, "All 6 floors must have comprehensive verified amenities!"
+        assert corridor_check["nearEmergency"] is not None
+        assert corridor_check["nearElevator"] is not None
+        assert corridor_check["nearBaby"] is not None
+        assert corridor_check["nearKiosk"] is not None
+        assert corridor_check["nearWc"] is not None
+        assert corridor_check["nearCarpark"] is not None
 
         # Test 2: Voice Command Modal (#btn-header-voice-command) & 1-Tap Voice Command Execution
         print("2. Testing Voice Command Modal (#btn-header-voice-command) & Turkish NLP Execution...")
@@ -58,7 +85,7 @@ async def run():
 
         # Click the 1st sample voice command: "Pierre Cardin'deyim, Paşabahçe'ye götür"
         await page.click('.voice-sample-chip[data-voice-cmd*="Pierre Cardin"]')
-        await page.wait_for_timeout(900)  # Let User X walk along the 3D corridor into the view of W Collection & Madame Coco
+        await page.wait_for_timeout(1200)  # Let User X walk along the 3D corridor into the view of W Collection & Madame Coco
 
         pov_state = await page.evaluate("""() => {
             const povContainer = document.getElementById('pov-3d-container');
@@ -66,12 +93,15 @@ async def run():
             const title = document.getElementById('pov-hud-title')?.textContent || '';
             const step = document.getElementById('pov-hud-step')?.textContent || '';
             const passing = document.getElementById('pov-hud-passing-text')?.textContent || '';
+            const passingLogoHtml = document.getElementById('pov-hud-passing-logo')?.innerHTML || '';
             const liveText = document.getElementById('live-nav-text')?.textContent || '';
             const landmarksText = document.getElementById('live-nav-landmarks-text')?.textContent || '';
             return {
                 povVisible: povContainer && !povContainer.classList.contains('hidden'),
                 engineActive: window.pov3dEngine ? window.pov3dEngine.isActive : false,
                 isWalking: window.pov3dEngine ? window.pov3dEngine.isWalking : false,
+                logosRenderedLastFrame: window.pov3dEngine ? window.pov3dEngine.logosRenderedLastFrame : 0,
+                cachedLogosCount: window.pov3dEngine ? window.pov3dEngine.logoImageCache.size : 0,
                 camX: window.pov3dEngine ? Math.round(window.pov3dEngine.camX) : 0,
                 camY: window.pov3dEngine ? Math.round(window.pov3dEngine.camY) : 0,
                 canvasW: canvas ? canvas.width : 0,
@@ -79,16 +109,20 @@ async def run():
                 title,
                 step,
                 passing,
+                hasPassingLogoSvg: passingLogoHtml.includes('<svg'),
                 liveText,
                 landmarksText,
                 voiceEnabled: window.isVoiceEnabled,
                 spokenText: window.lastSpokenNavigationText
             };
         }""")
-        print("   1st-Person 3D POV State:", pov_state)
+        print("   1st-Person 3D POV & Corporate Logo State:", pov_state)
         assert pov_state["povVisible"] is True, "#pov-3d-container should be visible when route starts!"
         assert pov_state["engineActive"] is True, "pov3dEngine.isActive should be True!"
         assert pov_state["canvasW"] > 400 and pov_state["canvasH"] > 400, "3D Canvas must be sized properly!"
+        assert pov_state["cachedLogosCount"] >= 170, "All 173 store corporate logos must be preloaded for 3D rendering!"
+        assert pov_state["logosRenderedLastFrame"] > 0, "Corporate brand logos must be rendered on 3D storefronts and signboards!"
+        assert pov_state["hasPassingLogoSvg"] is True, "Passing store HUD badge must render the store's corporate SVG logo!"
         assert "Pierre Cardin" in pov_state["title"] and "Paşabahçe" in pov_state["title"]
         assert "W Collection" in pov_state["liveText"] or "W Collection" in pov_state["landmarksText"] or "W Collection" in pov_state["passing"]
         assert pov_state["voiceEnabled"] is True, "Voice guidance should be enabled by default!"
@@ -140,7 +174,7 @@ async def run():
 
         assert len(console_errors) == 0, f"Console errors: {console_errors}"
         assert len(page_errors) == 0, f"Page errors: {page_errors}"
-        print("ALL 1ST-PERSON 3D POV, VOICE COMMAND & FIELD RESEARCH TESTS PASSED WITH 0 ERRORS!")
+        print("ALL 1ST-PERSON 3D POV, CORPORATE LOGOS, VOICE SYNC & AMENITY VERIFICATION TESTS PASSED WITH 0 ERRORS!")
         await browser.close()
 
 if __name__ == "__main__":

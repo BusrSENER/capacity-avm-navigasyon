@@ -590,6 +590,10 @@ class MallMap {
     const amenities = floorInfo.amenities || [];
     const AMENITY_ICONS = {
       wc: '🚻',
+      elevator: '🛗',
+      escalator: '🪜',
+      emergency: '🚨',
+      kiosk: '🖥️',
       atm: '💳',
       info: '🛡️',
       entrance: '🚪',
@@ -602,13 +606,14 @@ class MallMap {
     };
 
     amenities.forEach(am => {
+      const amKind = am.kind || am.type || 'info';
       const amMarker = document.createElement('div');
-      amMarker.className = `amenity-marker-wrapper kind-${am.kind}`;
+      amMarker.className = `amenity-marker-wrapper kind-${amKind}`;
       amMarker.style.left = `${am.cx}px`;
       amMarker.style.top = `${am.cy}px`;
       amMarker.title = am.name;
 
-      const iconChar = AMENITY_ICONS[am.kind] || 'ℹ️';
+      const iconChar = AMENITY_ICONS[amKind] || 'ℹ️';
 
       amMarker.innerHTML = `
         <div class="amenity-icon-circle" title="${am.name}">

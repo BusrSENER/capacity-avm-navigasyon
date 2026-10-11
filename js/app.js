@@ -21,17 +21,24 @@ let searchQuery = '';
 let currentPathPreference = 'wide'; // 'wide' (Geniş Yol) | 'short' (Kısa Yol)
 window.currentPathPreference = currentPathPreference;
 
-// Simülasyon Hız Kontrolü (1x ➔ 2x ➔ 4x)
+// Simülasyon Hız Kontrolü (1x ➔ 2x ➔ 4x) - 2B Çanta, 3B Gözümden Yürüyüş ve Sesli Komut Hızı Senkronize
 let currentSimSpeed = 1.0;
+window.currentSimSpeed = currentSimSpeed;
 const simSpeedSteps = [1.0, 2.0, 4.0];
 
-function cycleSimSpeed() {
-  const currentIndex = simSpeedSteps.indexOf(currentSimSpeed);
-  const nextIndex = (currentIndex + 1) % simSpeedSteps.length;
-  currentSimSpeed = simSpeedSteps[nextIndex];
+function setSimSpeed(spd, silent = false) {
+  currentSimSpeed = spd;
+  window.currentSimSpeed = currentSimSpeed;
 
   if (cartSimulator) {
     cartSimulator.setSpeed(currentSimSpeed);
+  }
+  if (window.pov3dEngine && window.pov3dEngine.walkSpeed !== currentSimSpeed) {
+    window.pov3dEngine.walkSpeed = currentSimSpeed;
+    const povSpeedBtn = document.getElementById('btn-pov-speed');
+    if (povSpeedBtn) {
+      povSpeedBtn.textContent = `⚡ ${currentSimSpeed}x`;
+    }
   }
 
   const hudSpeedText = document.getElementById('hud-speed-text');
@@ -48,7 +55,16 @@ function cycleSimSpeed() {
     deskSpeedBtn.className = 'px-2 py-1 rounded-lg bg-cyan-600 text-white font-bold';
   }
 
-  showToast(`⚡ Simülasyon hızı: ${currentSimSpeed}x`, 'info');
+  if (!silent) {
+    showToast(`⚡ Yürüyüş ve seslendirme hızı: ${currentSimSpeed}x`, 'info');
+  }
+}
+window.setSimSpeed = setSimSpeed;
+
+function cycleSimSpeed() {
+  const currentIndex = simSpeedSteps.indexOf(currentSimSpeed);
+  const nextIndex = (currentIndex + 1) % simSpeedSteps.length;
+  setSimSpeed(simSpeedSteps[nextIndex]);
 }
 
 // Cihaz ve Ekran Durum Yardımcısı (Mobil Dikey & Mobil Yatay/Landscape)
@@ -300,12 +316,15 @@ const TRANSLATIONS = {
     },
     amenities: {
       wc: 'Tuvalet',
+      elevator: 'Asansör',
+      baby: 'Bebek Odası',
+      emergency: 'Acil Çıkış',
+      carpark: 'Otopark',
+      kiosk: 'Kiosk Harita',
       entrance: 'Giriş-Çıkış',
       info: 'Danışma',
       atm: 'ATM',
-      carpark: 'Otopark',
       prayer: 'Mescit',
-      baby: 'Bebek Odası',
       wheelchair: 'Akülü Sandalye Şarj'
     },
     parkingMemoryBtn: 'Otopark Konumu Kaydet',
@@ -349,12 +368,15 @@ const TRANSLATIONS = {
     },
     amenities: {
       wc: 'Restrooms',
+      elevator: 'Elevators',
+      baby: 'Baby Care',
+      emergency: 'Emergency Exit',
+      carpark: 'Parking',
+      kiosk: 'Kiosk Map',
       entrance: 'Entrances',
       info: 'Info Desk',
       atm: 'ATMs',
-      carpark: 'Parking',
       prayer: 'Prayer Room',
-      baby: 'Baby Care',
       wheelchair: 'Wheelchair Charger'
     },
     parkingMemoryBtn: 'Save Parking Spot',
@@ -716,17 +738,54 @@ function initApp() {
   }
   window.setMapViewMode = setMapViewMode;
 
-  function speakNavigationText(text, force = false) {
+  window.speechBusyUntil = 0;
+  window.speechMainBusyUntil = 0;
+
+  function speakNavigationText(text, force = false, isStoreCue = false) {
     if (!text) return;
     if (!isVoiceEnabled && !force) return;
     window.lastSpokenNavigationText = text;
+
+    const now = performance.now();
+    const spd = (window.pov3dEngine && window.pov3dEngine.walkSpeed) || currentSimSpeed || 1.0;
+    // Yürüyüş hızı ile sesli komut hızını birebir senkronize et (1x -> 1.06, 2x -> 1.36, 4x -> 1.72)
+    const baseRate = spd >= 3.5 ? 1.72 : (spd >= 1.8 ? 1.36 : 1.06);
+    const rate = isStoreCue ? Math.min(1.85, baseRate * 1.1) : baseRate;
+
+    // Kelime sayısına göre tahmini konuşma süresi (ms) -> Yürüyüş hızını sesle senkronize etmek için
+    const wordCount = Math.max(1, text.trim().split(/\s+/).length);
+    const estMs = Math.round((wordCount * 380) / rate);
+
+    if (!isStoreCue) {
+      window.speechMainBusyUntil = now + estMs;
+      window.speechBusyUntil = now + Math.min(2000, estMs * 0.65);
+    } else {
+      // Ana manevra cümlesi henüz okunuyorsa yanından geçilen mağaza anonsu ana cümleyi kesmesin, kuyruğa eklensin
+      window.speechBusyUntil = Math.max(window.speechBusyUntil || 0, now + Math.min(950, estMs * 0.5));
+    }
+
     try {
       if ('speechSynthesis' in window && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+        const mainStillSpeaking = now < (window.speechMainBusyUntil || 0);
+        if (!isStoreCue || !mainStillSpeaking) {
+          window.speechSynthesis.cancel();
+        }
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = currentLanguage === 'en' ? 'en-US' : 'tr-TR';
-        utterance.rate = 1.0;
+        utterance.rate = rate;
         utterance.pitch = 1.0;
+        utterance.onend = () => {
+          if (!isStoreCue) {
+            window.speechBusyUntil = 0;
+            window.speechMainBusyUntil = 0;
+          }
+        };
+        utterance.onerror = () => {
+          if (!isStoreCue) {
+            window.speechBusyUntil = 0;
+            window.speechMainBusyUntil = 0;
+          }
+        };
         window.speechSynthesis.speak(utterance);
       }
     } catch (e) {
@@ -1848,7 +1907,7 @@ function setupSearchEngine() {
 // 5. Hızlı İhtiyaç Çipleri (Amenities) & En Yakın Servis Noktası Bulma Algoritması
 function findNearestAmenity(amenityKind, floor) {
   if (!mallData) return null;
-  const currentFl = floor || currentFloor || 4;
+  const currentFl = floor || (selectedStartStore && selectedStartStore.floor) || currentFloor || 4;
 
   const allList = [];
   if (Array.isArray(mallData.amenities)) allList.push(...mallData.amenities);
@@ -1873,13 +1932,25 @@ function findNearestAmenity(amenityKind, floor) {
   const matches = deduped.filter(a => {
     const aType = (a.type || '').toLowerCase();
     const aKind = (a.kind || '').toLowerCase();
-    const aName = (a.name || '').toLowerCase();
+    const aName = normalizeTr(a.name || '');
 
     if (kind === 'wc') {
       return aType === 'wc' || aKind === 'wc' || aName.includes('wc') || aName.includes('tuvalet') || aName.includes('lavabo');
     }
     if (kind === 'baby') {
       return aType === 'baby' || aKind === 'baby' || aName.includes('bebek');
+    }
+    if (kind === 'elevator') {
+      return aType === 'elevator' || aKind === 'elevator' || aName.includes('asansor');
+    }
+    if (kind === 'escalator') {
+      return aType === 'escalator' || aKind === 'escalator' || aName.includes('yuruyen merdiven');
+    }
+    if (kind === 'emergency') {
+      return aType === 'emergency' || aKind === 'emergency' || aName.includes('acil cikis') || aName.includes('yangin');
+    }
+    if (kind === 'kiosk') {
+      return aType === 'kiosk' || aKind === 'kiosk' || aName.includes('kiosk');
     }
     if (kind === 'prayer') {
       return aType === 'prayer' || aKind === 'prayer' || aName.includes('mescit');
@@ -1888,31 +1959,44 @@ function findNearestAmenity(amenityKind, floor) {
       return aType === 'atm' || aKind === 'atm' || aName.includes('atm') || aName.includes('bankamatik');
     }
     if (kind === 'info') {
-      return aType === 'info' || aKind === 'info' || aName.includes('danışma') || aName.includes('danisma');
+      return aType === 'info' || aKind === 'info' || aName.includes('danisma');
     }
     if (kind === 'entrance') {
-      return aType === 'entrance' || aKind === 'entrance' || aName.includes('giriş') || aName.includes('giris');
+      return aType === 'entrance' || aKind === 'entrance' || aName.includes('giris');
     }
     if (kind === 'carpark') {
       return aType === 'carpark' || aKind === 'carpark' || aName.includes('otopark') || aName.includes('vale');
     }
     if (kind === 'wheelchair') {
-      return aType === 'wheelchair' || aKind === 'wheelchair' || aName.includes('akülü') || aName.includes('sandalye') || aName.includes('engelli');
+      return aType === 'wheelchair' || aKind === 'wheelchair' || aName.includes('akulu') || aName.includes('sandalye') || aName.includes('engelli');
     }
     return aType === kind || aKind === kind || aName.includes(kind);
   });
 
   if (matches.length === 0) return null;
 
-  // 1. Kullanıcının bulunduğu kattaki servis noktası
-  const sameFloor = matches.find(m => m.floor === currentFl);
-  if (sameFloor) return sameFloor;
+  const refX = (selectedStartStore && selectedStartStore.floor === currentFl) ? selectedStartStore.cx : 700;
+  const refY = (selectedStartStore && selectedStartStore.floor === currentFl) ? selectedStartStore.cy : 425;
+
+  // 1. Kullanıcının bulunduğu kattaki en yakın servis noktası (Öklid mesafesine göre)
+  const sameFloorMatches = matches.filter(m => m.floor === currentFl);
+  if (sameFloorMatches.length > 0) {
+    sameFloorMatches.sort((a, b) => {
+      const dA = Math.hypot((a.cx || 700) - refX, (a.cy || 425) - refY);
+      const dB = Math.hypot((b.cx || 700) - refX, (b.cy || 425) - refY);
+      return dA - dB;
+    });
+    return sameFloorMatches[0];
+  }
 
   // 2. Kat farkı mutlak değeri en az olan en yakın kat
   matches.sort((a, b) => {
     const distA = Math.abs((a.floor || 4) - currentFl);
     const distB = Math.abs((b.floor || 4) - currentFl);
-    return distA - distB;
+    if (distA !== distB) return distA - distB;
+    const dA = Math.hypot((a.cx || 700) - refX, (a.cy || 425) - refY);
+    const dB = Math.hypot((b.cx || 700) - refX, (b.cy || 425) - refY);
+    return dA - dB;
   });
 
   return matches[0];
@@ -3942,7 +4026,29 @@ function executeVoiceCommandText(rawText) {
 
   closeVoiceCommandModal();
 
-  // Senaryo A: Cümlede hem Başlangıç hem Hedef geçtiyse (Örn: "Pierre Cardin'deyim, Paşabahçe'ye götür")
+  // Hızlı ihtiyaç / servis anahtar kelimeleri (Tuvalet, Bebek Odası, Asansör, Acil Çıkış, Kiosk, Otopark, ATM, Mescit)
+  const amenityKeywords = [
+    { kw: ['acil cikis', 'yangin merdiveni', 'acil'], kind: 'emergency' },
+    { kw: ['bebek', 'emzirme'], kind: 'baby' },
+    { kw: ['tuvalet', 'lavabo', 'wc'], kind: 'wc' },
+    { kw: ['asansor'], kind: 'elevator' },
+    { kw: ['yuruyen merdiven'], kind: 'escalator' },
+    { kw: ['kiosk harita', 'dijital kiosk', 'harita ekran'], kind: 'kiosk' },
+    { kw: ['mescit', 'namaz'], kind: 'prayer' },
+    { kw: ['atm', 'banka', 'bankamatik'], kind: 'atm' },
+    { kw: ['otopark', 'araba', 'vale'], kind: 'carpark' },
+    { kw: ['sandalye', 'sarj', 'engelli'], kind: 'wheelchair' }
+  ];
+
+  let matchedAmenityKind = null;
+  for (const ak of amenityKeywords) {
+    if (ak.kw.some(k => textNorm.includes(k))) {
+      matchedAmenityKind = ak.kind;
+      break;
+    }
+  }
+
+  // Senaryo A: Cümlede hem Başlangıç hem Hedef mağaza/kapı geçtiyse (Örn: "Pierre Cardin'deyim, Paşabahçe'ye götür")
   if (uniqueMatches.length >= 2) {
     const startItem = uniqueMatches[0].item;
     const targetItem = uniqueMatches[1].item;
@@ -3957,7 +4063,24 @@ function executeVoiceCommandText(rawText) {
     return true;
   }
 
-  // Senaryo B: Cümlede tek bir mağaza/kapı geçtiyse
+  // Senaryo B: Cümlede 1 Başlangıç Mağazası/Kapısı + 1 Hizmet/Servis Noktası geçtiyse (Örn: "Pierre Cardin'deyim, acil çıkışa götür" veya "C Kapısındayım, en yakın bebek odasına götür")
+  if (uniqueMatches.length === 1 && matchedAmenityKind) {
+    const startItem = uniqueMatches[0].item;
+    setStartLocation(startItem);
+    const nearest = findNearestAmenity(matchedAmenityKind, startItem.floor || currentFloor);
+    if (nearest) {
+      setTargetLocation(nearest);
+      if (window.speakNavigationText) {
+        window.speakNavigationText(
+          `${startItem.name.replace(/^📍\s*/, '')} konumundan en yakın ${nearest.name} noktasına gözünüzden 3 boyutlu yürüyüş başlatıldı.`,
+          true
+        );
+      }
+      return true;
+    }
+  }
+
+  // Senaryo C: Cümlede tek bir mağaza/kapı geçtiyse
   if (uniqueMatches.length === 1) {
     const singleItem = uniqueMatches[0].item;
     const isStartIntent = /(deyim|dayim|teyim|tayim|onundeyim|yanindayim|buradayim|girisindeyim)/.test(textNorm) &&
@@ -3979,26 +4102,16 @@ function executeVoiceCommandText(rawText) {
     }
   }
 
-  // Senaryo C: Hızlı ihtiyaç / servis (Tuvalet, Bebek Odası, Otopark, ATM, Mescit)
-  const amenityKeywords = [
-    { kw: ['tuvalet', 'lavabo', 'wc'], kind: 'wc' },
-    { kw: ['bebek', 'emzirme'], kind: 'baby' },
-    { kw: ['mescit', 'namaz'], kind: 'prayer' },
-    { kw: ['atm', 'banka'], kind: 'atm' },
-    { kw: ['otopark', 'araba', 'vale'], kind: 'carpark' },
-    { kw: ['sandalye', 'sarj', 'engelli'], kind: 'wheelchair' }
-  ];
-  for (const ak of amenityKeywords) {
-    if (ak.kw.some(k => textNorm.includes(k))) {
-      const nearest = findNearestAmenity(ak.kind, currentFloor);
-      if (nearest) {
-        if (!selectedStartStore) {
-          const defaultStart = (mallData.entrances || []).find(e => e.id === 'ent_fisekhane') || allStores[0];
-          if (defaultStart) setStartLocation(defaultStart);
-        }
-        setTargetLocation(nearest);
-        return true;
+  // Senaryo D: Yalnızca hızlı ihtiyaç / servis söylendiyse (Örn: "En yakın tuvalete götür")
+  if (matchedAmenityKind) {
+    const nearest = findNearestAmenity(matchedAmenityKind, currentFloor);
+    if (nearest) {
+      if (!selectedStartStore) {
+        const defaultStart = (mallData.entrances || []).find(e => e.id === 'ent_fisekhane') || allStores[0];
+        if (defaultStart) setStartLocation(defaultStart);
       }
+      setTargetLocation(nearest);
+      return true;
     }
   }
 
