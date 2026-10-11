@@ -740,51 +740,146 @@ function initApp() {
 
   window.speechBusyUntil = 0;
   window.speechMainBusyUntil = 0;
+  window.activeTtsAudio = null;
+  window.lastVoiceLanguage = 'tr-TR';
+
+  function toTurkishPhoneticSpeech(rawText) {
+    if (!rawText) return '';
+    let s = String(rawText)
+      .replace(/[📍🎯⬆️↪️↩️🪜🛗🚪🎉👀🔊🔇🛣️✂️🛍️🚨🍼🚻🅿️🖥️]/g, ' ')
+      .replace(/➔|→/g, ', ')
+      .replace(/(\d+)\s*m\b/gi, '$1 metre')
+      .replace(/(\d+)\s*dk\b/gi, '$1 dakika')
+      .replace(/\bWC\b/gi, 'Tuvalet')
+      .replace(/\bAVM\b/g, 'A V M')
+      .replace(/W\s*Collection/gi, 'Dabılyu Koleksiyon')
+      .replace(/Pierre\s*Cardin/gi, 'Piyer Karden')
+      .replace(/Madame\s*Coco/gi, 'Madam Koko')
+      .replace(/Marks\s*&\s*Spencer/gi, 'Marks end Spensır')
+      .replace(/Tommy\s*Hilfiger/gi, 'Tomi Hilfigır')
+      .replace(/US\s*Polo\s*Assn\.?/gi, 'Yu Es Polo')
+      .replace(/Yves\s*Rocher/gi, 'İv Roşe')
+      .replace(/L'Occitane/gi, 'Loksitan')
+      .replace(/Sephora/gi, 'Sefora')
+      .replace(/DeFacto/gi, 'Defakto')
+      .replace(/LC\s*Waikiki/gi, 'El Si Vaykiki')
+      .replace(/H&M/gi, 'Eyç end Em')
+      .replace(/D&R/gi, 'Di end Ar')
+      .replace(/B&G\s*Store/gi, 'Bi end Ci Stor')
+      .replace(/Cookshop/gi, 'Kukşop')
+      .replace(/SuperStep/gi, 'Süper Step')
+      .replace(/The\s*Hunger/gi, 'Dı Hangır')
+      .replace(/Blue\s*Diamond/gi, 'Blu Daymınd')
+      .replace(/Storks\s*Diamond/gi, 'Storks Daymınd')
+      .replace(/English\s*Home/gi, 'İngliş Hom')
+      .replace(/G\s*Lingerie/gi, 'Ci Lanjeri')
+      .replace(/So\s*Chic/gi, 'So Şik')
+      .replace(/Sunglass\s*Hut/gi, 'Sanglas Hat')
+      .replace(/Cacharel/gi, 'Kaşarel');
+    return s.replace(/\s+/g, ' ').trim();
+  }
+  window.toTurkishPhoneticSpeech = toTurkishPhoneticSpeech;
 
   function speakNavigationText(text, force = false, isStoreCue = false) {
     if (!text) return;
     if (!isVoiceEnabled && !force) return;
     window.lastSpokenNavigationText = text;
+    const isEn = currentLanguage === 'en';
+    window.lastVoiceLanguage = isEn ? 'en-US' : 'tr-TR';
 
+    const spokenText = isEn ? String(text) : toTurkishPhoneticSpeech(text);
     const now = performance.now();
     const spd = (window.pov3dEngine && window.pov3dEngine.walkSpeed) || currentSimSpeed || 1.0;
-    // Yürüyüş hızı ile sesli komut hızını birebir senkronize et (1x -> 1.06, 2x -> 1.36, 4x -> 1.72)
-    const baseRate = spd >= 3.5 ? 1.72 : (spd >= 1.8 ? 1.36 : 1.06);
-    const rate = isStoreCue ? Math.min(1.85, baseRate * 1.1) : baseRate;
+    const baseRate = spd >= 3.5 ? 1.55 : (spd >= 1.8 ? 1.28 : 1.05);
+    const rate = isStoreCue ? Math.min(1.65, baseRate * 1.08) : baseRate;
 
-    // Kelime sayısına göre tahmini konuşma süresi (ms) -> Yürüyüş hızını sesle senkronize etmek için
-    const wordCount = Math.max(1, text.trim().split(/\s+/).length);
-    const estMs = Math.round((wordCount * 380) / rate);
+    // Kelime sayısına göre başlangıç tahmini konuşma süresi (ms) -> Ses metadata gelince gerçek süreyle güncellenir
+    const wordCount = Math.max(1, spokenText.trim().split(/\s+/).length);
+    const estMs = Math.round((wordCount * 410) / rate);
+
+    const mainStillSpeaking = now < (window.speechMainBusyUntil || 0);
+    if (isStoreCue && mainStillSpeaking) {
+      // Ana manevra cümlesi okunurken mağaza ara anonsu ana cümleyi kesmesin
+      return;
+    }
 
     if (!isStoreCue) {
       window.speechMainBusyUntil = now + estMs;
-      window.speechBusyUntil = now + Math.min(2000, estMs * 0.65);
+      window.speechBusyUntil = now + estMs;
     } else {
-      // Ana manevra cümlesi henüz okunuyorsa yanından geçilen mağaza anonsu ana cümleyi kesmesin, kuyruğa eklensin
-      window.speechBusyUntil = Math.max(window.speechBusyUntil || 0, now + Math.min(950, estMs * 0.5));
+      window.speechBusyUntil = Math.max(window.speechBusyUntil || 0, now + estMs);
     }
 
     try {
-      if ('speechSynthesis' in window && window.speechSynthesis) {
-        const mainStillSpeaking = now < (window.speechMainBusyUntil || 0);
-        if (!isStoreCue || !mainStillSpeaking) {
+      const voices = ('speechSynthesis' in window && window.speechSynthesis)
+        ? window.speechSynthesis.getVoices()
+        : [];
+      const nativeTrVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('tr'));
+
+      // Eğer Türkçe moddaysak ve işletim sisteminde yerel Türkçe ses paketi (tr-TR) YOKSA
+      // (Örn: Windows'ta yalnızca Microsoft David/Zira en-US varsa), İngilizce aksanlı sesi ASLA kullanma!
+      // Doğrudan gerçek Türkçe Neural TTS ses akışını (<audio referrerpolicy="no-referrer">) çal:
+      if (!isEn && !nativeTrVoice) {
+        if ('speechSynthesis' in window && window.speechSynthesis) {
           window.speechSynthesis.cancel();
         }
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = currentLanguage === 'en' ? 'en-US' : 'tr-TR';
+        if (window.activeTtsAudio) {
+          try {
+            window.activeTtsAudio.pause();
+          } catch (e) {}
+        }
+        const clipped = spokenText.slice(0, 195);
+        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=tr&client=tw-ob&q=${encodeURIComponent(clipped)}`;
+        const audio = new Audio();
+        audio.referrerPolicy = 'no-referrer';
+        audio.preload = 'auto';
+        audio.src = ttsUrl;
+        audio.playbackRate = Math.min(2.0, Math.max(0.85, rate));
+        window.activeTtsAudio = audio;
+
+        audio.onloadedmetadata = () => {
+          if (audio.duration && isFinite(audio.duration)) {
+            const realDurationMs = (audio.duration * 1000) / audio.playbackRate;
+            const endTs = performance.now() + realDurationMs;
+            window.speechBusyUntil = endTs;
+            if (!isStoreCue) {
+              window.speechMainBusyUntil = endTs;
+            }
+          }
+        };
+        const clearBusy = () => {
+          if (window.activeTtsAudio === audio) {
+            window.speechBusyUntil = 0;
+            if (!isStoreCue) window.speechMainBusyUntil = 0;
+          }
+        };
+        audio.onended = clearBusy;
+        audio.onerror = clearBusy;
+        const playPromise = audio.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {
+            // Tarayıcı autoplay kısıtlaması varsa zamanlayıcıyı doğal süresinde bırak
+          });
+        }
+        return;
+      }
+
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(spokenText);
+        utterance.lang = isEn ? 'en-US' : 'tr-TR';
+        if (!isEn && nativeTrVoice) {
+          utterance.voice = nativeTrVoice;
+        }
         utterance.rate = rate;
         utterance.pitch = 1.0;
         utterance.onend = () => {
-          if (!isStoreCue) {
-            window.speechBusyUntil = 0;
-            window.speechMainBusyUntil = 0;
-          }
+          window.speechBusyUntil = 0;
+          if (!isStoreCue) window.speechMainBusyUntil = 0;
         };
         utterance.onerror = () => {
-          if (!isStoreCue) {
-            window.speechBusyUntil = 0;
-            window.speechMainBusyUntil = 0;
-          }
+          window.speechBusyUntil = 0;
+          if (!isStoreCue) window.speechMainBusyUntil = 0;
         };
         window.speechSynthesis.speak(utterance);
       }
@@ -807,7 +902,7 @@ function initApp() {
       }
       if (iconEl) iconEl.textContent = '🔊';
       if (labelEl) labelEl.textContent = 'Sesli Açık';
-      showToast('🔊 Sesli adım adım yönlendirme açıldı', 'success');
+      showToast('🔊 Türkçe sesli adım adım yönlendirme açıldı', 'success');
 
       // Mevcut adımı hemen seslendir
       if (lastCalculatedRoute && lastCalculatedRoute.instructions && lastCalculatedRoute.instructions.length > 0) {
@@ -828,10 +923,15 @@ function initApp() {
       if (iconEl) iconEl.textContent = '🔇';
       if (labelEl) labelEl.textContent = 'Sessiz';
       try {
+        if (window.activeTtsAudio) {
+          window.activeTtsAudio.pause();
+        }
         if ('speechSynthesis' in window && window.speechSynthesis) {
           window.speechSynthesis.cancel();
         }
       } catch (e) {}
+      window.speechBusyUntil = 0;
+      window.speechMainBusyUntil = 0;
       showToast('🔇 Sesli yönlendirme kapatıldı', 'info');
     }
   }
@@ -928,6 +1028,9 @@ function initApp() {
     }
   }
   window.updateLiveNavHUD = updateLiveNavHUD;
+  window.resetVoiceStepTracker = () => {
+    lastSpokenStepIndex = -999;
+  };
 
   cartSimulator = new CartSimulator(
     mallMap,
@@ -2824,7 +2927,10 @@ function calculateAndDisplayRoute() {
     routeGroup.style.opacity = '1';
   }
 
-  // Canlı Turn-by-Turn HUD Banner'ını ilk adıma ayarla
+  // Canlı Turn-by-Turn HUD Banner'ını ilk adıma ayarla ve sesli adım sayacını sıfırla
+  if (window.resetVoiceStepTracker) {
+    window.resetVoiceStepTracker();
+  }
   updateLiveNavHUD(0, 0);
 
   // Mobilde Alt Çekmeceyi Otomatik Küçült ve Rota Modunu Aktif Et
@@ -3108,9 +3214,9 @@ function openEntranceModal() {
       name: 'Müzikli Gösteri Havuzu (Etkinlik Alanı)',
       floor: 4,
       floor_name: 'Zemin Kat (Merkez)',
-      nav_node: 'c_4_m_700',
+      nav_node: 'c_4_wp_pool_s2',
       cx: 700.0,
-      cy: 440.0,
+      cy: 482.0,
       iconEmoji: '🌊',
       badge: 'Buluşma Noktası',
       badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
@@ -4054,12 +4160,6 @@ function executeVoiceCommandText(rawText) {
     const targetItem = uniqueMatches[1].item;
     setStartLocation(startItem);
     setTargetLocation(targetItem);
-    if (window.speakNavigationText) {
-      window.speakNavigationText(
-        `${startItem.name.replace(/^📍\s*/, '')} konumundan ${targetItem.name} mağazasına gözünüzden 3 boyutlu yürüyüş başlatıldı.`,
-        true
-      );
-    }
     return true;
   }
 
@@ -4070,12 +4170,6 @@ function executeVoiceCommandText(rawText) {
     const nearest = findNearestAmenity(matchedAmenityKind, startItem.floor || currentFloor);
     if (nearest) {
       setTargetLocation(nearest);
-      if (window.speakNavigationText) {
-        window.speakNavigationText(
-          `${startItem.name.replace(/^📍\s*/, '')} konumundan en yakın ${nearest.name} noktasına gözünüzden 3 boyutlu yürüyüş başlatıldı.`,
-          true
-        );
-      }
       return true;
     }
   }

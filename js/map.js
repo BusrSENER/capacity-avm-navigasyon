@@ -243,11 +243,11 @@ class MallMap {
           <!-- SVG Floor Layer -->
           <div id="svg-layer" class="absolute inset-0 pointer-events-auto" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 5;"></div>
           
-          <!-- HTML Markers Layer (Brand Logos & Icons - Zemin Poligonlarının Üstünde) -->
-          <div id="markers-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 40;"></div>
+          <!-- Navigation Route SVG Layer (Koridor Rotası) -->
+          <svg id="route-svg" class="absolute inset-0 pointer-events-none" width="${this.vbWidth}" height="${this.vbHeight}" viewBox="0 0 ${this.vbWidth} ${this.vbHeight}" style="z-index: 45; overflow: visible;"></svg>
 
-          <!-- Navigation Route SVG Layer (Mağaza poligonlarının EN ÜSTÜNDE) -->
-          <svg id="route-svg" class="absolute inset-0 pointer-events-none" width="${this.vbWidth}" height="${this.vbHeight}" viewBox="0 0 ${this.vbWidth} ${this.vbHeight}" style="z-index: 50; overflow: visible;"></svg>
+          <!-- HTML Markers Layer (Brand Logos & Icons - Rota Çizgisinin Üstünde) -->
+          <div id="markers-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 55;"></div>
 
           <!-- Animated Shopping Cart Layer -->
           <div id="avatar-layer" class="absolute inset-0 pointer-events-none" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 60;"></div>
@@ -450,7 +450,7 @@ class MallMap {
     });
 
     const placedPositions = [];
-    const minDistance = isZoomed ? 18 : (showAll ? 24 : 26);
+    const minDistance = isZoomed ? 8 : (showAll ? 12 : 16);
 
     sortedStores.forEach(store => {
       const isTarget = this.activeTargetStore && this.activeTargetStore.id === store.id;
@@ -471,12 +471,7 @@ class MallMap {
 
       placedPositions.push({ x: store.cx, y: store.cy });
 
-      // Uzun mağazalarda veya 2. Kat Food Court'ta logoyu SVG metninin üstüne orantılı yerleştir
-      // Hedef veya Başlangıç noktalarında ofset ASLA uygulanmaz, doğrudan mağazanın matematiksel merkezine (cx, cy) ortalanır
-      const isTargetOrStart = isTarget || isStart;
-      const isTallShop = (store.cy > 520 && store.cy < 680 && store.cx > 350 && store.cx < 1050 && floorNum === 4);
-      const isFoodCourtShop = (floorNum === 6);
-      const offsetY = (!isAnchor && !isTargetOrStart && (isFoodCourtShop || isTallShop)) ? -22 : 0;
+      const offsetY = 0;
 
       const marker = document.createElement('div');
       marker.className = `logo-tile-marker ${isAnchor ? 'is-anchor' : (hasLogo ? 'is-brand-store' : 'is-secondary')} ${isTarget ? 'is-target' : ''} ${isStart ? 'is-start' : ''} ${isEnRoute ? 'is-enroute-landmark' : ''}`;
@@ -738,10 +733,10 @@ class MallMap {
       const firstNode = allPath[0];
       const lastNode = allPath[allPath.length - 1];
 
-      // Eğer başlangıç noktası bu kattaysa: Yeşil Başlangıç İmi (Merkeze Ortala)
+      // Eğer başlangıç noktası bu kattaysa: Yeşil Başlangıç İmi (Koridor Kapı Noktasına)
       if (firstNode.floor === this.currentFloor) {
-        const startX = (this.activeStartStore && this.activeStartStore.floor === this.currentFloor && this.activeStartStore.cx) ? this.activeStartStore.cx : firstNode.x;
-        const startY = (this.activeStartStore && this.activeStartStore.floor === this.currentFloor && this.activeStartStore.cy) ? this.activeStartStore.cy : firstNode.y;
+        const startX = firstNode.x;
+        const startY = firstNode.y;
 
         const startG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         startG.setAttribute('class', 'route-start-pin');
@@ -756,10 +751,10 @@ class MallMap {
         g.appendChild(startG);
       }
 
-      // Eğer hedef nokta bu kattaysa: Kırmızı Hedef İmi (Mağazanın Dışına Taşmadan Tam Merkeze Ortala)
+      // Eğer hedef nokta bu kattaysa: Kırmızı Hedef İmi (Koridor Kapı Noktasına)
       if (lastNode.floor === this.currentFloor) {
-        const targetX = (this.activeTargetStore && this.activeTargetStore.floor === this.currentFloor && this.activeTargetStore.cx) ? this.activeTargetStore.cx : lastNode.x;
-        const targetY = (this.activeTargetStore && this.activeTargetStore.floor === this.currentFloor && this.activeTargetStore.cy) ? this.activeTargetStore.cy : lastNode.y;
+        const targetX = lastNode.x;
+        const targetY = lastNode.y;
 
         const endG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         endG.setAttribute('class', 'route-end-pin');

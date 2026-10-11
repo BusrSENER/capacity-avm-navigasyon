@@ -201,8 +201,10 @@ class CartSimulator {
     }
 
     const segDist = Math.hypot(toNode.x - fromNode.x, toNode.y - fromNode.y);
-    const baseSpeed = 75; // px / sn
-    const currentSpeed = baseSpeed * this.speed;
+    const isSpeaking = currentTime < (window.speechBusyUntil || 0);
+    const speechFactor = isSpeaking ? 0.52 : 1.0;
+    const baseSpeed = 34; // Doğal yürüyüş temposu (sesli komutla senkronize)
+    const currentSpeed = baseSpeed * this.speed * speechFactor;
 
     if (segDist > 0) {
       this.subProgress += (currentSpeed * dt) / segDist;

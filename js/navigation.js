@@ -293,7 +293,7 @@ class NavigationEngine {
         if (!u || !v || u.floor !== floor || v.floor !== floor) continue;
 
         const segLen = Math.hypot(v.x - u.x, v.y - u.y);
-        if (segLen < 22) continue; // Kapı önü 3-4 metrelik mikro adımlarda mağaza eşleştirme
+        if (segLen < 1) continue;
 
         for (const s of floorStores) {
           if (excludeNavNodes.has(s.nav_node)) continue;
@@ -302,7 +302,7 @@ class NavigationEngine {
           const doorY = s.door_y !== undefined ? s.door_y : s.cy;
           const pDoor = this._pointToSegmentProjection(doorX, doorY, u.x, u.y, v.x, v.y);
 
-          if (pDoor.dist <= maxDoorDist && pDoor.t >= 0.04 && pDoor.t <= 0.96) {
+          if (pDoor.dist <= maxDoorDist && pDoor.t >= 0.0 && pDoor.t <= 1.0) {
             const orderScore = idx + pDoor.t;
             const prev = matched.get(s.id);
             if (!prev || pDoor.dist < prev.minDist) {
@@ -320,13 +320,13 @@ class NavigationEngine {
         .map(item => item.store);
     };
 
-    // Önce koridor cephesindeki (kapısı koridora <= 28 birim mesafedeki) doğrudan komşu mağazaları bul
-    const directMatches = collectMatches(28);
+    // Önce koridor cephesindeki (kapısı koridora <= 30 birim mesafedeki) doğrudan komşu mağazaları bul
+    const directMatches = collectMatches(30);
     if (directMatches.length > 0) {
       return directMatches;
     }
-    // Doğrudan cephe mağazası yoksa yakın çevredeki (<= 46 birim) mağazaları döndür
-    return collectMatches(46);
+    // Doğrudan cephe mağazası yoksa yakın çevredeki (<= 48 birim) mağazaları döndür
+    return collectMatches(48);
   }
 
   _generateInstructions(pathNodes, startNodeId = null, targetNodeId = null) {
@@ -341,18 +341,23 @@ class NavigationEngine {
     const excludeEndpoints = new Set([startNodeId, targetNodeId].filter(Boolean));
 
     const recordPassingStores = (stores) => {
-      const names = [];
+      const majorNames = [];
+      const allNames = [];
       for (const s of stores) {
         if (!s || !s.id) continue;
         if (!enRouteStoreIdSet.has(s.id)) {
           enRouteStoreIdSet.add(s.id);
           enRouteStoreNames.push(s.name);
         }
-        if (!names.includes(s.name)) {
-          names.push(s.name);
+        if (!allNames.includes(s.name)) {
+          allNames.push(s.name);
+        }
+        const area = (s.w || 60) * (s.h || 60);
+        if (area >= 4500 && !majorNames.includes(s.name)) {
+          majorNames.push(s.name);
         }
       }
-      return names;
+      return majorNames.length > 0 ? majorNames : allNames;
     };
 
     const formatPassingPhrase = (storeNames, walkMeters, isFinalStretch = false) => {

@@ -216,7 +216,7 @@ html.dark .cart-beacon {
 /* SVG Harita Zeminindeki Standart Mağaza İsim Metinleri (Net & Okunabilir) */
 .store-polygon text {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
-  font-size: 13px !important;
+  font-size: 9px !important;
   font-weight: 700 !important;
   fill: #1e293b !important;
   stroke: none !important;
@@ -230,6 +230,11 @@ html.dark .cart-beacon {
   opacity: 1 !important;
   visibility: visible !important;
   transition: fill 0.2s ease;
+}
+
+/* Yakın planda HTML .logo-tile-marker aktif olduğundan SVG içi gömülü logoları gizleyerek çift logo görünümünü önle */
+#map-canvas-container:not(.lod-far) #store-logos-svg-layer {
+  display: none !important;
 }
 
 html.dark .store-polygon text {

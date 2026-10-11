@@ -1,486 +1,526 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850" width="100%" height="100%" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background-color: transparent;">
   <!-- ================= BİNA TABANI VE MİMARİ OMURGA (1400 x 850) ================= -->
-  <!-- Saf Beyaz Kat Gövdesi (#ffffff, stroke #cbd5e1) -->
-  <path d="M 90,130 
-           L 660,130 
-           L 660,50 L 740,50 L 740,130 
-           L 1090,130 
-           C 1170,130 1280,220 1280,440 
-           C 1280,660 1170,750 1090,750 
-           L 90,750 
-           C 60,750 60,130 90,130 Z" 
-        fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+  <path d="M 88,130 L 650,130 L 650,45 L 710,45 L 710,130 L 1110,130 C 1210,130 1285,220 1285,440 C 1285,660 1210,750 1110,750 L 88,750 C 58,750 58,130 88,130 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" />
 
-  <!-- Yürüme Koridorları (#f8fafc) -->
-  <path d="M 200,320 
-           L 1080,320 
-           C 1180,320 1240,360 1240,440 
-           C 1240,520 1180,560 1080,560 
-           L 200,560 
-           C 160,560 160,320 200,320 Z" 
-        fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
-
-  <!-- Kuzey Koridoru (Carousel Bağlantısı) -->
-  <path d="M 660,50 L 740,50 L 740,340 L 660,340 Z" 
-        fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <!-- ================= ANA YATAY KORİDORLAR VE ARA YOLLAR (OPEN CORRIDORS) ================= -->
+  <g id="corridors-layer" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1">
+    <!-- Kuzey Ana Koridoru (y=330) -->
+    <rect x="178" y="304" width="934" height="50" rx="8" />
+    <!-- Merkez Ana Koridoru (y=440) -->
+    <rect x="178" y="414" width="1075" height="52" rx="8" />
+    <!-- Güney Ana Koridoru (y=550) -->
+    <rect x="178" y="526" width="934" height="48" rx="8" />
+    <!-- Dikey Ara Yollar (x=200, 370, 565, 680, 800, 1005, 1090) -->
+    <rect x="178" y="135" width="44" height="605" rx="6" />
+    <rect x="348" y="304" width="44" height="270" rx="6" />
+    <rect x="542" y="304" width="46" height="436" rx="6" />
+    <rect x="654" y="48" width="52" height="282" rx="6" />
+    <rect x="778" y="304" width="44" height="270" rx="6" />
+    <rect x="982" y="304" width="46" height="270" rx="6" />
+    <rect x="1068" y="135" width="44" height="605" rx="6" />
+  </g>
+  <!-- Koridor Merkez Yürüme Çizgileri (Rehber İzleri) -->
+  <g id="corridor-guides" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="5 5" fill="none" opacity="0.75">
+    <line x1="200" y1="330" x2="1090" y2="330" />
+    <line x1="200" y1="440" x2="600" y2="440" />
+    <line x1="800" y1="440" x2="1245" y2="440" />
+    <line x1="200" y1="550" x2="1090" y2="550" />
+    <line x1="200" y1="330" x2="200" y2="550" />
+    <line x1="370" y1="330" x2="370" y2="550" />
+    <line x1="565" y1="330" x2="565" y2="550" />
+    <line x1="680" y1="55"  x2="680" y2="330" />
+    <line x1="800" y1="330" x2="800" y2="550" />
+    <line x1="1005" y1="330" x2="1005" y2="550" />
+    <line x1="1090" y1="330" x2="1090" y2="550" />
+  </g>
 
   <!-- Dış Cadde / Yön Bilgilendirmeleri -->
-  <text x="700" y="32" fill="#0284c7" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">
-    ▲ HALİT ZİYA UŞAKLIGİL CADDESİ (CAROUSEL GEÇİŞİ)
-  </text>
-  <text x="1355" y="440" fill="#d97706" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(90 1355 440)" letter-spacing="2">
-    ▲ FİŞEKHANE CADDESİ (ANA GİRİŞ / MEYDAN)
-  </text>
-  <text x="700" y="795" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">
-    ▼ DADYAN SOKAK / ACIBADEM BAKIRKÖY HASTANESİ
-  </text>
-  <text x="35" y="440" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 35 440)" letter-spacing="1">
-    ◄ ZEBERCET SOKAK / ATAKÖY YÖNÜ
-  </text>
-
-  <!-- Atrium & Sirkülasyon Elemanları -->
-  
-    <!-- Atrium Galeri Boşluğu (Aşağıya Bakan Cam Korkuluk) -->
-    <ellipse cx="700" cy="440" rx="90" ry="65" fill="#eef2f6" stroke="#cbd5e1" stroke-width="2.5" stroke-dasharray="6 3"/>
-    <text x="700" y="444" fill="#94a3b8" font-size="10" font-weight="700" text-anchor="middle">GALERİ BOŞLUĞU (ATRİUM)</text>
-    
-    <!-- Merkez Geçiş Köprüsü (Skybridge) -->
-    <rect x="675" y="375" width="50" height="130" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-    <line x1="700" y1="380" x2="700" y2="500" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 3"/>
-        
-  
-    <!-- Batı Yürüyen Merdiven Grubu -->
-    <g transform="translate(265, 420)">
-      <rect width="45" height="38" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
-      <text x="22" y="24" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
-      <text x="22" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
-    </g>
-    
-    <!-- Doğu Yürüyen Merdiven Grubu -->
-    <g transform="translate(1010, 420)">
-      <rect width="45" height="38" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
-      <text x="22" y="24" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
-      <text x="22" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
-    </g>
-    
-    <!-- Panoramik Cam Asansörler -->
-    <g transform="translate(565, 420)">
-      <rect width="28" height="38" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
-      <text x="14" y="24" fill="#0284c7" font-size="12" text-anchor="middle">🛗</text>
-      <text x="14" y="48" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">ASANSÖR</text>
-    </g>
-    
+  <text x="680" y="32" fill="#0284c7" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">▲ HALİT ZİYA UŞAKLIGİL CADDESİ (CAROUSEL GEÇİŞİ)</text>
+  <text x="1355" y="440" fill="#d97706" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(90 1355 440)" letter-spacing="2">▲ FİŞEKHANE CADDESİ (ANA GİRİŞ / MEYDAN)</text>
+  <text x="700" y="795" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">▼ DADYAN SOKAK / ACIBADEM BAKIRKÖY HASTANESİ</text>
+  <text x="35" y="440" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-90 35 440)" letter-spacing="1">◄ ZEBERCET SOKAK / ATAKÖY YÖNÜ</text>
+  <!-- Atrium Galeri Boşluğu -->
+  <ellipse cx="700" cy="440" rx="85" ry="42" fill="#eef2f6" stroke="#cbd5e1" stroke-width="2.2" stroke-dasharray="6 3"/>
+  <text x="700" y="444" fill="#94a3b8" font-size="9.5" font-weight="700" text-anchor="middle">GALERİ BOŞLUĞU (ATRİUM)</text>
+  <!-- Batı Yürüyen Merdiven Grubu -->
+  <g transform="translate(245, 420)">
+    <rect width="42" height="36" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="21" y="23" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
+    <text x="21" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+  </g>
+  <!-- Doğu Yürüyen Merdiven Grubu -->
+  <g transform="translate(984, 420)">
+    <rect width="42" height="36" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="21" y="23" fill="#2563eb" font-size="12" text-anchor="middle">⚡</text>
+    <text x="21" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">MERDİVEN</text>
+  </g>
+  <!-- Panoramik Cam Asansörler -->
+  <g transform="translate(551, 420)">
+    <rect width="28" height="36" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+    <text x="14" y="23" fill="#0284c7" font-size="12" text-anchor="middle">🛗</text>
+    <text x="14" y="46" fill="#64748b" font-size="7.5" font-weight="700" text-anchor="middle">ASANSÖR</text>
+  </g>
 
   <!-- ================= MAĞAZALAR ================= -->
   <g id="stores-layer">
-    
     <g class="store-polygon" data-id="store_3_1" id="room_3_1" data-name="Adidas">
-      <rect x="220.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="260.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Adidas
-      </text>
+      <rect x="96.0" y="140.0" width="82.0" height="162.0" rx="6" fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="137.0" y="243.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Adidas</text>
     </g>
     <g class="store-polygon" data-id="store_3_2" id="room_3_2" data-name="Armağan Oyuncak">
-      <rect x="254.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="294.7" y="229.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Armağan Oyuncak
-      </text>
+      <rect x="222.0" y="140.0" width="44.4" height="162.0" rx="6" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="244.2" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Armağan Oyuncak</text>
     </g>
     <g class="store-polygon" data-id="store_3_3" id="room_3_3" data-name="Atasun Optik">
-      <rect x="289.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="329.3" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Atasun Optik
-      </text>
+      <rect x="270.4" y="140.0" width="44.4" height="162.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="292.6" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Atasun Optik</text>
     </g>
     <g class="store-polygon" data-id="store_3_4" id="room_3_4" data-name="Atelier Rebul">
-      <rect x="324.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="364.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Atelier Rebul
-      </text>
+      <rect x="318.9" y="140.0" width="44.4" height="162.0" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="341.1" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Atelier Rebul</text>
     </g>
     <g class="store-polygon" data-id="store_3_5" id="room_3_5" data-name="Ayakkabı Dünyası">
-      <rect x="358.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="398.7" y="229.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Ayakkabı Dünyası
-      </text>
+      <rect x="367.3" y="140.0" width="44.4" height="162.0" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="389.5" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Ayakkabı Dünyası</text>
     </g>
-    <g class="store-polygon" data-id="store_3_6" id="room_3_6" data-name="Aydın Döviz & Altın">
-      <rect x="393.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="433.3" y="229.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Aydın Döviz & Altın
-      </text>
+    <g class="store-polygon" data-id="store_3_6" id="room_3_6" data-name="Aydın Döviz &amp; Altın">
+      <rect x="415.8" y="140.0" width="44.4" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="438.0" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Aydın Döviz &amp; Altın</text>
     </g>
-    <g class="store-polygon" data-id="store_3_7" id="room_3_7" data-name="B&G Store">
-      <rect x="428.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="468.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        B&G Store
-      </text>
+    <g class="store-polygon" data-id="store_3_7" id="room_3_7" data-name="B&amp;G Store">
+      <rect x="464.2" y="140.0" width="44.4" height="162.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="486.4" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">B&amp;G Store</text>
     </g>
     <g class="store-polygon" data-id="store_3_8" id="room_3_8" data-name="Beşiktaş-Kartal Yuvası">
-      <rect x="462.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="502.7" y="229.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Beşiktaş-Kartal Yuvası
-      </text>
+      <rect x="512.7" y="140.0" width="44.4" height="162.0" rx="6" fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="534.9" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Beşiktaş-Kartal Yuvası</text>
     </g>
     <g class="store-polygon" data-id="store_3_9" id="room_3_9" data-name="Boston Donuts">
-      <rect x="497.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="537.3" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Boston Donuts
-      </text>
+      <rect x="561.1" y="140.0" width="44.4" height="162.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="583.3" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Boston Donuts</text>
     </g>
     <g class="store-polygon" data-id="store_3_10" id="room_3_10" data-name="Ceyo">
-      <rect x="532.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="572.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Ceyo
-      </text>
+      <rect x="609.6" y="140.0" width="44.4" height="162.0" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="631.8" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Ceyo</text>
     </g>
     <g class="store-polygon" data-id="store_3_11" id="room_3_11" data-name="Columbia">
-      <rect x="566.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="606.7" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Columbia
-      </text>
+      <rect x="706.0" y="140.0" width="36.7" height="162.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="724.4" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Columbia</text>
     </g>
     <g class="store-polygon" data-id="store_3_12" id="room_3_12" data-name="Çiğköftem">
-      <rect x="601.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="641.3" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Çiğköftem
-      </text>
+      <rect x="746.7" y="140.0" width="36.7" height="162.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="765.1" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Çiğköftem</text>
     </g>
     <g class="store-polygon" data-id="store_3_13" id="room_3_13" data-name="Emooptik">
-      <rect x="636.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="676.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Emooptik
-      </text>
+      <rect x="787.3" y="140.0" width="36.7" height="162.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="805.6" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Emooptik</text>
     </g>
     <g class="store-polygon" data-id="store_3_14" id="room_3_14" data-name="Ender Spor">
-      <rect x="670.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="710.7" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Ender Spor
-      </text>
+      <rect x="828.0" y="140.0" width="36.7" height="162.0" rx="6" fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="846.4" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Ender Spor</text>
     </g>
     <g class="store-polygon" data-id="store_3_15" id="room_3_15" data-name="ETS Tur">
-      <rect x="705.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="745.3" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        ETS Tur
-      </text>
+      <rect x="868.7" y="140.0" width="36.7" height="162.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="887.1" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">ETS Tur</text>
     </g>
     <g class="store-polygon" data-id="store_3_16" id="room_3_16" data-name="Eve">
-      <rect x="740.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="780.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Eve
-      </text>
+      <rect x="909.3" y="140.0" width="36.7" height="162.0" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="927.6" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Eve</text>
     </g>
     <g class="store-polygon" data-id="store_3_17" id="room_3_17" data-name="Flo">
-      <rect x="774.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="814.7" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Flo
-      </text>
+      <rect x="950.0" y="140.0" width="36.7" height="162.0" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="968.4" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Flo</text>
     </g>
     <g class="store-polygon" data-id="store_3_18" id="room_3_18" data-name="Greyder">
-      <rect x="809.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="849.3" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Greyder
-      </text>
+      <rect x="990.7" y="140.0" width="36.7" height="162.0" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1009.1" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Greyder</text>
     </g>
     <g class="store-polygon" data-id="store_3_19" id="room_3_19" data-name="GS Store">
-      <rect x="844.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="884.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        GS Store
-      </text>
+      <rect x="1031.3" y="140.0" width="36.7" height="162.0" rx="6" fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1049.6" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">GS Store</text>
     </g>
     <g class="store-polygon" data-id="store_3_20" id="room_3_20" data-name="Haribo Çok Şeker">
-      <rect x="878.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="918.7" y="229.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Haribo Çok Şeker
-      </text>
+      <rect x="1112.0" y="140.0" width="138.0" height="162.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1181.0" y="243.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Haribo Çok Şeker</text>
     </g>
     <g class="store-polygon" data-id="store_3_21" id="room_3_21" data-name="İdil Baby Mamino">
-      <rect x="913.3" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="953.3" y="229.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        İdil Baby Mamino
-      </text>
+      <rect x="96.0" y="356.0" width="82.0" height="120.7" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="137.0" y="438.4" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">İdil Baby Mamino</text>
     </g>
     <g class="store-polygon" data-id="store_3_22" id="room_3_22" data-name="Jolly Tur">
-      <rect x="948.0" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="988.0" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Jolly Tur
-      </text>
+      <rect x="96.0" y="482.7" width="82.0" height="120.7" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="137.0" y="565.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Jolly Tur</text>
     </g>
     <g class="store-polygon" data-id="store_3_23" id="room_3_23" data-name="Jumbo">
-      <rect x="982.7" y="140.0" width="80.0" height="170.0" rx="6"
-            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1022.7" y="229.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Jumbo
-      </text>
+      <rect x="96.0" y="609.3" width="82.0" height="120.7" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="137.0" y="691.6" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Jumbo</text>
     </g>
     <g class="store-polygon" data-id="store_3_24" id="room_3_24" data-name="Kervan">
-      <rect x="239.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="279.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Kervan
-      </text>
+      <rect x="222.0" y="356.0" width="61.0" height="56.0" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="252.5" y="398.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Kervan</text>
     </g>
     <g class="store-polygon" data-id="store_3_25" id="room_3_25" data-name="Kifidis">
-      <rect x="278.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="318.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Kifidis
-      </text>
+      <rect x="287.0" y="356.0" width="61.0" height="56.0" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="317.5" y="398.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Kifidis</text>
     </g>
     <g class="store-polygon" data-id="store_3_26" id="room_3_26" data-name="Korkmaz">
-      <rect x="317.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="357.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Korkmaz
-      </text>
+      <rect x="392.0" y="356.0" width="73.0" height="56.0" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="428.5" y="398.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Korkmaz</text>
     </g>
     <g class="store-polygon" data-id="store_3_27" id="room_3_27" data-name="Koton">
-      <rect x="356.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="396.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Koton
-      </text>
+      <rect x="469.0" y="356.0" width="73.0" height="56.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="505.5" y="398.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Koton</text>
     </g>
     <g class="store-polygon" data-id="store_3_28" id="room_3_28" data-name="LCWaikiki">
-      <rect x="395.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="435.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        LCWaikiki
-      </text>
+      <rect x="822.0" y="356.0" width="78.0" height="56.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="861.0" y="398.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">LCWaikiki</text>
     </g>
     <g class="store-polygon" data-id="store_3_29" id="room_3_29" data-name="Linens">
-      <rect x="434.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="474.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Linens
-      </text>
+      <rect x="904.0" y="356.0" width="78.0" height="56.0" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="943.0" y="398.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Linens</text>
     </g>
     <g class="store-polygon" data-id="store_3_30" id="room_3_30" data-name="Mad Parfumeur">
-      <rect x="473.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="513.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Mad Parfumeur
-      </text>
+      <rect x="222.0" y="468.0" width="61.0" height="56.0" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="252.5" y="510.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Mad Parfumeur</text>
     </g>
     <g class="store-polygon" data-id="store_3_31" id="room_3_31" data-name="Malatya Pazarı Palancı">
-      <rect x="512.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="552.5" y="649.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Malatya Pazarı Palancı
-      </text>
+      <rect x="287.0" y="468.0" width="61.0" height="56.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="317.5" y="510.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Malatya Pazarı Palancı</text>
     </g>
     <g class="store-polygon" data-id="store_3_32" id="room_3_32" data-name="Migros MMM">
-      <rect x="551.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="591.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Migros MMM
-      </text>
+      <rect x="392.0" y="468.0" width="73.0" height="56.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="428.5" y="510.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Migros MMM</text>
     </g>
     <g class="store-polygon" data-id="store_3_33" id="room_3_33" data-name="Nike">
-      <rect x="590.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="630.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Nike
-      </text>
+      <rect x="469.0" y="468.0" width="73.0" height="56.0" rx="6" fill="#dcfce7" stroke="#4ade80" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="505.5" y="510.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Nike</text>
     </g>
     <g class="store-polygon" data-id="store_3_34" id="room_3_34" data-name="Ortopedia">
-      <rect x="629.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="669.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Ortopedia
-      </text>
+      <rect x="822.0" y="468.0" width="78.0" height="56.0" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="861.0" y="510.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Ortopedia</text>
     </g>
     <g class="store-polygon" data-id="store_3_35" id="room_3_35" data-name="Panço">
-      <rect x="668.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="708.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Panço
-      </text>
+      <rect x="904.0" y="468.0" width="78.0" height="56.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="943.0" y="510.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Panço</text>
     </g>
     <g class="store-polygon" data-id="store_3_36" id="room_3_36" data-name="Penti">
-      <rect x="707.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="747.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Penti
-      </text>
+      <rect x="222.0" y="576.0" width="60.8" height="158.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="252.4" y="677.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Penti</text>
     </g>
     <g class="store-polygon" data-id="store_3_37" id="room_3_37" data-name="Quum">
-      <rect x="746.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="786.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Quum
-      </text>
+      <rect x="286.8" y="576.0" width="60.8" height="158.0" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="317.2" y="677.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Quum</text>
     </g>
     <g class="store-polygon" data-id="store_3_38" id="room_3_38" data-name="Samsung">
-      <rect x="785.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="825.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Samsung
-      </text>
+      <rect x="351.6" y="576.0" width="60.8" height="158.0" rx="6" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="382.0" y="677.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Samsung</text>
     </g>
     <g class="store-polygon" data-id="store_3_39" id="room_3_39" data-name="Setur">
-      <rect x="824.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="864.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Setur
-      </text>
+      <rect x="416.4" y="576.0" width="60.8" height="158.0" rx="6" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="446.8" y="677.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Setur</text>
     </g>
     <g class="store-polygon" data-id="store_3_40" id="room_3_40" data-name="Sihirli Eller">
-      <rect x="863.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="903.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Sihirli Eller
-      </text>
+      <rect x="481.2" y="576.0" width="60.8" height="158.0" rx="6" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="511.6" y="677.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Sihirli Eller</text>
     </g>
     <g class="store-polygon" data-id="store_3_41" id="room_3_41" data-name="Şenol Zeytinoğlu - Kadın Erkek Kuaför">
-      <rect x="902.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="942.5" y="649.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Şenol Zeytinoğlu - Kadın Erkek Kuaför
-      </text>
+      <rect x="590.0" y="576.0" width="44.2" height="158.0" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="612.1" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Şenol Zeytinoğlu - Kadın Erkek Kuaför</text>
     </g>
     <g class="store-polygon" data-id="store_3_42" id="room_3_42" data-name="Takma Takma">
-      <rect x="941.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="981.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Takma Takma
-      </text>
+      <rect x="638.2" y="576.0" width="44.2" height="158.0" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="660.3" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Takma Takma</text>
     </g>
     <g class="store-polygon" data-id="store_3_43" id="room_3_43" data-name="Tchibo">
-      <rect x="980.5" y="560.0" width="80.0" height="170.0" rx="6"
-            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1020.5" y="649.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Tchibo
-      </text>
+      <rect x="686.4" y="576.0" width="44.2" height="158.0" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="708.5" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Tchibo</text>
     </g>
     <g class="store-polygon" data-id="store_3_44" id="room_3_44" data-name="Tefal">
-      <rect x="100.0" y="360.0" width="110.0" height="140.0" rx="6"
-            fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="155.0" y="434.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Tefal
-      </text>
+      <rect x="734.6" y="576.0" width="44.2" height="158.0" rx="6" fill="#ede9fe" stroke="#a855f7" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="756.7" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Tefal</text>
     </g>
     <g class="store-polygon" data-id="store_3_45" id="room_3_45" data-name="Tekno Stand Premium">
-      <rect x="100.0" y="520.0" width="110.0" height="140.0" rx="6"
-            fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="155.0" y="594.0"
-            fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Tekno Stand Premium
-      </text>
+      <rect x="782.8" y="576.0" width="44.2" height="158.0" rx="6" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="804.9" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Tekno Stand Premium</text>
     </g>
     <g class="store-polygon" data-id="store_3_46" id="room_3_46" data-name="The North Face">
-      <rect x="100.0" y="200.0" width="110.0" height="140.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="155.0" y="274.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        The North Face
-      </text>
+      <rect x="831.0" y="576.0" width="44.2" height="158.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="853.1" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">The North Face</text>
     </g>
     <g class="store-polygon" data-id="store_3_47" id="room_3_47" data-name="Toyzz Shop">
-      <rect x="100.0" y="360.0" width="110.0" height="140.0" rx="6"
-            fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="155.0" y="434.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Toyzz Shop
-      </text>
+      <rect x="879.2" y="576.0" width="44.2" height="158.0" rx="6" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="901.3" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Toyzz Shop</text>
     </g>
     <g class="store-polygon" data-id="store_3_48" id="room_3_48" data-name="Turkcell">
-      <rect x="1090.0" y="520.0" width="120.0" height="140.0" rx="6"
-            fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1150.0" y="594.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Turkcell
-      </text>
+      <rect x="927.4" y="576.0" width="44.2" height="158.0" rx="6" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="949.5" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Turkcell</text>
     </g>
     <g class="store-polygon" data-id="store_3_49" id="room_3_49" data-name="Waffle Stop">
-      <rect x="1090.0" y="200.0" width="120.0" height="140.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1150.0" y="274.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Waffle Stop
-      </text>
+      <rect x="975.6" y="576.0" width="44.2" height="158.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="997.7" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Waffle Stop</text>
     </g>
     <g class="store-polygon" data-id="store_3_50" id="room_3_50" data-name="Watsons">
-      <rect x="1090.0" y="360.0" width="120.0" height="140.0" rx="6"
-            fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1150.0" y="434.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Watsons
-      </text>
+      <rect x="1023.8" y="576.0" width="44.2" height="158.0" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1045.9" y="677.0" fill="#1e293b" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Watsons</text>
     </g>
     <g class="store-polygon" data-id="store_3_51" id="room_3_51" data-name="Yağcıoğlu">
-      <rect x="1090.0" y="520.0" width="120.0" height="140.0" rx="6"
-            fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
-      <text class="pointer-events-none select-none" x="1150.0" y="594.0"
-            fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-        Yağcıoğlu
-      </text>
+      <rect x="1112.0" y="576.0" width="138.0" height="158.0" rx="6" fill="#fce7f3" stroke="#f472b6" stroke-width="1.8" />
+      <text class="pointer-events-none select-none" x="1181.0" y="677.0" fill="#1e293b" font-size="10" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">Yağcıoğlu</text>
     </g>
+  </g>
+  <!-- ================= GÖMÜLÜ KURUMSAL MAĞAZA LOGOLARI ================= -->
+  <g id="store-logos-svg-layer" style="pointer-events: none;">
+    <g class="svg-store-brand-badge" data-store-id="store_3_1"><rect x="112.0" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#4ade80" stroke-width="0.9" /><svg x="114.0" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <polygon points="28,62 36,62 50,38 42,38" fill="#ffffff"/>
+    <polygon points="44,62 52,62 66,32 58,32" fill="#ffffff"/>
+    <polygon points="60,62 68,62 82,26 74,26" fill="#ffffff"/>
+    <text x="50" y="76" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle">adidas</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_2"><rect x="224.9" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#c084fc" stroke-width="0.9" /><svg x="226.9" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <polygon points="50,24 54,34 65,34 56,40 59,51 50,44 41,51 44,40 35,34 46,34" fill="#facc15"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">ARMAĞAN</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_3"><rect x="273.3" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="275.3" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#009fe3"/>
+    <circle cx="36" cy="44" r="11" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <circle cx="64" cy="44" r="11" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <path d="M47 44 Q50 40 53 44" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">ATASUN</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_4"><rect x="321.8" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#ec4899" stroke-width="0.9" /><svg x="323.8" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <circle cx="50" cy="38" r="14" fill="none" stroke="#d4af37" stroke-width="1.8"/>
+    <text x="50" y="43" font-family="'Times New Roman', serif" font-weight="700" font-size="12" fill="#d4af37" text-anchor="middle">AR</text>
+    <text x="50" y="66" font-family="'Times New Roman', serif" font-weight="800" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1">ATELIER REBUL</text>
+    <text x="50" y="77" font-family="sans-serif" font-weight="600" font-size="6" fill="#d4af37" text-anchor="middle" letter-spacing="2">EST. 1895</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_5"><rect x="370.2" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f59e0b" stroke-width="0.9" /><svg x="372.2" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <path d="M25 45 C35 32, 65 32, 75 45 C65 52, 35 52, 25 45 Z" fill="#ffffff"/>
+    <text x="50" y="64" font-family="sans-serif" font-weight="900" font-size="8.5" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">AYAKKABI</text>
+    <text x="50" y="76" font-family="sans-serif" font-weight="800" font-size="8.5" fill="#fef08a" text-anchor="middle" letter-spacing="1">DÜNYASI</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_6"><rect x="418.7" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="420.7" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+    <text x="50" y="46" font-family="sans-serif" font-weight="800" font-size="12" fill="#fbbf24" text-anchor="middle">AYDIN</text>
+    <text x="50" y="66" font-family="sans-serif" font-weight="700" font-size="8" fill="#ffffff" text-anchor="middle" letter-spacing="1">DÖVİZ</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_7"><rect x="467.1" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="469.1" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0f2b48"/>
+    <text x="50" y="52" font-family="sans-serif" font-weight="900" font-size="22" fill="#ffffff" text-anchor="middle">B&amp;G</text>
+    <text x="50" y="70" font-family="sans-serif" font-weight="800" font-size="10" fill="#fbbf24" text-anchor="middle" letter-spacing="2">STORE</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_8"><rect x="515.6" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#4ade80" stroke-width="0.9" /><svg x="517.6" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <rect x="30" y="20" width="8" height="24" fill="#ffffff"/>
+    <rect x="46" y="20" width="8" height="24" fill="#e11d48"/>
+    <rect x="62" y="20" width="8" height="24" fill="#ffffff"/>
+    <text x="50" y="62" font-family="sans-serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="1">KARTAL YUVASI</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="800" font-size="7" fill="#e11d48" text-anchor="middle" letter-spacing="1.5">BEŞİKTAŞ JK</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_9"><rect x="564.0" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="566.0" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#831843"/>
+    <circle cx="50" cy="38" r="14" fill="#f472b6"/>
+    <circle cx="50" cy="38" r="5" fill="#831843"/>
+    <text x="50" y="66" font-family="sans-serif" font-weight="800" font-size="8" fill="#ffffff" text-anchor="middle">BOSTON</text>
+    <text x="50" y="76" font-family="sans-serif" font-weight="800" font-size="7" fill="#f472b6" text-anchor="middle">DONUTS</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_10"><rect x="612.5" y="192.0" width="38.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f59e0b" stroke-width="0.9" /><svg x="614.5" y="193.5" width="34.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0284c7"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="2">CEYO</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_11"><rect x="708.1" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="710.1" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0284c7"/>
+    <rect x="36" y="28" width="12" height="12" rx="2" fill="#ffffff"/>
+    <rect x="52" y="28" width="12" height="12" rx="2" fill="#ffffff"/>
+    <rect x="36" y="44" width="12" height="12" rx="2" fill="#ffffff"/>
+    <rect x="52" y="44" width="12" height="12" rx="2" fill="#ffffff"/>
+    <text x="50" y="74" font-family="sans-serif" font-weight="900" font-size="8" fill="#ffffff" text-anchor="middle" letter-spacing="1">COLUMBIA</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_12"><rect x="748.8" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="750.8" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#15803d"/>
+    <text x="50" y="54" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle">ÇİĞKÖFTEM</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_13"><rect x="789.3" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="791.3" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="52" font-family="sans-serif" font-weight="900" font-size="20" fill="#eab308" text-anchor="middle">EMO</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="700" font-size="8" fill="#ffffff" text-anchor="middle" letter-spacing="2">OPTİK</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_14"><rect x="830.1" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#4ade80" stroke-width="0.9" /><svg x="832.1" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#1e3a8a"/>
+    <polygon points="35,26 50,44 65,26" fill="#ef4444"/>
+    <text x="50" y="62" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle" letter-spacing="1">ENDER</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="800" font-size="8" fill="#ef4444" text-anchor="middle" letter-spacing="2">SPOR</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_15"><rect x="870.8" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="872.8" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <text x="50" y="52" font-family="sans-serif" font-weight="900" font-size="26" fill="#ffffff" text-anchor="middle">ets</text>
+    <text x="50" y="72" font-family="sans-serif" font-weight="800" font-size="9" fill="#ffffff" text-anchor="middle" letter-spacing="2">TUR</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_16"><rect x="911.3" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#ec4899" stroke-width="0.9" /><svg x="913.3" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#9333ea"/>
+    <text x="50" y="60" font-family="sans-serif" font-weight="900" font-size="26" fill="#ffffff" text-anchor="middle" letter-spacing="1">eve</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_17"><rect x="952.1" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f59e0b" stroke-width="0.9" /><svg x="954.1" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#ea580c"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="24" fill="#ffffff" text-anchor="middle">FLO</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_18"><rect x="992.8" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f59e0b" stroke-width="0.9" /><svg x="994.8" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#eab308"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="15" fill="#000000" text-anchor="middle" letter-spacing="2">GREYDER</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_19"><rect x="1033.3" y="192.0" width="32.6" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#4ade80" stroke-width="0.9" /><svg x="1035.3" y="193.5" width="28.6" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#a30000"/>
+    <circle cx="50" cy="40" r="18" fill="#fdb913"/>
+    <text x="50" y="47" font-family="'Times New Roman', serif" font-weight="900" font-size="18" fill="#a30000" text-anchor="middle">GS</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="2">STORE</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_20"><rect x="1156.0" y="192.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="1158.0" y="193.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#eab308"/>
+    <rect x="15" y="32" width="70" height="34" rx="8" fill="#dc2626"/>
+    <text x="50" y="54" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">HARIBO</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_21"><rect x="112.0" y="387.4" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="114.0" y="388.9" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0d9488"/>
+    <text x="50" y="48" font-family="sans-serif" font-weight="900" font-size="13" fill="#ffffff" text-anchor="middle">İDİL</text>
+    <text x="50" y="66" font-family="sans-serif" font-weight="700" font-size="9" fill="#99f6e4" text-anchor="middle">BABY</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_22"><rect x="112.0" y="514.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="114.0" y="515.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0284c7"/>
+    <circle cx="50" cy="38" r="14" fill="#f59e0b"/>
+    <text x="50" y="45" font-family="sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">j</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle">jolly</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_23"><rect x="112.0" y="640.6" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#a855f7" stroke-width="0.9" /><svg x="114.0" y="642.1" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="58" font-family="'Times New Roman', serif" font-weight="900" font-size="18" fill="#eab308" text-anchor="middle" letter-spacing="2">JUMBO</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_24"><rect x="227.5" y="362.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#a855f7" stroke-width="0.9" /><svg x="229.5" y="363.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#065f46"/>
+    <text x="50" y="56" font-family="'Times New Roman', serif" font-weight="900" font-size="16" fill="#fef08a" text-anchor="middle" letter-spacing="1">KERVAN</text>
+    <text x="50" y="70" font-family="sans-serif" font-weight="600" font-size="6.5" fill="#ffffff" text-anchor="middle" letter-spacing="2">HOME</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_25"><rect x="292.5" y="362.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f59e0b" stroke-width="0.9" /><svg x="294.5" y="363.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#14532d"/>
+    <text x="50" y="52" font-family="'Times New Roman', serif" font-weight="900" font-size="15" fill="#ffffff" text-anchor="middle" letter-spacing="1">KİFİDİS</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="600" font-size="7" fill="#86efac" text-anchor="middle" letter-spacing="2">EST. 1919</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_26"><rect x="403.5" y="362.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#a855f7" stroke-width="0.9" /><svg x="405.5" y="363.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#b91c1c"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">KORKMAZ</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_27"><rect x="480.5" y="362.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="482.5" y="363.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="17" fill="#ffffff" text-anchor="middle" letter-spacing="2">KOTON</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_29"><rect x="918.0" y="362.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#a855f7" stroke-width="0.9" /><svg x="920.0" y="363.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0f766e"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">Linens</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_30"><rect x="227.5" y="474.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#ec4899" stroke-width="0.9" /><svg x="229.5" y="475.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#171717"/>
+    <text x="50" y="50" font-family="'Times New Roman', serif" font-weight="900" font-size="22" fill="#eab308" text-anchor="middle">MAD</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="700" font-size="7" fill="#ffffff" text-anchor="middle" letter-spacing="2">PARFUMEUR</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_31"><rect x="292.5" y="474.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="294.5" y="475.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#78350f"/>
+    <circle cx="50" cy="36" r="14" fill="#d97706"/>
+    <text x="50" y="42" font-family="'Times New Roman', serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle">MP</text>
+    <text x="50" y="64" font-family="sans-serif" font-weight="800" font-size="7.5" fill="#ffffff" text-anchor="middle">MALATYA PAZARI</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="700" font-size="6.5" fill="#fde68a" text-anchor="middle">PALANCI</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_33"><rect x="480.5" y="474.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#4ade80" stroke-width="0.9" /><svg x="482.5" y="475.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#000000"/>
+    <path d="M22 56 C34 62, 54 62, 78 30 C66 48, 48 56, 32 50 C26 48, 22 52, 22 56 Z" fill="#ffffff"/>
+    <text x="50" y="78" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">NIKE</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_34"><rect x="836.0" y="474.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f59e0b" stroke-width="0.9" /><svg x="838.0" y="475.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#2563eb"/>
+    <text x="50" y="56" font-family="sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">ORTOPEDIA</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_35"><rect x="918.0" y="474.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="920.0" y="475.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0284c7"/>
+    <text x="50" y="54" font-family="sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle">panço</text>
+    <path d="M36 62 Q50 72 64 62" stroke="#ea580c" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_36"><rect x="227.4" y="626.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="229.4" y="627.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#db2777"/>
+    <text x="50" y="60" font-family="sans-serif" font-weight="900" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="1">penti</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_37"><rect x="292.2" y="626.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#d97706" stroke-width="0.9" /><svg x="294.2" y="627.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#312e81"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle" letter-spacing="2">QUUM</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_38"><rect x="357.0" y="626.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#818cf8" stroke-width="0.9" /><svg x="359.0" y="627.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#034ea2"/>
+    <ellipse cx="50" cy="50" rx="38" ry="20" fill="none" stroke="#ffffff" stroke-width="2" transform="rotate(-12 50 50)"/>
+    <text x="50" y="55" font-family="sans-serif" font-weight="900" font-size="11.5" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">SAMSUNG</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_39"><rect x="421.8" y="626.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#2dd4bf" stroke-width="0.9" /><svg x="423.8" y="627.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#1e293b"/>
+    <text x="50" y="56" font-family="sans-serif" font-weight="900" font-size="18" fill="#38bdf8" text-anchor="middle" letter-spacing="1.5">SETUR</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_40"><rect x="486.6" y="626.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#c084fc" stroke-width="0.9" /><svg x="488.6" y="627.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="60" font-family="'Times New Roman', serif" font-weight="900" font-style="italic" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="3">ELLE</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_41"><rect x="592.9" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#ec4899" stroke-width="0.9" /><svg x="594.9" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#18181b"/>
+    <text x="50" y="46" font-family="sans-serif" font-weight="800" font-size="9" fill="#eab308" text-anchor="middle">ŞENOL</text>
+    <text x="50" y="62" font-family="sans-serif" font-weight="700" font-size="7" fill="#ffffff" text-anchor="middle">ZEYTİNOĞLU</text>
+    <text x="50" y="74" font-family="sans-serif" font-weight="600" font-size="5.5" fill="#a1a1aa" text-anchor="middle">KUAFÖR</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_42"><rect x="641.0" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#ec4899" stroke-width="0.9" /><svg x="643.0" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#f43f5e"/>
+    <text x="50" y="46" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffffff" text-anchor="middle">TAKMA</text>
+    <text x="50" y="66" font-family="sans-serif" font-weight="900" font-size="10" fill="#ffe4e6" text-anchor="middle">TAKMA</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_43"><rect x="689.2" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#a855f7" stroke-width="0.9" /><svg x="691.2" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0b1c3e"/>
+    <path d="M50 25 C45 32, 55 38, 50 45 C48 38, 42 32, 50 25 Z" fill="#eab308"/>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle">Tchibo</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_44"><rect x="737.5" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#a855f7" stroke-width="0.9" /><svg x="739.5" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#e11d48"/>
+    <text x="50" y="60" font-family="sans-serif" font-weight="900" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="1">Tefal</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_45"><rect x="785.6" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#818cf8" stroke-width="0.9" /><svg x="787.6" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#f97316"/>
+    <circle cx="50" cy="38" r="14" fill="#00205b"/>
+    <circle cx="50" cy="38" r="7" fill="#f97316"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="12" fill="#00205b" text-anchor="middle" letter-spacing="1">TEKNOSA</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_46"><rect x="833.9" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="835.9" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#dc2626"/>
+    <path d="M48 28 A16 16 0 0 1 64 44 L64 56 A4 4 0 0 1 56 56 L56 44 A8 8 0 0 0 48 36 Z M54 22 A22 22 0 0 1 76 44 L76 56 A4 4 0 0 1 68 56 L68 44 A14 14 0 0 0 54 30 Z" fill="#ffffff"/>
+    <text x="50" y="72" font-family="sans-serif" font-weight="900" font-size="7.5" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">THE NORTH FACE</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_47"><rect x="882.0" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#c084fc" stroke-width="0.9" /><svg x="884.0" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#e11d48"/>
+    <text x="50" y="48" font-family="sans-serif" font-weight="900" font-size="20" fill="#facc15" text-anchor="middle">TOYZZ</text>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">SHOP</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_48"><rect x="930.2" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#818cf8" stroke-width="0.9" /><svg x="932.2" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0f224a"/>
+    <circle cx="42" cy="40" r="8" fill="#fec325"/>
+    <circle cx="58" cy="40" r="8" fill="#fec325"/>
+    <text x="50" y="70" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="1">TURKCELL</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_49"><rect x="978.5" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="980.5" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#d97706"/>
+    <text x="50" y="48" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle">WAFFLE</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="900" font-size="14" fill="#451a03" text-anchor="middle">STOP</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_50"><rect x="1026.7" y="626.0" width="38.5" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#ec4899" stroke-width="0.9" /><svg x="1028.7" y="627.5" width="34.5" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#0f766e"/>
+    <text x="50" y="58" font-family="sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1">watsons</text>
+  </svg></g>
+    <g class="svg-store-brand-badge" data-store-id="store_3_51"><rect x="1156.0" y="626.0" width="50.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="0.92" stroke="#f472b6" stroke-width="0.9" /><svg x="1158.0" y="627.5" width="46.0" height="23.0" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" rx="20" fill="#451a03"/>
+    <text x="50" y="52" font-family="'Times New Roman', serif" font-weight="800" font-size="10" fill="#fed7aa" text-anchor="middle">YAĞCIOĞLU</text>
+    <text x="50" y="68" font-family="sans-serif" font-weight="600" font-size="7" fill="#ffffff" text-anchor="middle" letter-spacing="1">PASTANESİ</text>
+  </svg></g>
   </g>
 </svg>
