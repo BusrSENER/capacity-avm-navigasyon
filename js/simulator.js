@@ -326,37 +326,47 @@ class CartSimulator {
   handleFloorTransition(fromNode, toNode) {
     this.pause();
 
-    // 1. Ekranın merkezinde yarı şeffaf cam (glassmorphism) kat geçiş kartını göster
-    this.showFloorTransitionCard(fromNode, toNode);
+    // Ardışık yürüyen merdiven / asansör adımlarını (örn: Z -> B1 -> B2 -> B3) tespit et ve tek seferde hedef kata geç
+    let finalIdx = this.currentIndex + 1;
+    while (
+      finalIdx + 1 < this.pathNodes.length &&
+      this.pathNodes[finalIdx].floor !== this.pathNodes[finalIdx + 1].floor
+    ) {
+      finalIdx++;
+    }
+    const finalNode = this.pathNodes[finalIdx] || toNode;
 
-    // 2. Bildirim süresi (600ms), ardından yeni kata geç
+    // 1. Ekranın merkezinde yarı şeffaf cam (glassmorphism) kat geçiş kartını göster
+    this.showFloorTransitionCard(fromNode, finalNode);
+
+    // 2. Bildirim süresi (hız çarpanına göre ölçekli), ardından hedef kata geç
+    const waitMs = Math.max(250, Math.round(550 / Math.max(1, this.speed)));
     this.transitionTimer = setTimeout(() => {
-      this.currentIndex++;
+      this.currentIndex = finalIdx;
       this.subProgress = 0;
 
       // 3. Yeni katın haritası (SVG) yüklenir
-      this.map.loadFloor(toNode.floor).then(() => {
+      this.map.loadFloor(finalNode.floor).then(() => {
         // Sepet yeni kattaki karşılık gelen kapı/aktarma noktasına yerleşir
-        this.updateCartPosition(toNode.x, toNode.y, 0, toNode.floor);
+        this.updateCartPosition(finalNode.x, finalNode.y, 0, finalNode.floor);
 
         // Kat seçici butonları (Floor Selector) ve UI otomatik olarak yeni kata kaysın
         if (this.onFloorChange) {
-          this.onFloorChange(toNode.floor);
+          this.onFloorChange(finalNode.floor);
         }
 
-        // Harita sert sıfırlanmaz, tüm binaya zoom-out yapmaz;
         // Doğrudan sepetin çıktığı kapı/aktarma koordinatına TEK ve akıcı bir flyTo hareketiyle odaklanır
         const targetScale = Math.max(this.map.scale, 1.35);
-        const flyDuration = 400;
-        this.map.flyTo(toNode.x, toNode.y, targetScale, flyDuration);
+        const flyDuration = Math.max(200, Math.round(380 / Math.max(1, this.speed)));
+        this.map.flyTo(finalNode.x, finalNode.y, targetScale, flyDuration);
 
         // Sepet yerleştikten ve flyTo animasyonu tamamen bittikten sonra simülasyon devam eder (kamera titremesini önler)
         this.transitionTimer = setTimeout(() => {
           this.hideFloorTransitionCard();
           this.play();
-        }, flyDuration + 50);
+        }, flyDuration + 40);
       });
-    }, 600);
+    }, waitMs);
   }
 
   updateCartPosition(x, y, angle, floor) {

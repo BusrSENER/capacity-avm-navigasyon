@@ -74,6 +74,36 @@ class Pov3DEngine {
       opacity: 0.24
     };
 
+    // Hafif Yansımalı Epoksi AVM Zemin Materyali (MeshStandardMaterial, roughness: 0.35, metalness: 0.15)
+    this.floorMaterial = {
+      type: 'MeshStandardMaterial',
+      roughness: 0.35,
+      metalness: 0.15,
+      color: '#e2e8f0',
+      reflectiveEpoxy: true
+    };
+
+    // Antrasit Tavan Mesh ve Lineer Tavan Işık Çizgileri Tanımı (Tavan Boşluğu Kapatma)
+    this.ceilingMesh = {
+      type: 'MeshStandardMaterial',
+      color: '#1e293b',
+      roughness: 0.55,
+      metalness: 0.20,
+      closedVoid: true,
+      hasLinearLightStrips: true
+    };
+
+    // Mağaza Ön Cephe Zemin Süpürgeliği ve Üst Profil Şeridi Tanımı
+    this.storefrontTrim = {
+      baseboardHeight: 2.8,
+      upperProfileHeight: 3.2,
+      baseboardColor: '#1e293b',
+      upperProfileColor: '#0f172a'
+    };
+
+    // Mükerrer Varış Anonsu Koruması
+    this.hasAnnouncedArrival = false;
+
     // Drag / Look-around durumu
     this.isDragging = false;
     this.dragMoved = false;
@@ -796,6 +826,8 @@ class Pov3DEngine {
     this.startStore = startStore;
     this.targetStore = targetStore;
     this.isFreeRoam = false;
+    this.hasAnnouncedArrival = false;
+    window.hasAnnouncedArrival = false;
     this.segIndex = 0;
     this.segProgress = 0;
     this.totalProgressPct = 0;
@@ -926,7 +958,7 @@ class Pov3DEngine {
   }
 
   toggleWalk() {
-    // Eğer aktif bir rota yoksa, "▶️ Otomatik Gez" koridor boyunca serbest adım atar!
+    // Eğer aktif bir rota yoksa, koridor boyunca serbest adım atar
     if (!this.route || !this.route.pathNodes || this.route.pathNodes.length < 2) {
       this.stepAlongCorridor(1);
       return;
@@ -949,6 +981,8 @@ class Pov3DEngine {
       clearTimeout(window.arrivalResetTimer);
       window.arrivalResetTimer = null;
     }
+    this.hasAnnouncedArrival = false;
+    window.hasAnnouncedArrival = false;
     this.segIndex = 0;
     this.segProgress = 0;
     this.totalProgressPct = 0;
@@ -985,22 +1019,22 @@ class Pov3DEngine {
     const badge = document.getElementById('pov-hud-mode-badge');
     if (badge) {
       if (this.route && this.targetStore) {
-        badge.innerHTML = '<span>👁️</span><span>Gözümden 3B • Canlı Rota</span>';
+        badge.textContent = '3B Canlı Rota Rehberi';
       } else {
-        badge.innerHTML = '<span>🧭</span><span>3B Sokak Görünümü • Serbest Gezinti</span>';
+        badge.textContent = '3B Sokak Görünümü • Serbest Gezinti';
       }
     }
     if (!btn) return;
     if (!this.route || !this.route.pathNodes || this.route.pathNodes.length < 2) {
-      btn.innerHTML = '<span>🚶</span><span>Koridorda İlerle</span>';
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg><span>Koridorda İlerle</span>`;
       return;
     }
     if (this.isWalking) {
-      btn.innerHTML = '<span>⏸️</span><span>Duraklat</span>';
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="4" height="16" x="6" y="4"/><rect width="4" height="16" x="14" y="4"/></svg><span>Duraklat</span>`;
     } else if (this.totalProgressPct >= 100) {
-      btn.innerHTML = '<span>✅</span><span>Varış Tamamlandı • 2B\'ye Dön</span>';
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>2B Haritaya Dön</span>`;
     } else {
-      btn.innerHTML = '<span>▶️</span><span>Rotada Yürü</span>';
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg><span>Rota Önizleme</span>`;
     }
   }
 
@@ -1031,13 +1065,14 @@ class Pov3DEngine {
 
       if (this.floorTransitionState.timer >= this.floorTransitionState.duration) {
         const nextFloor = this.floorTransitionState.toFloor;
+        const targetSegIdx = this.floorTransitionState.targetSegIndex;
         this.currentFloor = nextFloor;
         this.floorTransitionState = null;
         this.camZ = 26;
         if (this.isWalking && this.route && this.route.pathNodes) {
-          this.segIndex++;
-          this.segProgress = 0;
           const nodes = this.route.pathNodes;
+          this.segIndex = typeof targetSegIdx === 'number' ? targetSegIdx : (this.segIndex + 1);
+          this.segProgress = 0;
           if (this.segIndex < nodes.length) {
             this.camX = nodes[this.segIndex].x;
             this.camY = nodes[this.segIndex].y;
@@ -1093,27 +1128,35 @@ class Pov3DEngine {
       }
       this._syncPlayPauseButton();
       this._updateHUDTexts();
-      if (window.updateLiveNavHUD) window.updateLiveNavHUD(-1, 100);
+      if (window.updateLiveNavHUD && !this.hasAnnouncedArrival && !window.hasAnnouncedArrival) {
+        window.updateLiveNavHUD(-1, 100);
+      }
       return;
     }
 
     const u = nodes[this.segIndex];
     const v = nodes[this.segIndex + 1];
 
-    // Kat değişimi düğümü mü?
+    // Kat değişimi düğümü mü? Ardışık yürüyen merdiven / asansör adımlarını (örn: Z -> B1 -> B2 -> B3) tek geçişte konsolide et;
+    // ara katlar için ayrı ses üretme veya kekeleme yapma!
     if (u.floor !== v.floor) {
       const isElev = v.edgeType === 'elevator' || v.portalKind === 'elevator';
+      let finalFloorSegIdx = this.segIndex + 1;
+      while (
+        finalFloorSegIdx + 1 < nodes.length &&
+        nodes[finalFloorSegIdx].floor !== nodes[finalFloorSegIdx + 1].floor
+      ) {
+        finalFloorSegIdx++;
+      }
+      const finalTargetFloor = nodes[finalFloorSegIdx].floor;
       this.floorTransitionState = {
         fromFloor: u.floor,
-        toFloor: v.floor,
+        toFloor: finalTargetFloor,
+        targetSegIndex: finalFloorSegIdx,
         timer: 0,
-        duration: 1.8,
+        duration: 1.5,
         portalType: isElev ? 'elevator' : 'escalator'
       };
-      const flLabel = this.mallData.floors[v.floor]?.label || `${v.floor}. Kat`;
-      if (window.speakNavigationText) {
-        window.speakNavigationText(`${isElev ? 'Asansör' : 'Yürüyen merdiven'} ile ${flLabel} katına ${v.floor > u.floor ? 'çıkılıyor' : 'iniliyor'}.`);
-      }
       return;
     }
 
@@ -1175,14 +1218,8 @@ class Pov3DEngine {
         if (hudPct) hudPct.textContent = '100%';
         this._syncPlayPauseButton();
         this._updateHUDTexts();
-        if (window.updateLiveNavHUD) window.updateLiveNavHUD(-1, 100);
-        const qrModal = document.getElementById('route-qr-modal');
-        const isQrOpen = qrModal && !qrModal.classList.contains('hidden');
-        const isServiceTarget = (typeof window.isServiceOrAmenityItem === 'function') && window.isServiceOrAmenityItem(this.targetStore);
-        if (window.showToast && !isQrOpen) {
-          const targetLabel = this.targetStore ? this.targetStore.name : 'Hedef';
-          const noun = isServiceTarget ? 'noktasına' : 'mağazasına';
-          window.showToast(`🎉 ${targetLabel} ${noun} ulaştınız! Tamamlanan rota haritada işaretlendi.`, 'success');
+        if (window.updateLiveNavHUD && !this.hasAnnouncedArrival && !window.hasAnnouncedArrival) {
+          window.updateLiveNavHUD(-1, 100);
         }
         const reached = this.targetStore;
         if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
@@ -1330,14 +1367,20 @@ class Pov3DEngine {
     const zoneName = this._getCorridorZoneName(this.camX, this.camY);
 
     if (this.route && this.targetStore) {
+      const isServiceTarget = (typeof window.isServiceOrAmenityItem === 'function') && window.isServiceOrAmenityItem(this.targetStore);
+      const cleanStart = this.startStore ? this.startStore.name.replace(/^📍\s*/, '') : 'Başlangıç';
+      const cleanTarget = (this.targetStore.name || '').replace(/^📍\s*/, '');
+
       if (modeBadgeEl) {
-        modeBadgeEl.textContent = '🧭 CANLI 3B ROTA REHBERİ';
+        modeBadgeEl.textContent = '3B CANLI ROTA REHBERİ';
       }
       if (titleEl) {
-        titleEl.textContent = `👁️ ${this.startStore ? this.startStore.name.replace(/^📍\s*/, '') : 'Başlangıç'} ➔ ${this.targetStore.name} (${floorLabel})`;
+        titleEl.textContent = `${cleanStart} ➔ ${cleanTarget} (${floorLabel})`;
       }
       if (distEl) {
-        distEl.textContent = this.totalProgressPct >= 100 ? '🎉 Vardınız!' : `${this.remainingMeters} m kaldı`;
+        distEl.textContent = this.totalProgressPct >= 100
+          ? (isServiceTarget ? 'Noktadasınız' : 'Vardınız')
+          : `${this.remainingMeters} m kaldı`;
       }
       if (progressFill) {
         progressFill.style.width = `${this.totalProgressPct}%`;
@@ -1346,7 +1389,9 @@ class Pov3DEngine {
       // Mevcut manevra metni
       if (stepEl && this.route.instructions && this.route.instructions.length > 0) {
         if (this.totalProgressPct >= 100) {
-          stepEl.textContent = `🎉 Hedefe Ulaştınız! ${this.targetStore.name} tam karşınızda.`;
+          stepEl.textContent = isServiceTarget
+            ? `${cleanTarget} noktasındasınız.`
+            : `${cleanTarget} mağazası önündesiniz.`;
         } else {
           let activeIns = this.route.instructions[0];
           for (const ins of this.route.instructions) {
@@ -1354,36 +1399,38 @@ class Pov3DEngine {
               activeIns = ins;
             }
           }
-          stepEl.textContent = `${activeIns.emoji || '⬆️'} ${activeIns.text}`;
+          stepEl.textContent = activeIns.text;
         }
       }
     } else {
       if (modeBadgeEl) {
-        modeBadgeEl.textContent = '🌐 360° SOKAK GÖRÜNÜMÜ • SERBEST GEZİNTİ';
+        modeBadgeEl.textContent = '360° SOKAK GÖRÜNÜMÜ • SERBEST GEZİNTİ';
       }
       if (titleEl) {
         if (this.startStore) {
-          titleEl.textContent = `🌐 ${floorLabel} • ${this.startStore.name.replace(/^📍\s*/, '')} Önü`;
+          titleEl.textContent = `${floorLabel} • ${this.startStore.name.replace(/^📍\s*/, '')}`;
         } else {
-          titleEl.textContent = `🌐 ${floorLabel} • ${zoneName}`;
+          titleEl.textContent = `${floorLabel} • ${zoneName}`;
         }
       }
       if (stepEl) {
-        stepEl.textContent = '👆 Koridordaki mavi halkalara dokunarak ilerleyin, mağaza vitrinlerine tıklayarak inceleyin veya hedef seçin.';
+        stepEl.textContent = 'Koridordaki mavi halkalara dokunarak ilerleyin veya mağaza vitrinlerine tıklayarak hedef seçin.';
       }
       if (distEl) distEl.textContent = `${floorLabel} • 360°`;
       if (progressFill) progressFill.style.width = '100%';
     }
 
     if (passingBadge && passingText) {
-      if (this.route && this.totalProgressPct >= 95 && this.targetStore) {
+      if (this.totalProgressPct >= 100) {
+        passingBadge.classList.add('hidden');
+      } else if (this.route && this.totalProgressPct >= 95 && this.targetStore) {
         const s = this.targetStore;
         if (passingLogoEl && typeof window.getStoreLogo === 'function') {
           passingLogoEl.innerHTML = window.getStoreLogo(s, 18);
           passingLogoEl.classList.remove('hidden');
         }
         const unitStr = s.unit ? ` (${s.unit})` : '';
-        passingText.textContent = `🎯 Hedefiniz Tam Karşınızda: ${s.name}${unitStr}`;
+        passingText.textContent = `Hedefiniz Karşınızda: ${s.name}${unitStr}`;
         passingBadge.classList.remove('hidden');
       } else if (this.currentlyPassingStore) {
         const s = this.currentlyPassingStore;
@@ -1392,7 +1439,7 @@ class Pov3DEngine {
           passingLogoEl.classList.remove('hidden');
         }
         const unitStr = s.unit ? ` (${s.unit})` : '';
-        passingText.textContent = `👀 ${this.currentlyPassingSide || 'Yanınızda'}: ${s.name}${unitStr} (Vitrine tıkla ➔ Rota)`;
+        passingText.textContent = `${this.currentlyPassingSide || 'Yanınızda'}: ${s.name}${unitStr}`;
         passingBadge.classList.remove('hidden');
       } else if (this.route && this.route.enRouteStoreNames && this.route.enRouteStoreNames.length > 0) {
         const floorStores = this.mallData?.floors[this.currentFloor]?.stores || [];
@@ -1401,7 +1448,7 @@ class Pov3DEngine {
           passingLogoEl.innerHTML = window.getStoreLogo(firstEnRouteStore, 18);
           passingLogoEl.classList.remove('hidden');
         }
-        passingText.textContent = `👀 Rota Üzerindeki Mağazalar: ${this.route.enRouteStoreNames.slice(0, 4).join(' ➔ ')}`;
+        passingText.textContent = `Rota Üzerindeki Mağazalar: ${this.route.enRouteStoreNames.slice(0, 4).join(' ➔ ')}`;
         passingBadge.classList.remove('hidden');
       } else {
         passingBadge.classList.add('hidden');
@@ -1519,44 +1566,54 @@ class Pov3DEngine {
     this.opaqueWallSegments = [];
     ctx.clearRect(0, 0, W, H);
 
-    // 1. GERÇEK CAPACITY AVM MİMARİ BEJ/KREM ALÇIPAN TAVAN & GÖMME ANTRASİT BAFFLE LED KANALLARI (0 .. horizonY)
+    // 1. ANTRASİT TAVAN MESH'İ VE LİNEER TAVAN IŞIK ÇİZGİLERİ (Tavan Boşluğu Kapatma: 0 .. horizonY)
     const ceilGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
-    ceilGrad.addColorStop(0, '#f5efe4');
-    ceilGrad.addColorStop(0.42, '#ede3d2');
-    ceilGrad.addColorStop(0.78, '#e2d4be');
-    ceilGrad.addColorStop(1, '#d2c0a5');
+    ceilGrad.addColorStop(0, '#182232');
+    ceilGrad.addColorStop(0.45, '#1e293b');
+    ceilGrad.addColorStop(0.82, '#283548');
+    ceilGrad.addColorStop(1, '#334155');
     ctx.fillStyle = ceilGrad;
     ctx.fillRect(0, 0, W, horizonY + 2);
 
-    // Tavan sıcak günışığı / LED homojen aydınlatma ışıltısı
-    const skyGlow = ctx.createRadialGradient(cx, horizonY * 0.30, 10, cx, horizonY * 0.40, W * 0.65);
-    skyGlow.addColorStop(0, 'rgba(255, 251, 235, 0.55)');
-    skyGlow.addColorStop(0.55, 'rgba(254, 243, 199, 0.25)');
-    skyGlow.addColorStop(1, 'rgba(214, 196, 172, 0)');
+    // Antrasit tavan üzerinde homojen lineer LED ambiyans ışıltısı
+    const skyGlow = ctx.createRadialGradient(cx, horizonY * 0.35, 16, cx, horizonY * 0.45, W * 0.68);
+    skyGlow.addColorStop(0, 'rgba(226, 232, 240, 0.20)');
+    skyGlow.addColorStop(0.55, 'rgba(148, 163, 184, 0.10)');
+    skyGlow.addColorStop(1, 'rgba(30, 41, 59, 0)');
     ctx.fillStyle = skyGlow;
     ctx.fillRect(0, 0, W, horizonY);
 
-    // 2. GERÇEK CAPACITY AVM KREM & KARAMEL ŞERİTLİ CILALI TRAVERTEN MERMER ZEMİN (horizonY .. H)
+    // 2. HAFİF YANSIMALI EPOKSİ AVM ZEMİN MATERYALİ (MeshStandardMaterial, roughness: 0.35, metalness: 0.15)
+    const isParkingFloor = this.currentFloor <= 3;
     const floorGrad = ctx.createLinearGradient(0, horizonY, 0, H);
-    floorGrad.addColorStop(0, '#cdb89d');
-    floorGrad.addColorStop(0.20, '#dfd0ba');
-    floorGrad.addColorStop(0.58, '#eee4d5');
-    floorGrad.addColorStop(1, '#f7f2ea');
+    if (isParkingFloor) {
+      floorGrad.addColorStop(0, '#475569');
+      floorGrad.addColorStop(0.25, '#64748b');
+      floorGrad.addColorStop(0.65, '#94a3b8');
+      floorGrad.addColorStop(1, '#cbd5e1');
+    } else {
+      floorGrad.addColorStop(0, '#cbd5e1');
+      floorGrad.addColorStop(0.22, '#dde5ee');
+      floorGrad.addColorStop(0.60, '#eaeff5');
+      floorGrad.addColorStop(1, '#f4f7fa');
+    }
     ctx.fillStyle = floorGrad;
     ctx.fillRect(0, horizonY, W, H - horizonY);
 
-    // Mermer zemin üzerinde sıcak mağaza & tavan LED yansıması
-    const floorReflect = ctx.createLinearGradient(cx - W * 0.32, horizonY, cx + W * 0.32, horizonY);
-    floorReflect.addColorStop(0, 'rgba(255, 251, 235, 0)');
-    floorReflect.addColorStop(0.5, 'rgba(255, 251, 235, 0.38)');
-    floorReflect.addColorStop(1, 'rgba(255, 251, 235, 0)');
+    // Epoksi zemin üzerinde speküler tavan ışık yansıması (roughness: 0.35, metalness: 0.15)
+    const floorReflect = ctx.createLinearGradient(cx - W * 0.38, horizonY, cx + W * 0.38, horizonY);
+    floorReflect.addColorStop(0, 'rgba(255, 255, 255, 0)');
+    floorReflect.addColorStop(0.32, 'rgba(226, 232, 240, 0.18)');
+    floorReflect.addColorStop(0.5, 'rgba(255, 255, 255, 0.42)');
+    floorReflect.addColorStop(0.68, 'rgba(226, 232, 240, 0.18)');
+    floorReflect.addColorStop(1, 'rgba(255, 255, 255, 0)');
     ctx.fillStyle = floorReflect;
     ctx.fillRect(0, horizonY, W, H - horizonY);
 
-    // 3. 3B PERSPEKTİF TRAVERTEN MERMER KARO DERZLERİ, KARAMEL ZEMİN ŞERİTLERİ VE ANTRASİT GÖMME TAVAN BAFFLE LED PANELLERİ
+    // 3. 3B PERSPEKTİF EPOKSİ ZEMİN DERZLERİ, ANTRASİT TAVAN MESH Kirişleri VE LİNEER TAVAN IŞIK ÇİZGİLERİ
     ctx.save();
-    ctx.strokeStyle = 'rgba(140, 108, 76, 0.22)';
-    ctx.lineWidth = Math.max(1, W / 900);
+    ctx.strokeStyle = isParkingFloor ? 'rgba(226, 232, 240, 0.18)' : 'rgba(100, 116, 139, 0.18)';
+    ctx.lineWidth = Math.max(1, W / 920);
     const gridStep = 65;
     const minGX = Math.floor((this.camX - 650) / gridStep) * gridStep;
     const maxGX = Math.ceil((this.camX + 650) / gridStep) * gridStep;
@@ -1564,7 +1621,7 @@ class Pov3DEngine {
     const maxGY = Math.ceil((this.camY + 650) / gridStep) * gridStep;
 
     for (let gx = minGX; gx <= maxGX; gx += gridStep) {
-      // Zemin traverten mermer derzleri
+      // Epoksi zemin derzleri
       const c1 = this._worldToCamera(gx, minGY, 0, cosYaw, sinYaw);
       const c2 = this._worldToCamera(gx, maxGY, 0, cosYaw, sinYaw);
       const clipped = this._clipPolygonNear([c1, c2], 6);
@@ -1576,15 +1633,15 @@ class Pov3DEngine {
         ctx.stroke();
       }
 
-      // Alçıpan tavan akustik derz çizgileri (wz = 68)
+      // Antrasit tavan mesh panel derzleri (wz = 68)
       const t1 = this._worldToCamera(gx, minGY, 68, cosYaw, sinYaw);
       const t2 = this._worldToCamera(gx, maxGY, 68, cosYaw, sinYaw);
       const clippedT = this._clipPolygonNear([t1, t2], 8);
       if (clippedT.length === 2) {
         const pt = this._projectCamVerts(clippedT, cx, horizonY, fovScale);
         ctx.save();
-        ctx.strokeStyle = 'rgba(180, 160, 135, 0.28)';
-        ctx.lineWidth = Math.max(1, W / 900);
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+        ctx.lineWidth = Math.max(1, W / 920);
         ctx.beginPath();
         ctx.moveTo(pt[0].x, pt[0].y);
         ctx.lineTo(pt[1].x, pt[1].y);
@@ -1604,20 +1661,42 @@ class Pov3DEngine {
         ctx.lineTo(p[1].x, p[1].y);
         ctx.stroke();
       }
+
+      const t1 = this._worldToCamera(minGX, gy, 68, cosYaw, sinYaw);
+      const t2 = this._worldToCamera(maxGX, gy, 68, cosYaw, sinYaw);
+      const clippedT = this._clipPolygonNear([t1, t2], 8);
+      if (clippedT.length === 2) {
+        const pt = this._projectCamVerts(clippedT, cx, horizonY, fovScale);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.18)';
+        ctx.lineWidth = Math.max(1, W / 960);
+        ctx.beginPath();
+        ctx.moveTo(pt[0].x, pt[0].y);
+        ctx.lineTo(pt[1].x, pt[1].y);
+        ctx.stroke();
+        ctx.restore();
+      }
     }
 
-    // Capacity AVM Gerçek Fotoğrafındaki (`media_1791722602735.jpg`) Gömme Koyu Antrasit Izgaralı Tavan Kanalı + Lineer Beyaz LED Bantları
+    // Ana koridor aksları boyunca kesintisiz Lineer Tavan Işık Çizgileri ve Epoksi Zemin Yansıma Bantları
     const corridorAxesY = [310, 440, 570];
     for (const corrY of corridorAxesY) {
-      // Zemin karamel-kahve mermer bordür şeridi
+      // Epoksi zemin üzerinde ince metalik kılavuz şerit + speküler tavan LED yansıması
       const b1 = this._worldToCamera(140, corrY, 0.2, cosYaw, sinYaw);
       const b2 = this._worldToCamera(1260, corrY, 0.2, cosYaw, sinYaw);
       const bClip = this._clipPolygonNear([b1, b2], 6);
       if (bClip.length === 2) {
         const pb = this._projectCamVerts(bClip, cx, horizonY, fovScale);
         ctx.save();
-        ctx.strokeStyle = 'rgba(154, 104, 62, 0.34)';
-        ctx.lineWidth = Math.max(2.5, W / 420);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.48)';
+        ctx.lineWidth = Math.max(5.0, W / 240);
+        ctx.beginPath();
+        ctx.moveTo(pb[0].x, pb[0].y);
+        ctx.lineTo(pb[1].x, pb[1].y);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(100, 116, 139, 0.28)';
+        ctx.lineWidth = Math.max(1.6, W / 580);
         ctx.beginPath();
         ctx.moveTo(pb[0].x, pb[0].y);
         ctx.lineTo(pb[1].x, pb[1].y);
@@ -1625,70 +1704,49 @@ class Pov3DEngine {
         ctx.restore();
       }
 
-      // Tavan gömme koyu antrasit baffle kanalı (wz = 67.5, genişlik 16 birim)
-      const chA1 = this._worldToCamera(140, corrY - 8, 67.5, cosYaw, sinYaw);
-      const chA2 = this._worldToCamera(1260, corrY - 8, 67.5, cosYaw, sinYaw);
-      const chB2 = this._worldToCamera(1260, corrY + 8, 67.5, cosYaw, sinYaw);
-      const chB1 = this._worldToCamera(140, corrY + 8, 67.5, cosYaw, sinYaw);
-      const chClip = this._clipPolygonNear([chA1, chA2, chB2, chB1], 8);
-      if (chClip.length >= 3) {
-        const pch = this._projectCamVerts(chClip, cx, horizonY, fovScale);
-        ctx.save();
-        ctx.fillStyle = '#27272a';
-        ctx.strokeStyle = '#a89984';
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(pch[0].x, pch[0].y);
-        for (let k = 1; k < pch.length; k++) ctx.lineTo(pch[k].x, pch[k].y);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-      }
+      // Antrasit tavan üzerinde çift paralel Lineer LED Işık Çizgisi (wz = 67.4) - Zifiri karanlık yarık olmadan bütünleşik!
+      for (const offsetY of [-4.5, 4.5]) {
+        const l1 = this._worldToCamera(140, corrY + offsetY, 67.4, cosYaw, sinYaw);
+        const l2 = this._worldToCamera(1260, corrY + offsetY, 67.4, cosYaw, sinYaw);
+        const lClip = this._clipPolygonNear([l1, l2], 8);
+        if (lClip.length === 2) {
+          const pl = this._projectCamVerts(lClip, cx, horizonY, fovScale);
+          ctx.save();
+          ctx.strokeStyle = 'rgba(186, 230, 253, 0.32)';
+          ctx.lineWidth = Math.max(4.5, W / 260);
+          ctx.beginPath();
+          ctx.moveTo(pl[0].x, pl[0].y);
+          ctx.lineTo(pl[1].x, pl[1].y);
+          ctx.stroke();
 
-      // Gömme kanal içindeki parlak beyaz lineer LED armatür şeritleri (wz = 67.0)
-      const l1 = this._worldToCamera(140, corrY, 67.0, cosYaw, sinYaw);
-      const l2 = this._worldToCamera(1260, corrY, 67.0, cosYaw, sinYaw);
-      const lClip = this._clipPolygonNear([l1, l2], 8);
-      if (lClip.length === 2) {
-        const pl = this._projectCamVerts(lClip, cx, horizonY, fovScale);
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
-        ctx.lineWidth = Math.max(2.2, W / 480);
-        ctx.beginPath();
-        ctx.moveTo(pl[0].x, pl[0].y);
-        ctx.lineTo(pl[1].x, pl[1].y);
-        ctx.stroke();
-        ctx.restore();
+          ctx.strokeStyle = 'rgba(248, 250, 252, 0.94)';
+          ctx.lineWidth = Math.max(1.8, W / 520);
+          ctx.beginPath();
+          ctx.moveTo(pl[0].x, pl[0].y);
+          ctx.lineTo(pl[1].x, pl[1].y);
+          ctx.stroke();
+          ctx.restore();
+        }
       }
     }
 
-    // Dikey (Kuzey-Güney) yan koridorlar için gömme antrasit tavan kanalı & lineer LED (x = 240, 430, 590, 760)
+    // Dikey (Kuzey-Güney) yan koridorlar için bütünleşik Lineer Tavan Işık Çizgileri (x = 240, 430, 590, 760)
     for (const corrX of [240, 430, 590, 760]) {
-      const chA1 = this._worldToCamera(corrX - 7, 160, 67.5, cosYaw, sinYaw);
-      const chA2 = this._worldToCamera(corrX - 7, 700, 67.5, cosYaw, sinYaw);
-      const chB2 = this._worldToCamera(corrX + 7, 700, 67.5, cosYaw, sinYaw);
-      const chB1 = this._worldToCamera(corrX + 7, 160, 67.5, cosYaw, sinYaw);
-      const chClip = this._clipPolygonNear([chA1, chA2, chB2, chB1], 8);
-      if (chClip.length >= 3) {
-        const pch = this._projectCamVerts(chClip, cx, horizonY, fovScale);
-        ctx.save();
-        ctx.fillStyle = '#27272a';
-        ctx.beginPath();
-        ctx.moveTo(pch[0].x, pch[0].y);
-        for (let k = 1; k < pch.length; k++) ctx.lineTo(pch[k].x, pch[k].y);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-      }
-      const l1 = this._worldToCamera(corrX, 160, 67.0, cosYaw, sinYaw);
-      const l2 = this._worldToCamera(corrX, 700, 67.0, cosYaw, sinYaw);
+      const l1 = this._worldToCamera(corrX, 160, 67.4, cosYaw, sinYaw);
+      const l2 = this._worldToCamera(corrX, 700, 67.4, cosYaw, sinYaw);
       const lClip = this._clipPolygonNear([l1, l2], 8);
       if (lClip.length === 2) {
         const pl = this._projectCamVerts(lClip, cx, horizonY, fovScale);
         ctx.save();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.90)';
-        ctx.lineWidth = Math.max(2.0, W / 520);
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.28)';
+        ctx.lineWidth = Math.max(4.0, W / 290);
+        ctx.beginPath();
+        ctx.moveTo(pl[0].x, pl[0].y);
+        ctx.lineTo(pl[1].x, pl[1].y);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(248, 250, 252, 0.90)';
+        ctx.lineWidth = Math.max(1.7, W / 560);
         ctx.beginPath();
         ctx.moveTo(pl[0].x, pl[0].y);
         ctx.lineTo(pl[1].x, pl[1].y);
@@ -1697,7 +1755,7 @@ class Pov3DEngine {
       }
     }
 
-    // Alçıpan Tavan Gömme Kare Mimari Downlight Spotları (wz = 68)
+    // Antrasit Tavan Gömme Lineer Mimari Downlight Armatürleri (wz = 68)
     for (let gx = minGX; gx <= maxGX; gx += gridStep) {
       for (let gy = minGY; gy <= maxGY; gy += gridStep) {
         const cSpot = this._worldToCamera(gx, gy, 68, cosYaw, sinYaw);
@@ -1705,13 +1763,13 @@ class Pov3DEngine {
           const sx = cx + (cSpot.ry / cSpot.rx) * fovScale;
           const sy = horizonY - (cSpot.rz / cSpot.rx) * fovScale;
           const rad = Math.max(2.0, (540 / cSpot.rx) * (W / 1150));
-          ctx.fillStyle = 'rgba(254, 243, 199, 0.45)';
-          ctx.fillRect(sx - rad * 1.8, sy - rad * 1.1, rad * 3.6, rad * 2.2);
-          ctx.fillStyle = '#ffffff';
-          ctx.strokeStyle = '#78716c';
+          ctx.fillStyle = 'rgba(186, 230, 253, 0.25)';
+          ctx.fillRect(sx - rad * 1.9, sy - rad * 0.9, rad * 3.8, rad * 1.8);
+          ctx.fillStyle = '#f8fafc';
+          ctx.strokeStyle = '#475569';
           ctx.lineWidth = 0.8;
-          ctx.fillRect(sx - rad * 1.1, sy - rad * 0.65, rad * 2.2, rad * 1.3);
-          ctx.strokeRect(sx - rad * 1.1, sy - rad * 0.65, rad * 2.2, rad * 1.3);
+          ctx.fillRect(sx - rad * 1.2, sy - rad * 0.55, rad * 2.4, rad * 1.1);
+          ctx.strokeRect(sx - rad * 1.2, sy - rad * 0.55, rad * 2.4, rad * 1.1);
         }
       }
     }
@@ -2173,10 +2231,16 @@ class Pov3DEngine {
         const u = nodes[i];
         const v = nodes[i + 1];
         if (u.floor === this.currentFloor && v.floor !== this.currentFloor) {
+          let finalV = v;
+          let j = i + 1;
+          while (j + 1 < nodes.length && nodes[j].floor !== nodes[j + 1].floor) {
+            j++;
+            finalV = nodes[j];
+          }
           const isElev = v.edgeType === 'elevator' || v.portalKind === 'elevator';
           const portalKind = isElev ? 'elevator' : 'escalator';
-          const goingUp = v.floor > u.floor;
-          const destLabel = this.mallData?.floors[v.floor]?.label || `${v.floor}. Kat`;
+          const goingUp = finalV.floor > u.floor;
+          const destLabel = this.mallData?.floors[finalV.floor]?.label || `${finalV.floor}. Kat`;
           routePortalNodes.push({
             x: u.x,
             y: u.y,
@@ -2207,17 +2271,17 @@ class Pov3DEngine {
     if (!amenities.length) return;
 
     const AMENITY_STYLE = {
-      emergency: { icon: '🚨', label: 'ACİL ÇIKIŞ', bg: '#dc2626', border: '#fef08a' },
-      elevator:  { icon: '🛗', label: 'PANORAMİK ASANSÖR', bg: '#0284c7', border: '#bae6fd' },
-      escalator: { icon: '🪜', label: 'YÜRÜYEN MERDİVEN', bg: '#4f46e5', border: '#a5b4fc' },
-      baby:      { icon: '🍼', label: 'BEBEK ODASI', bg: '#db2777', border: '#fbcfe8' },
-      wc:        { icon: '🚻', label: 'WC / TUVALET', bg: '#0d9488', border: '#99f6e4' },
-      kiosk:     { icon: '🖥️', label: 'KİOSK HARİTA', bg: '#ea580c', border: '#fed7aa' },
-      carpark:   { icon: '🅿️', label: 'OTOPARK', bg: '#2563eb', border: '#bfdbfe' },
-      atm:       { icon: '💳', label: 'ATM', bg: '#059669', border: '#a7f3d0' },
-      prayer:    { icon: '🕌', label: 'MESCİT', bg: '#7c3aed', border: '#ddd6fe' },
-      wheelchair:{ icon: '♿', label: 'ENGELSİZ ŞARJ', bg: '#0369a1', border: '#bae6fd' },
-      info:      { icon: 'ℹ️', label: 'DANIŞMA', bg: '#0f172a', border: '#38bdf8' }
+      emergency: { icon: '', label: 'ACİL ÇIKIŞ', bg: '#dc2626', border: '#fef08a' },
+      elevator:  { icon: '', label: 'PANORAMİK ASANSÖR', bg: '#0284c7', border: '#bae6fd' },
+      escalator: { icon: '', label: 'YÜRÜYEN MERDİVEN', bg: '#4f46e5', border: '#a5b4fc' },
+      baby:      { icon: '', label: 'BEBEK ODASI', bg: '#db2777', border: '#fbcfe8' },
+      wc:        { icon: '', label: 'WC / TUVALET', bg: '#0d9488', border: '#99f6e4' },
+      kiosk:     { icon: '', label: 'KİOSK HARİTA', bg: '#ea580c', border: '#fed7aa' },
+      carpark:   { icon: '', label: 'OTOPARK', bg: '#2563eb', border: '#bfdbfe' },
+      atm:       { icon: '', label: 'ATM', bg: '#059669', border: '#a7f3d0' },
+      prayer:    { icon: '', label: 'MESCİT', bg: '#7c3aed', border: '#ddd6fe' },
+      wheelchair:{ icon: '', label: 'ENGELSİZ ŞARJ', bg: '#0369a1', border: '#bae6fd' },
+      info:      { icon: '', label: 'DANIŞMA', bg: '#0f172a', border: '#38bdf8' }
     };
 
     const visibleAm = [];
@@ -2272,7 +2336,7 @@ class Pov3DEngine {
       const fSize = Math.round(Math.max(9, Math.min(15, 11 * sc)));
       ctx.font = `800 ${fSize}px "Plus Jakarta Sans", sans-serif`;
 
-      const text = `${st.icon} ${st.label}`;
+      const text = st.icon ? `${st.icon} ${st.label}` : st.label;
       const tw = ctx.measureText(text).width + 14 * sc;
       const th = fSize + 8 * sc;
       const bx = pT.x - tw / 2;
@@ -2454,10 +2518,10 @@ class Pov3DEngine {
       const fSize = Math.round(Math.max(10, Math.min(16, 12 * sc)));
       ctx.font = `800 ${fSize}px "Plus Jakarta Sans", sans-serif`;
 
-      const arrow = goingUp ? '⬆️' : '⬇️';
+      const arrow = goingUp ? '↑' : '↓';
       const titleText = isRoutePortal
-        ? `🪜 YÜRÜYEN MERDİVEN ${arrow} ${destLabel || 'KAT GEÇİŞİ'}`
-        : `🪜 YÜRÜYEN MERDİVEN ${arrow}`;
+        ? `YÜRÜYEN MERDİVEN ${arrow} ${destLabel || 'KAT GEÇİŞİ'}`
+        : `YÜRÜYEN MERDİVEN ${arrow}`;
       const tw = ctx.measureText(titleText).width + 18 * sc;
       const th = fSize + 10 * sc;
       const bxSign = pS.x - tw / 2;
@@ -2605,9 +2669,174 @@ class Pov3DEngine {
     ctx.restore();
   }
 
+  _render3DParkingStructure(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W, H) {
+    const flCode = this.currentFloor === 3 ? 'B1' : (this.currentFloor === 2 ? 'B2' : 'B3');
+    const parkingSectors = [
+      { axis: 'A', zone: 'Mavi Bölge', color: '#2563eb', light: '#93c5fd', yRow: 255, xList: [280, 480, 680] },
+      { axis: 'B', zone: 'Sarı Bölge', color: '#eab308', light: '#fde047', yRow: 365, xList: [820, 1000, 1160] },
+      { axis: 'C', zone: 'Turuncu Bölge', color: '#f97316', light: '#fdba74', yRow: 515, xList: [280, 480, 680] },
+      { axis: 'D', zone: 'Kırmızı Bölge', color: '#ef4444', light: '#fca5a5', yRow: 625, xList: [820, 1000, 1160] }
+    ];
+
+    ctx.save();
+    // 1. Otopark Zemin Park Çizgileri (Park Cepleri)
+    ctx.strokeStyle = 'rgba(248, 250, 252, 0.38)';
+    ctx.lineWidth = Math.max(1.5, W / 640);
+    for (const sec of parkingSectors) {
+      for (let bx = 210; bx <= 1190; bx += 70) {
+        const p1 = this._worldToCamera(bx, sec.yRow - 28, 0.15, cosYaw, sinYaw);
+        const p2 = this._worldToCamera(bx, sec.yRow + 28, 0.15, cosYaw, sinYaw);
+        const cl = this._clipPolygonNear([p1, p2], 6.0);
+        if (cl.length === 2) {
+          const sp = this._projectCamVerts(cl, cx, horizonY, fovScale);
+          ctx.beginPath();
+          ctx.moveTo(sp[0].x, sp[0].y);
+          ctx.lineTo(sp[1].x, sp[1].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // 2. 3B Ekstrüde Otopark Kolonları (Pillar Extrusion: z = 0 .. 68)
+    const pillars = [];
+    for (const sec of parkingSectors) {
+      sec.xList.forEach((px, idx) => {
+        const codeNum = String((idx + 1) * 2).padStart(2, '0');
+        let label = `${sec.axis}-${codeNum}`;
+        if (this.currentFloor === 2 && sec.axis === 'B' && idx === 1) {
+          label = 'B2-03 Hibatech';
+        } else if (sec.axis === 'C' && idx === 1) {
+          label = `${sec.axis}-${codeNum} • E-Şarj`;
+        }
+        const dist = Math.hypot(px - this.camX, sec.yRow - this.camY);
+        if (dist > 14 && dist < 880) {
+          pillars.push({
+            wx: px,
+            wy: sec.yRow,
+            dist,
+            label,
+            zoneLabel: `${flCode} • ${sec.zone}`,
+            color: sec.color,
+            light: sec.light
+          });
+        }
+      });
+    }
+
+    // Uzaktan yakına sırala
+    pillars.sort((a, b) => b.dist - a.dist);
+    this.lastRenderedParkingColumnsCount = pillars.length;
+
+    const colHalfW = 9.5;
+    for (const col of pillars) {
+      // Kameraya bakan 3B kolon ön ve yan yüzlerini ekstrüde et (z = 0 .. 68)
+      const corners = [
+        { x: col.wx - colHalfW, y: col.wy - colHalfW },
+        { x: col.wx + colHalfW, y: col.wy - colHalfW },
+        { x: col.wx + colHalfW, y: col.wy + colHalfW },
+        { x: col.wx - colHalfW, y: col.wy + colHalfW }
+      ];
+      const faces = [
+        [corners[0], corners[1]],
+        [corners[1], corners[2]],
+        [corners[2], corners[3]],
+        [corners[3], corners[0]]
+      ];
+
+      for (const [fA, fB] of faces) {
+        const fMidX = (fA.x + fB.x) * 0.5;
+        const fMidY = (fA.y + fB.y) * 0.5;
+        if (Math.hypot(fMidX - this.camX, fMidY - this.camY) > col.dist + 2) continue;
+
+        // Kolon Beton Gövdesi (z = 0 .. 68)
+        const camCol = [
+          this._worldToCamera(fA.x, fA.y, 0, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, 0, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, 68, cosYaw, sinYaw),
+          this._worldToCamera(fA.x, fA.y, 68, cosYaw, sinYaw)
+        ];
+        const clipCol = this._clipPolygonNear(camCol, 6.0);
+        if (clipCol.length >= 3) {
+          const scrCol = this._projectCamVerts(clipCol, cx, horizonY, fovScale);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.strokeStyle = '#64748b';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(scrCol[0].x, scrCol[0].y);
+          for (let k = 1; k < scrCol.length; k++) ctx.lineTo(scrCol[k].x, scrCol[k].y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        // Kolon Zemin Süpürgeliği / Koruma Bandı (z = 0 .. 5)
+        const camBase = [
+          this._worldToCamera(fA.x, fA.y, 0, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, 0, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, 5, cosYaw, sinYaw),
+          this._worldToCamera(fA.x, fA.y, 5, cosYaw, sinYaw)
+        ];
+        const clipBase = this._clipPolygonNear(camBase, 6.0);
+        if (clipBase.length >= 3) {
+          const scrBase = this._projectCamVerts(clipBase, cx, horizonY, fovScale);
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.moveTo(scrBase[0].x, scrBase[0].y);
+          for (let k = 1; k < scrBase.length; k++) ctx.lineTo(scrBase[k].x, scrBase[k].y);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Kolon Renkli Bölge Kuşağı (z = 22 .. 42)
+        const camBand = [
+          this._worldToCamera(fA.x, fA.y, 22, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, 22, cosYaw, sinYaw),
+          this._worldToCamera(fB.x, fB.y, 42, cosYaw, sinYaw),
+          this._worldToCamera(fA.x, fA.y, 42, cosYaw, sinYaw)
+        ];
+        const clipBand = this._clipPolygonNear(camBand, 6.0);
+        if (clipBand.length >= 3) {
+          const scrBand = this._projectCamVerts(clipBand, cx, horizonY, fovScale);
+          ctx.fillStyle = col.color;
+          ctx.beginPath();
+          ctx.moveTo(scrBand[0].x, scrBand[0].y);
+          for (let k = 1; k < scrBand.length; k++) ctx.lineTo(scrBand[k].x, scrBand[k].y);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      // Kolon Kod Etiketi (örn: A-04, B-04, B2-03 Hibatech)
+      const cLabel = this._worldToCamera(col.wx, col.wy, 32, cosYaw, sinYaw);
+      if (cLabel.rx > 16 && cLabel.rx < 480 && Math.abs(cLabel.ry) < cLabel.rx * 0.95) {
+        const pL = this._projectCamVerts([cLabel], cx, horizonY, fovScale)[0];
+        const sc = Math.max(0.58, Math.min(1.25, 110 / cLabel.rx)) * (W / 1150 + 0.3);
+        const fSize = Math.round(Math.max(9, Math.min(14, 11 * sc)));
+        ctx.font = `800 ${fSize}px "Plus Jakarta Sans", sans-serif`;
+        const tw = ctx.measureText(col.label).width + 14 * sc;
+        const th = fSize + 8 * sc;
+        const bx = pL.x - tw / 2;
+        const by = pL.y - th / 2;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+        ctx.strokeStyle = col.light;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(bx, by, tw, th, 6);
+        else ctx.rect(bx, by, tw, th);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(col.label, pL.x, by + th / 2);
+      }
+    }
+    ctx.restore();
+  }
+
   _render3DStorefronts(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W, H) {
     const floorStores = this.mallData?.floors[this.currentFloor]?.stores || [];
-    if (!floorStores.length) return;
+    const isParkingFloor = this.currentFloor <= 3;
 
     const enRouteSet = new Set(this.route?.enRouteStoreIds || []);
     const wallQuads = [];
@@ -2616,13 +2845,15 @@ class Pov3DEngine {
     const wallHeight = 66;
     const fasciaBottom = 44;
 
-    // 0. MİMARİ AVM DIŞ ÇEVRE VE KORİDOR SONU TRAVERTEN KAPAMA DUVARLARI (Ufukta asla boşluk kalmaması için)
+    // 0. MİMARİ AVM DIŞ ÇEVRE VE B1/B2/B3 OTOPARK SINIR DUVARLARI (Ufukta asla sonsuz boşluk / void kalmaması için her katta çizilir!)
     const perimeterWalls = [
-      { cA: { x: 115, y: 125 }, cB: { x: 1285, y: 125 } }, // Kuzey Ana Çevre Duvarı
-      { cA: { x: 1285, y: 740 }, cB: { x: 115, y: 740 } }, // Güney Ana Çevre Duvarı
-      { cA: { x: 115, y: 740 }, cB: { x: 115, y: 125 } },  // Batı Koridor Sonu Kapama Duvarı
-      { cA: { x: 1285, y: 125 }, cB: { x: 1285, y: 740 } } // Doğu Koridor Sonu Kapama Duvarı
+      { cA: { x: 115, y: 125 }, cB: { x: 1285, y: 125 }, zoneColor: '#2563eb', zoneLabel: 'A Aksı • Mavi Bölge' },    // Kuzey Ana Sınır Duvarı
+      { cA: { x: 1285, y: 740 }, cB: { x: 115, y: 740 }, zoneColor: '#ef4444', zoneLabel: 'D Aksı • Kırmızı Bölge' }, // Güney Ana Sınır Duvarı
+      { cA: { x: 115, y: 740 }, cB: { x: 115, y: 125 }, zoneColor: '#f97316', zoneLabel: 'C Aksı • Turuncu Bölge' },  // Batı Koridor Sonu Sınır Duvarı
+      { cA: { x: 1285, y: 125 }, cB: { x: 1285, y: 740 }, zoneColor: '#eab308', zoneLabel: 'B Aksı • Sarı Bölge' }    // Doğu Koridor Sonu Sınır Duvarı
     ];
+    this.lastRenderedBoundaryWallsCount = perimeterWalls.length;
+
     ctx.save();
     for (const pw of perimeterWalls) {
       const camPW = [
@@ -2634,8 +2865,8 @@ class Pov3DEngine {
       const clipPW = this._clipPolygonNear(camPW, 6.0);
       if (clipPW.length >= 3) {
         const scrPW = this._projectCamVerts(clipPW, cx, horizonY, fovScale);
-        ctx.fillStyle = '#e7dac6';
-        ctx.strokeStyle = '#c5b092';
+        ctx.fillStyle = isParkingFloor ? '#334155' : '#e2e8f0';
+        ctx.strokeStyle = isParkingFloor ? '#475569' : '#94a3b8';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(scrPW[0].x, scrPW[0].y);
@@ -2644,6 +2875,45 @@ class Pov3DEngine {
         ctx.fill();
         ctx.stroke();
       }
+
+      // Sınır Duvarı Zemin Süpürgeliği (z = 0 .. 3.2)
+      const camPlinth = [
+        this._worldToCamera(pw.cA.x, pw.cA.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(pw.cB.x, pw.cB.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(pw.cB.x, pw.cB.y, 3.2, cosYaw, sinYaw),
+        this._worldToCamera(pw.cA.x, pw.cA.y, 3.2, cosYaw, sinYaw)
+      ];
+      const clipPlinth = this._clipPolygonNear(camPlinth, 6.0);
+      if (clipPlinth.length >= 3) {
+        const scrPlinth = this._projectCamVerts(clipPlinth, cx, horizonY, fovScale);
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.moveTo(scrPlinth[0].x, scrPlinth[0].y);
+        for (let k = 1; k < scrPlinth.length; k++) ctx.lineTo(scrPlinth[k].x, scrPlinth[k].y);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Otopark Katlarında Renkli Bölge Kuşağı (z = 18 .. 32)
+      if (isParkingFloor) {
+        const camZoneBand = [
+          this._worldToCamera(pw.cA.x, pw.cA.y, 18, cosYaw, sinYaw),
+          this._worldToCamera(pw.cB.x, pw.cB.y, 18, cosYaw, sinYaw),
+          this._worldToCamera(pw.cB.x, pw.cB.y, 32, cosYaw, sinYaw),
+          this._worldToCamera(pw.cA.x, pw.cA.y, 32, cosYaw, sinYaw)
+        ];
+        const clipZoneBand = this._clipPolygonNear(camZoneBand, 6.0);
+        if (clipZoneBand.length >= 3) {
+          const scrZoneBand = this._projectCamVerts(clipZoneBand, cx, horizonY, fovScale);
+          ctx.fillStyle = pw.zoneColor;
+          ctx.beginPath();
+          ctx.moveTo(scrZoneBand[0].x, scrZoneBand[0].y);
+          for (let k = 1; k < scrZoneBand.length; k++) ctx.lineTo(scrZoneBand[k].x, scrZoneBand[k].y);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
       // Üst Galeri Koyu Antrasit Alınlık Bandı (z = 46 .. 68)
       const camBand = [
         this._worldToCamera(pw.cA.x, pw.cA.y, 46, cosYaw, sinYaw),
@@ -2654,7 +2924,7 @@ class Pov3DEngine {
       const clipBand = this._clipPolygonNear(camBand, 6.0);
       if (clipBand.length >= 3) {
         const scrBand = this._projectCamVerts(clipBand, cx, horizonY, fovScale);
-        ctx.fillStyle = '#292524';
+        ctx.fillStyle = '#1e293b';
         ctx.beginPath();
         ctx.moveTo(scrBand[0].x, scrBand[0].y);
         for (let k = 1; k < scrBand.length; k++) ctx.lineTo(scrBand[k].x, scrBand[k].y);
@@ -2663,6 +2933,13 @@ class Pov3DEngine {
       }
     }
     ctx.restore();
+
+    // B1 / B2 / B3 Otopark Katlarında 3B Otopark Kolonlarını ve Park Alanı Çizgilerini Ekstrüde Et
+    if (isParkingFloor) {
+      this._render3DParkingStructure(ctx, cx, horizonY, fovScale, cosYaw, sinYaw, now, W, H);
+    }
+
+    if (!floorStores.length) return;
 
     for (const s of floorStores) {
       const sx = s.x !== undefined ? s.x : (s.cx - (s.w || 70) / 2);
@@ -2815,7 +3092,7 @@ class Pov3DEngine {
       const { store, cA, cB, midX, midY, faceLen, isFrontFacade, isDoorFace, isPrimaryFace, isStart, isTarget, isEnRoute, isPassingNow, wallDist } = wq;
       const catStyle = this._getCategoryColors(store.category);
 
-      // 1. Ana Vitrin Duvarı & Traverten Kolon Çerçevesi (z = 0 .. wallHeight)
+      // 1. Ana Vitrin Duvarı & Mimari Kolon Çerçevesi (z = 0 .. wallHeight)
       const camWall = [
         this._worldToCamera(cA.x, cA.y, 0, cosYaw, sinYaw),
         this._worldToCamera(cB.x, cB.y, 0, cosYaw, sinYaw),
@@ -2838,13 +3115,12 @@ class Pov3DEngine {
         ctx.strokeStyle = '#10b981';
         ctx.lineWidth = 3.0;
       } else if (isPassingNow || isEnRoute) {
-        ctx.fillStyle = '#e7dac6';
+        ctx.fillStyle = '#f1f5f9';
         ctx.strokeStyle = isPassingNow ? '#059669' : '#10b981';
         ctx.lineWidth = 2.6;
       } else {
-        // Capacity AVM gerçek bej traverten mermer kolon & duvar dokusu
-        ctx.fillStyle = '#e5d5be';
-        ctx.strokeStyle = '#bfa785';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.strokeStyle = '#94a3b8';
         ctx.lineWidth = 1.6;
       }
 
@@ -2867,21 +3143,65 @@ class Pov3DEngine {
         this.opaqueWallSegments.push({ minX: wMinX, maxX: wMaxX, rx: wallDist });
       }
 
+      // 1A-ALT. Zemin Süpürgeliği (Baseboard / Plinth: z = 0 .. 2.8) - Boş karton duvar görünümünü kırar
+      const baseH = this.storefrontTrim?.baseboardHeight || 2.8;
+      const camBaseboard = [
+        this._worldToCamera(cA.x, cA.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(cB.x, cB.y, 0, cosYaw, sinYaw),
+        this._worldToCamera(cB.x, cB.y, baseH, cosYaw, sinYaw),
+        this._worldToCamera(cA.x, cA.y, baseH, cosYaw, sinYaw)
+      ];
+      const clipBaseboard = this._clipPolygonNear(camBaseboard, 6.0);
+      if (clipBaseboard.length >= 3) {
+        const scrBaseboard = this._projectCamVerts(clipBaseboard, cx, horizonY, fovScale);
+        ctx.fillStyle = this.storefrontTrim?.baseboardColor || '#1e293b';
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1.1;
+        ctx.beginPath();
+        ctx.moveTo(scrBaseboard[0].x, scrBaseboard[0].y);
+        for (let k = 1; k < scrBaseboard.length; k++) ctx.lineTo(scrBaseboard[k].x, scrBaseboard[k].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // 1A-ÜST. Üst Profil Şeridi (Upper Architectural Crown Trim: z = wallHeight - 3.2 .. wallHeight)
+      const topTrimH = this.storefrontTrim?.upperProfileHeight || 3.2;
+      const camUpperProfile = [
+        this._worldToCamera(cA.x, cA.y, wallHeight - topTrimH, cosYaw, sinYaw),
+        this._worldToCamera(cB.x, cB.y, wallHeight - topTrimH, cosYaw, sinYaw),
+        this._worldToCamera(cB.x, cB.y, wallHeight, cosYaw, sinYaw),
+        this._worldToCamera(cA.x, cA.y, wallHeight, cosYaw, sinYaw)
+      ];
+      const clipUpperProfile = this._clipPolygonNear(camUpperProfile, 6.0);
+      if (clipUpperProfile.length >= 3) {
+        const scrUpperProfile = this._projectCamVerts(clipUpperProfile, cx, horizonY, fovScale);
+        ctx.fillStyle = this.storefrontTrim?.upperProfileColor || '#0f172a';
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.1;
+        ctx.beginPath();
+        ctx.moveTo(scrUpperProfile[0].x, scrUpperProfile[0].y);
+        for (let k = 1; k < scrUpperProfile.length; k++) ctx.lineTo(scrUpperProfile[k].x, scrUpperProfile[k].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
       if (faceLen >= 20) {
-        // 1B. Sıcak Aydınlatmalı Cam Vitrin & Çift Kanatlı Cam Kapı Doğramaları (Tüm Koridor ve Ara Yol Cephelerinde)
-        const glassA = { x: cA.x + (cB.x - cA.x) * 0.07, y: cA.y + (cB.y - cA.y) * 0.07 };
-        const glassB = { x: cA.x + (cB.x - cA.x) * 0.93, y: cA.y + (cB.y - cA.y) * 0.93 };
+        // 1B. Sıcak Aydınlatmalı Cam Vitrin & Çift Kanatlı Cam Kapı Doğramaları (z = baseH .. fasciaBottom - 1.5)
+        const glassA = { x: cA.x + (cB.x - cA.x) * 0.06, y: cA.y + (cB.y - cA.y) * 0.06 };
+        const glassB = { x: cA.x + (cB.x - cA.x) * 0.94, y: cA.y + (cB.y - cA.y) * 0.94 };
         const camGlass = [
-          this._worldToCamera(glassA.x, glassA.y, 1.2, cosYaw, sinYaw),
-          this._worldToCamera(glassB.x, glassB.y, 1.2, cosYaw, sinYaw),
+          this._worldToCamera(glassA.x, glassA.y, baseH, cosYaw, sinYaw),
+          this._worldToCamera(glassB.x, glassB.y, baseH, cosYaw, sinYaw),
           this._worldToCamera(glassB.x, glassB.y, fasciaBottom - 1.5, cosYaw, sinYaw),
           this._worldToCamera(glassA.x, glassA.y, fasciaBottom - 1.5, cosYaw, sinYaw)
         ];
         const clippedGlass = this._clipPolygonNear(camGlass, 6.0);
         if (clippedGlass.length >= 3) {
           const scrGlass = this._projectCamVerts(clippedGlass, cx, horizonY, fovScale);
-          ctx.fillStyle = isPassingNow ? 'rgba(254, 249, 195, 0.96)' : 'rgba(255, 250, 235, 0.94)';
-          ctx.strokeStyle = '#292524';
+          ctx.fillStyle = isPassingNow ? 'rgba(254, 249, 195, 0.96)' : 'rgba(248, 250, 252, 0.95)';
+          ctx.strokeStyle = '#334155';
           ctx.lineWidth = 1.6;
           ctx.beginPath();
           ctx.moveTo(scrGlass[0].x, scrGlass[0].y);
@@ -2894,12 +3214,12 @@ class Pov3DEngine {
           for (const frac of [0.33, 0.67]) {
             const mx = cA.x + (cB.x - cA.x) * frac;
             const my = cA.y + (cB.y - cA.y) * frac;
-            const mBot = this._worldToCamera(mx, my, 1.2, cosYaw, sinYaw);
+            const mBot = this._worldToCamera(mx, my, baseH, cosYaw, sinYaw);
             const mTop = this._worldToCamera(mx, my, fasciaBottom - 1.5, cosYaw, sinYaw);
             const mClip = this._clipPolygonNear([mBot, mTop], 6.0);
             if (mClip.length === 2) {
               const mProj = this._projectCamVerts(mClip, cx, horizonY, fovScale);
-              ctx.strokeStyle = 'rgba(41, 37, 36, 0.62)';
+              ctx.strokeStyle = 'rgba(30, 41, 59, 0.62)';
               ctx.lineWidth = 1.2;
               ctx.beginPath();
               ctx.moveTo(mProj[0].x, mProj[0].y);
@@ -2909,20 +3229,20 @@ class Pov3DEngine {
           }
         }
 
-        // 2. Üst Işıklı Mağaza Tabelası Şeridi (Capacity AVM Koyu Antrasit / Bronz Kurumsal Alınlık: z = fasciaBottom .. wallHeight)
-        const fA = { x: cA.x + (cB.x - cA.x) * 0.05, y: cA.y + (cB.y - cA.y) * 0.05 };
-        const fB = { x: cA.x + (cB.x - cA.x) * 0.95, y: cA.y + (cB.y - cA.y) * 0.95 };
+        // 2. Üst Işıklı Mağaza Tabelası Şeridi (z = fasciaBottom .. wallHeight - topTrimH)
+        const fA = { x: cA.x + (cB.x - cA.x) * 0.04, y: cA.y + (cB.y - cA.y) * 0.04 };
+        const fB = { x: cA.x + (cB.x - cA.x) * 0.96, y: cA.y + (cB.y - cA.y) * 0.96 };
         const camFascia = [
           this._worldToCamera(fA.x, fA.y, fasciaBottom, cosYaw, sinYaw),
           this._worldToCamera(fB.x, fB.y, fasciaBottom, cosYaw, sinYaw),
-          this._worldToCamera(fB.x, fB.y, wallHeight - 2, cosYaw, sinYaw),
-          this._worldToCamera(fA.x, fA.y, wallHeight - 2, cosYaw, sinYaw)
+          this._worldToCamera(fB.x, fB.y, wallHeight - topTrimH, cosYaw, sinYaw),
+          this._worldToCamera(fA.x, fA.y, wallHeight - topTrimH, cosYaw, sinYaw)
         ];
         const clippedFascia = this._clipPolygonNear(camFascia, 6.0);
         if (clippedFascia.length >= 3) {
           const scrFascia = this._projectCamVerts(clippedFascia, cx, horizonY, fovScale);
-          ctx.fillStyle = isTarget ? '#dc2626' : (isStart ? '#059669' : (isPassingNow ? '#047857' : '#1c1917'));
-          ctx.strokeStyle = isTarget ? '#fca5a5' : (isPassingNow ? '#34d399' : '#78716c');
+          ctx.fillStyle = isTarget ? '#dc2626' : (isStart ? '#059669' : (isPassingNow ? '#047857' : '#1e293b'));
+          ctx.strokeStyle = isTarget ? '#fca5a5' : (isPassingNow ? '#34d399' : '#64748b');
           ctx.lineWidth = 1.2;
           ctx.beginPath();
           ctx.moveTo(scrFascia[0].x, scrFascia[0].y);
@@ -2932,7 +3252,7 @@ class Pov3DEngine {
           ctx.stroke();
 
           // Mimari Fascia Altı Sıcak LED Aydınlatma Şeridi (z = fasciaBottom)
-          ctx.strokeStyle = 'rgba(254, 240, 138, 0.88)';
+          ctx.strokeStyle = 'rgba(254, 240, 138, 0.90)';
           ctx.lineWidth = Math.max(1.6, W / 680);
           ctx.beginPath();
           ctx.moveTo(scrFascia[0].x, scrFascia[0].y);

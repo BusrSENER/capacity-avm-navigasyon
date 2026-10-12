@@ -835,7 +835,17 @@ function initApp() {
       }
 
       if (window.pov3dEngine) {
-        if (lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
+        if (window.hasAnnouncedArrival || window.isRouteCompletedState) {
+          // Rota zaten tamamlanmışsa 3B butonuna tekrar basıldığında yürüyüşü ve varış anonsunu YENİDEN BAŞLATMA!
+          const reachedFocus = window.lastReachedStore || selectedTargetStore || selectedStartStore || activePoiStore || null;
+          window.pov3dEngine.hasAnnouncedArrival = true;
+          window.pov3dEngine.isWalking = false;
+          window.pov3dEngine.enterFreeRoam(reachedFocus?.floor || currentFloor || 4, reachedFocus);
+          window.pov3dEngine.totalProgressPct = 100;
+          window.pov3dEngine.remainingMeters = 0;
+          window.pov3dEngine._syncPlayPauseButton();
+          window.pov3dEngine._updateHUDTexts();
+        } else if (lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
           if (savedIdx > 0 || savedProg > 0.02) {
             window.pov3dEngine.route = lastCalculatedRoute;
             window.pov3dEngine.startStore = selectedStartStore;
@@ -857,7 +867,7 @@ function initApp() {
       // '2d' veya '3d' moduna geçiş: 3B Gözümden aktifse kaldığı noktayı 2B/3B Çanta Simülatörüne kesintisiz aktar
       let shouldResumeCart = false;
       if (window.pov3dEngine && window.pov3dEngine.isActive) {
-        shouldResumeCart = Boolean(window.pov3dEngine.isWalking && window.pov3dEngine.totalProgressPct < 99);
+        shouldResumeCart = Boolean(window.pov3dEngine.isWalking && window.pov3dEngine.totalProgressPct < 99 && !window.hasAnnouncedArrival);
         const povIdx = window.pov3dEngine.segIndex;
         const povProg = window.pov3dEngine.segProgress;
         const povX = window.pov3dEngine.camX;
@@ -865,7 +875,7 @@ function initApp() {
         const povFloor = window.pov3dEngine.currentFloor;
         window.pov3dEngine.exit();
 
-        if (cartSimulator && lastCalculatedRoute) {
+        if (cartSimulator && lastCalculatedRoute && !window.hasAnnouncedArrival && !window.isRouteCompletedState) {
           cartSimulator.syncFromPov(povIdx, povProg, povX, povY, povFloor);
         }
       }
@@ -897,6 +907,7 @@ function initApp() {
   window.speechMainBusyUntil = 0;
   window.activeTtsAudio = null;
   window.lastVoiceLanguage = 'tr-TR';
+  window.hasAnnouncedArrival = false;
 
   function getTurkishPossessiveSuffix(name) {
     if (!name) return "'nın";
@@ -1047,7 +1058,7 @@ function initApp() {
     const subBar = document.getElementById('live-voice-subtitle-bar');
     const subText = document.getElementById('live-voice-subtitle-text');
     if (!subBar || !subText) return;
-    if (!rawText) {
+    if (!rawText || window.hasAnnouncedArrival || window.isRouteCompletedState) {
       subBar.classList.add('hidden');
       return;
     }
@@ -1075,13 +1086,38 @@ function initApp() {
   }
   window.isSpeechEngineCurrentlyBusy = isSpeechEngineCurrentlyBusy;
 
-  function queueArrivalAnnouncement(arrMsg) {
-    if (!arrMsg) return;
+  function queueArrivalAnnouncement(arrMsgOrTarget) {
+    if (!arrMsgOrTarget) return;
+    let arrMsg = '';
+    if (typeof arrMsgOrTarget === 'object') {
+      const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
+      const isAmenity = isServiceOrAmenityItem(arrMsgOrTarget);
+      const destName = stripUiEmojis(arrMsgOrTarget.name || arrMsgOrTarget.short_name || (isEn ? 'Destination' : 'Hedef Nokta'));
+      if (isAmenity) {
+        arrMsg = isEn ? `You are at ${destName}.` : `${destName} noktasındasınız.`;
+      } else {
+        arrMsg = isEn
+          ? `You have arrived at ${destName}. Enjoy your shopping.`
+          : `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
+      }
+    } else {
+      arrMsg = String(arrMsgOrTarget);
+    }
+    // Mükerrer varış anonsunu engelle (hasAnnouncedArrival bayrağı)
+    if (window.hasAnnouncedArrival) return;
+    window.hasAnnouncedArrival = true;
+    if (window.pov3dEngine) {
+      window.pov3dEngine.hasAnnouncedArrival = true;
+    }
+
     if (window.queuedArrivalTimer) {
       clearTimeout(window.queuedArrivalTimer);
       window.queuedArrivalTimer = null;
       window.arrivalSpeechQueueTimer = null;
     }
+
+    // Varış anında tekil bildirim kartı gösterilmesi için ikinci iç ses altyazı kutusunu gizle
+    document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
 
     const now = performance.now();
     const busyRemaining = Math.max(0, (window.speechMainBusyUntil || 0) - now);
@@ -1090,7 +1126,6 @@ function initApp() {
     if (!isBusy) {
       window.wasArrivalSpeechQueued = false;
       window.queuedArrivalDelayMs = 0;
-      updateVoiceSubtitleUI(arrMsg, true);
       if (isVoiceEnabled && typeof window.speakNavigationText === 'function') {
         window.speakNavigationText(arrMsg, false, false, true);
       }
@@ -1117,7 +1152,7 @@ function initApp() {
       }
       window.queuedArrivalTimer = null;
       window.arrivalSpeechQueueTimer = null;
-      updateVoiceSubtitleUI(arrMsg, true);
+      document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
       if (isVoiceEnabled && typeof window.speakNavigationText === 'function') {
         window.speakNavigationText(arrMsg, false, false, true);
       }
@@ -1131,13 +1166,11 @@ function initApp() {
   function speakNavigationText(text, force = false, isStoreCue = false, isArrival = false) {
     if (!text) return;
 
-    // Eğer bu bir varış anonsuysa ve konuşma motoru hala önceki cümleyi okuyorsa kuyruğa al (önceki cümleyi yutma)
-    if (isArrival && isSpeechEngineCurrentlyBusy()) {
-      queueArrivalAnnouncement(text);
-      return;
+    if (isArrival) {
+      document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
+    } else {
+      updateVoiceSubtitleUI(text, true);
     }
-
-    updateVoiceSubtitleUI(text, true);
     if (!isVoiceEnabled && !force) return;
     window.lastSpokenNavigationText = stripUiEmojis(String(text));
     const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
@@ -1194,12 +1227,16 @@ function initApp() {
         utterance.onend = () => {
           window.speechBusyUntil = 0;
           if (!isStoreCue) window.speechMainBusyUntil = 0;
-          updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
+          if (!isArrival && !window.hasAnnouncedArrival) {
+            updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
+          }
         };
         utterance.onerror = () => {
           window.speechBusyUntil = 0;
           if (!isStoreCue) window.speechMainBusyUntil = 0;
-          updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
+          if (!isArrival && !window.hasAnnouncedArrival) {
+            updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
+          }
         };
         window.lastSpeechUtterance = utterance;
         window.speechSynthesis.speak(utterance);
@@ -1227,7 +1264,7 @@ function initApp() {
       showToast(isEn ? 'Step-by-step voice navigation enabled' : 'Sesli adım adım yönlendirme açıldı', 'success');
 
       // Mevcut adımı hemen seslendir
-      if (lastCalculatedRoute && lastCalculatedRoute.instructions && lastCalculatedRoute.instructions.length > 0) {
+      if (lastCalculatedRoute && lastCalculatedRoute.instructions && lastCalculatedRoute.instructions.length > 0 && !window.hasAnnouncedArrival) {
         const curIdx = cartSimulator ? cartSimulator.currentIndex : 0;
         let currentIns = lastCalculatedRoute.instructions[0];
         for (const ins of lastCalculatedRoute.instructions) {
@@ -1346,25 +1383,45 @@ function initApp() {
     const arrivalBar = ensureArrivalActionBar();
     const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
 
-    // 1. Hedefe Ulaşıldı Durumu (Önceki sesli yönlendirme aktifse kesmeden kuyruğa al)
+    // 1. Hedefe Ulaşıldı Durumu (Tekil minimalist varış kartı, donatı metin kontrolü ve mükerrer anons koruması)
     if (nodeIndex === -1 || progressPct >= 100) {
+      // Çakışan orta modal, toast ve ekstra altyazı kutularını tamamen gizle
+      document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
+      document.getElementById('floor-transition-overlay')?.classList.add('hidden');
+      document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
+      if (typeof hideToast === 'function') {
+        hideToast();
+      }
+
       banner.classList.remove('hidden');
       iconEl.innerHTML = getMonoIconSvg('check', 16);
-      const destName = stripUiEmojis((selectedTargetStore && selectedTargetStore.name) || (window.lastReachedStore && window.lastReachedStore.name) || (isEn ? 'Destination' : 'Hedef Mağaza'));
-      textEl.textContent = isEn ? `You have arrived at ${destName}!` : 'Hedefe Ulaştınız!';
-      subEl.textContent = isEn
-        ? `In front of ${destName} • Select a new destination or reset`
-        : `${destName} önündesiniz • Yeni hedef seçebilir veya sıfırlayabilirsiniz`;
+
+      const targetObj = selectedTargetStore || window.lastReachedStore || null;
+      const isAmenity = isServiceOrAmenityItem(targetObj);
+      const destName = stripUiEmojis((targetObj && (targetObj.name || targetObj.short_name)) || (isEn ? 'Destination' : 'Hedef Nokta'));
+
+      let arrMsg = '';
+      if (isAmenity) {
+        // Donatı / Hizmet noktası için: ASLA 'mağazası önündesiniz' ve 'Keyifli alışverişler dileriz' deme!
+        arrMsg = isEn ? `You are at ${destName}.` : `${destName} noktasındasınız.`;
+        textEl.textContent = arrMsg;
+        subEl.textContent = isEn
+          ? 'Select a new destination or reset location'
+          : 'Yeni hedef seçebilir veya konumu sıfırlayabilirsiniz';
+      } else {
+        arrMsg = isEn
+          ? `You have arrived at ${destName}. Enjoy your shopping.`
+          : `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
+        textEl.textContent = isEn ? `You have arrived at ${destName}!` : `${destName} mağazası önündesiniz.`;
+        subEl.textContent = isEn
+          ? 'Enjoy your shopping • Select a new destination or reset'
+          : 'Keyifli alışverişler dileriz • Yeni hedef seçebilirsiniz';
+      }
+
       landmarksWrap?.classList.add('hidden');
       arrivalBar?.classList.remove('hidden');
-      const arrMsg = isEn
-        ? `You have arrived at ${destName}. Enjoy your visit.`
-        : `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
-      const voiceSubText = document.getElementById('live-voice-subtitle-text');
-      if (voiceSubText) {
-        voiceSubText.textContent = arrMsg;
-      }
-      if (lastSpokenStepIndex !== -1) {
+
+      if (!window.hasAnnouncedArrival && lastSpokenStepIndex !== -1) {
         lastSpokenStepIndex = -1;
         queueArrivalAnnouncement(arrMsg);
       }
@@ -1431,6 +1488,10 @@ function initApp() {
   window.updateLiveNavHUD = updateLiveNavHUD;
   window.resetVoiceStepTracker = () => {
     lastSpokenStepIndex = -999;
+    window.hasAnnouncedArrival = false;
+    if (window.pov3dEngine) {
+      window.pov3dEngine.hasAnnouncedArrival = false;
+    }
     if (window.queuedArrivalTimer) {
       clearTimeout(window.queuedArrivalTimer);
       window.queuedArrivalTimer = null;
@@ -1441,6 +1502,7 @@ function initApp() {
   // Tamamlanan Rotayı Haritada Mat Gri-Mavi (opacity: 0.5, .route-completed) Olarak Bırakan Yardımcı Fonksiyon
   function markRouteAsCompletedOnMap() {
     window.isRouteCompletedState = true;
+    document.querySelectorAll('.marker-name-pinned').forEach(el => el.remove());
     if (!mallMap || !mallMap.routeSvg) return;
     mallMap.routeSvg.classList.add('route-completed');
     mallMap.routeSvg.querySelectorAll('.route-group, path').forEach(el => {
@@ -1476,8 +1538,8 @@ function initApp() {
       updateFloorUI(newFloor);
     },
     () => {
-      // 1. Başarı Bildirimi Göster ve Sesli Varış Anonsunu Kuyruklu Olarak Tetikle
-      showToast('🎉 Hedefe ulaştınız! Yeni bir mağaza seçerek yeni rotaya geçebilir veya konumu sıfırlayabilirsiniz.', 'success');
+      // 1. Çakışan orta toast/modal kutusunu gösterme; yalnızca tekil üst varış kartını (updateLiveNavHUD) güncelle!
+      hideToast();
       resetSimControls();
 
       // 3B Gözümden Motorunu da varış durumuna senkronize et
@@ -1495,7 +1557,7 @@ function initApp() {
         window.lastReachedStore = reachedStore;
       }
 
-      // Canlı HUD bildirimini "Hedefe Ulaştınız" olarak güncelle (aktif konuşma varsa kesmeden kuyruğa alır)
+      // Canlı HUD bildirimini tekil varış kartı olarak güncelle (aktif konuşma varsa kesmeden kuyruğa alır)
       updateLiveNavHUD(-1, 100);
 
       // Rota çizgisini silmeden 'route-completed' sınıfıyla mat gri-mavi (opacity: 0.5) olarak haritada bırak
@@ -2932,7 +2994,24 @@ function isServiceOrAmenityItem(item) {
   const id = String(item.id || '');
   if (id.startsWith('am_') || id.startsWith('ent_') || id.startsWith('p_') || id.startsWith('start_')) return true;
   const kind = String(item.kind || item.type || '').toLowerCase();
-  if (['wc', 'baby', 'elevator', 'escalator', 'emergency', 'exit', 'atm', 'prayer', 'info', 'kiosk', 'entrance', 'carpark', 'wheelchair'].includes(kind)) {
+  if (['wc', 'baby', 'elevator', 'escalator', 'emergency', 'exit', 'atm', 'prayer', 'info', 'kiosk', 'entrance', 'carpark', 'wheelchair', 'health', 'medical', 'amenity'].includes(kind)) {
+    return true;
+  }
+  const toAscii = (str) => normalizeTr(str)
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c');
+  const normName = toAscii(item.name || item.short_name || '');
+  const normCat = toAscii(item.category_name || item.category || '');
+  const strictAmenityTerms = [
+    'saglik', 'ilk yardim', 'revir', 'mescit', 'ibadet', 'bebek odasi', 'bebek bakim',
+    'wc', 'tuvalet', 'lavabo', 'danisma', 'kiosk', 'atm', 'bankamatik',
+    'otopark', 'asansor', 'yuruyen merdiven', 'acil cikis', 'kapisi'
+  ];
+  if (strictAmenityTerms.some(t => normName === t || normName.includes(t) || normCat.includes(t))) {
     return true;
   }
   return false;
@@ -3797,6 +3876,10 @@ function calculateAndDisplayRoute() {
 
   // Yeni rota çizilirken önceki tamamlanmış rota (.route-completed) durumunu ve GPS yürüyüşünü sıfırla
   window.isRouteCompletedState = false;
+  window.hasAnnouncedArrival = false;
+  if (window.pov3dEngine) {
+    window.pov3dEngine.hasAnnouncedArrival = false;
+  }
   if (typeof stopLiveGpsRouteWalk === 'function') {
     stopLiveGpsRouteWalk();
   }
@@ -3886,6 +3969,10 @@ function calculateAndDisplayRoute() {
 
 function clearCurrentRoute() {
   window.isRouteCompletedState = false;
+  window.hasAnnouncedArrival = false;
+  if (window.pov3dEngine) {
+    window.pov3dEngine.hasAnnouncedArrival = false;
+  }
   window.lastReachedStore = null;
   if (window.arrivalResetTimer) {
     clearTimeout(window.arrivalResetTimer);

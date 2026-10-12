@@ -664,16 +664,16 @@
           </div>
         </div>
 
-        <!-- 3B Gözümden & Sokak Görünümü Visor HUD (Kompakt Mobil & Masaüstü Bilgi ve Gezinti Kartı) -->
-        <div id="pov-hud-overlay" class="absolute bottom-3 left-3 right-3 sm:right-auto sm:left-4 sm:bottom-16 sm:w-[425px] z-30 pointer-events-auto">
-          <div class="backdrop-blur-2xl bg-slate-900/92 text-white border border-white/15 rounded-2xl p-2.5 sm:p-3.5 shadow-[0_18px_45px_rgba(0,0,0,0.6)] flex flex-col gap-1.5">
+        <!-- 3B Gözümden & Sokak Görünümü Yüzen Hap (Floating Pill) HUD -->
+        <div id="pov-hud-overlay" class="pov-floating-pill-hud absolute bottom-3 left-3 right-3 sm:right-auto sm:left-4 sm:bottom-14 sm:w-[400px] z-30 pointer-events-auto">
+          <div class="pov-floating-pill-card text-white border border-white/15 rounded-3xl p-3 sm:p-3.5 shadow-[0_18px_45px_rgba(0,0,0,0.55)] flex flex-col gap-2">
             <!-- Üst Etiket ve Kat / Mesafe -->
             <div class="flex items-center justify-between gap-2">
-              <span id="pov-hud-mode-badge" class="px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-rose-600 text-[9.5px] font-black uppercase tracking-wider text-white flex items-center gap-1 shadow-xs">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span>3B Sokak Görünümü • Canlı Galeri</span>
+              <span id="pov-hud-mode-badge" class="px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-extrabold uppercase tracking-wider text-slate-100 flex items-center gap-1.5">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>3B Sokak Görünümü</span>
               </span>
-              <span id="pov-hud-distance" class="text-[11px] font-extrabold text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded-md">
+              <span id="pov-hud-distance" class="text-[11px] font-bold text-cyan-200 bg-cyan-950/70 border border-cyan-400/25 px-2.5 py-0.5 rounded-full">
                 Zemin Kat
               </span>
             </div>
@@ -684,55 +684,36 @@
             </div>
 
             <!-- Canlı Adım / Manevra veya Serbest Gezinti İpucu -->
-            <div id="pov-hud-step" class="text-xs font-bold text-amber-200 bg-white/10 rounded-xl px-2.5 py-1.5 border border-white/10 leading-snug">
-              Koridordaki halkalara dokunarak veya oklarla sokak görünümünde gezinin.
+            <div id="pov-hud-step" class="text-xs font-semibold text-slate-100 bg-white/8 rounded-2xl px-3 py-1.5 border border-white/10 leading-snug">
+              Koridordaki mavi halkalara dokunarak ilerleyin veya mağaza vitrinlerine tıklayarak hedef seçin.
             </div>
 
             <!-- Şu An Yanından Geçilen Mağaza (En-Route Live Proximity + Kurumsal Marka Logosu) -->
-            <div id="pov-hud-passing" class="hidden flex items-center gap-2 text-[11px] font-extrabold text-emerald-300 bg-emerald-950/75 border border-emerald-500/35 rounded-xl px-2.5 py-1.5 truncate">
+            <div id="pov-hud-passing" class="hidden flex items-center gap-2 text-[11px] font-bold text-emerald-200 bg-emerald-950/65 border border-emerald-400/30 rounded-2xl px-3 py-1.5 truncate">
               <span id="pov-hud-passing-logo" class="w-5 h-5 rounded-md bg-white p-0.5 flex items-center justify-center shrink-0 shadow-xs overflow-hidden"></span>
               <span id="pov-hud-passing-text" class="truncate">Yakınınızda: W Collection (Z-16)</span>
             </div>
 
-            <!-- Google Street View Adım & Bakış Kumandası (Sola Bak, İleri Adım, Geri Adım, Sağa Bak) -->
-            <div class="grid grid-cols-4 gap-1.5 pt-0.5">
-              <button type="button" id="btn-pov-turn-left" class="py-1.5 px-2 rounded-xl bg-slate-800/95 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sola Dön (Sol Ok / A)">
-                <span>↶</span>
-                <span>Sola Bak</span>
-              </button>
-              <button type="button" id="btn-pov-step-fwd" class="py-1.5 px-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/35 text-cyan-200 border border-cyan-400/40 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs" title="Koridorda İleri İlerle (Yukarı Ok / W)">
-                <span>↑</span>
-                <span>İleri Git</span>
-              </button>
-              <button type="button" id="btn-pov-step-back" class="py-1.5 px-2 rounded-xl bg-slate-800/95 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer" title="Geri Adım At (Aşağı Ok / S)">
-                <span>↓</span>
-                <span>Geri</span>
-              </button>
-              <button type="button" id="btn-pov-turn-right" class="py-1.5 px-2 rounded-xl bg-slate-800/95 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sağa Dön (Sağ Ok / D)">
-                <span>↷</span>
-                <span>Sağa Bak</span>
-              </button>
-            </div>
-
             <!-- İlerleme Çubuğu -->
-            <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
-              <div id="pov-hud-progress-fill" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-400 transition-all duration-150" style="width: 0%;"></div>
+            <div class="w-full h-1 rounded-full bg-white/10 overflow-hidden">
+              <div id="pov-hud-progress-fill" class="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-emerald-400 transition-all duration-150" style="width: 0%;"></div>
             </div>
 
-            <!-- 3B Kontrol Butonları -->
+            <!-- Yüzen Hap (Floating Pill) İnce Çizgi Kontrol Barı -->
             <div class="flex items-center justify-between gap-1.5 pt-0.5">
-              <button type="button" id="btn-pov-play-pause" class="flex-1 min-w-[96px] py-1.5 px-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center gap-1">
+              <button type="button" id="btn-pov-play-pause" class="flex-1 min-w-[96px] py-1.5 px-3 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect width="4" height="16" x="6" y="4"/><rect width="4" height="16" x="14" y="4"/></svg>
                 <span>Duraklat</span>
               </button>
-              <button type="button" id="btn-pov-speed" class="py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shrink-0" title="Yürüyüş Hızı">
+              <button type="button" id="btn-pov-speed" class="py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 text-cyan-200 border border-white/15 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0" title="Yürüyüş Hızı">
                 1x
               </button>
-              <button type="button" id="btn-pov-voice-cmd" class="py-1.5 px-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-xs font-extrabold transition-all active:scale-95 cursor-pointer flex items-center gap-1 shrink-0" title="Sesli Komut Ver">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+              <button type="button" id="btn-pov-voice-cmd" class="py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 shrink-0" title="Sesli Komut Ver">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
                 <span class="hidden sm:inline">Sesli</span>
               </button>
-              <button type="button" id="btn-pov-exit-2d" class="py-1.5 px-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shrink-0 flex items-center gap-1" title="Aynı Konumda 2B Harita Görünümüne Geç">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+              <button type="button" id="btn-pov-exit-2d" class="py-1.5 px-3 rounded-full bg-indigo-500/85 hover:bg-indigo-500 text-white border border-indigo-300/35 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0 flex items-center gap-1.5" title="Aynı Konumda 2B Harita Görünümüne Geç">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                 <span>2B Harita</span>
               </button>
             </div>

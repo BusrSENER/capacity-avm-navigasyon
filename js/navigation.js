@@ -153,13 +153,34 @@ class NavigationEngine {
 
   _getStoreOrEntranceNameByNode(nodeId) {
     if (!nodeId) return '';
+    if (typeof window !== 'undefined' && window.selectedTargetStore && window.selectedTargetStore.nav_node === nodeId && window.selectedTargetStore.name) {
+      return window.selectedTargetStore.name;
+    }
     for (const fl of Object.values(this.floors || {})) {
       const found = (fl.stores || []).find(s => s.nav_node === nodeId);
       if (found && found.name) return found.name;
+      const foundAm = (fl.amenities || []).find(a => a.nav_node === nodeId);
+      if (foundAm && foundAm.name) return foundAm.name;
     }
+    const topAm = (this.mallData?.amenities || []).find(a => a.nav_node === nodeId);
+    if (topAm && topAm.name) return topAm.name;
     const ent = (this.entrances || []).find(e => e.nav_node === nodeId);
     if (ent && (ent.short_name || ent.name)) return ent.short_name || ent.name;
     return '';
+  }
+
+  _isAmenityTarget(nodeId, displayName = '') {
+    if (typeof window !== 'undefined' && window.selectedTargetStore && (!nodeId || window.selectedTargetStore.nav_node === nodeId)) {
+      if (typeof window.isServiceOrAmenityItem === 'function' && window.isServiceOrAmenityItem(window.selectedTargetStore)) {
+        return true;
+      }
+    }
+    const norm = String(displayName || '')
+      .replace(/İ/g, 'i')
+      .replace(/I/g, 'ı')
+      .toLowerCase();
+    if (!norm) return false;
+    return /(saglik|sağlık|ilk yardim|ilk yardım|revir|mescit|bebek|wc|tuvalet|lavabo|danisma|danışma|atm|bankamatik|otopark|asansor|asansör|merdiven|acil cikis|acil çıkış|kiosk)/.test(norm);
   }
 
   /**
@@ -627,7 +648,7 @@ class NavigationEngine {
       const u = pathNodes[i];
       const v = pathNodes[i + 1];
 
-      // Kat Değişimi
+      // Kat Değişimi (Ardışık merdiven/asansör geçişlerini tek adımda konsolide et: örn. Z -> B1 -> B2 -> B3)
       if (u.floor !== v.floor) {
         if (accumulatedWalk > 5 || pendingTurn) {
           const walkMeters = Math.max(4, Math.round(accumulatedWalk * this.mPerUnit));
@@ -635,30 +656,73 @@ class NavigationEngine {
           accumulatedWalk = 0;
         }
 
-        const isElevator = v.edgeType === 'elevator' || v.portalKind === 'elevator';
-        const portalText = isElevator ? 'Asansör ile' : 'Yürüyen merdiven ile';
-        const dirText = v.floor > u.floor ? 'çıkın' : 'inin';
-        const trFcText = `${portalText} ${this._getFloorLabel(v.floor)} katına ${dirText}.`;
-        const enFcText = `Take the ${isElevator ? 'elevator' : 'escalator'} to ${this._getFloorLabelEn(v.floor)}.`;
+        const startFloor = u.floor;
+        let finalFloor = v.floor;
+        let endPortalNodeIdx = i + 1;
+        let isElevator = v.edgeType === 'elevator' || v.portalKind === 'elevator';
+        let consolidatedFloors = [startFloor, finalFloor];
+        const finalTargetFloor = pathNodes[pathNodes.length - 1].floor;
+
+        // İleriye bakarak ardışık kat geçişlerini (veya ara katlardaki merdiven sahanlığı bağlantısını) tek cümlede birleştir
+        while (endPortalNodeIdx < pathNodes.length - 1) {
+          let scanIdx = endPortalNodeIdx;
+          let interFloorWalk = 0;
+          let foundNextPortal = false;
+
+          while (scanIdx < pathNodes.length - 1) {
+            const a = pathNodes[scanIdx];
+            const b = pathNodes[scanIdx + 1];
+            if (a.floor !== b.floor) {
+              foundNextPortal = true;
+              break;
+            }
+            interFloorWalk += Math.hypot(b.x - a.x, b.y - a.y);
+            if (a.floor === finalTargetFloor && interFloorWalk > 180) {
+              break;
+            }
+            scanIdx++;
+          }
+
+          if (foundNextPortal) {
+            const nextPortalTarget = pathNodes[scanIdx + 1];
+            finalFloor = nextPortalTarget.floor;
+            endPortalNodeIdx = scanIdx + 1;
+            consolidatedFloors.push(finalFloor);
+            if (nextPortalTarget.edgeType === 'elevator' || nextPortalTarget.portalKind === 'elevator') {
+              isElevator = true;
+            }
+          } else {
+            break;
+          }
+        }
+
+        const portalText = isElevator ? 'Asansörü kullanarak' : 'Yürüyen merdivenleri kullanarak';
+        const dirText = finalFloor > startFloor ? 'çıkın' : 'inin';
+        const trFcText = `${portalText} ${this._getFloorLabel(finalFloor)} katına ${dirText}.`;
+        const enFcText = `Take the ${isElevator ? 'elevator' : 'escalators'} ${finalFloor > startFloor ? 'up' : 'down'} to ${this._getFloorLabelEn(finalFloor)}.`;
         const fcText = isEn ? enFcText : trFcText;
 
         instructions.push({
           step: stepNum++,
           nodeIndex: i,
+          endNodeIndex: endPortalNodeIdx,
           type: 'floor_change',
           icon: isElevator ? 'arrow-up-down' : 'layers',
           emoji: '',
-          floor: v.floor,
-          fromFloor: u.floor,
-          toFloor: v.floor,
+          floor: finalFloor,
+          fromFloor: startFloor,
+          toFloor: finalFloor,
+          consolidatedFloors,
           passingStores: [],
           text: fcText,
           voiceText: isEn ? fcText : this.normalizeStorePronunciation(fcText)
         });
 
-        currentFloor = v.floor;
-        walkStartIndex = i + 1;
+        currentFloor = finalFloor;
+        walkStartIndex = endPortalNodeIdx;
         pendingTurn = null;
+        accumulatedWalk = 0;
+        i = endPortalNodeIdx - 1;
         continue;
       }
 
@@ -728,12 +792,25 @@ class NavigationEngine {
       });
     }
 
-    const arrivalShortText = isEn
-      ? (targetDisplayName ? `You have arrived at ${targetDisplayName}.` : 'You have arrived at your destination.')
-      : 'Hedefinize ulaştınız.';
-    const arrivalVoiceText = isEn
-      ? (targetDisplayName ? `You have arrived at ${targetDisplayName}.` : 'You have arrived at your destination.')
-      : 'Hedefinize ulaştınız. Keyifli alışverişler dileriz.';
+    const isAmenityDest = this._isAmenityTarget(targetNodeId, targetDisplayName);
+    const cleanTargetName = String(targetDisplayName || '').trim();
+    let arrivalShortText;
+    let arrivalVoiceText;
+
+    if (isAmenityDest) {
+      const amName = cleanTargetName || (isEn ? 'Service Point' : 'Hizmet');
+      arrivalShortText = isEn ? `You are at ${amName}.` : `${amName} noktasındasınız.`;
+      arrivalVoiceText = isEn ? `You are at ${amName}.` : this.normalizeStorePronunciation(`${amName} noktasındasınız.`);
+    } else {
+      arrivalShortText = isEn
+        ? (cleanTargetName ? `You have arrived at ${cleanTargetName}.` : 'You have arrived at your destination.')
+        : (cleanTargetName ? `${cleanTargetName} önündesiniz.` : 'Hedefinize ulaştınız.');
+      arrivalVoiceText = isEn
+        ? (cleanTargetName ? `You have arrived at ${cleanTargetName}.` : 'You have arrived at your destination.')
+        : (cleanTargetName
+          ? this.normalizeStorePronunciation(`Hedefe ulaştınız! ${cleanTargetName} mağazası önündesiniz. Keyifli alışverişler dileriz.`)
+          : 'Hedefinize ulaştınız. Keyifli alışverişler dileriz.');
+    }
 
     instructions.push({
       step: stepNum++,
@@ -742,6 +819,7 @@ class NavigationEngine {
       icon: 'check-circle-2',
       emoji: '',
       floor: pathNodes[pathNodes.length - 1].floor,
+      isAmenityDestination: isAmenityDest,
       passingStores: [],
       queueAfterPrevious: true,
       minQueueDelayMs: 450,

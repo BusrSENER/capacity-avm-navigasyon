@@ -2162,16 +2162,17 @@ body.has-pov-3d-active #floating-view-toggle {
   display: none !important;
 }
 
-/* 3B Gözümden HUD Paneli: Açık ve koyu temada her zaman yüksek kontrastlı koyu lacivert arka plan */
+/* 3B Gözümden HUD Paneli: Yüzen hap (floating pill) kapsayıcısı şeffaf, iç kart glassmorphism */
 #pov-hud-overlay {
-  background: rgba(15, 23, 42, 0.94) !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   color: #ffffff !important;
 }
 
 #pov-hud-overlay #pov-step-box {
-  background: rgba(30, 41, 59, 0.85) !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(30, 41, 59, 0.72) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
 }
 
 /* Genel bakışta (.lod-far) Anchor etiketlerinin birbirine girmesini önleyen kompakt stil */
@@ -2510,3 +2511,29 @@ path.route-completed.route__flow {
     gap: 3px !important;
   }
 }
+
+/* ========================================================
+   3B APPLE MAPS TARZI YÜZEN HAP (FLOATING PILL) GLASSMORPHISM HUD
+   ======================================================== */
+.pov-floating-pill-hud {
+  z-index: 48;
+}
+
+.pov-floating-pill-card {
+  background: rgba(15, 23, 42, 0.68) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+.pov-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+

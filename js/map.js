@@ -505,17 +505,19 @@ class MallMap {
 
       const logoHtml = getStoreLogo(store, isAnchor ? 32 : 28);
 
+      const isCompletedRoute = Boolean(window.isRouteCompletedState);
+
       marker.innerHTML = `
         <div class="logo-tile">
           ${logoHtml}
         </div>
-        ${isTarget || isStart ? `
-          <span class="marker-name-label marker-name-pinned text-sm font-black text-white ${isStart ? 'bg-emerald-600 ring-2 ring-emerald-400' : 'bg-red-600 ring-2 ring-red-400'} px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
-            ${isStart ? '📍 Başlangıç: ' : '🎯 Hedef: '}${store.name}
+        ${(isTarget || isStart) && !isCompletedRoute ? `
+          <span class="marker-name-label marker-name-pinned text-xs font-extrabold text-white ${isStart ? 'bg-emerald-600 ring-2 ring-emerald-400' : 'bg-red-600 ring-2 ring-red-400'} px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer">
+            ${isStart ? 'Başlangıç: ' : 'Hedef: '}${store.name}
           </span>
         ` : `
-          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} ${isEnRoute ? 'marker-name-enroute' : ''} text-sm font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 cursor-pointer absolute top-full z-40">
-            ${isEnRoute ? '👀 ' : ''}${store.name}
+          <span class="marker-name-label ${isAnchor ? 'marker-name-anchor' : 'marker-name-secondary'} ${isEnRoute ? 'marker-name-enroute' : ''} text-xs font-bold text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/95 px-2 py-0.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 whitespace-nowrap mt-1 cursor-pointer absolute top-full z-40">
+            ${store.name}
           </span>
         `}
       `;
@@ -562,8 +564,8 @@ class MallMap {
       fragment.appendChild(marker);
     });
 
-    // Eğer seçili başlangıç noktası bu kattaysa ve mağaza listesinde yoksa (Kapı, Danışma, Havuz vb.)
-    if (this.activeStartStore && this.activeStartStore.floor === floorNum) {
+    // Eğer seçili başlangıç noktası bu kattaysa ve mağaza listesinde yoksa (Kapı, Danışma, Havuz vb.) - Rota tamamlanmışsa ekstra harita balonu gösterme!
+    if (this.activeStartStore && this.activeStartStore.floor === floorNum && !window.isRouteCompletedState) {
       const alreadyHas = sortedStores.some(s => s.id === this.activeStartStore.id);
       if (!alreadyHas && this.activeStartStore.cx && this.activeStartStore.cy) {
         const startMarker = document.createElement('div');
@@ -573,18 +575,18 @@ class MallMap {
         startMarker.title = `Başlangıç: ${this.activeStartStore.name}`;
         startMarker.innerHTML = `
           <div class="logo-tile">
-            <span class="text-base font-bold text-emerald-600">📍</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
-          <span class="marker-name-label marker-name-pinned text-sm font-black text-white bg-emerald-600 ring-2 ring-emerald-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
-            📍 Başlangıç: ${this.activeStartStore.name}
+          <span class="marker-name-label marker-name-pinned text-xs font-extrabold text-white bg-emerald-600 ring-2 ring-emerald-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer">
+            Başlangıç: ${this.activeStartStore.name}
           </span>
         `;
         fragment.appendChild(startMarker);
       }
     }
 
-    // Eğer seçili hedef noktası bu kattaysa ve mağaza listesinde yoksa
-    if (this.activeTargetStore && this.activeTargetStore.floor === floorNum) {
+    // Eğer seçili hedef noktası bu kattaysa ve mağaza listesinde yoksa - Rota tamamlanmışsa ekstra harita balonu gösterme!
+    if (this.activeTargetStore && this.activeTargetStore.floor === floorNum && !window.isRouteCompletedState) {
       const alreadyHas = sortedStores.some(s => s.id === this.activeTargetStore.id);
       if (!alreadyHas && this.activeTargetStore.cx && this.activeTargetStore.cy) {
         const targetMarker = document.createElement('div');
@@ -594,10 +596,10 @@ class MallMap {
         targetMarker.title = `Hedef: ${this.activeTargetStore.name}`;
         targetMarker.innerHTML = `
           <div class="logo-tile">
-            <span class="text-base font-bold text-rose-600">🎯</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
-          <span class="marker-name-label marker-name-pinned text-sm font-black text-white bg-rose-600 ring-2 ring-rose-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer animate-pulse">
-            🎯 Hedef: ${this.activeTargetStore.name}
+          <span class="marker-name-label marker-name-pinned text-xs font-extrabold text-white bg-rose-600 ring-2 ring-rose-400 px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap mt-1 cursor-pointer">
+            Hedef: ${this.activeTargetStore.name}
           </span>
         `;
         fragment.appendChild(targetMarker);
