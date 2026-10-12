@@ -1750,6 +1750,10 @@ function updateFloorUI(floorNum) {
   if (filterTab === 'this_floor') {
     renderSidebarStoreGrid();
   }
+  if (typeof window.syncSavedParkingOnSvgMap === 'function') {
+    setTimeout(() => window.syncSavedParkingOnSvgMap(), 60);
+    setTimeout(() => window.syncSavedParkingOnSvgMap(), 260);
+  }
 }
 
 // 3. UI Dinleyicileri
@@ -1761,6 +1765,9 @@ function setupUIEventListeners() {
       mallMap.loadFloor(fl).then(() => {
         if (window.isRouteCompletedState && typeof window.markRouteAsCompletedOnMap === 'function') {
           window.markRouteAsCompletedOnMap();
+        }
+        if (typeof window.syncSavedParkingOnSvgMap === 'function') {
+          window.syncSavedParkingOnSvgMap();
         }
       });
       updateFloorUI(fl);
@@ -4732,6 +4739,69 @@ async function refreshParkingOccupancyHeatbars() {
 }
 window.refreshParkingOccupancyHeatbars = refreshParkingOccupancyHeatbars;
 
+const CAPACITY_PARKING_ZONE_AXIS_META = {
+  Mavi: {
+    letter: 'A',
+    range: 'A-01..A-15',
+    lobbyLabel: 'Batı Panoramik Asansör & Koton-LCW Aksı',
+    colorHex: '#2563eb'
+  },
+  Sarı: {
+    letter: 'B',
+    range: 'B-01..B-15',
+    lobbyLabel: 'Merkez / B2-03 Hibatech Oto Yıkama & Lostra Aksı',
+    colorHex: '#eab308'
+  },
+  Turuncu: {
+    letter: 'C',
+    range: 'C-01..C-15',
+    lobbyLabel: 'Doğu Asansör & ⚡ E-Şarj (ZES/Eşarj) / Dry Clean Aksı',
+    colorHex: '#f97316'
+  },
+  Kırmızı: {
+    letter: 'D',
+    range: 'D-01..D-15',
+    lobbyLabel: 'Güney Merdiven • VIP Vale & Fişekhane Çıkış Aksı',
+    colorHex: '#ef4444'
+  }
+};
+
+function renderQuickPillarChipsForZone(zoneName = 'Mavi', floorCode = 'P2') {
+  const chipsWrap = document.getElementById('parking-quick-pillar-chips');
+  const pillarInput = document.getElementById('parking-spot-pillar');
+  if (!chipsWrap) return;
+
+  const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
+  const L = axisMeta.letter;
+
+  const floorSpecificRef = floorCode === 'P3'
+    ? '🕌 B3 Mescit & Lostra Yanı'
+    : (floorCode === 'P1' ? '💳 B1 Ödeme Noktası Yanı' : '🧼 B2-03 Hibatech Oto Yıkama');
+
+  const quickPillars = [
+    { val: `${L}-04`, label: `📍 ${L}-04` },
+    { val: `${L}-08`, label: `📍 ${L}-08` },
+    { val: `${L}-12`, label: `📍 ${L}-12` },
+    { val: `${L}-15`, label: `📍 ${L}-15` },
+    { val: floorSpecificRef.replace(/^[^\s]+\s*/, ''), label: floorSpecificRef },
+    { val: '⚡ E-Şarj (ZES/Eşarj)', label: '⚡ E-Şarj (ZES/Eşarj)' },
+    { val: '🛗 Asansör Lobisi Karşısı', label: '🛗 Asansör Karşısı' }
+  ];
+
+  chipsWrap.innerHTML = quickPillars.map(item => `
+    <button type="button" data-pillar-val="${item.val}" class="parking-pillar-chip px-2 py-1 rounded-lg bg-slate-100 hover:bg-amber-500/20 dark:bg-slate-800 dark:hover:bg-amber-500/20 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-[10px] font-bold transition-all cursor-pointer">
+      ${item.label}
+    </button>
+  `).join('');
+
+  chipsWrap.querySelectorAll('.parking-pillar-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const val = chip.getAttribute('data-pillar-val') || '';
+      if (pillarInput) pillarInput.value = val;
+    });
+  });
+}
+
 function ensureCleanParkingModalUI() {
   // Karmaşık URL/link paylaşım kutularını kaldır (Madde 2)
   document.getElementById('parking-saved-share-actions')?.remove();
@@ -4744,28 +4814,85 @@ function ensureCleanParkingModalUI() {
     saveBtn.innerHTML = '<span>🚘</span><span>Aracımı Buraya Park Ettim</span>';
   }
 
-  // Hızlı sütun seçim çiplerini koru
+  // Hızlı sütun ve gerçek Capacity referans çiplerini oluştur
   const pillarInput = document.getElementById('parking-spot-pillar');
   if (pillarInput && pillarInput.parentElement && !document.getElementById('parking-quick-pillar-chips')) {
     const chipsWrap = document.createElement('div');
     chipsWrap.id = 'parking-quick-pillar-chips';
     chipsWrap.className = 'flex items-center gap-1.5 flex-wrap mt-1.5';
-    const quickPillars = ['A-04', 'B-12', 'C-14', 'R-08', 'S-15', 'Asansör Karşısı'];
-    chipsWrap.innerHTML = quickPillars.map(p => `
-      <button type="button" data-pillar-val="${p}" class="parking-pillar-chip px-2 py-1 rounded-lg bg-slate-100 hover:bg-amber-500/20 dark:bg-slate-800 dark:hover:bg-amber-500/20 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[10px] font-bold transition-all cursor-pointer">
-        📍 ${p}
-      </button>
-    `).join('');
     pillarInput.parentElement.appendChild(chipsWrap);
-
-    chipsWrap.querySelectorAll('.parking-pillar-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const val = chip.getAttribute('data-pillar-val') || '';
-        if (pillarInput) pillarInput.value = val;
-      });
-    });
+    renderQuickPillarChipsForZone(selectedParkingZone?.name || 'Mavi', selectedParkingFloor?.code || 'P2');
   }
 }
+
+function syncSavedParkingOnSvgMap() {
+  const container = document.getElementById('map-canvas-container');
+  if (!container) return;
+  const svgEl = container.querySelector('svg');
+  if (!svgEl) return;
+
+  // 1. B2 ve B3 kat planlarındaki .parking-svg-zone alanlarına tıklama etkileşimi bağla
+  svgEl.querySelectorAll('.parking-svg-zone').forEach(zoneGroup => {
+    if (!zoneGroup.dataset.boundClick) {
+      zoneGroup.dataset.boundClick = '1';
+      zoneGroup.style.cursor = 'pointer';
+      zoneGroup.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const fCode = zoneGroup.getAttribute('data-floor-code') || 'P2';
+        const zName = zoneGroup.getAttribute('data-zone') || 'Mavi';
+        openParkingMemoryModal();
+        const flBtn = document.querySelector(`.parking-floor-btn[data-code="${fCode}"]`);
+        if (flBtn && typeof window.selectParkingFloor === 'function') {
+          window.selectParkingFloor(flBtn);
+        }
+        const zBtn = document.querySelector(`.parking-zone-btn[data-zone="${zName}"]`);
+        if (zBtn && typeof window.selectParkingZone === 'function') {
+          window.selectParkingZone(zBtn);
+        }
+      });
+    }
+  });
+
+  // 2. Kayıtlı araç bu kattaysa SVG harita üzerinde ilgili otopark alanında canlı rozet göster
+  svgEl.querySelector('#svg-saved-car-pin')?.remove();
+  const saved = getSavedParkingSpot();
+  if (!saved) return;
+
+  const floorCode = String(saved.code || saved.floor_id || 'P2').toUpperCase();
+  const savedFloorNum = floorCode === 'P1' ? 3 : (floorCode === 'P3' ? 1 : 2);
+  const activeFloorNum = mallMap ? mallMap.currentFloor : currentFloor;
+  if (activeFloorNum !== savedFloorNum) return;
+
+  const zoneName = saved.zone || saved.zone_color || 'Mavi';
+  const pillarText = (saved.pillar || saved.pillar_code || '').trim();
+  const targetZoneEl = svgEl.querySelector(`.parking-svg-zone[data-floor-code="${floorCode}"][data-zone="${zoneName}"]`);
+
+  const cx = Number(targetZoneEl?.getAttribute('data-cx')) || (savedFloorNum === 2 ? 1040 : 1115);
+  const cy = Number(targetZoneEl?.getAttribute('data-cy')) || 520;
+
+  const pinGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  pinGroup.setAttribute('id', 'svg-saved-car-pin');
+  pinGroup.setAttribute('transform', `translate(${cx}, ${cy})`);
+  pinGroup.style.cursor = 'pointer';
+
+  const labelText = `🚘 ARACINIZ: ${floorCode} ${zoneName.toUpperCase()}${pillarText ? ' (' + pillarText + ')' : ''}`;
+  const boxWidth = Math.max(176, labelText.length * 6.8 + 24);
+
+  pinGroup.innerHTML = `
+    <circle cx="0" cy="0" r="24" fill="#f59e0b" fill-opacity="0.28">
+      <animate attributeName="r" values="18;30;18" dur="1.8s" repeatCount="indefinite" />
+      <animate attributeName="fill-opacity" values="0.35;0.08;0.35" dur="1.8s" repeatCount="indefinite" />
+    </circle>
+    <rect x="${-boxWidth / 2}" y="-20" width="${boxWidth}" height="34" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="2.4" />
+    <text x="0" y="1" fill="#fef3c7" font-size="9.5" font-weight="900" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">${labelText}</text>
+  `;
+  pinGroup.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navigateToSavedCar();
+  });
+  svgEl.appendChild(pinGroup);
+}
+window.syncSavedParkingOnSvgMap = syncSavedParkingOnSvgMap;
 
 function ensureSmartParkingGreetingCard() {
   const headerContainer = document.getElementById('floor-header-card');
@@ -4824,6 +4951,7 @@ function updateParkingUI() {
     const floorCode = saved.code || saved.floor_id || 'P2';
     const zoneName = saved.zone || saved.zone_color || 'Mavi';
     const pillarText = (saved.pillar || saved.pillar_code || '').trim();
+    const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
     const label = `${floorCode} ${zoneName}`;
 
     if (btnText) btnText.textContent = `Arabama Git (${label})`;
@@ -4831,7 +4959,7 @@ function updateParkingUI() {
     if (headerBtn) headerBtn.classList.remove('hidden');
 
     if (smartCard && smartText) {
-      const pillarSuffix = pillarText ? ` (${pillarText})` : ' (Genel Alan)';
+      const pillarSuffix = pillarText ? ` (${pillarText})` : ` (${axisMeta.letter} Aksı)`;
       smartText.textContent = `🚘 Aracınız: ${floorCode} - ${zoneName}${pillarSuffix}`;
       smartCard.classList.remove('hidden');
     }
@@ -4845,10 +4973,10 @@ function updateParkingUI() {
 
       if (badge) {
         badge.textContent = floorCode;
-        badge.style.backgroundColor = saved.zoneColor || '#2563eb';
+        badge.style.backgroundColor = saved.zoneColor || axisMeta.colorHex || '#2563eb';
       }
-      if (title) title.textContent = `${saved.name || floorCode + ' Katı'} • ${zoneName} Bölge`;
-      if (pillar) pillar.textContent = pillarText ? `Direk / Not: ${pillarText}` : 'Genel Otopark Alanı';
+      if (title) title.textContent = `${saved.name || floorCode + ' Katı'} • ${zoneName} Bölge (${axisMeta.letter} Aksı)`;
+      if (pillar) pillar.textContent = pillarText ? `Sütun / Referans: ${pillarText} • ${axisMeta.lobbyLabel}` : axisMeta.lobbyLabel;
       if (time) time.textContent = saved.time ? `Kaydedildi: ${saved.time}` : 'Kayıtlı';
     }
     if (parkingForm) parkingForm.classList.remove('hidden');
@@ -4859,6 +4987,8 @@ function updateParkingUI() {
     if (savedCard) savedCard.classList.add('hidden');
     if (parkingForm) parkingForm.classList.remove('hidden');
   }
+
+  syncSavedParkingOnSvgMap();
 }
 
 function openParkingMemoryModal() {
@@ -4930,6 +5060,90 @@ async function deleteParkingSpot() {
 }
 window.deleteParkingSpot = deleteParkingSpot;
 
+function resolveSavedParkingTargetStore(saved, currentFl) {
+  const floorCode = String(saved?.code || saved?.floor_id || 'P2').toUpperCase();
+  const zoneName = String(saved?.zone || saved?.zone_color || 'Mavi');
+  const pillarText = String(saved?.pillar || saved?.pillar_code || '').trim();
+  const pillarNorm = normalizeTr(pillarText);
+  const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
+
+  const targetFloorNum = floorCode === 'P1' ? 3 : (floorCode === 'P3' ? 1 : 2);
+  const allStores = getAllStores();
+
+  // Eğer B2 (P2) katında Hibatech Oto Yıkama referansı veya Sarı Bölge seçildiyse ve B2-03 Hibatech mevcutsa:
+  if (targetFloorNum === 2 && (pillarNorm.includes('hibatech') || pillarNorm.includes('yikama') || zoneName === 'Sarı')) {
+    const hibatech = allStores.find(s => s.id === 'store_2_1');
+    if (hibatech && hibatech.nav_node) {
+      return {
+        ...hibatech,
+        name: `🚘 ${floorCode} ${zoneName} Bölge (${pillarText || 'B2-03 Hibatech Oto Yıkama Yanı'})`,
+        category_name: 'Kayıtlı Araç Konumu (B2 Otopark)',
+        is_service_area: true
+      };
+    }
+  }
+
+  // Eğer B3 (P3) katında Lostra / Dry Clean / Mescit referansı seçildiyse:
+  if (targetFloorNum === 1) {
+    if (pillarNorm.includes('lostra') || zoneName === 'Sarı') {
+      const lostra = allStores.find(s => s.id === 'store_1_2');
+      if (lostra && lostra.nav_node) {
+        return {
+          ...lostra,
+          name: `🚘 ${floorCode} ${zoneName} Bölge (${pillarText || 'B3-10 Başak Lostra Lobisi'})`,
+          category_name: 'Kayıtlı Araç Konumu (B3 Otopark)',
+          is_service_area: true
+        };
+      }
+    }
+    if (pillarNorm.includes('dry') || zoneName === 'Turuncu') {
+      const dryClean = allStores.find(s => s.id === 'store_1_4');
+      if (dryClean && dryClean.nav_node) {
+        return {
+          ...dryClean,
+          name: `🚘 ${floorCode} ${zoneName} Bölge (${pillarText || 'B3-05 Dry Clean Lobisi'})`,
+          category_name: 'Kayıtlı Araç Konumu (B3 Otopark)',
+          is_service_area: true
+        };
+      }
+    }
+  }
+
+  // Bölge rengine göre o kattaki gerçek Otopark Asansör / Yaya Lobisi düğümünü seç
+  let navNode = `c_${targetFloorNum}_m_760`;
+  let cx = 780;
+  let cy = 440;
+  if (zoneName === 'Mavi' || pillarNorm.startsWith('a')) {
+    navNode = `c_${targetFloorNum}_m_240`;
+    cx = 220;
+    cy = 440;
+  } else if (zoneName === 'Sarı' || pillarNorm.startsWith('b')) {
+    navNode = `c_${targetFloorNum}_n_430`;
+    cx = 430;
+    cy = 295;
+  } else if (zoneName === 'Turuncu' || pillarNorm.startsWith('c') || pillarNorm.includes('sarj')) {
+    navNode = `c_${targetFloorNum}_m_760`;
+    cx = 780;
+    cy = 440;
+  } else if (zoneName === 'Kırmızı' || pillarNorm.startsWith('d') || pillarNorm.includes('vale')) {
+    navNode = `c_${targetFloorNum}_s_760`;
+    cx = 760;
+    cy = 570;
+  }
+
+  return {
+    id: `parking_target_${floorCode}_${zoneName}`,
+    name: `🚘 Aracınız: ${floorCode} ${zoneName} Bölge (${pillarText || axisMeta.letter + ' Aksı'})`,
+    floor: targetFloorNum,
+    category_name: `${floorCode} Kapalı Otopark (${axisMeta.lobbyLabel})`,
+    kind: 'carpark',
+    is_service_area: true,
+    cx,
+    cy,
+    nav_node: navNode
+  };
+}
+
 function navigateToSavedCar() {
   const saved = getSavedParkingSpot();
   if (!saved) {
@@ -4940,44 +5154,51 @@ function navigateToSavedCar() {
   closeParkingMemoryModal();
 
   const currentFl = mallMap ? mallMap.currentFloor : 4;
-  const nearestLift = findNearestAmenity('elevator', currentFl);
-  const elevatorNodeId = nearestLift?.nav_node || `p_${currentFl}_lift_w`;
-
   let startStoreObj = null;
 
   if (selectedStartStore && selectedStartStore.floor === currentFl) {
     startStoreObj = selectedStartStore;
   } else {
     if (currentFl === 4) {
-      startStoreObj = { id: 'danisma', name: 'Zemin Kat Danışma', floor: 4, cx: 265, cy: 570, nav_node: 'n_danisma' };
+      startStoreObj = (mallData?.entrances || []).find(e => e.id === 'ent_danisma') || {
+        id: 'danisma',
+        name: 'Zemin Kat Danışma',
+        floor: 4,
+        cx: 265,
+        cy: 570,
+        nav_node: 'n_danisma'
+      };
     } else {
-      const floorStores = getAllStores().filter(s => s.floor === currentFl);
-      startStoreObj = floorStores.length > 0 ? floorStores[0] : { id: 'door_0', name: 'Kat Girişi', floor: currentFl, cx: 240, cy: 400, nav_node: `p_${currentFl}_lift_w` };
+      const floorStores = getAllStores().filter(s => s.floor === currentFl && s.nav_node);
+      startStoreObj = floorStores.length > 0
+        ? floorStores[0]
+        : { id: 'door_0', name: 'Kat Girişi', floor: currentFl, cx: 240, cy: 440, nav_node: `c_${currentFl}_m_240` };
     }
   }
 
   const floorCode = saved.code || saved.floor_id || 'P2';
   const zoneName = saved.zone || saved.zone_color || 'Mavi';
   const pillarText = saved.pillar || saved.pillar_code || '';
+  const targetParkingObj = resolveSavedParkingTargetStore(saved, currentFl);
 
-  const elevatorStore = {
-    id: nearestLift?.id || `am_lift_w_${currentFl}`,
-    name: `Otopark Asansörü (${floorCode} - ${zoneName}${pillarText ? ' ' + pillarText : ''})`,
-    floor: currentFl,
-    category_name: 'Asansör',
-    kind: 'elevator',
-    is_service_area: true,
-    cx: nearestLift?.cx || 240,
-    cy: nearestLift?.cy || 400,
-    nav_node: elevatorNodeId
-  };
+  // Eğer başlangıç ve hedef aynı düğümdeyse farklı bir başlangıç noktası seç
+  if (startStoreObj && startStoreObj.nav_node === targetParkingObj.nav_node) {
+    startStoreObj = {
+      id: `lobby_entry_${currentFl}`,
+      name: 'Kat Kuzeybatı Girişi',
+      floor: currentFl,
+      cx: 240,
+      cy: 310,
+      nav_node: `c_${currentFl}_n_240`
+    };
+  }
 
   if (startStoreObj) {
     setStartLocation(startStoreObj);
   }
-  setTargetLocation(elevatorStore);
+  setTargetLocation(targetParkingObj);
 
-  showToast(`🚘 Aracınız ${floorCode} - ${zoneName} Bölge (${pillarText || 'Otopark'}) noktasında. En yakın otopark asansörüne rota çizildi.`, 'success');
+  showToast(`🚘 Aracınız ${floorCode} - ${zoneName} Bölge (${pillarText || 'Otopark'}) noktasında. Otopark katına ve bölgesine rota çizildi.`, 'success');
 }
 
 function navigateToAvailableParking(recordFullZone = false) {
@@ -5092,6 +5313,7 @@ function setupParkingMemoryEvents() {
       name: btn.getAttribute('data-name') || 'P2 (2. Bodrum Kat)'
     };
     renderParkingHeatbars(currentParkingOccupancy);
+    renderQuickPillarChipsForZone(selectedParkingZone.name, selectedParkingFloor.code);
   }
   window.selectParkingFloor = selectParkingFloor;
 
@@ -5131,6 +5353,7 @@ function setupParkingMemoryEvents() {
       color: color
     };
     renderParkingHeatbars(currentParkingOccupancy);
+    renderQuickPillarChipsForZone(selectedParkingZone.name, selectedParkingFloor.code);
   }
   window.selectParkingZone = selectParkingZone;
 

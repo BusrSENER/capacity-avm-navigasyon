@@ -32,17 +32,92 @@
   <!-- Dış Cadde / Yön Bilgilendirmeleri -->
   <text x="480" y="102" fill="#0284c7" font-size="11.5" font-weight="800" text-anchor="middle" letter-spacing="1">▲ ATAKÖY / ZEBERCET SOKAK YÖNÜ</text>
   <text x="760" y="782" fill="#059669" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1.2">▼ FİŞEKHANE CADDESİ (C KAPISI ANA GİRİŞ) &amp; DADYAN SOKAK (B KAPISI)</text>
-  <!-- 2. Bodrum Kat (B2) Kiosk Koton & LC Waikiki Alt Kat Blokları -->
-  <g opacity="0.88">
+  <!-- 2. Bodrum Kat (B2 / P2) Kiosk Koton & LC Waikiki Alt Kat Blokları + Gerçek Otopark Renk & Harf Planı -->
+  <g id="b2-kiosk-and-parking-zones">
     <rect x="270" y="140" width="136" height="140" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.8" />
     <text x="338" y="208" fill="#334155" font-size="12" font-weight="900" text-anchor="middle">KOTON</text>
     <text x="338" y="224" fill="#64748b" font-size="8.5" font-weight="700" text-anchor="middle">(ALT KAT • B2)</text>
     <rect x="270" y="340" width="136" height="72" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.8" />
     <text x="338" y="374" fill="#334155" font-size="11" font-weight="900" text-anchor="middle">LC WAIKIKI</text>
     <text x="338" y="389" fill="#64748b" font-size="8" font-weight="700" text-anchor="middle">(ALT KAT • B2)</text>
-    <rect x="795" y="420" width="460" height="290" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 4" />
-    <text x="1025" y="555" fill="#475569" font-size="15" font-weight="900" text-anchor="middle">🅿️ P2 KAPALI OTOPARK &amp; VALE ALANI</text>
-    <text x="1025" y="578" fill="#64748b" font-size="10.5" font-weight="700" text-anchor="middle">A1-A4 • B1-B4 • C1-C4 (E-ŞARJ) • D1-D4 (VALE &amp; OTO YIKAMA)</text>
+
+    <!-- 💳 Kiosk Otopark Ödeme Noktası (Parking Payment) -->
+    <g id="b2-parking-payment-point" transform="translate(792, 345)">
+      <rect x="0" y="0" width="118" height="54" rx="8" fill="#ecfeff" stroke="#0891b2" stroke-width="1.8" />
+      <text x="59" y="22" fill="#0e7490" font-size="9.5" font-weight="900" text-anchor="middle">💳 OTOPARK ÖDEME</text>
+      <text x="59" y="36" fill="#155e75" font-size="7.5" font-weight="700" text-anchor="middle">PARKING PAYMENT (B2)</text>
+      <text x="59" y="47" fill="#0891b2" font-size="7" font-weight="800" text-anchor="middle">Doğu Asansör Lobisi Yanı</text>
+    </g>
+
+    <!-- 🅿️ B2 (P2) KAPALI OTOPARK RENK BLOKLARI VE HARF/KOLON AKSLARI (A, B, C, D) -->
+    <g id="b2-parking-layout-grid">
+      <!-- Otopark Ana Çerçevesi -->
+      <rect x="795" y="412" width="498" height="318" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 4" />
+      <rect x="805" y="420" width="478" height="28" rx="6" fill="#0f172a" />
+      <text x="1044" y="438" fill="#f8fafc" font-size="10.5" font-weight="900" text-anchor="middle" letter-spacing="0.8">🅿️ 2. BODRUM (B2 / P2) KAPALI OTOPARK • RENK &amp; SÜTUN PLANI</text>
+
+      <!-- 🔵 MAVİ BÖLGE (A SÜTUN AKSI: A-01 .. A-15) - Batı/Kuzey Yönü -->
+      <g id="parking-zone-b2-mavi" class="parking-svg-zone" data-floor-code="P2" data-zone="Mavi" data-cx="918" data-cy="495">
+        <rect x="808" y="456" width="228" height="112" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2" />
+        <rect x="808" y="456" width="228" height="22" rx="6" fill="#2563eb" />
+        <text x="922" y="471" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">🔵 MAVİ BÖLGE • A AKSI (A-01 – A-15)</text>
+        <text x="922" y="492" fill="#1e40af" font-size="8.5" font-weight="800" text-anchor="middle">Kuzey / Batı Asansör &amp; Koton-LCW Lobisi Yönü</text>
+        <g fill="#dbeafe" stroke="#3b82f6" stroke-width="1" font-size="7.5" font-weight="800">
+          <rect x="818" y="502" width="46" height="22" rx="4" /><text x="841" y="516" fill="#1d4ed8" text-anchor="middle" stroke="none">A-01..04</text>
+          <rect x="872" y="502" width="46" height="22" rx="4" /><text x="895" y="516" fill="#1d4ed8" text-anchor="middle" stroke="none">A-05..08</text>
+          <rect x="926" y="502" width="46" height="22" rx="4" /><text x="949" y="516" fill="#1d4ed8" text-anchor="middle" stroke="none">A-09..12</text>
+          <rect x="980" y="502" width="46" height="22" rx="4" /><text x="1003" y="516" fill="#1d4ed8" text-anchor="middle" stroke="none">A-13..15</text>
+        </g>
+        <text x="922" y="556" fill="#2563eb" font-size="8" font-weight="800" text-anchor="middle">🛗 Yaya Girişi: Batı &amp; Kuzey Asansör Lobisi</text>
+      </g>
+
+      <!-- 🟡 SARI BÖLGE (B SÜTUN AKSI: B-01 .. B-15) - Hibatech Oto Yıkama Yanı -->
+      <g id="parking-zone-b2-sari" class="parking-svg-zone" data-floor-code="P2" data-zone="Sarı" data-cx="1165" data-cy="495">
+        <rect x="1050" y="456" width="230" height="112" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="2" />
+        <rect x="1050" y="456" width="230" height="22" rx="6" fill="#eab308" />
+        <text x="1165" y="471" fill="#0f172a" font-size="9.5" font-weight="900" text-anchor="middle">🟡 SARI BÖLGE • B AKSI (B-01 – B-15)</text>
+        <text x="1165" y="492" fill="#854d0e" font-size="8.5" font-weight="800" text-anchor="middle">Merkez / B2-03 Hibatech Oto Yıkama Yanı</text>
+        <g fill="#fef08a" stroke="#ca8a04" stroke-width="1" font-size="7.5" font-weight="800">
+          <rect x="1060" y="502" width="48" height="22" rx="4" /><text x="1084" y="516" fill="#713f12" text-anchor="middle" stroke="none">B-01..04</text>
+          <rect x="1115" y="502" width="48" height="22" rx="4" /><text x="1139" y="516" fill="#713f12" text-anchor="middle" stroke="none">B-05..08</text>
+          <rect x="1170" y="502" width="48" height="22" rx="4" /><text x="1194" y="516" fill="#713f12" text-anchor="middle" stroke="none">B-09..12</text>
+          <rect x="1225" y="502" width="46" height="22" rx="4" /><text x="1248" y="516" fill="#713f12" text-anchor="middle" stroke="none">B-13..15</text>
+        </g>
+        <text x="1165" y="556" fill="#a16207" font-size="8" font-weight="800" text-anchor="middle">🧼 Referans: B2-03 Hibatech Oto Yıkama Karşısı</text>
+      </g>
+
+      <!-- 🟠 TURUNCU BÖLGE (C SÜTUN AKSI: C-01 .. C-15) - E-Şarj & Doğu Lobisi -->
+      <g id="parking-zone-b2-turuncu" class="parking-svg-zone" data-floor-code="P2" data-zone="Turuncu" data-cx="918" data-cy="645">
+        <rect x="808" y="582" width="228" height="136" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="2" />
+        <rect x="808" y="582" width="228" height="22" rx="6" fill="#f97316" />
+        <text x="922" y="597" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">🟠 TURUNCU BÖLGE • C AKSI (C-01 – C-15)</text>
+        <text x="922" y="618" fill="#9a3412" font-size="8.5" font-weight="800" text-anchor="middle">⚡ Elektrikli Araç Şarj (ZES / Eşarj) &amp; Doğu Aksı</text>
+        <g fill="#ffedd5" stroke="#ea580c" stroke-width="1" font-size="7.5" font-weight="800">
+          <rect x="818" y="628" width="46" height="22" rx="4" /><text x="841" y="642" fill="#9a3412" text-anchor="middle" stroke="none">C-01..04</text>
+          <rect x="872" y="628" width="46" height="22" rx="4" /><text x="895" y="642" fill="#9a3412" text-anchor="middle" stroke="none">C-05..08</text>
+          <rect x="926" y="628" width="46" height="22" rx="4" /><text x="949" y="642" fill="#9a3412" text-anchor="middle" stroke="none">C-09..12</text>
+          <rect x="980" y="628" width="46" height="22" rx="4" /><text x="1003" y="642" fill="#9a3412" text-anchor="middle" stroke="none">C-13..15</text>
+        </g>
+        <text x="922" y="672" fill="#c2410c" font-size="8" font-weight="800" text-anchor="middle">⚡ C-01..C-06: AC/DC Hızlı Şarj Üniteleri</text>
+        <text x="922" y="706" fill="#9a3412" font-size="8" font-weight="800" text-anchor="middle">🛗 Yaya Girişi: Doğu Asansör &amp; Güney Merdiven</text>
+      </g>
+
+      <!-- 🔴 KIRMIZI BÖLGE (D SÜTUN AKSI: D-01 .. D-15) - Vale Park & Fişekhane Çıkışı -->
+      <g id="parking-zone-b2-kirmizi" class="parking-svg-zone" data-floor-code="P2" data-zone="Kırmızı" data-cx="1165" data-cy="645">
+        <rect x="1050" y="582" width="230" height="136" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2" />
+        <rect x="1050" y="582" width="230" height="22" rx="6" fill="#ef4444" />
+        <text x="1165" y="597" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">🔴 KIRMIZI BÖLGE • D AKSI (D-01 – D-15)</text>
+        <text x="1165" y="618" fill="#991b1b" font-size="8.5" font-weight="800" text-anchor="middle">🚘 VIP Vale Park &amp; Fişekhane Cad. Çıkış Rampası</text>
+        <g fill="#fee2e2" stroke="#dc2626" stroke-width="1" font-size="7.5" font-weight="800">
+          <rect x="1060" y="628" width="48" height="22" rx="4" /><text x="1084" y="642" fill="#991b1b" text-anchor="middle" stroke="none">D-01..04</text>
+          <rect x="1115" y="628" width="48" height="22" rx="4" /><text x="1139" y="642" fill="#991b1b" text-anchor="middle" stroke="none">D-05..08</text>
+          <rect x="1170" y="628" width="48" height="22" rx="4" /><text x="1194" y="642" fill="#991b1b" text-anchor="middle" stroke="none">D-09..12</text>
+          <rect x="1225" y="628" width="46" height="22" rx="4" /><text x="1248" y="642" fill="#991b1b" text-anchor="middle" stroke="none">D-13..15</text>
+        </g>
+        <text x="1165" y="672" fill="#b91c1c" font-size="8" font-weight="800" text-anchor="middle">🔑 Vale Teslim &amp; AVM Araç Çıkış Yönü</text>
+        <text x="1165" y="706" fill="#991b1b" font-size="8" font-weight="800" text-anchor="middle">🛗 Yaya Girişi: Güney Yürüyen Merdiven (C Kapısı Aksı)</text>
+      </g>
+    </g>
   </g>
   <g class="kiosk-escalator-rotunda" transform="translate(240, 310)">
     <circle cx="0" cy="0" r="24" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
