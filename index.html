@@ -130,7 +130,7 @@
       <div id="bottom-sheet-handle-bar" class="w-full flex items-center justify-between h-[52px] pb-1 cursor-pointer md:hidden shrink-0 select-none">
         <div class="flex items-center gap-2.5 min-w-0 flex-1">
           <div class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-500 dark:bg-orange-500/20 flex items-center justify-center text-sm font-bold shrink-0">
-            🔍
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
           <div class="flex flex-col min-w-0 truncate">
             <span id="bottom-sheet-hint" class="text-xs font-extrabold text-slate-800 dark:text-slate-100 truncate flex items-center gap-1.5">
@@ -222,7 +222,7 @@
               <input 
                 id="input-start-loc" 
                 type="text" 
-                placeholder="📍 Nereden? (Giriş / Mağaza)" 
+                placeholder="Nereden? (Giriş / Mağaza)" 
                 class="w-full pl-2.5 pr-6 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 cursor-text transition-all truncate shadow-inner"
               >
               <button id="btn-clear-start" class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden" title="Başlangıcı Temizle">
@@ -236,7 +236,7 @@
               <input 
                 id="input-target-loc" 
                 type="text" 
-                placeholder="🎯 Nereye? (Mağaza / Hizmet)" 
+                placeholder="Nereye? (Mağaza / Hizmet)" 
                 class="w-full pl-2.5 pr-6 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:bg-white dark:focus:bg-slate-800 transition-all truncate shadow-inner"
               >
               <button id="btn-clear-target" class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden" title="Hedefi Temizle">
@@ -251,8 +251,8 @@
           </button>
 
           <!-- Sesli Komut (Mikrofon) Hızlı Butonu -->
-          <button id="btn-sidebar-voice-cmd" class="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-gradient-to-br from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white flex flex-col items-center justify-center shrink-0 transition-all active:scale-95 shadow-md shadow-orange-500/25 cursor-pointer" title="🎙️ Sesli Komut: Konuşarak Konum Pinle ve Rota Çiz">
-            <span class="text-sm leading-none">🎙️</span>
+          <button id="btn-sidebar-voice-cmd" class="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-gradient-to-br from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white flex flex-col items-center justify-center shrink-0 transition-all active:scale-95 shadow-md shadow-orange-500/25 cursor-pointer" title="Sesli Komut: Konuşarak Konum Pinle ve Rota Çiz">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
             <span class="text-[8px] font-black uppercase tracking-tighter mt-0.5 leading-none">Sesli</span>
           </button>
         </div>
@@ -262,38 +262,38 @@
           <div id="search-autocomplete-list" class="hidden absolute top-0 left-0 right-0 max-h-60 sm:max-h-72 overflow-y-auto bg-white/98 dark:bg-slate-900/98 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 divide-y divide-slate-100 dark:divide-slate-800"></div>
         </div>
 
-        <!-- 👁️ GÖRÜNÜM MODU SEÇİCİ: [🗺️ 2B Plan] | [🧊 3B Maket] | [👁️ Gözümden (3B)] -->
+        <!-- GÖRÜNÜM MODU SEÇİCİ: [2B Plan] | [3B Maket] | [Gözümden (3B)] -->
         <div id="view-mode-switcher-bar" class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 mt-0.5">
           <button type="button" id="btn-mode-2d" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-extrabold flex items-center justify-center gap-1 transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-sm" data-view-mode="2d" title="2B Kuşbakışı Kat Planı">
-            <span>🗺️</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
             <span class="truncate">2B Plan</span>
           </button>
           <button type="button" id="btn-mode-3d" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700/60" data-view-mode="3d" title="3B Perspektif Kat Maketi">
-            <span>🧊</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
             <span class="truncate">3B Maket</span>
           </button>
           <button type="button" id="btn-mode-pov" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700/60" data-view-mode="pov" title="X Kişisinin Gözünden 3B Canlı AVM Koridor Yürüyüşü">
-            <span>👁️</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
             <span class="truncate">Gözümden 3B</span>
           </button>
         </div>
 
-        <!-- Rota Tercih Sekmeleri: [ 🚶 Yürüyen Merdiven ] ve [ ♿ Engelsiz / Asansör ] -->
+        <!-- Rota Tercih Sekmeleri: [ Yürüyen Merdiven ] ve [ Engelsiz / Asansör ] -->
         <div class="flex items-center gap-1.5 pt-0.5">
           <button id="tab-pref-escalator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-red-600 bg-red-600 text-white shadow-xs cursor-pointer" data-mode="escalator" title="Yürüyen Merdiven ve Merdivenleri Tercih Et">
-            <span>🚶</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M4 18h4l8-8h4"/><path d="M14 6h6v6"/></svg>
             <span>Yürüyen Merdiven</span>
           </button>
           <button id="tab-pref-elevator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-mode="elevator" title="Hareket Kabiliyeti Kısıtlı Kişiler, Tekerlekli Sandalye ve Bebek Arabası İçin Uyarlanmış Engelsiz Güzergah">
-            <span>♿🛗</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 10 10 8 12 10"/><polyline points="12 14 14 16 16 14"/></svg>
             <span>Engelsiz / Asansör</span>
           </button>
         </div>
 
-        <!-- ♿ Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Rota Bilgi Şeridi -->
+        <!-- Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Rota Bilgi Şeridi -->
         <div id="pmr-accessible-banner" class="hidden mt-1 px-2.5 py-1.5 rounded-xl bg-sky-500/12 dark:bg-sky-500/20 border border-sky-500/35 text-[10.5px] font-bold text-sky-800 dark:text-sky-200 flex items-center justify-between gap-1.5 animate-in fade-in duration-150">
           <div class="flex items-center gap-1.5 min-w-0">
-            <span class="text-sm shrink-0">♿</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="5" r="2"/><path d="M10 9h4l1 5h4"/><path d="M9 13a5 5 0 1 0 5 6"/></svg>
             <span class="truncate">Engelsiz Güzergah: Geniş koridor + Panoramik asansör</span>
           </div>
           <span class="px-1.5 py-0.5 rounded bg-sky-600 text-white text-[9px] font-black uppercase shrink-0">PMR Aktif</span>
@@ -305,27 +305,29 @@
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="quick-start-chips-row" data-scroll-dir="-1" title="Sola Kaydır" aria-label="Sola Kaydır">‹</button>
         <div id="quick-start-chips-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 select-none">
           <button id="btn-gps-auto-locate" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all shadow-sm shadow-sky-600/25 cursor-pointer active:scale-95" title="GPS ve İç Mekan Konumlandırma (IPS) ile Konumunuzu Otomatik Algıla">
-            <span id="gps-btn-icon">📡</span>
+            <span id="gps-btn-icon" class="inline-flex items-center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="7"/></svg></span>
             <span id="gps-btn-label">GPS Konumumu Bul</span>
           </button>
           <button id="btn-pin-here" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all shadow-xs cursor-pointer active:scale-95" title="Şu An Bulunduğunuz Kapı veya Mağazayı Tek Tıkla Pinleyin">
-            <span>📍 Şu An Buradayım</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Şu An Buradayım</span>
           </button>
           <button id="btn-quick-events" class="px-2.5 py-1 rounded-xl bg-violet-600/15 hover:bg-violet-600/25 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/35 text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all cursor-pointer active:scale-95" title="Takviminizde Yer Alan AVM Etkinlikleri ve Konumları">
-            <span>📅 Etkinlik Takvimi</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>Etkinlik Takvimi</span>
           </button>
           <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Kapılar:</span>
           <button id="btn-quick-fisekhane" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="fisekhane" title="C Kapısı - Fişekhane Ana Giriş (x: 1245, y: 410)">
-            <span>🚪 C Kapısı (Fişekhane)</span>
+            <span>C Kapısı (Fişekhane)</span>
           </button>
           <button id="btn-quick-carousel" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="carousel" title="B Kapısı - Carousel Geçiş Kapısı (x: 680, y: 50)">
-            <span>🚪 B Kapısı (Carousel)</span>
+            <span>B Kapısı (Carousel)</span>
           </button>
           <button id="btn-quick-akapisi" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="akapisi" title="A Kapısı - Ataköy / Marks & Spencer Girişi (x: 200, y: 440)">
-            <span>🚪 A Kapısı</span>
+            <span>A Kapısı</span>
           </button>
           <button id="btn-quick-danisma" class="quick-start-chip px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all border border-slate-200 dark:border-slate-700 cursor-pointer" data-point="danisma" title="Zemin Kat Danışma (x: 1085, y: 425)">
-            <span>ℹ️ Danışma</span>
+            <span>Danışma</span>
           </button>
         </div>
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="quick-start-chips-row" data-scroll-dir="1" title="Sağa Kaydır" aria-label="Sağa Kaydır">›</button>
@@ -377,43 +379,44 @@
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="amenity-chips-row" data-scroll-dir="-1" title="Hizmetleri Sola Kaydır" aria-label="Sola Kaydır">‹</button>
         <div id="amenity-chips-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 select-none">
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-500/15 hover:bg-sky-500/25 dark:bg-sky-500/20 text-sky-800 dark:text-sky-200 border border-sky-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="elevator" title="Kattaki Tüm Asansörleri Haritada İşaretle ve Göster">
-            <span>🛗</span> Asansör
+            <span>Asansör</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-pink-500/15 hover:bg-pink-500/25 dark:bg-pink-500/20 text-pink-800 dark:text-pink-200 border border-pink-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="baby" title="Kattaki Tüm Bebek Bakım Odalarını Haritada İşaretle ve Göster">
-            <span>🍼</span> Bebek Odası
+            <span>Bebek Odası</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-indigo-500/15 hover:bg-indigo-500/25 dark:bg-indigo-500/20 text-indigo-800 dark:text-indigo-200 border border-indigo-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="wc" title="Kattaki Tüm WC / Tuvaletleri Haritada İşaretle ve Göster">
-            <span>🚻</span> WC / Tuvalet
+            <span>WC / Tuvalet</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/25 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="emergency" title="Kattaki Tüm Acil Çıkış Kapılarını Haritada İşaretle ve Göster">
-            <span>🚨</span> Acil Çıkış
+            <span>Acil Çıkış</span>
           </button>
           <button id="btn-parking-memory" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/20 dark:hover:bg-amber-400/30 text-amber-900 dark:bg-amber-400/20 dark:text-amber-200 border border-amber-500/30 shrink-0 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs" title="Dolu/Boş Park Alanı Takibi, Park Yeri Kaydı ve Araca Yönlendirme">
-            <span>🅿️🚗</span> <span id="parking-memory-btn-text">Otopark &amp; Park Kaydı</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+            <span id="parking-memory-btn-text">Otopark &amp; Park Kaydı</span>
           </button>
           <button id="btn-amenity-events" class="amenity-pill px-3 py-1 rounded-full text-[11px] font-bold bg-violet-500/15 hover:bg-violet-500/25 dark:bg-violet-400/20 text-violet-800 dark:text-violet-200 border border-violet-500/30 shrink-0 flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs" title="AVM Etkinlik Takvimi ve Etkinlik Konumlarına Yönlendirme">
-            <span>📅</span> <span>Etkinlikler</span>
+            <span>Etkinlikler</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="entrance" title="Tüm Giriş ve Çıkış Kapılarını Haritada İşaretle">
-            <span>🚪</span> Giriş-Çıkış
+            <span>Giriş-Çıkış</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="kiosk" title="Kiosk ve Danışma Noktalarını Haritada İşaretle">
-            <span>🖥️</span> Kiosk Harita
+            <span>Kiosk Harita</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="carpark" title="Otopark Giriş ve Asansörlerini Haritada İşaretle">
-            <span>🅿️</span> Otopark Girişi
+            <span>Otopark Girişi</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="info">
-            <span>🛡️</span> Danışma
+            <span>Danışma</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="wheelchair">
-            <span>♿</span> Akülü Sandalye Şarj
+            <span>Akülü Sandalye Şarj</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/15 hover:bg-emerald-500/25 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="atm" title="1. Bodrum Kat (B-21 Turkcell & B-22 B&G Store Arası) Bankamatikler (ATM) Alanını Haritada Göster">
-            <span>💳</span> Bankamatikler (ATM)
+            <span>Bankamatikler (ATM)</span>
           </button>
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="prayer">
-            <span>🕌</span> Mescit
+            <span>Mescit</span>
           </button>
         </div>
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="amenity-chips-row" data-scroll-dir="1" title="Hizmetleri Sağa Kaydır" aria-label="Sağa Kaydır">›</button>
@@ -477,11 +480,11 @@
           <div id="poi-action-buttons" class="flex flex-col gap-2 pt-1">
             <button id="poi-route-btn" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-bold shadow-md shadow-red-600/30 hover:from-red-500 hover:to-red-600 flex items-center justify-center gap-2 transition-all">
               <i data-lucide="navigation" class="w-4 h-4"></i>
-              <span>🎯 Hedef Yap</span>
+              <span>Hedef Yap</span>
             </button>
             <button id="poi-start-btn" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
               <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
-              <span>📍 Buradan Başla</span>
+              <span>Buradan Başla</span>
             </button>
           </div>
 
@@ -489,7 +492,8 @@
           <div id="poi-campaign-card" class="p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-red-500/10 border border-amber-500/30 flex flex-col gap-1.5">
             <div class="flex items-center justify-between">
               <span class="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                <span>🏷️</span> Günün Fırsatı
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                <span>Günün Fırsatı</span>
               </span>
               <span id="poi-campaign-badge" class="px-1.5 py-0.5 rounded bg-red-600 text-white text-[9px] font-black">%50 İndirim</span>
             </div>
@@ -543,29 +547,29 @@
             </div>
             <p id="current-floor-sub" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Ana Giriş · Lüks &amp; Tasarım · Müzikli Havuz · Kafe</p>
           </div>
-          <!-- 📡 GPS / İç Mekan Otomatik Konum Çipi -->
-          <button id="btn-header-gps-locate" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-sky-600/20 transition-all active:scale-95 cursor-pointer" title="📡 GPS / İç Mekan Sensörü ile Konumumu Otomatik Algıla">
-            <span>📡</span>
+          <!-- GPS / İç Mekan Otomatik Konum Çipi -->
+          <button id="btn-header-gps-locate" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-sky-600/20 transition-all active:scale-95 cursor-pointer" title="GPS / İç Mekan Sensörü ile Konumumu Otomatik Algıla">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="7"/></svg>
             <span class="hidden lg:inline">GPS Konum</span>
           </button>
-          <!-- 📅 Etkinlik Takvimi Çipi -->
-          <button id="btn-header-events" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-violet-600/20 transition-all active:scale-95 cursor-pointer" title="📅 AVM Etkinlik Takvimi ve Etkinlik Konumları">
-            <span>📅</span>
+          <!-- Etkinlik Takvimi Çipi -->
+          <button id="btn-header-events" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-violet-600/20 transition-all active:scale-95 cursor-pointer" title="AVM Etkinlik Takvimi ve Etkinlik Konumları">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             <span class="hidden lg:inline">Etkinlikler</span>
           </button>
-          <!-- 🎙️ Sesli Komut (Mikrofon) Çipi -->
-          <button id="btn-header-voice-command" class="header-voice-cmd-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-orange-500/25 transition-all active:scale-95 cursor-pointer" title="🎙️ Sesli Komut: Konuşarak Konumunu Pinle ve Rota Çiz">
-            <span>🎙️</span>
+          <!-- Sesli Komut (Mikrofon) Çipi -->
+          <button id="btn-header-voice-command" class="header-voice-cmd-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-orange-500/25 transition-all active:scale-95 cursor-pointer" title="Sesli Komut: Konuşarak Konumunu Pinle ve Rota Çiz">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
             <span class="hidden sm:inline">Sesli Komut</span>
           </button>
-          <!-- 👁️ Gözümden (3B) / 2B Geçiş Çipi -->
+          <!-- Gözümden (3B) / 2B Geçiş Çipi -->
           <button id="btn-header-pov-toggle" class="header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer" title="X Kişisinin Gözünden 3B Koridor Görünümüne Geç">
-            <span id="header-pov-icon">👁️</span>
+            <span id="header-pov-icon" class="inline-flex items-center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>
             <span id="header-pov-text" class="hidden sm:inline">Gözümden 3B</span>
           </button>
           <!-- 1-Tıkla "Şu An Buradayım" Konum Pinleme Çipi -->
           <button id="btn-header-pin-here" class="header-pin-here-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-emerald-600/20 transition-all active:scale-95 cursor-pointer" title="Şu An Bulunduğunuz Kapı veya Mağazayı Seçin">
-            <span>📍</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
             <span id="header-pin-here-text">Buradayım</span>
           </button>
         </div>
@@ -573,7 +577,9 @@
         <!-- Servis / İhtiyaç Noktaları Çoklu İşaretleme Bannerı (Asansör, Bebek Odası, WC, Acil Çıkış Tıklandığında Tümünü Gösterir) -->
         <div id="amenity-highlight-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-2 transition-all">
           <div class="flex items-center gap-2 min-w-0">
-            <span id="amenity-banner-icon" class="w-7 h-7 rounded-lg bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center text-sm shrink-0">🛗</span>
+            <span id="amenity-banner-icon" class="w-7 h-7 rounded-lg bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center text-sm shrink-0">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 10 10 8 12 10"/><polyline points="12 14 14 16 16 14"/></svg>
+            </span>
             <div class="flex flex-col min-w-0">
               <span id="amenity-banner-title" class="text-xs font-extrabold text-slate-800 dark:text-slate-100 truncate">Bu katta 2 Asansör işaretlendi</span>
               <span id="amenity-banner-sub" class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">Haritadaki pinlere dokunabilir veya en yakınına rota çizebilirsiniz</span>
@@ -581,7 +587,7 @@
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
             <button type="button" id="btn-amenity-route-nearest" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-xs cursor-pointer active:scale-95">
-              <span>🧭</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
               <span>En Yakınına Rota</span>
             </button>
             <button type="button" id="btn-amenity-clear-highlight" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center text-xs font-bold cursor-pointer" title="İşaretleri Kaldır">✕</button>
@@ -592,7 +598,7 @@
         <div id="header-live-nav-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col gap-1.5 transition-all">
           <div class="flex items-center gap-2.5 min-w-0">
             <div id="live-nav-icon" class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex items-center justify-center text-base sm:text-lg font-bold shrink-0 shadow-xs select-none">
-              ⬆️
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
             </div>
             <div class="flex flex-col min-w-0 flex-1">
               <div id="live-nav-text" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-snug">
@@ -602,20 +608,19 @@
                 Rotayı takip edin
               </div>
             </div>
-            <!-- Sesli Rehber (Web Speech API - tr-TR) Butonu -->
+            <!-- Sesli Rehber (Web Speech API - tr-TR / en-US) Butonu -->
             <button id="btn-voice-toggle" class="shrink-0 h-8 px-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sesli Yol Tarifini Aç / Kapat veya Tekrar Dinle">
-              <span id="voice-toggle-icon">🔊</span>
+              <span id="voice-toggle-icon" class="inline-flex items-center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>
               <span id="voice-toggle-label" class="hidden sm:inline">Sesli Açık</span>
             </button>
           </div>
           <!-- Sesli Komut Canlı Altyazı Şeridi (Kalabalık yapmadan mevcut HUD içinde o an okunan cümleyi gösterir) -->
           <div id="live-voice-subtitle-bar" class="hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/25 text-[10.5px] font-bold text-cyan-900 dark:text-cyan-200">
             <span class="inline-block w-2 h-2 rounded-full bg-cyan-500 animate-ping shrink-0"></span>
-            <span id="live-voice-subtitle-text" class="leading-snug">🔊 Sesli Rehber: Rotanız hazır.</span>
+            <span id="live-voice-subtitle-text" class="leading-snug">Sesli Rehber: Rotanız hazır.</span>
           </div>
           <!-- Yanından Geçilen Mağazalar (Landmark Strip) -->
           <div id="live-nav-landmarks" class="hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-[10.5px] font-bold text-amber-800 dark:text-amber-300 truncate">
-            <span>👀</span>
             <span id="live-nav-landmarks-text" class="truncate">Yanından geçilecek: W Collection, Madame Coco</span>
           </div>
         </div>
@@ -624,7 +629,7 @@
       <!-- İnteraktif SVG Harita Konteyneri -->
       <div id="map-canvas-container" class="w-full h-full relative overflow-hidden select-none cursor-grab active:cursor-grabbing"></div>
 
-      <!-- 👁️ BİRİNCİ ŞAHIS (X KİŞİSİNİN GÖZÜ) 3B CANLI AVM KORİDOR & GOOGLE STREET VIEW SİMÜLATÖRÜ -->
+      <!-- BİRİNCİ ŞAHIS (X KİŞİSİNİN GÖZÜ) 3B CANLI AVM KORİDOR & GOOGLE STREET VIEW SİMÜLATÖRÜ -->
       <div id="pov-3d-container" class="hidden absolute inset-0 z-25 bg-slate-950 overflow-hidden select-none">
         <canvas id="pov-3d-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
 
@@ -648,11 +653,11 @@
             </div>
             <div class="grid grid-cols-2 gap-2 pt-0.5">
               <button type="button" id="btn-pov-popup-route" class="py-2 px-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 text-white text-xs font-extrabold flex items-center justify-center gap-1 shadow-md cursor-pointer active:scale-95 transition-all">
-                <span>🎯</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
                 <span>Buraya Yürü</span>
               </button>
               <button type="button" id="btn-pov-popup-start" class="py-2 px-2.5 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white text-xs font-extrabold flex items-center justify-center gap-1 shadow-md cursor-pointer active:scale-95 transition-all">
-                <span>📍</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                 <span>Önüne Git</span>
               </button>
             </div>
@@ -665,7 +670,7 @@
             <!-- Üst Etiket ve Kat / Mesafe -->
             <div class="flex items-center justify-between gap-2">
               <span id="pov-hud-mode-badge" class="px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-rose-600 text-[9.5px] font-black uppercase tracking-wider text-white flex items-center gap-1 shadow-xs">
-                <span>👁️</span>
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                 <span>3B Sokak Görünümü • Canlı Galeri</span>
               </span>
               <span id="pov-hud-distance" class="text-[11px] font-extrabold text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded-md">
@@ -675,18 +680,18 @@
 
             <!-- Rota veya Konum Başlığı -->
             <div id="pov-hud-title" class="text-xs sm:text-sm font-extrabold text-white truncate">
-              👁️ Capacity AVM 3B Koridor Gezintisi
+              Capacity AVM 3B Koridor Gezintisi
             </div>
 
             <!-- Canlı Adım / Manevra veya Serbest Gezinti İpucu -->
             <div id="pov-hud-step" class="text-xs font-bold text-amber-200 bg-white/10 rounded-xl px-2.5 py-1.5 border border-white/10 leading-snug">
-              👆 Koridordaki halkalara dokunarak veya oklarla sokak görünümünde gezinin.
+              Koridordaki halkalara dokunarak veya oklarla sokak görünümünde gezinin.
             </div>
 
             <!-- Şu An Yanından Geçilen Mağaza (En-Route Live Proximity + Kurumsal Marka Logosu) -->
             <div id="pov-hud-passing" class="hidden flex items-center gap-2 text-[11px] font-extrabold text-emerald-300 bg-emerald-950/75 border border-emerald-500/35 rounded-xl px-2.5 py-1.5 truncate">
               <span id="pov-hud-passing-logo" class="w-5 h-5 rounded-md bg-white p-0.5 flex items-center justify-center shrink-0 shadow-xs overflow-hidden"></span>
-              <span id="pov-hud-passing-text" class="truncate">👀 Yakınınızda: W Collection (Z-16)</span>
+              <span id="pov-hud-passing-text" class="truncate">Yakınınızda: W Collection (Z-16)</span>
             </div>
 
             <!-- Google Street View Adım & Bakış Kumandası (Sola Bak, İleri Adım, Geri Adım, Sağa Bak) -->
@@ -696,11 +701,11 @@
                 <span>Sola Bak</span>
               </button>
               <button type="button" id="btn-pov-step-fwd" class="py-1.5 px-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/35 text-cyan-200 border border-cyan-400/40 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs" title="Koridorda İleri İlerle (Yukarı Ok / W)">
-                <span>⬆️</span>
+                <span>↑</span>
                 <span>İleri Git</span>
               </button>
               <button type="button" id="btn-pov-step-back" class="py-1.5 px-2 rounded-xl bg-slate-800/95 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer" title="Geri Adım At (Aşağı Ok / S)">
-                <span>⬇️</span>
+                <span>↓</span>
                 <span>Geri</span>
               </button>
               <button type="button" id="btn-pov-turn-right" class="py-1.5 px-2 rounded-xl bg-slate-800/95 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sağa Dön (Sağ Ok / D)">
@@ -717,18 +722,17 @@
             <!-- 3B Kontrol Butonları -->
             <div class="flex items-center justify-between gap-1.5 pt-0.5">
               <button type="button" id="btn-pov-play-pause" class="flex-1 min-w-[96px] py-1.5 px-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center gap-1">
-                <span>⏸</span>
                 <span>Duraklat</span>
               </button>
               <button type="button" id="btn-pov-speed" class="py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shrink-0" title="Yürüyüş Hızı">
-                ⚡ 1x
+                1x
               </button>
               <button type="button" id="btn-pov-voice-cmd" class="py-1.5 px-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-xs font-extrabold transition-all active:scale-95 cursor-pointer flex items-center gap-1 shrink-0" title="Sesli Komut Ver">
-                <span>🎙️</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
                 <span class="hidden sm:inline">Sesli</span>
               </button>
               <button type="button" id="btn-pov-exit-2d" class="py-1.5 px-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40 text-xs font-extrabold transition-all active:scale-95 cursor-pointer shrink-0 flex items-center gap-1" title="Aynı Konumda 2B Harita Görünümüne Geç">
-                <span>🗺️</span>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                 <span>2B Harita</span>
               </button>
             </div>
@@ -765,9 +769,9 @@
         <button class="floor-pill w-7.5 h-7.5 min-w-[30px] min-h-[30px] rounded-full flex items-center justify-center text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" data-floor="1" title="3. Bodrum Kat: Hizmet &amp; Otopark">B3</button>
       </div>
 
-      <!-- Yüzen [ 🛍️ Çantaya Dön ] Butonu (Serbest Kamera Modunda Çıkar) -->
+      <!-- Yüzen [ Çantaya Dön ] Butonu (Serbest Kamera Modunda Çıkar) -->
       <button id="btn-recenter-cart" class="fixed sm:absolute right-4 bottom-24 sm:bottom-28 z-40 hidden flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md border border-white/20 dark:border-slate-800 transition-all duration-300 hover:scale-105 active:scale-95">
-        <span class="text-sm">🛍️</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
         <span>Çantaya Dön</span>
       </button>
 
@@ -811,20 +815,20 @@
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
     </div>
-    <!-- Alt Satır: Yan yana [📍 Buradan Başla] ve [🎯 Hedef Yap] Butonları -->
+    <!-- Alt Satır: Yan yana [Buradan Başla] ve [Hedef Yap] Butonları -->
     <div id="peek-action-buttons" class="grid grid-cols-2 gap-2 pt-0.5">
       <button id="btn-peek-start" class="min-h-[42px] sm:min-h-[44px] py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30">
-        <span>📍</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
         <span class="truncate"><span class="sm:hidden">Başlangıç Yap</span><span class="hidden sm:inline">Buradayım (Başlangıç Yap)</span></span>
       </button>
       <button id="btn-peek-target" class="min-h-[42px] sm:min-h-[44px] py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
-        <span>🎯</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
         <span class="truncate">Hedef Yap</span>
       </button>
     </div>
   </div>
 
-  <!-- 🧭 ROTA ÇİZİLDİĞİNDE ÇIKAN "NASIL İLERLEMEK İSTERSİNİZ?" SEÇİM KARTI -->
+  <!-- ROTA ÇİZİLDİĞİNDE ÇIKAN "NASIL İLERLEMEK İSTERSİNİZ?" SEÇİM KARTI -->
   <div id="route-mode-choice-modal" style="z-index: 65;" class="hidden fixed bottom-20 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-20 sm:w-[410px] z-50 pointer-events-auto animate-in fade-in slide-in-from-bottom-3 duration-200">
     <div class="bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl rounded-2xl border-2 border-indigo-500/40 shadow-[0_18px_45px_rgba(15,23,42,0.28)] p-3.5 flex flex-col gap-2.5">
       <div class="flex items-start justify-between gap-2">
@@ -842,11 +846,17 @@
 
       <div class="grid grid-cols-2 gap-2">
         <button type="button" id="btn-choose-mode-2d" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-cyan-600/25 active:scale-95 transition-all cursor-pointer">
-          <span class="text-base leading-none">🛍️ 2B Harita</span>
-          <span class="text-[10px] font-semibold text-cyan-100">Çanta ile İlerle</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-extrabold leading-none">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Rota Önizleme</span>
+          </span>
+          <span class="text-[10px] font-semibold text-cyan-100">2B Adım Adım Simülasyon</span>
         </button>
         <button type="button" id="btn-choose-mode-pov" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer">
-          <span class="text-base leading-none">👁️ 3B Gözümden</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-extrabold leading-none">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>3B Gözümden</span>
+          </span>
           <span class="text-[10px] font-semibold text-orange-100">Canlı Koridorda Yürü</span>
         </button>
       </div>
@@ -855,32 +865,31 @@
 
   <!-- MİNİMAL HUD (NAVİGASYON ÇUBUĞU) - 64px İnce Yönlendirme Çubuğu -->
   <div id="nav-hud-bar" class="fixed bottom-0 left-0 right-0 h-16 sm:h-[68px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-8px_30px_rgba(0,0,0,0.14)] z-50 flex items-center justify-between px-2.5 sm:px-6 transition-all duration-300 translate-y-full opacity-0 pointer-events-none flex-nowrap overflow-hidden">
-    <!-- Yan Yana Kompakt Kontroller: [⇅] + [⚡ 1x] + [📋 Detay] + [📲 QR] + [▶ Başlat / ⏸ Duraklat] + [✖] -->
+    <!-- Yan Yana Kompakt Kontroller: [⇅] + [1x] + [Detay] + [QR] + [Başlat / Duraklat] + [✖] -->
     <div class="w-full flex items-center justify-between gap-1.5 sm:gap-2 flex-nowrap overflow-hidden max-w-lg mx-auto">
       <!-- 1. Takas İkonu [ ⇅ ] -->
       <button id="btn-hud-swap" class="h-10 w-10 sm:h-11 sm:w-11 min-h-[40px] min-w-[40px] rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 transition-all active:scale-95" title="Rotayı Tersine Çevir (⇄)">
         <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
       </button>
 
-      <!-- 2. Hız [ ⚡ 1x ] -->
+      <!-- 2. Hız [ 1x ] -->
       <button id="btn-hud-speed" class="h-10 sm:h-11 min-h-[40px] px-2 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-0.5 shrink-0 transition-all active:scale-95" title="Simülasyon Hızı (1x ➔ 2x ➔ 4x)">
-        <span class="text-xs">⚡</span>
         <span id="hud-speed-text">1x</span>
       </button>
 
-      <!-- 3. Çekmece Tetikleyici [ 📋 Detay ] -->
+      <!-- 3. Çekmece Tetikleyici [ Detay ] -->
       <button id="btn-hud-steps-toggle" class="h-10 sm:h-11 min-h-[40px] px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Adım Adım Yol Tarifi ve Geniş/Kısa Yol Ayarları">
         <i data-lucide="list" class="w-4 h-4 shrink-0"></i>
         <span>Detay</span>
       </button>
 
-      <!-- 4. QR Kodu [ 📲 QR ] -->
+      <!-- 4. QR Kodu [ QR ] -->
       <button id="btn-hud-qr" class="h-10 sm:h-11 min-h-[40px] px-2 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-extrabold text-xs flex items-center justify-center gap-1 shrink-0 transition-all active:scale-95" title="Rotayı Telefona Aktar (QR)">
-        <span class="text-sm">📲</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <span class="text-xs font-bold hidden sm:inline">QR</span>
       </button>
 
-      <!-- 5. Ana Buton [ ▶ Başlat / ⏸ Duraklat ] (Mobilde Asla Kesilmez!) -->
+      <!-- 5. Ana Buton [ Başlat / Duraklat ] (Mobilde Asla Kesilmez!) -->
       <button id="btn-hud-sim-play" class="flex-1 min-w-[104px] h-10 sm:h-11 min-h-[40px] px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-cyan-500/25 active:scale-95 shrink-0">
         <i data-lucide="play" id="hud-sim-icon" class="w-4 h-4 fill-current shrink-0"></i>
         <span id="hud-sim-text" class="whitespace-nowrap font-extrabold">Başlat</span>
@@ -905,18 +914,15 @@
       </button>
     </div>
 
-    <!-- Rota Koridor Tercih Çipleri: [🛣️ Geniş Yol], [✂️ Kısa Yol] ve [📲 Rotayı Cebine Al] (Artık Detay Çekmecesi İçinde!) -->
+    <!-- Rota Koridor Tercih Çipleri: [Geniş Yol], [Kısa Yol] ve [Rotayı Cebine Al] -->
     <div id="route-path-chips" class="flex items-center justify-between gap-1.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
       <button id="chip-path-wide" class="flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 shadow-xs border border-indigo-600 bg-indigo-600 text-white cursor-pointer" data-path="wide" title="Geniş ve Ferah Koridorları Tercih Et">
-        <span>🛣️</span>
         <span>Geniş Yol</span>
       </button>
       <button id="chip-path-short" class="flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-path="short" title="En Kısa Mesafeli Koridorları Tercih Et">
-        <span>✂️</span>
         <span>Kısa Yol</span>
       </button>
       <button id="btn-route-qr" class="flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all active:scale-95 shadow-sm bg-gradient-to-r from-indigo-600 to-violet-600 text-white cursor-pointer" title="Rotayı Telefona Aktar">
-        <span>📲</span>
         <span>Cebine Al</span>
       </button>
     </div>
@@ -926,7 +932,9 @@
 
   <!-- Mobil Yüzen Eylem Butonu (Floating View Toggle: Harita / Liste) -->
   <button id="floating-view-toggle" class="fixed right-4 bottom-38 z-50 md:hidden flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md border border-white/20 dark:border-slate-800 transition-all duration-300 active:scale-95" title="Görünümü Değiştir">
-    <span id="floating-toggle-icon" class="text-sm">📋</span>
+    <span id="floating-toggle-icon" class="inline-flex items-center">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    </span>
     <span id="floating-toggle-text">Liste</span>
   </button>
 
@@ -946,10 +954,10 @@
         </button>
       </div>
 
-      <!-- 📡 Otomatik GPS / IPS Konum Algılama Butonu -->
+      <!-- Otomatik GPS / IPS Konum Algılama Butonu -->
       <button type="button" id="btn-modal-gps-locate" class="w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-xs font-extrabold flex items-center justify-between gap-2 shadow-md shadow-sky-600/25 transition-all active:scale-98 cursor-pointer shrink-0">
         <div class="flex items-center gap-2">
-          <span class="text-base">📡</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="7"/></svg>
           <div class="text-left">
             <div class="leading-tight">GPS / İç Mekan Sensörü ile Otomatik Bul</div>
             <div class="text-[10px] font-medium text-sky-100">Bulunduğunuz katı ve en yakın mağazayı algılar</div>
@@ -989,7 +997,7 @@
       <div class="relative flex items-center justify-center">
         <div class="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full blur-md opacity-60 animate-pulse"></div>
         <div class="relative w-16 h-16 rounded-2xl bg-white/15 dark:bg-white/10 border border-white/25 flex items-center justify-center text-3xl shadow-inner backdrop-blur-md">
-          <span id="floor-transition-icon">🪜</span>
+          <span id="floor-transition-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h4l8-8h4"/><path d="M14 6h6v6"/></svg></span>
         </div>
       </div>
       
@@ -1033,7 +1041,7 @@
       <div class="w-full flex items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="w-7 h-7 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm">
-            📲
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           </div>
           <h3 class="text-xs font-bold text-slate-900 dark:text-white">Rotayı Cebine Al</h3>
         </div>
@@ -1092,15 +1100,15 @@
   <!-- YATAY MOD MENÜ ÇEKMECESİ ARKA PLAN KARARTMASI (LANDSCAPE DRAWER BACKDROP) -->
   <div id="landscape-drawer-backdrop" class="fixed inset-0 z-50 bg-slate-950/45 backdrop-blur-xs hidden transition-opacity duration-300"></div>
 
-  <!-- 🅿️🚗 AKILLI OTOPARK DOLULUK TAKİBİ, PARK KAYDI VE YÖNLENDİRME MODALI (SITUM SMART PARKING) -->
+  <!-- AKILLI OTOPARK DOLULUK TAKİBİ, PARK KAYDI VE YÖNLENDİRME MODALI -->
   <div id="parking-memory-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
     <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" id="parking-modal-backdrop"></div>
     <div class="relative w-full max-w-md rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-3.5 max-h-[90vh] overflow-y-auto">
       <!-- Header -->
       <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
-            🅿️
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
           </div>
           <div>
             <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-heading">Akıllı Otopark &amp; Doluluk Rehberi</h3>
@@ -1119,7 +1127,8 @@
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Kayıtlı Araç Konumu
           </span>
           <button id="btn-parking-delete" class="text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1">
-            <i data-lucide="trash-2" class="w-3 h-3"></i> Konumu Sil
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            <span>Park Kaydını Sonlandır</span>
           </button>
         </div>
         <div class="flex items-center gap-3">
@@ -1128,13 +1137,13 @@
           </div>
           <div class="flex-1 min-w-0">
             <div id="parking-saved-location-title" class="text-sm font-extrabold text-slate-900 dark:text-white truncate">P2 Katı &bull; Mavi Bölge</div>
-            <div id="parking-saved-pillar-text" class="text-xs font-semibold text-slate-600 dark:text-slate-300">Direk No: R08</div>
+            <div id="parking-saved-pillar-text" class="text-xs font-semibold text-slate-600 dark:text-slate-300">Direk No: B-04</div>
             <div id="parking-saved-time-text" class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Kaydedildi</div>
           </div>
         </div>
         <button id="btn-parking-navigate-car" class="w-full py-2 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
-          <span>🚗</span>
-          <span>Arabama Git (En Yakın Asansöre Yönlendir)</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          <span>Araca Rota Çiz</span>
         </button>
       </div>
 
@@ -1179,17 +1188,17 @@
           </div>
         </div>
 
-        <!-- 🔴 Dolu Park Alanı Uyarısı veAlternatif Boş Alana Yönlendirme Kutusu -->
+        <!-- Dolu Park Alanı Uyarısı ve Alternatif Boş Alana Yönlendirme Kutusu -->
         <div id="parking-full-warning-box" class="hidden p-3 rounded-2xl bg-rose-500/12 border border-rose-500/35 text-xs text-rose-800 dark:text-rose-200 flex flex-col gap-2 animate-in fade-in duration-150">
           <div class="flex items-start gap-2">
-            <span class="text-base leading-none shrink-0">🚨</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
             <div>
               <div class="font-extrabold">Seçilen Park Bölgesi Dolu (%100)!</div>
               <p class="text-[11px] text-rose-700/90 dark:text-rose-300 mt-0.5">Bu park alanı dolu olarak kaydedildi. Sizi hemen en yakın boş park alanı olan <strong>P2 Mavi Bölge (A Aksı • Asansör Yanı)</strong> noktasına yönlendirebiliriz.</p>
             </div>
           </div>
           <button type="button" id="btn-parking-full-redirect" class="w-full py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-extrabold flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:scale-95 transition-all">
-            <span>🧭</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
             <span>Dolu Alanı Kaydet &amp; En Yakın Boş Park Alanına Yönlendir</span>
           </button>
         </div>
@@ -1200,29 +1209,29 @@
           <input 
             id="parking-spot-pillar" 
             type="text" 
-            placeholder="Örn: B-08, Hibatech Oto Yıkama Yanı, ZES/Eşarj..." 
+            placeholder="Örn: B-04, B2-03 Hibatech, E-Şarj İstasyonu..." 
             class="w-full px-3 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
 
         <!-- Kaydet Butonu -->
         <button id="btn-parking-save" type="button" class="w-full py-3 px-4 mt-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-extrabold text-xs sm:text-sm shadow-md shadow-amber-500/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
-          <span>🚘</span>
-          <span>Aracımı Buraya Park Ettim</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+          <span>Park Yerini Kaydet</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 📅 TAKVİMİNİZDE YER ALAN ETKİNLİKLER VE KONUMLARI MODALI (SITUM EVENTS CALENDAR & WAYFINDING) -->
+  <!-- TAKVİMİNİZDE YER ALAN ETKİNLİKLER VE KONUMLARI MODALI -->
   <div id="events-calendar-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
     <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md" id="events-modal-backdrop"></div>
     <div class="relative w-full max-w-lg rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-3.5 max-h-[88vh]">
       <!-- Header -->
       <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-2xl bg-violet-500/15 text-violet-600 dark:text-violet-400 flex items-center justify-center text-xl">
-            📅
+          <div class="w-10 h-10 rounded-2xl bg-violet-500/15 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
           </div>
           <div>
             <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-heading">Capacity Etkinlik Takvimi &amp; Konumları</h3>
@@ -1237,10 +1246,10 @@
       <!-- Sekmeler: Tüm Etkinlikler | Takvimimdekiler -->
       <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl shrink-0">
         <button type="button" id="tab-events-all" class="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs font-extrabold shadow-xs transition-all cursor-pointer">
-          🌟 Tüm AVM Etkinlikleri (5)
+          Tüm AVM Etkinlikleri (5)
         </button>
         <button type="button" id="tab-events-saved" class="flex-1 py-1.5 px-3 rounded-xl text-slate-600 dark:text-slate-300 text-xs font-bold hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer">
-          🗓️ Takvimimdekiler (<span id="saved-events-count">2</span>)
+          Takvimimdekiler (<span id="saved-events-count">2</span>)
         </button>
       </div>
 
@@ -1255,8 +1264,8 @@
   <div id="en-route-campaign-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-[92%] sm:w-auto hidden transition-all select-none">
     <div class="backdrop-blur-xl bg-slate-900/95 text-white border border-amber-500/40 shadow-2xl rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 ring-1 ring-amber-500/20">
       <div id="campaign-toast-icon-wrapper" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-red-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
-        <div class="w-full h-full bg-white rounded-[10px] p-1 flex items-center justify-center text-sm">
-          🏷️
+        <div class="w-full h-full bg-white text-slate-900 rounded-[10px] p-1 flex items-center justify-center text-sm">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
         </div>
       </div>
       <div class="flex-1 min-w-0">
@@ -1298,7 +1307,7 @@
       <!-- Store & Title -->
       <div class="flex items-center gap-3">
         <div id="campaign-modal-logo" class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 p-2 flex items-center justify-center text-2xl font-black shrink-0">
-          🛍️
+          Z
         </div>
         <div class="flex-1 min-w-0">
           <h3 id="campaign-modal-store-name" class="text-base font-extrabold text-slate-900 dark:text-white font-heading truncate">Zara</h3>
@@ -1329,7 +1338,7 @@
     </div>
   </div>
 
-  <!-- 🎙️ SESLİ KOMUT ASİSTANI MODALI (WEB SPEECH RECOGNITION & HIZLI SESLİ KOMUTLAR) -->
+  <!-- SESLİ KOMUT ASİSTANI MODALI (WEB SPEECH RECOGNITION & HIZLI SESLİ KOMUTLAR) -->
   <div id="voice-command-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden animate-in fade-in duration-200">
     <div class="absolute inset-0 bg-slate-950/75 backdrop-blur-md" id="voice-modal-backdrop"></div>
     <div class="relative w-full max-w-md rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-2xl z-10 flex flex-col gap-4">
@@ -1337,7 +1346,7 @@
       <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-600 text-white flex items-center justify-center text-xl shadow-md shadow-orange-500/20">
-            🎙️
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
           </div>
           <div>
             <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-heading">nrdsor Sesli Komut Asistanı</h3>
@@ -1353,7 +1362,7 @@
       <div class="flex flex-col items-center justify-center py-2 gap-2.5">
         <button type="button" id="btn-voice-mic-listen" class="relative w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white flex items-center justify-center text-3xl shadow-xl shadow-orange-500/35 transition-all active:scale-95 cursor-pointer">
           <span id="voice-mic-pulse" class="absolute -inset-2 rounded-full bg-orange-500/30 animate-ping hidden"></span>
-          <span id="voice-mic-emoji" class="relative z-10">🎙️</span>
+          <span id="voice-mic-emoji" class="relative z-10 inline-flex items-center justify-center"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span>
         </button>
         <div id="voice-listen-status" class="text-xs font-extrabold text-slate-700 dark:text-slate-200 text-center">
           Konuşmak için mikrofona dokunun veya aşağıdaki hazır sesli komutlardan birini seçin
@@ -1368,42 +1377,43 @@
           placeholder="Örn: Pierre Cardin'deyim, Paşabahçe'ye götür..." 
           class="flex-1 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
         />
-        <button type="button" id="btn-voice-command-run" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white text-xs font-extrabold shadow-md transition-all active:scale-95 cursor-pointer shrink-0">
-          👁️ Yürü
+        <button type="button" id="btn-voice-command-run" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white text-xs font-extrabold shadow-md transition-all active:scale-95 cursor-pointer shrink-0 flex items-center gap-1.5">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          <span>Yürü</span>
         </button>
       </div>
 
       <!-- Tek Tıkla Örnek Sesli Komutlar (Saha Araştırması Senaryoları) -->
       <div class="flex flex-col gap-1.5">
-        <span class="text-[10.5px] font-black uppercase tracking-wider text-slate-400">🗣️ Örnek Sesli Komutlar (Tek Tıkla Dene):</span>
+        <span class="text-[10.5px] font-black uppercase tracking-wider text-slate-400">Örnek Sesli Komutlar (Tek Tıkla Dene):</span>
         <div class="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1">
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="Pierre Cardin'deyim, Paşabahçe'ye götür">
-            <span>🗣️ "Pierre Cardin'deyim, Paşabahçe'ye götür"</span>
-            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">👁️ Gözümden</span>
+            <span>"Pierre Cardin'deyim, Paşabahçe'ye götür"</span>
+            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">Gözümden</span>
           </button>
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="C Kapısındayım, Zara'ya git">
-            <span>🗣️ "C Kapısındayım, Zara'ya git"</span>
-            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">👁️ Gözümden</span>
+            <span>"C Kapısındayım, Zara'ya git"</span>
+            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">Gözümden</span>
           </button>
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="Şu an W Collection önündeyim, Boyner'e götür">
-            <span>🗣️ "Şu an W Collection önündeyim, Boyner'e götür"</span>
-            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">👁️ Gözümden</span>
+            <span>"Şu an W Collection önündeyim, Boyner'e götür"</span>
+            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">Gözümden</span>
           </button>
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="B Kapısındayım, Müzikli Havuz'a götür">
-            <span>🗣️ "B Kapısındayım, Müzikli Havuz'a götür"</span>
-            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">👁️ Gözümden</span>
+            <span>"B Kapısındayım, Müzikli Havuz'a götür"</span>
+            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">Gözümden</span>
           </button>
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="C Kapısındayım, engelsiz rota ile Zara'ya götür">
-            <span>🗣️ "C Kapısındayım, engelsiz rota ile Zara'ya götür"</span>
-            <span class="text-[10px] font-extrabold text-sky-600 dark:text-sky-400 shrink-0">♿ Engelsiz</span>
+            <span>"C Kapısındayım, engelsiz rota ile Zara'ya götür"</span>
+            <span class="text-[10px] font-extrabold text-sky-600 dark:text-sky-400 shrink-0">Engelsiz</span>
           </button>
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="C Kapısındayım, en yakın bebek odasına götür">
-            <span>🗣️ "C Kapısındayım, en yakın bebek odasına götür"</span>
-            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">🍼 Bebek Odası</span>
+            <span>"C Kapısındayım, en yakın bebek odasına götür"</span>
+            <span class="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 shrink-0">Bebek Odası</span>
           </button>
           <button type="button" class="voice-sample-chip text-left px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between gap-2 transition-all cursor-pointer" data-voice-cmd="Pierre Cardin'deyim, acil çıkışa götür">
-            <span>🗣️ "Pierre Cardin'deyim, acil çıkışa götür"</span>
-            <span class="text-[10px] font-extrabold text-rose-600 dark:text-rose-400 shrink-0">🚨 Acil Çıkış</span>
+            <span>"Pierre Cardin'deyim, acil çıkışa götür"</span>
+            <span class="text-[10px] font-extrabold text-rose-600 dark:text-rose-400 shrink-0">Acil Çıkış</span>
           </button>
         </div>
       </div>
@@ -1414,13 +1424,13 @@
   <div id="toast-container" class="fixed z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
 
   <!-- JavaScript Modülleri (Cache-Busted) -->
-  <script src="js/logos.js?v=20261012_v7"></script>
-  <script src="js/qrcode.js?v=20261012_v7"></script>
-  <script src="js/parking-service.js?v=20261012_v7"></script>
-  <script src="js/navigation.js?v=20261012_v7"></script>
-  <script src="js/simulator.js?v=20261012_v7"></script>
-  <script src="js/map.js?v=20261012_v7"></script>
-  <script src="js/pov3d.js?v=20261012_v7"></script>
-  <script src="js/app.js?v=20261012_v7"></script>
+  <script src="js/logos.js?v=20261012_v8"></script>
+  <script src="js/qrcode.js?v=20261012_v8"></script>
+  <script src="js/parking-service.js?v=20261012_v8"></script>
+  <script src="js/navigation.js?v=20261012_v8"></script>
+  <script src="js/simulator.js?v=20261012_v8"></script>
+  <script src="js/map.js?v=20261012_v8"></script>
+  <script src="js/pov3d.js?v=20261012_v8"></script>
+  <script src="js/app.js?v=20261012_v8"></script>
 </body>
 </html>

@@ -38,7 +38,7 @@ function setSimSpeed(spd, silent = false) {
     window.pov3dEngine.walkSpeed = currentSimSpeed;
     const povSpeedBtn = document.getElementById('btn-pov-speed');
     if (povSpeedBtn) {
-      povSpeedBtn.textContent = `⚡ ${currentSimSpeed}x`;
+      povSpeedBtn.textContent = `${currentSimSpeed}x`;
     }
   }
 
@@ -119,7 +119,7 @@ function expandBottomSheet() {
   document.body.classList.add('has-sheet-expanded');
   isBottomSheetExpanded = true;
 
-  if (toggleIcon) toggleIcon.textContent = '🗺️';
+  if (toggleIcon) toggleIcon.innerHTML = getMonoIconSvg('layers', 14);
   if (toggleText) toggleText.textContent = 'Harita';
   if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(180deg)';
   if (sheetHint) sheetHint.innerHTML = '<span>Mağazalar &amp; Rota</span>';
@@ -143,7 +143,7 @@ function collapseBottomSheet() {
   isBottomSheetExpanded = false;
   if (backdrop) backdrop.classList.add('hidden');
 
-  if (toggleIcon) toggleIcon.textContent = '📋';
+  if (toggleIcon) toggleIcon.innerHTML = getMonoIconSvg('layers', 14);
   if (toggleText) toggleText.textContent = 'Liste';
   if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(0deg)';
   if (sheetHint) sheetHint.innerHTML = '<span>Yeni Rota Çiz</span> <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">&bull; Mağaza Ara</span>';
@@ -239,7 +239,43 @@ window.addEventListener('resize', () => {
   }
 });
 
-// Toast Notification Engine (Tekil Kuyruk & Yığılma Önleyici)
+// Minimalist Tek Renk (Monochrome / currentColor) Inline SVG Çizgi İkon Yardımcısı (14-16px Lucide/Feather Tarzı)
+function getMonoIconSvg(name, size = 14) {
+  const s = Number(size) || 14;
+  const base = `width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block shrink-0"`;
+  const paths = {
+    car: `<svg ${base}><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>`,
+    navigation: `<svg ${base}><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>`,
+    pin: `<svg ${base}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+    play: `<svg ${base}><polygon points="6 3 20 12 6 21 6 3"/></svg>`,
+    route: `<svg ${base}><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>`,
+    logOut: `<svg ${base}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`,
+    volume2: `<svg ${base}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
+    volumeX: `<svg ${base}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>`,
+    check: `<svg ${base}><path d="M20 6 9 17l-5-5"/></svg>`,
+    info: `<svg ${base}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+    warning: `<svg ${base}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+    arrowUp: `<svg ${base}><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>`,
+    cornerUpRight: `<svg ${base}><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>`,
+    cornerUpLeft: `<svg ${base}><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>`,
+    layers: `<svg ${base}><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>`,
+    eye: `<svg ${base}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    refresh: `<svg ${base}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>`
+  };
+  return paths[name] || paths.info;
+}
+window.getMonoIconSvg = getMonoIconSvg;
+
+function stripUiEmojis(raw) {
+  if (!raw) return '';
+  return String(raw)
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+window.stripUiEmojis = stripUiEmojis;
+
+// Toast Notification Engine (Tekil Kuyruk & Yığılma Önleyici - Kurumsal Minimalist)
 let activeToastTimeout = null;
 
 function hideToast() {
@@ -270,6 +306,7 @@ function showToast(message, type = 'info') {
   }
   container.innerHTML = '';
 
+  const cleanMsg = stripUiEmojis(message);
   const toast = document.createElement('div');
   const typeStyles = {
     info: 'border-cyan-500/40 bg-white/95 dark:bg-slate-900/90 text-cyan-700 dark:text-cyan-300',
@@ -279,16 +316,16 @@ function showToast(message, type = 'info') {
   };
 
   const icons = {
-    info: 'ℹ️',
-    success: '✅',
-    warning: '⚠️',
-    error: '🚨'
+    info: getMonoIconSvg('info', 15),
+    success: getMonoIconSvg('check', 15),
+    warning: getMonoIconSvg('warning', 15),
+    error: getMonoIconSvg('warning', 15)
   };
 
   toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-xl backdrop-blur-md text-xs sm:text-sm font-semibold transition-all duration-300 transform translate-y-4 opacity-0 ${typeStyles[type] || typeStyles.info}`;
   toast.innerHTML = `
-    <span class="shrink-0 text-base">${icons[type] || 'ℹ️'}</span>
-    <span class="flex-1">${message}</span>
+    <span class="shrink-0 flex items-center">${icons[type] || icons.info}</span>
+    <span class="flex-1">${cleanMsg}</span>
   `;
 
   container.appendChild(toast);
@@ -311,13 +348,14 @@ function showToast(message, type = 'info') {
 // ==========================================
 let currentLanguage = localStorage.getItem('capacity_language') || 'tr';
 window.currentLanguage = currentLanguage;
+window.currentLang = currentLanguage;
 
 const TRANSLATIONS = {
   tr: {
-    startPlaceholder: '📍 Nereden? (Giriş / Mağaza)',
-    targetPlaceholder: '🎯 Nereye? (Mağaza / Hizmet)',
+    startPlaceholder: 'Nereden? (Giriş / Mağaza)',
+    targetPlaceholder: 'Nereye? (Mağaza / Hizmet)',
     entranceLabel: 'Giriş:',
-    danisma: 'ℹ️ Danışma',
+    danisma: 'Danışma',
     escalator: 'Yürüyen Merdiven',
     elevator: 'Asansör / Bebek',
     tabThisFloor: 'Bu katta · ',
@@ -348,29 +386,29 @@ const TRANSLATIONS = {
       prayer: 'Mescit',
       wheelchair: 'Akülü Sandalye Şarj'
     },
-    parkingMemoryBtn: 'Otopark Konumu Kaydet',
+    parkingMemoryBtn: 'Park Yerini Kaydet',
     parkingModalTitle: 'Otopark Hafızası',
     parkingModalDesc: 'Park yerinizi kaydedin, dönüşte tek tıkla rotanızı çizin',
     parkingFloorLabel: 'Hangi Kat?',
     parkingZoneLabel: 'Hangi Bölge / Renk?',
     parkingPillarLabel: 'Direk No / Sütun / Not (İsteğe Bağlı):',
-    parkingPillarPlaceholder: 'Örn: R08, S12, Voltrun şarj yanı...',
-    parkingSaveBtn: 'Aracımı Buraya Park Ettim',
+    parkingPillarPlaceholder: 'Örn: B-04, B2-03 Hibatech, E-Şarj İstasyonu...',
+    parkingSaveBtn: 'Park Yerini Kaydet',
     parkingSavedTitle: 'Kayıtlı Araç Konumu',
-    parkingDeleteBtn: 'Otoparktan Ayrıldım',
-    parkingNavigateBtn: 'Arabama Rota Çiz',
+    parkingDeleteBtn: 'Park Kaydını Sonlandır',
+    parkingNavigateBtn: 'Araca Rota Çiz',
     peekStartBtn: 'Buradayım (Başlangıç Yap)',
     peekTargetBtn: 'Hedef Yap',
-    simStart: 'Simülasyonu Başlat',
+    simStart: 'Rota Önizleme',
     simPause: 'Duraklat',
     hudDetail: 'Detay',
     compass: 'Kuzey: Carousel • Doğu: Fişekhane Cad.'
   },
   en: {
-    startPlaceholder: '📍 From where? (Entrance / Store)',
-    targetPlaceholder: '🎯 To where? (Store / Service)',
+    startPlaceholder: 'From where? (Entrance / Store)',
+    targetPlaceholder: 'To where? (Store / Service)',
     entranceLabel: 'Entrance:',
-    danisma: 'ℹ️ Info Desk',
+    danisma: 'Info Desk',
     escalator: 'Escalator',
     elevator: 'Elevator / Stroller',
     tabThisFloor: 'On this floor · ',
@@ -407,14 +445,14 @@ const TRANSLATIONS = {
     parkingFloorLabel: 'Which Floor?',
     parkingZoneLabel: 'Which Zone / Color?',
     parkingPillarLabel: 'Pillar No / Column / Note (Optional):',
-    parkingPillarPlaceholder: 'e.g. R08, S12, near EV charger...',
-    parkingSaveBtn: 'I Parked My Car Here',
+    parkingPillarPlaceholder: 'e.g. B-04, B2-03 Hibatech, EV Charger...',
+    parkingSaveBtn: 'Park Yerini Kaydet',
     parkingSavedTitle: 'Saved Vehicle Location',
-    parkingDeleteBtn: 'Delete Spot',
-    parkingNavigateBtn: 'Go to My Car (Nearest Elevator)',
+    parkingDeleteBtn: 'Park Kaydını Sonlandır',
+    parkingNavigateBtn: 'Araca Rota Çiz',
     peekStartBtn: 'I am here (Start Point)',
     peekTargetBtn: 'Set as Target',
-    simStart: 'Start Simulation',
+    simStart: 'Route Preview',
     simPause: 'Pause',
     hudDetail: 'Details',
     compass: 'North: Carousel • East: Fişekhane Ave.'
@@ -422,11 +460,32 @@ const TRANSLATIONS = {
 };
 
 function setLanguage(lang) {
+  const prevLang = currentLanguage;
   currentLanguage = (lang === 'en') ? 'en' : 'tr';
   try {
     localStorage.setItem('capacity_language', currentLanguage);
   } catch (e) {}
   window.currentLanguage = currentLanguage;
+  window.currentLang = currentLanguage;
+
+  // Dil değiştirildiği an aktif konuşmayı derhal kes (Madde 3)
+  if ('speechSynthesis' in window && window.speechSynthesis) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+  if (window.activeTtsAudio) {
+    try {
+      window.activeTtsAudio.pause();
+    } catch (e) {}
+  }
+  if (window.queuedArrivalTimer) {
+    clearTimeout(window.queuedArrivalTimer);
+    window.queuedArrivalTimer = null;
+    window.arrivalSpeechQueueTimer = null;
+  }
+  window.speechBusyUntil = 0;
+  window.speechMainBusyUntil = 0;
 
   const t = TRANSLATIONS[currentLanguage];
 
@@ -453,12 +512,14 @@ function setLanguage(lang) {
   const escBtn = document.getElementById('tab-pref-escalator');
   const eleBtn = document.getElementById('tab-pref-elevator');
   if (escBtn) {
-    const span = escBtn.querySelectorAll('span')[1];
-    if (span) span.textContent = t.escalator;
+    const spans = escBtn.querySelectorAll('span');
+    const textSpan = spans[spans.length - 1];
+    if (textSpan) textSpan.textContent = t.escalator;
   }
   if (eleBtn) {
-    const span = eleBtn.querySelectorAll('span')[1];
-    if (span) span.textContent = t.elevator;
+    const spans = eleBtn.querySelectorAll('span');
+    const textSpan = spans[spans.length - 1];
+    if (textSpan) textSpan.textContent = t.elevator;
   }
 
   // 4. Quick start chips
@@ -488,19 +549,17 @@ function setLanguage(lang) {
     }
   });
 
-  // 6. Amenity Pills
+  // 6. Amenity Pills (Monochrome SVG + Clean Text, 0 Emojis)
   document.querySelectorAll('#amenity-chips-row .amenity-pill').forEach(pill => {
     const amen = pill.getAttribute('data-amenity');
     if (amen && t.amenities[amen]) {
-      const iconSpan = pill.querySelector('span');
-      const iconText = iconSpan ? iconSpan.textContent : '';
-      pill.innerHTML = `<span>${iconText}</span> ${t.amenities[amen]}`;
+      pill.innerHTML = `${getMonoIconSvg('pin', 13)} <span>${t.amenities[amen]}</span>`;
     }
   });
 
   // 7. Parking memory button
   const pBtnText = document.getElementById('parking-memory-btn-text');
-  if (pBtnText) {
+  if (pBtnText && !getSavedParkingSpot()) {
     pBtnText.textContent = t.parkingMemoryBtn;
   }
 
@@ -512,12 +571,10 @@ function setLanguage(lang) {
   const peekStart = document.getElementById('btn-peek-start');
   const peekTarget = document.getElementById('btn-peek-target');
   if (peekStart) {
-    const span = peekStart.querySelectorAll('span')[1];
-    if (span) span.textContent = t.peekStartBtn;
+    peekStart.innerHTML = `${getMonoIconSvg('pin', 14)}<span class="truncate font-bold">${t.peekStartBtn}</span>`;
   }
   if (peekTarget) {
-    const span = peekTarget.querySelectorAll('span')[1];
-    if (span) span.textContent = t.peekTargetBtn;
+    peekTarget.innerHTML = `${getMonoIconSvg('navigation', 14)}<span class="truncate font-bold">${t.peekTargetBtn}</span>`;
   }
 
   // 10. Compass
@@ -539,22 +596,50 @@ function setLanguage(lang) {
   if (pPillarInput) pPillarInput.placeholder = t.parkingPillarPlaceholder;
   const pSaveBtn = document.getElementById('btn-parking-save');
   if (pSaveBtn) {
-    const span = pSaveBtn.querySelectorAll('span')[1];
-    if (span) span.textContent = t.parkingSaveBtn;
+    pSaveBtn.innerHTML = `${getMonoIconSvg('car', 15)}<span>Park Yerini Kaydet</span>`;
   }
   const pNavBtn = document.getElementById('btn-parking-navigate-car');
   if (pNavBtn) {
-    const span = pNavBtn.querySelectorAll('span')[1];
-    if (span) span.textContent = t.parkingNavigateBtn;
+    pNavBtn.innerHTML = `${getMonoIconSvg('navigation', 15)}<span>Araca Rota Çiz</span>`;
   }
   const pDelBtn = document.getElementById('btn-parking-delete');
-  if (pDelBtn) pDelBtn.innerHTML = `<i data-lucide="trash-2" class="w-3 h-3"></i> ${t.parkingDeleteBtn}`;
+  if (pDelBtn) {
+    pDelBtn.innerHTML = `${getMonoIconSvg('logOut', 14)}<span>Park Kaydını Sonlandır</span>`;
+  }
 
   // 12. Simulation play button
   const simPlayText = document.getElementById('sim-play-text');
   if (simPlayText) {
     const isRunning = cartSimulator && cartSimulator.isRunning;
     simPlayText.textContent = isRunning ? t.simPause : t.simStart;
+  }
+
+  // 13. Eğer aktif bir rota varsa, yönergeleri seçilen dilde (TR / EN) yeniden üret ve HUD'ı güncelle
+  if (lastCalculatedRoute && navEngine && typeof navEngine._generateInstructions === 'function') {
+    const nodes = lastCalculatedRoute.pathNodes || lastCalculatedRoute.path || [];
+    if (nodes.length > 0) {
+      lastCalculatedRoute.instructions = navEngine._generateInstructions(
+        nodes,
+        activeRouteMode,
+        lastCalculatedRoute.enRouteStoreNames || []
+      );
+      if (typeof window.resetVoiceStepTracker === 'function') {
+        window.resetVoiceStepTracker();
+      }
+      const curIdx = cartSimulator ? (cartSimulator.currentIndex || 0) : 0;
+      const totalLen = Math.max(1, nodes.length - 1);
+      const pct = Math.min(99, Math.round((curIdx / totalLen) * 100));
+      if (typeof updateLiveNavHUD === 'function') {
+        updateLiveNavHUD(curIdx, pct);
+      }
+      // Dil değişimi sonrası aktif yönergeyi yeni dilde (en-US / tr-TR) seslendir
+      if (prevLang !== currentLanguage && lastCalculatedRoute.instructions.length > 0) {
+        const firstIns = lastCalculatedRoute.instructions[0];
+        if (firstIns && typeof window.speakNavigationText === 'function') {
+          window.speakNavigationText(firstIns.voiceText || firstIns.text, true);
+        }
+      }
+    }
   }
 
   if (window.lucide) lucide.createIcons();
@@ -735,7 +820,7 @@ function initApp() {
       if (headerPovBtn) {
         headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-400/40 text-[11px] font-extrabold flex items-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer';
       }
-      if (headerPovIcon) headerPovIcon.textContent = '🗺️';
+      if (headerPovIcon) headerPovIcon.innerHTML = getMonoIconSvg('layers', 14);
       if (headerPovText) headerPovText.textContent = '2B Harita';
 
       // 2B Çanta çalışıyorsa duraklat ve kaldığı segmenti (currentIndex, subProgress) 3B Gözümden kamerasına aktar
@@ -791,8 +876,8 @@ function initApp() {
       if (headerPovBtn) {
         headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer';
       }
-      if (headerPovIcon) headerPovIcon.textContent = '👁️';
-      if (headerPovText) headerPovText.textContent = 'Gözümden 3B';
+      if (headerPovIcon) headerPovIcon.innerHTML = getMonoIconSvg('eye', 14);
+      if (headerPovText) headerPovText.textContent = '3B Görünüm';
 
       if (shouldResumeCart && cartSimulator && !cartSimulator.isPlaying) {
         cartSimulator.start();
@@ -834,25 +919,38 @@ function initApp() {
   }
   window.getTurkishPossessiveSuffix = getTurkishPossessiveSuffix;
 
-  const ttsPronunciationMap = window.ttsPronunciationMap || {
+  const ttsPronunciationMap = Object.assign(window.ttsPronunciationMap || {}, {
+    'W Collection': 'Dabılyu Kolekşın',
+    'Tommy Hilfiger': 'Tomi Hilfiger',
+    'English Home': 'İngliş Hom',
+    'Madame Coco': 'Madam Koko',
+    'Marks & Spencer': 'Marks end Spensır',
+    'Pull&Bear': 'Pul end Ber',
+    'Pull & Bear': 'Pul end Ber',
+    'U.S. Polo Assn.': 'Yu Es Polo',
+    'US Polo': 'Yu Es Polo',
+    'Mac': 'Mek',
+    'MAC': 'Mek',
+    'M·A·C': 'Mek',
+    'Yves Rocher': 'İv Roşe',
+    "L'Occitane": 'Loksitan',
+    'SuperStep': 'Süper Step',
+    'Sneaks Up': 'Sniks Ap',
+    'Skechers': 'Skeçırs',
+    'Pierre Cardin': 'Piyer Kardin',
+    'The North Face': 'Dı Nort Feys',
+    'Burger King': 'Börgır King',
+    'HD İskender': 'He De İskender',
+    'Tchibo': 'Çibo',
+    'Blue Diamond': 'Mavi Elmas',
     'D&R': 'De ve Er',
     'D & R': 'De ve Er',
     'LCWaikiki': 'El Si Vaykiki',
     'LC Waikiki': 'El Si Vaykiki',
     'H&M': 'Haş ve Em',
     'B&G Store': 'Be ve Ge Stor',
-    'Marks & Spencer': 'Marks end Spensır',
-    'Pull & Bear': 'Pul end Ber',
     'Jack & Jones': 'Cek end Cons',
     'Saat & Saat': 'Saat ve Saat',
-    'U.S. Polo Assn.': 'Yu Es Polo',
-    'US Polo': 'Yu Es Polo',
-    'W Collection': 'Dabılyu Koleksiyon',
-    'Pierre Cardin': 'Piyer Karden',
-    'Madame Coco': 'Madam Koko',
-    'Tommy Hilfiger': 'Tomi Hilfigır',
-    'Yves Rocher': 'İv Roşe',
-    "L'Occitane": 'Loksitan',
     'Sephora': 'Sefora',
     'DeFacto': 'Defakto',
     "Victoria's Secret": 'Viktoryaz Sikrıt',
@@ -862,33 +960,25 @@ function initApp() {
     'Massimo Dutti': 'Massimo Dutti',
     'Beymen Club': 'Beymen Klab',
     'Paribu Cineverse': 'Paribu Sinevörs',
-    'HD İskender': 'Eyç Di İskender',
     'KFC': 'Key Ef Si',
     "Arby's": 'Arbis',
     'Popeyes': 'Popays',
     "Carl's Jr.": 'Karls Cunyır',
     "McDonald's": 'Mekdanılds',
-    'Burger King': 'Börgır King',
     'Green Salads': 'Grin Salads',
     'Subway': 'Sabvey',
     'Starbucks': 'Starbaks',
     'Caribou Coffee': 'Karibu Kofi',
     'Caffè Nero': 'Kafe Nero',
     'Cafe Nero': 'Kafe Nero',
-    'Tchibo': 'Çibo',
     'Cold Stone': 'Kold Ston',
     'Krispy Kreme': 'Krispi Krim',
     'Rossmann': 'Rosman',
     'Watsons': 'Vatsıns',
-    'M·A·C': 'Mek Kozmetik',
-    'MAC': 'Mek Kozmetik',
     'Golden Rose': 'Goldın Roz',
     'Hairist': 'Heyrist',
-    'Skechers': 'Skeçırs',
     'Columbia': 'Kolombiya',
-    'The North Face': 'Dı Nort Feys',
     'Timberland': 'Timbırlend',
-    'Sneaks Up': 'Sniks Ap',
     'New Balance': 'Niv Balans',
     'Under Armour': 'Andır Armır',
     'Harley Davidson': 'Harli Devidsın',
@@ -922,32 +1012,25 @@ function initApp() {
     'Calzedonia': 'Kalzedonya',
     'Suwen': 'Suven',
     'Cookshop': 'Kukşop',
-    'SuperStep': 'Süper Step',
     'The Hunger': 'Dı Hangır',
-    'Blue Diamond': 'Blu Daymınd',
     'Storks Diamond': 'Storks Daymınd',
-    'English Home': 'İngliş Hom',
     'G Lingerie': 'Ci Lanjeri',
     'So Chic': 'So Şik',
     'Sunglass Hut': 'Sanglas Hat',
     'Cacharel': 'Kaşarel'
-  };
-  ttsPronunciationMap['D&R'] = 'De ve Er';
-  ttsPronunciationMap['LCWaikiki'] = 'El Si Vaykiki';
-  ttsPronunciationMap['LC Waikiki'] = 'El Si Vaykiki';
+  });
   window.ttsPronunciationMap = ttsPronunciationMap;
 
   function toTurkishPhoneticSpeech(rawText) {
     if (!rawText) return '';
-    let s = String(rawText)
-      .replace(/[📍🎯⬆️↪️↩️🪜🛗🚪🎉👀🔊🔇🛣️✂️🛍️🚨🍼🚻🅿️🖥️]/g, ' ')
+    let s = stripUiEmojis(String(rawText))
       .replace(/➔|→/g, ', ')
       .replace(/(\d+)\s*m\b/gi, '$1 metre')
       .replace(/(\d+)\s*dk\b/gi, '$1 dakika')
-      .replace(/\bWC\b/gi, 'Tuvalet')
-      .replace(/\bAVM\b/g, 'A V M');
+      .replace(/\bWC\b/gi, 'Tuvalet');
 
-    for (const [brand, phonetic] of Object.entries(ttsPronunciationMap)) {
+    const sortedEntries = Object.entries(ttsPronunciationMap).sort((a, b) => b[0].length - a[0].length);
+    for (const [brand, phonetic] of sortedEntries) {
       const escaped = brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = /^[A-Za-z0-9]+$/.test(brand)
         ? new RegExp(`\\b${escaped}\\b`, 'gi')
@@ -958,6 +1041,7 @@ function initApp() {
     return s.replace(/\s+/g, ' ').trim();
   }
   window.toTurkishPhoneticSpeech = toTurkishPhoneticSpeech;
+  window.normalizeTextForTurkishTts = toTurkishPhoneticSpeech;
 
   function updateVoiceSubtitleUI(rawText, isSpeaking = true) {
     const subBar = document.getElementById('live-voice-subtitle-bar');
@@ -968,7 +1052,7 @@ function initApp() {
       return;
     }
     subBar.classList.remove('hidden');
-    subText.textContent = `🔊 ${String(rawText).replace(/^[⬆️↪️↩️📍🎯🎉🔊]+\s*/, '')}`;
+    subText.textContent = stripUiEmojis(String(rawText));
     const dot = subBar.querySelector('span');
     if (dot) {
       dot.className = isSpeaking
@@ -1013,7 +1097,7 @@ function initApp() {
       return;
     }
 
-    // Önceki yönlendirme cümlesi ('Dürümle mağazasını geçerek...') hala okunuyorsa KESME;
+    // Önceki yönlendirme cümlesi hala okunuyorsa KESME;
     // speechSynthesis.speaking veya window.speechMainBusyUntil bitene kadar + 450ms kuyrukta beklet!
     const queueWaitMs = Math.max(450, Math.min(4000, Math.round(busyRemaining + 450)));
     window.wasArrivalSpeechQueued = true;
@@ -1055,23 +1139,24 @@ function initApp() {
 
     updateVoiceSubtitleUI(text, true);
     if (!isVoiceEnabled && !force) return;
-    window.lastSpokenNavigationText = text;
-    const isEn = currentLanguage === 'en';
-    window.lastVoiceLanguage = isEn ? 'en-US' : 'tr-TR';
+    window.lastSpokenNavigationText = stripUiEmojis(String(text));
+    const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
+    const targetLang = isEn ? 'en-US' : 'tr-TR';
+    window.lastVoiceLanguage = targetLang;
 
-    const spokenText = isEn ? String(text) : toTurkishPhoneticSpeech(text);
+    const spokenText = isEn ? stripUiEmojis(String(text)) : toTurkishPhoneticSpeech(text);
+    window.lastSpokenPhoneticText = spokenText;
     const now = performance.now();
     const spd = (window.pov3dEngine && window.pov3dEngine.walkSpeed) || currentSimSpeed || 1.0;
     const baseRate = spd >= 3.5 ? 1.55 : (spd >= 1.8 ? 1.32 : 1.15);
     const rate = isStoreCue ? Math.min(1.65, baseRate * 1.08) : baseRate;
 
-    // Kelime sayısına göre başlangıç tahmini konuşma süresi (ms) -> Ses metadata gelince gerçek süreyle güncellenir
+    // Kelime sayısına göre başlangıç tahmini konuşma süresi (ms)
     const wordCount = Math.max(1, spokenText.trim().split(/\s+/).length);
     const estMs = Math.round((wordCount * 380) / rate);
 
     const mainStillSpeaking = now < (window.speechMainBusyUntil || 0);
     if (isStoreCue && mainStillSpeaking) {
-      // Ana manevra cümlesi okunurken mağaza ara anonsu ana cümleyi kesmesin
       return;
     }
 
@@ -1083,65 +1168,25 @@ function initApp() {
     }
 
     try {
+      if (window.activeTtsAudio) {
+        try {
+          window.activeTtsAudio.pause();
+        } catch (e) {}
+      }
+
       const voices = ('speechSynthesis' in window && window.speechSynthesis)
         ? window.speechSynthesis.getVoices()
         : [];
       const nativeTrVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('tr'));
-
-      // Eğer Türkçe moddaysak ve işletim sisteminde yerel Türkçe ses paketi (tr-TR) YOKSA
-      // (Örn: Windows'ta yalnızca Microsoft David/Zira en-US varsa), İngilizce aksanlı sesi ASLA kullanma!
-      // Doğrudan gerçek Türkçe Neural TTS ses akışını (<audio referrerpolicy="no-referrer">) çal:
-      if (!isEn && !nativeTrVoice) {
-        if ('speechSynthesis' in window && window.speechSynthesis) {
-          window.speechSynthesis.cancel();
-        }
-        if (window.activeTtsAudio) {
-          try {
-            window.activeTtsAudio.pause();
-          } catch (e) {}
-        }
-        const clipped = spokenText.slice(0, 195);
-        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=tr&client=tw-ob&q=${encodeURIComponent(clipped)}`;
-        const audio = new Audio();
-        audio.referrerPolicy = 'no-referrer';
-        audio.preload = 'auto';
-        audio.src = ttsUrl;
-        audio.playbackRate = Math.min(2.0, Math.max(0.95, rate));
-        window.activeTtsAudio = audio;
-
-        audio.onloadedmetadata = () => {
-          if (audio.duration && isFinite(audio.duration)) {
-            const realDurationMs = (audio.duration * 1000) / audio.playbackRate;
-            const endTs = performance.now() + realDurationMs;
-            window.speechBusyUntil = endTs;
-            if (!isStoreCue) {
-              window.speechMainBusyUntil = endTs;
-            }
-          }
-        };
-        const clearBusy = () => {
-          if (window.activeTtsAudio === audio) {
-            window.speechBusyUntil = 0;
-            if (!isStoreCue) window.speechMainBusyUntil = 0;
-            updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
-          }
-        };
-        audio.onended = clearBusy;
-        audio.onerror = clearBusy;
-        const playPromise = audio.play();
-        if (playPromise && typeof playPromise.catch === 'function') {
-          playPromise.catch(() => {
-            // Tarayıcı autoplay kısıtlaması varsa zamanlayıcıyı doğal süresinde bırak
-          });
-        }
-        return;
-      }
+      const nativeEnVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('en'));
 
       if ('speechSynthesis' in window && window.speechSynthesis) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(spokenText);
-        utterance.lang = isEn ? 'en-US' : 'tr-TR';
-        if (!isEn && nativeTrVoice) {
+        utterance.lang = targetLang;
+        if (isEn && nativeEnVoice) {
+          utterance.voice = nativeEnVoice;
+        } else if (!isEn && nativeTrVoice) {
           utterance.voice = nativeTrVoice;
         }
         utterance.rate = rate;
@@ -1156,6 +1201,7 @@ function initApp() {
           if (!isStoreCue) window.speechMainBusyUntil = 0;
           updateVoiceSubtitleUI(window.lastSpokenNavigationText, false);
         };
+        window.lastSpeechUtterance = utterance;
         window.speechSynthesis.speak(utterance);
       }
     } catch (e) {
@@ -1170,14 +1216,15 @@ function initApp() {
     const btn = document.getElementById('btn-voice-toggle');
     const iconEl = document.getElementById('voice-toggle-icon');
     const labelEl = document.getElementById('voice-toggle-label');
+    const isEn = currentLanguage === 'en';
 
     if (isVoiceEnabled) {
       if (btn) {
         btn.className = 'shrink-0 h-8 px-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer';
       }
-      if (iconEl) iconEl.textContent = '🔊';
-      if (labelEl) labelEl.textContent = 'Sesli Açık';
-      showToast('🔊 Türkçe sesli adım adım yönlendirme açıldı', 'success');
+      if (iconEl) iconEl.innerHTML = getMonoIconSvg('volume2', 14);
+      if (labelEl) labelEl.textContent = isEn ? 'Voice On' : 'Sesli Açık';
+      showToast(isEn ? 'Step-by-step voice navigation enabled' : 'Sesli adım adım yönlendirme açıldı', 'success');
 
       // Mevcut adımı hemen seslendir
       if (lastCalculatedRoute && lastCalculatedRoute.instructions && lastCalculatedRoute.instructions.length > 0) {
@@ -1195,8 +1242,8 @@ function initApp() {
       if (btn) {
         btn.className = 'shrink-0 h-8 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer';
       }
-      if (iconEl) iconEl.textContent = '🔇';
-      if (labelEl) labelEl.textContent = 'Sessiz';
+      if (iconEl) iconEl.innerHTML = getMonoIconSvg('volumeX', 14);
+      if (labelEl) labelEl.textContent = isEn ? 'Muted' : 'Sessiz';
       if (window.queuedArrivalTimer) {
         clearTimeout(window.queuedArrivalTimer);
         window.queuedArrivalTimer = null;
@@ -1211,7 +1258,7 @@ function initApp() {
       } catch (e) {}
       window.speechBusyUntil = 0;
       window.speechMainBusyUntil = 0;
-      showToast('🔇 Sesli yönlendirme kapatıldı', 'info');
+      showToast(isEn ? 'Voice navigation muted' : 'Sesli yönlendirme kapatıldı', 'info');
     }
   }
   window.toggleVoiceNavigation = toggleVoiceNavigation;
@@ -1230,12 +1277,12 @@ function initApp() {
       bar.id = 'arrival-action-bar';
       bar.className = 'hidden flex items-center gap-1.5 pt-1';
       bar.innerHTML = `
-        <button type="button" id="btn-arrival-new-route" class="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-[11px] font-extrabold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all cursor-pointer">
-          <span>🧭</span>
+        <button type="button" id="btn-arrival-new-route" class="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-[11px] font-extrabold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer">
+          ${getMonoIconSvg('navigation', 14)}
           <span>Buradan Yeni Rota Seç</span>
         </button>
-        <button type="button" id="btn-arrival-reset-all" class="py-1.5 px-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 border border-rose-500/30 text-[11px] font-extrabold flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer shrink-0">
-          <span>🔄</span>
+        <button type="button" id="btn-arrival-reset-all" class="py-1.5 px-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 border border-rose-500/30 text-[11px] font-extrabold flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer shrink-0">
+          ${getMonoIconSvg('refresh', 14)}
           <span>Konumu Sıfırla</span>
         </button>
       `;
@@ -1270,13 +1317,13 @@ function initApp() {
         setTimeout(() => {
           document.getElementById('input-target-loc')?.focus();
         }, 120);
-        showToast(`📍 Başlangıç noktanız ${newStart ? newStart.name : 'güncellendi'}. Şimdi yeni hedef mağazanızı seçebilirsiniz!`, 'info');
+        showToast(`Başlangıç noktanız ${newStart ? newStart.name : 'güncellendi'}. Şimdi yeni hedef mağazanızı seçebilirsiniz.`, 'info');
       });
 
       bar.querySelector('#btn-arrival-reset-all')?.addEventListener('click', (e) => {
         e.stopPropagation();
         clearCurrentRoute();
-        showToast('🔄 Konumunuz ve rotanız sıfırlandı.', 'info');
+        showToast('Konumunuz ve rotanız sıfırlandı.', 'info');
       });
     }
     return bar;
@@ -1297,20 +1344,25 @@ function initApp() {
     }
 
     const arrivalBar = ensureArrivalActionBar();
+    const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
 
     // 1. Hedefe Ulaşıldı Durumu (Önceki sesli yönlendirme aktifse kesmeden kuyruğa al)
     if (nodeIndex === -1 || progressPct >= 100) {
       banner.classList.remove('hidden');
-      iconEl.textContent = '🎉';
-      textEl.textContent = 'Hedefe Ulaştınız!';
-      const destName = (selectedTargetStore && selectedTargetStore.name) || (window.lastReachedStore && window.lastReachedStore.name) || 'Hedef Mağaza';
-      subEl.textContent = `${destName} önündesiniz • Yeni hedef seçebilir veya sıfırlayabilirsiniz`;
+      iconEl.innerHTML = getMonoIconSvg('check', 16);
+      const destName = stripUiEmojis((selectedTargetStore && selectedTargetStore.name) || (window.lastReachedStore && window.lastReachedStore.name) || (isEn ? 'Destination' : 'Hedef Mağaza'));
+      textEl.textContent = isEn ? `You have arrived at ${destName}!` : 'Hedefe Ulaştınız!';
+      subEl.textContent = isEn
+        ? `In front of ${destName} • Select a new destination or reset`
+        : `${destName} önündesiniz • Yeni hedef seçebilir veya sıfırlayabilirsiniz`;
       landmarksWrap?.classList.add('hidden');
       arrivalBar?.classList.remove('hidden');
-      const arrMsg = `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
+      const arrMsg = isEn
+        ? `You have arrived at ${destName}. Enjoy your visit.`
+        : `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
       const voiceSubText = document.getElementById('live-voice-subtitle-text');
       if (voiceSubText) {
-        voiceSubText.textContent = `🔊 ${arrMsg}`;
+        voiceSubText.textContent = arrMsg;
       }
       if (lastSpokenStepIndex !== -1) {
         lastSpokenStepIndex = -1;
@@ -1336,18 +1388,14 @@ function initApp() {
       }
     }
 
-    // 3. İkon ve Metinleri Güncelle
-    let emoji = activeIns.emoji || '⬆️';
-    if (!emoji || emoji === '📍') {
-      if (activeIns.type === 'straight') emoji = '⬆️';
-      else if (activeIns.type === 'turn_right') emoji = '↪️';
-      else if (activeIns.type === 'turn_left') emoji = '↩️';
-      else if (activeIns.type === 'floor_change') emoji = activeIns.icon === 'arrow-up-down' ? '🛗' : '🪜';
-      else if (activeIns.type === 'destination') emoji = '🎯';
-      else emoji = '⬆️';
-    }
-    iconEl.textContent = emoji;
-    textEl.textContent = activeIns.text;
+    // 3. İkon ve Metinleri Güncelle (Monochrome Inline SVG)
+    let iconSvg = getMonoIconSvg('arrowUp', 16);
+    if (activeIns.type === 'turn_right') iconSvg = getMonoIconSvg('cornerUpRight', 16);
+    else if (activeIns.type === 'turn_left') iconSvg = getMonoIconSvg('cornerUpLeft', 16);
+    else if (activeIns.type === 'floor_change') iconSvg = getMonoIconSvg('layers', 16);
+    else if (activeIns.type === 'destination') iconSvg = getMonoIconSvg('pin', 16);
+    iconEl.innerHTML = iconSvg;
+    textEl.textContent = stripUiEmojis(activeIns.text);
 
     // 4. Yanından Geçilecek Mağazalar (Referans Noktaları) Rozeti
     if (landmarksWrap && landmarksText) {
@@ -1355,7 +1403,7 @@ function initApp() {
         ? activeIns.passingStores
         : (lastCalculatedRoute.enRouteStoreNames || []).slice(0, 3);
       if (stepStores.length > 0) {
-        landmarksText.textContent = stepStores.join(' ➔ ');
+        landmarksText.textContent = stepStores.join(' • ');
         landmarksWrap.classList.remove('hidden');
       } else {
         landmarksWrap.classList.add('hidden');
@@ -1371,10 +1419,13 @@ function initApp() {
 
     // 6. Alt Bilgi: Bir sonraki manevra veya kalan ilerleme
     if (nextIns) {
-      const nextEmoji = nextIns.emoji || (nextIns.type === 'floor_change' ? '🪜' : (nextIns.type === 'turn_right' ? '↪️' : (nextIns.type === 'turn_left' ? '↩️' : '⬆️')));
-      subEl.textContent = `Sonraki: ${nextEmoji} ${nextIns.text}`;
+      subEl.textContent = isEn
+        ? `Next: ${stripUiEmojis(nextIns.text)}`
+        : `Sonraki: ${stripUiEmojis(nextIns.text)}`;
     } else {
-      subEl.textContent = `Hedefe doğru ilerliyorsunuz (%${Math.round(progressPct)})`;
+      subEl.textContent = isEn
+        ? `Proceeding to destination (${Math.round(progressPct)}%)`
+        : `Hedefe doğru ilerliyorsunuz (%${Math.round(progressPct)})`;
     }
   }
   window.updateLiveNavHUD = updateLiveNavHUD;
@@ -2636,18 +2687,18 @@ function findNearestAmenity(amenityKind, floor) {
 window.findNearestAmenity = findNearestAmenity;
 
 const AMENITY_META_LABELS = {
-  elevator: { icon: '🛗', label: 'Asansör' },
-  baby: { icon: '🍼', label: 'Bebek Bakım Odası' },
-  wc: { icon: '🚻', label: 'WC / Tuvalet' },
-  emergency: { icon: '🚨', label: 'Acil Çıkış' },
-  exit: { icon: '🚨', label: 'Acil Çıkış' },
-  entrance: { icon: '🚪', label: 'Giriş / Çıkış Kapısı' },
-  kiosk: { icon: '🖥️', label: 'Kiosk & Danışma' },
-  info: { icon: '🛡️', label: 'Danışma Noktası' },
-  carpark: { icon: '🅿️', label: 'Otopark Girişi / Asansörü' },
-  wheelchair: { icon: '♿', label: 'Engelsiz / Akülü Sandalye Noktası' },
-  atm: { icon: '💳', label: 'ATM' },
-  prayer: { icon: '🕌', label: 'Mescit' }
+  elevator: { icon: '', label: 'Asansör' },
+  baby: { icon: '', label: 'Bebek Bakım Odası' },
+  wc: { icon: '', label: 'WC / Tuvalet' },
+  emergency: { icon: '', label: 'Acil Çıkış' },
+  exit: { icon: '', label: 'Acil Çıkış' },
+  entrance: { icon: '', label: 'Giriş / Çıkış Kapısı' },
+  kiosk: { icon: '', label: 'Kiosk & Danışma' },
+  info: { icon: '', label: 'Danışma Noktası' },
+  carpark: { icon: '', label: 'Otopark Girişi / Asansörü' },
+  wheelchair: { icon: '', label: 'Engelsiz / Akülü Sandalye Noktası' },
+  atm: { icon: '', label: 'ATM' },
+  prayer: { icon: '', label: 'Mescit' }
 };
 
 function clearAmenityHighlightOnMap() {
@@ -3166,10 +3217,10 @@ function showPoiPeekCard(store) {
 
   // Buton Metinlerini & İkonlarını Kesinlikle Standardize Et (Mobilde taşmadan kusursuz görünür)
   if (btnStart) {
-    btnStart.innerHTML = '<span>📍</span><span class="truncate font-bold"><span class="sm:hidden">Başlangıç Yap</span><span class="hidden sm:inline">Buradayım (Başlangıç Yap)</span></span>';
+    btnStart.innerHTML = `${getMonoIconSvg('pin', 14)}<span class="truncate font-bold"><span class="sm:hidden">Başlangıç Yap</span><span class="hidden sm:inline">Buradayım (Başlangıç Yap)</span></span>`;
   }
   if (btnTarget) {
-    btnTarget.innerHTML = '<span>🎯</span><span class="truncate font-bold">Hedef Yap</span>';
+    btnTarget.innerHTML = `${getMonoIconSvg('navigation', 14)}<span class="truncate font-bold">Hedef Yap</span>`;
   }
 
   // Dinamik Buton Önceliği (Durum Makinesi):
@@ -3565,11 +3616,11 @@ function renderPoiDetail(store) {
       title: 'Capacity Sezon İndirimi',
       discount: '%40 İndirim',
       code: 'CAPACITY40',
-      badge: '🔥 Fırsat'
+      badge: 'Fırsat'
     };
 
     const campBadge = document.getElementById('poi-campaign-badge');
-    if (campBadge) campBadge.textContent = camp.badge || '%40 İndirim';
+    if (campBadge) campBadge.textContent = stripUiEmojis(camp.badge || '%40 İndirim');
 
     const campText = document.getElementById('poi-campaign-text');
     if (campText) campText.textContent = camp.title;
@@ -3610,31 +3661,31 @@ function renderPoiActionButtons(store) {
       </div>
       <button id="poi-start-btn" data-action="start" class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
-        <span>📍 Burayı Başlangıç Yap</span>
+        <span>Burayı Başlangıç Yap</span>
       </button>
     `;
   } else if (!selectedStartStore || activeFocusSlot === 'start') {
-    // 1. Durum: [📍 Nereden?] boşsa veya odak [📍 Nereden?] üzerindeyse ➔ [📍 Buradan Başla] (öncelikli) ve [🎯 Hedef Yap]
+    // 1. Durum: Nereden? boşsa veya odak Nereden? üzerindeyse ➔ Buradan Başla (öncelikli) ve Hedef Yap
     container.innerHTML = `
       <button id="poi-start-btn" data-action="start" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
         <i data-lucide="map-pin" class="w-4 h-4"></i>
-        <span>📍 Buradan Başla</span>
+        <span>Buradan Başla</span>
       </button>
       <button id="poi-route-btn" data-action="target" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
         <i data-lucide="navigation" class="w-3.5 h-3.5 text-red-500"></i>
-        <span>🎯 Hedef Yap</span>
+        <span>Hedef Yap</span>
       </button>
     `;
   } else {
-    // 2. Durum: [📍 Nereden?] doluysa ve odak hedefteyse ➔ [🎯 Hedef Yap] (öncelikli) ve [📍 Başlangıcı Değiştir]
+    // 2. Durum: Nereden? doluysa ve odak hedefteyse ➔ Hedef Yap (öncelikli) ve Başlangıcı Değiştir
     container.innerHTML = `
       <button id="poi-route-btn" data-action="target" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all active:scale-95">
         <i data-lucide="navigation" class="w-4 h-4"></i>
-        <span>🎯 Hedef Yap</span>
+        <span>Hedef Yap</span>
       </button>
       <button id="poi-start-btn" data-action="start" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
-        <span>📍 Başlangıcı Değiştir</span>
+        <span>Başlangıcı Değiştir</span>
       </button>
     `;
   }
@@ -3687,7 +3738,7 @@ function calculateAndDisplayRoute() {
   window.lastCalculatedRoute = result;
   updateHeaderNavSummary(selectedTargetStore, result);
 
-  // Koridor Tercih Çiplerini [🛣️ Geniş Yol] ve [✂️ Kısa Yol] Göster
+  // Koridor Tercih Çiplerini [Geniş Yol] ve [Kısa Yol] Göster
   const pathChips = document.getElementById('route-path-chips');
   if (pathChips) {
     pathChips.classList.remove('hidden');
@@ -3712,7 +3763,7 @@ function calculateAndDisplayRoute() {
   if (hudStepsList && result.instructions) {
     const pmrHeaderHtml = activeRouteMode === 'elevator'
       ? `<div class="p-2 rounded-xl bg-sky-500/12 border border-sky-500/35 text-sky-800 dark:text-sky-200 text-[10.5px] font-bold flex items-center gap-1.5">
-           <span>♿</span>
+           ${getMonoIconSvg('info', 14)}
            <span>Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Güzergah (Geniş Koridor + Panoramik Asansör)</span>
          </div>`
       : '';
@@ -3721,7 +3772,7 @@ function calculateAndDisplayRoute() {
     const storeServiceGuideHtml = `
       <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-slate-800 dark:text-slate-100 text-[10.5px] flex items-center justify-between gap-2">
         <div class="min-w-0">
-          <div class="font-extrabold truncate">🧭 ${selectedTargetStore.name}</div>
+          <div class="font-extrabold truncate flex items-center gap-1">${getMonoIconSvg('navigation', 13)}<span>${stripUiEmojis(selectedTargetStore.name)}</span></div>
           <div class="text-[9.5px] text-slate-500 dark:text-slate-400 truncate">${targetFloorName} • ${targetCat} • Açık (10:00-22:00)</div>
         </div>
         <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9.5px] font-black shrink-0">${result.totalDistance}m • ~${result.estimatedMinutes}dk</span>
@@ -3729,7 +3780,7 @@ function calculateAndDisplayRoute() {
     `;
     hudStepsList.innerHTML = pmrHeaderHtml + storeServiceGuideHtml + result.instructions.map(ins => {
       const passingHtml = (ins.passingStores && ins.passingStores.length > 0)
-        ? `<div class="mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold"><span>👀</span><span>${ins.passingStores.join(' ➔ ')}</span></div>`
+        ? `<div class="mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold"><span>${ins.passingStores.join(' ➔ ')}</span></div>`
         : '';
       return `
       <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
@@ -4028,11 +4079,11 @@ function updateHeaderResetButtonVisibility() {
     resetBtn.type = 'button';
     resetBtn.className = 'hidden shrink-0 px-2 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-extrabold items-center justify-center gap-1 shadow-sm shadow-rose-600/20 transition-all active:scale-95 cursor-pointer';
     resetBtn.title = 'Konumu ve Rotayı Sıfırla';
-    resetBtn.innerHTML = '<span>🔄</span><span class="hidden sm:inline">Sıfırla</span>';
+    resetBtn.innerHTML = `${getMonoIconSvg('refresh', 13)}<span class="hidden sm:inline">Sıfırla</span>`;
     resetBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       clearCurrentRoute();
-      showToast('🔄 Başlangıç konumu ve rota sıfırlandı.', 'info');
+      showToast('Başlangıç konumu ve rota sıfırlandı.', 'info');
     });
     pinBtn.parentElement.appendChild(resetBtn);
   }
@@ -4225,12 +4276,12 @@ function openEntranceModal() {
       return;
     }
 
-    const activeStartLabel = selectedStartStore ? (selectedStartStore.short_name || selectedStartStore.name) : '';
+    const activeStartLabel = selectedStartStore ? stripUiEmojis(selectedStartStore.short_name || selectedStartStore.name) : '';
     const resetHeaderHtml = (selectedStartStore || selectedTargetStore || lastCalculatedRoute || window.isRouteCompletedState)
       ? `
         <button type="button" id="btn-modal-reset-location" class="w-full mb-2 p-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 border border-rose-500/40 text-rose-700 dark:text-rose-300 text-xs font-extrabold flex items-center justify-between gap-2 transition-all active:scale-95 cursor-pointer shadow-xs">
           <span class="flex items-center gap-2 min-w-0">
-            <span class="text-base">🔄</span>
+            ${getMonoIconSvg('refresh', 14)}
             <span class="truncate">Mevcut Konumu ve Rotayı Sıfırla${activeStartLabel ? ' (' + activeStartLabel + ')' : ''}</span>
           </span>
           <span class="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black shrink-0">Sıfırla</span>
@@ -4242,7 +4293,7 @@ function openEntranceModal() {
       const isSelected = selectedStartStore && (selectedStartStore.id === loc.id || selectedStartStore.name === loc.name);
       const iconHtml = loc.storeObj
         ? getStoreLogo(loc.storeObj, 24)
-        : `<span class="text-lg leading-none">${loc.iconEmoji}</span>`;
+        : getMonoIconSvg('pin', 16);
 
       return `
         <div 
@@ -4715,7 +4766,7 @@ function renderParkingHeatbars(occupancyMap = null) {
 
     summaryPanel.innerHTML = `
       <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-        <span>📊 Canlı Bölge Doluluk Oranları (${floorCode})</span>
+        <span>Canlı Bölge Doluluk Oranları (${floorCode})</span>
         <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400">Kapasite: 60 Araç/Bölge</span>
       </div>
       <div class="flex flex-col gap-1.5">${rowsHtml}</div>
@@ -4749,13 +4800,13 @@ const CAPACITY_PARKING_ZONE_AXIS_META = {
   Sarı: {
     letter: 'B',
     range: 'B-01..B-15',
-    lobbyLabel: 'Merkez / B2-03 Hibatech Oto Yıkama & Lostra Aksı',
+    lobbyLabel: 'Merkez / B2-03 Hibatech & Lostra Aksı',
     colorHex: '#eab308'
   },
   Turuncu: {
     letter: 'C',
     range: 'C-01..C-15',
-    lobbyLabel: 'Doğu Asansör & ⚡ E-Şarj (ZES/Eşarj) / Dry Clean Aksı',
+    lobbyLabel: 'Doğu Asansör & E-Şarj İstasyonu / Dry Clean Aksı',
     colorHex: '#f97316'
   },
   Kırmızı: {
@@ -4774,18 +4825,14 @@ function renderQuickPillarChipsForZone(zoneName = 'Mavi', floorCode = 'P2') {
   const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
   const L = axisMeta.letter;
 
-  const floorSpecificRef = floorCode === 'P3'
-    ? '🕌 B3 Mescit & Lostra Yanı'
-    : (floorCode === 'P1' ? '💳 B1 Ödeme Noktası Yanı' : '🧼 B2-03 Hibatech Oto Yıkama');
-
   const quickPillars = [
-    { val: `${L}-04`, label: `📍 ${L}-04` },
-    { val: `${L}-08`, label: `📍 ${L}-08` },
-    { val: `${L}-12`, label: `📍 ${L}-12` },
-    { val: `${L}-15`, label: `📍 ${L}-15` },
-    { val: floorSpecificRef.replace(/^[^\s]+\s*/, ''), label: floorSpecificRef },
-    { val: '⚡ E-Şarj (ZES/Eşarj)', label: '⚡ E-Şarj (ZES/Eşarj)' },
-    { val: '🛗 Asansör Lobisi Karşısı', label: '🛗 Asansör Karşısı' }
+    { val: 'B-04', label: 'B-04' },
+    ...(L !== 'B' ? [{ val: `${L}-04`, label: `${L}-04` }] : []),
+    { val: `${L}-08`, label: `${L}-08` },
+    { val: `${L}-12`, label: `${L}-12` },
+    { val: 'B2-03 Hibatech', label: 'B2-03 Hibatech' },
+    { val: 'E-Şarj İstasyonu', label: 'E-Şarj İstasyonu' },
+    { val: 'Asansör Karşısı', label: 'Asansör Karşısı' }
   ];
 
   chipsWrap.innerHTML = quickPillars.map(item => `
@@ -4803,24 +4850,35 @@ function renderQuickPillarChipsForZone(zoneName = 'Mavi', floorCode = 'P2') {
 }
 
 function ensureCleanParkingModalUI() {
-  // Karmaşık URL/link paylaşım kutularını kaldır (Madde 2)
+  // Karmaşık URL/link paylaşım kutularını kaldır
   document.getElementById('parking-saved-share-actions')?.remove();
   document.getElementById('parking-share-link-box')?.remove();
   document.getElementById('btn-parking-save-and-share')?.remove();
 
-  // Kaydet butonunun tek ve belirgin olduğundan emin ol: [ 🚘 Aracımı Buraya Park Ettim ]
+  // Kaydet, Rota Çiz ve Kaydı Sonlandır butonlarını kurumsal minimalist metin ve tek renk SVG ikonlarla güncelle
   const saveBtn = document.getElementById('btn-parking-save');
   if (saveBtn) {
-    saveBtn.innerHTML = '<span>🚘</span><span>Aracımı Buraya Park Ettim</span>';
+    saveBtn.innerHTML = `${getMonoIconSvg('car', 15)}<span>Park Yerini Kaydet</span>`;
+  }
+  const navCarBtn = document.getElementById('btn-parking-navigate-car');
+  if (navCarBtn) {
+    navCarBtn.innerHTML = `${getMonoIconSvg('navigation', 15)}<span>Araca Rota Çiz</span>`;
+  }
+  const delSpotBtn = document.getElementById('btn-parking-delete');
+  if (delSpotBtn) {
+    delSpotBtn.innerHTML = `${getMonoIconSvg('logOut', 14)}<span>Park Kaydını Sonlandır</span>`;
   }
 
   // Hızlı sütun ve gerçek Capacity referans çiplerini oluştur
   const pillarInput = document.getElementById('parking-spot-pillar');
-  if (pillarInput && pillarInput.parentElement && !document.getElementById('parking-quick-pillar-chips')) {
-    const chipsWrap = document.createElement('div');
-    chipsWrap.id = 'parking-quick-pillar-chips';
-    chipsWrap.className = 'flex items-center gap-1.5 flex-wrap mt-1.5';
-    pillarInput.parentElement.appendChild(chipsWrap);
+  if (pillarInput && pillarInput.parentElement) {
+    let chipsWrap = document.getElementById('parking-quick-pillar-chips');
+    if (!chipsWrap) {
+      chipsWrap = document.createElement('div');
+      chipsWrap.id = 'parking-quick-pillar-chips';
+      chipsWrap.className = 'flex items-center gap-1.5 flex-wrap mt-1.5';
+      pillarInput.parentElement.appendChild(chipsWrap);
+    }
     renderQuickPillarChipsForZone(selectedParkingZone?.name || 'Mavi', selectedParkingFloor?.code || 'P2');
   }
 }
@@ -4875,7 +4933,7 @@ function syncSavedParkingOnSvgMap() {
   pinGroup.setAttribute('transform', `translate(${cx}, ${cy})`);
   pinGroup.style.cursor = 'pointer';
 
-  const labelText = `🚘 ARACINIZ: ${floorCode} ${zoneName.toUpperCase()}${pillarText ? ' (' + pillarText + ')' : ''}`;
+  const labelText = `ARACINIZ: ${floorCode} ${zoneName.toUpperCase()}${pillarText ? ' (' + pillarText + ')' : ''}`;
   const boxWidth = Math.max(176, labelText.length * 6.8 + 24);
 
   pinGroup.innerHTML = `
@@ -4905,19 +4963,19 @@ function ensureSmartParkingGreetingCard() {
     card.className = 'pointer-events-auto hidden mt-1.5 px-3 py-2 rounded-2xl glass-panel border-2 border-amber-500/50 bg-slate-900/95 text-white shadow-xl flex flex-wrap items-center justify-between gap-2 max-w-[96vw] transition-all';
     card.innerHTML = `
       <div class="flex items-center gap-2 min-w-0">
-        <span class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-sm shrink-0">🚘</span>
+        <span class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center shrink-0">${getMonoIconSvg('car', 15)}</span>
         <span id="smart-parking-greeting-text" class="text-xs sm:text-sm font-black tracking-tight text-amber-100 truncate">
-          🚘 Aracınız: P2 - Mavi (B-12)
+          Aracınız: P2 - Mavi (B-12)
         </span>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" id="btn-smart-parking-route" class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] shadow-sm flex items-center gap-1 transition-all active:scale-95 cursor-pointer">
-          <span>🧭</span>
-          <span>Arabama Rota Çiz</span>
+        <button type="button" id="btn-smart-parking-route" class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] shadow-sm flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+          ${getMonoIconSvg('navigation', 14)}
+          <span>Araca Rota Çiz</span>
         </button>
-        <button type="button" id="btn-smart-parking-release" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-red-950/80 text-slate-200 hover:text-red-200 border border-slate-700 hover:border-red-500/40 font-bold text-[11px] flex items-center gap-1 transition-all active:scale-95 cursor-pointer">
-          <span>🚪</span>
-          <span>Otoparktan Ayrıldım</span>
+        <button type="button" id="btn-smart-parking-release" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-red-950/80 text-slate-200 hover:text-red-200 border border-slate-700 hover:border-red-500/40 font-bold text-[11px] flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+          ${getMonoIconSvg('logOut', 14)}
+          <span>Park Kaydını Sonlandır</span>
         </button>
       </div>
     `;
@@ -4950,17 +5008,17 @@ function updateParkingUI() {
   if (saved) {
     const floorCode = saved.code || saved.floor_id || 'P2';
     const zoneName = saved.zone || saved.zone_color || 'Mavi';
-    const pillarText = (saved.pillar || saved.pillar_code || '').trim();
+    const pillarText = stripUiEmojis((saved.pillar || saved.pillar_code || '').trim());
     const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
     const label = `${floorCode} ${zoneName}`;
 
-    if (btnText) btnText.textContent = `Arabama Git (${label})`;
-    if (headerText) headerText.textContent = `Arabama Git (${label})`;
+    if (btnText) btnText.textContent = `Araca Rota Çiz (${label})`;
+    if (headerText) headerText.textContent = `Araca Rota Çiz (${label})`;
     if (headerBtn) headerBtn.classList.remove('hidden');
 
     if (smartCard && smartText) {
       const pillarSuffix = pillarText ? ` (${pillarText})` : ` (${axisMeta.letter} Aksı)`;
-      smartText.textContent = `🚘 Aracınız: ${floorCode} - ${zoneName}${pillarSuffix}`;
+      smartText.textContent = `Aracınız: ${floorCode} - ${zoneName}${pillarSuffix}`;
       smartCard.classList.remove('hidden');
     }
 
@@ -4981,7 +5039,7 @@ function updateParkingUI() {
     }
     if (parkingForm) parkingForm.classList.remove('hidden');
   } else {
-    if (btnText) btnText.textContent = 'Otopark Konumu Kaydet';
+    if (btnText) btnText.textContent = 'Park Yerini Kaydet';
     if (headerBtn) headerBtn.classList.add('hidden');
     if (smartCard) smartCard.classList.add('hidden');
     if (savedCard) savedCard.classList.add('hidden');
@@ -5006,7 +5064,7 @@ function closeParkingMemoryModal() {
 
 async function saveParkingSpot(closeModalAfter = true) {
   const pillarInput = document.getElementById('parking-spot-pillar');
-  const pillar = pillarInput ? pillarInput.value.trim() : '';
+  const pillar = pillarInput ? stripUiEmojis(pillarInput.value.trim()) : '';
   const floorCode = selectedParkingFloor.code || 'P2';
   const zoneName = selectedParkingZone.name || 'Mavi';
 
@@ -5038,7 +5096,7 @@ async function saveParkingSpot(closeModalAfter = true) {
   currentParkingOccupancy[key] = (Number(currentParkingOccupancy[key]) || 0) + 1;
   renderParkingHeatbars(currentParkingOccupancy);
 
-  showToast(`🚘 Aracınız kaydedildi: ${floorCode} - ${zoneName} Bölge${pillar ? ' (' + pillar + ')' : ''}`, 'success');
+  showToast(`Park yeriniz kaydedildi: ${floorCode} - ${zoneName} Bölge${pillar ? ' (' + pillar + ')' : ''}`, 'success');
   updateParkingUI();
   if (closeModalAfter) {
     closeParkingMemoryModal();
@@ -5055,7 +5113,7 @@ async function deleteParkingSpot() {
       localStorage.removeItem('capacity_parking_spot');
     } catch (e) {}
   }
-  showToast('🚪 Otopark kaydınız silindi. İyi yolculuklar dileriz!', 'info');
+  showToast('Park kaydınız sonlandırıldı. İyi yolculuklar dileriz.', 'info');
   updateParkingUI();
 }
 window.deleteParkingSpot = deleteParkingSpot;
@@ -5063,7 +5121,7 @@ window.deleteParkingSpot = deleteParkingSpot;
 function resolveSavedParkingTargetStore(saved, currentFl) {
   const floorCode = String(saved?.code || saved?.floor_id || 'P2').toUpperCase();
   const zoneName = String(saved?.zone || saved?.zone_color || 'Mavi');
-  const pillarText = String(saved?.pillar || saved?.pillar_code || '').trim();
+  const pillarText = stripUiEmojis(String(saved?.pillar || saved?.pillar_code || '').trim());
   const pillarNorm = normalizeTr(pillarText);
   const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
 
@@ -5076,7 +5134,7 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
     if (hibatech && hibatech.nav_node) {
       return {
         ...hibatech,
-        name: `🚘 ${floorCode} ${zoneName} Bölge (${pillarText || 'B2-03 Hibatech Oto Yıkama Yanı'})`,
+        name: `${floorCode} ${zoneName} Bölge (${pillarText || 'B2-03 Hibatech'})`,
         category_name: 'Kayıtlı Araç Konumu (B2 Otopark)',
         is_service_area: true
       };
@@ -5090,7 +5148,7 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
       if (lostra && lostra.nav_node) {
         return {
           ...lostra,
-          name: `🚘 ${floorCode} ${zoneName} Bölge (${pillarText || 'B3-10 Başak Lostra Lobisi'})`,
+          name: `${floorCode} ${zoneName} Bölge (${pillarText || 'B3-10 Başak Lostra Lobisi'})`,
           category_name: 'Kayıtlı Araç Konumu (B3 Otopark)',
           is_service_area: true
         };
@@ -5101,7 +5159,7 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
       if (dryClean && dryClean.nav_node) {
         return {
           ...dryClean,
-          name: `🚘 ${floorCode} ${zoneName} Bölge (${pillarText || 'B3-05 Dry Clean Lobisi'})`,
+          name: `${floorCode} ${zoneName} Bölge (${pillarText || 'B3-05 Dry Clean Lobisi'})`,
           category_name: 'Kayıtlı Araç Konumu (B3 Otopark)',
           is_service_area: true
         };
@@ -5133,7 +5191,7 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
 
   return {
     id: `parking_target_${floorCode}_${zoneName}`,
-    name: `🚘 Aracınız: ${floorCode} ${zoneName} Bölge (${pillarText || axisMeta.letter + ' Aksı'})`,
+    name: `Aracınız: ${floorCode} ${zoneName} Bölge (${pillarText || axisMeta.letter + ' Aksı'})`,
     floor: targetFloorNum,
     category_name: `${floorCode} Kapalı Otopark (${axisMeta.lobbyLabel})`,
     kind: 'carpark',
@@ -5178,7 +5236,7 @@ function navigateToSavedCar() {
 
   const floorCode = saved.code || saved.floor_id || 'P2';
   const zoneName = saved.zone || saved.zone_color || 'Mavi';
-  const pillarText = saved.pillar || saved.pillar_code || '';
+  const pillarText = stripUiEmojis(saved.pillar || saved.pillar_code || '');
   const targetParkingObj = resolveSavedParkingTargetStore(saved, currentFl);
 
   // Eğer başlangıç ve hedef aynı düğümdeyse farklı bir başlangıç noktası seç
@@ -5198,7 +5256,7 @@ function navigateToSavedCar() {
   }
   setTargetLocation(targetParkingObj);
 
-  showToast(`🚘 Aracınız ${floorCode} - ${zoneName} Bölge (${pillarText || 'Otopark'}) noktasında. Otopark katına ve bölgesine rota çizildi.`, 'success');
+  showToast(`Aracınız ${floorCode} - ${zoneName} Bölge (${pillarText || 'Otopark'}) noktasında. Otopark katına ve bölgesine rota çizildi.`, 'success');
 }
 
 function navigateToAvailableParking(recordFullZone = false) {
@@ -5250,9 +5308,9 @@ function navigateToAvailableParking(recordFullZone = false) {
   setTargetLocation(availableParkingTarget);
 
   if (recordFullZone) {
-    showToast('🚨 Dolu park alanı kaydedildi! En yakın rahat park alanı olan P2 Mavi Bölge asansörüne yönlendiriliyorsunuz.', 'success');
+    showToast('Dolu park alanı kaydedildi. En yakın rahat park alanı olan P2 Mavi Bölge asansörüne yönlendiriliyorsunuz.', 'success');
   } else {
-    showToast('🅿️ En yakın rahat otopark alanı olan P2 (-2. Kat) Mavi Bölge noktasına yönlendiriliyorsunuz.', 'success');
+    showToast('En yakın rahat otopark alanı olan P2 (-2. Kat) Mavi Bölge noktasına yönlendiriliyorsunuz.', 'success');
   }
 }
 window.navigateToAvailableParking = navigateToAvailableParking;
@@ -5973,6 +6031,22 @@ function startLiveGpsWatchTracking() {
   } catch (e) {}
 }
 
+function getGateCStartObject() {
+  const entFisekhane = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane' || e.id === 'store_gate_c');
+  return {
+    ...(entFisekhane || {}),
+    id: 'store_gate_c',
+    alias_id: 'ent_fisekhane',
+    name: 'C Kapısı (Fişekhane Cad.)',
+    short_name: 'C Kapısı',
+    floor: 4,
+    cx: entFisekhane?.cx || 1245.0,
+    cy: entFisekhane?.cy || 410.0,
+    nav_node: entFisekhane?.nav_node || 'n_ent_fisekhane'
+  };
+}
+window.getGateCStartObject = getGateCStartObject;
+
 function detectUserLocationGPS() {
   if (window.isKioskMode) {
     showToast('Kiosk modundasınız. Başlangıç konumu Danışma / Kiosk olarak sabittir.', 'info');
@@ -5989,9 +6063,9 @@ function detectUserLocationGPS() {
   const statusText = document.getElementById('gps-live-status-text');
 
   if (gpsBtnLabel) gpsBtnLabel.textContent = 'GPS Taranıyor...';
-  if (gpsBtnIcon) gpsBtnIcon.textContent = '🛰️';
+  if (gpsBtnIcon) gpsBtnIcon.innerHTML = getMonoIconSvg('navigation', 14);
 
-  const finalizeLocation = (lat, lng, accuracyMeters, sourceLabel) => {
+  const finalizeLocation = (lat, lng, accuracyMeters) => {
     isGpsLocating = false;
     const activeFl = currentFloor || 4;
     const floorStores = (mallData?.floors[activeFl]?.stores || []).filter(s => s.nav_node);
@@ -6023,32 +6097,22 @@ function detectUserLocationGPS() {
       }
     }
 
-    // Kullanıcı şu an Capacity AVM dışındaysa veya iç mekan beacon yedeği kullanılıyorsa:
-    if (!detectedObj) {
-      if (activeFl === 4 && entrances.length > 0) {
-        const zeminBeacons = [
-          entrances.find(e => e.id === 'ent_fisekhane'),
-          entrances.find(e => e.id === 'ent_havuz'),
-          entrances.find(e => e.id === 'ent_carousel'),
-          entrances.find(e => e.id === 'ent_danisma')
-        ].filter(Boolean);
-        detectedObj = zeminBeacons[gpsBeaconIndex % zeminBeacons.length] || entrances[0];
-        gpsBeaconIndex++;
-      } else if (floorStores.length > 0) {
-        detectedObj = floorStores[gpsBeaconIndex % Math.min(5, floorStores.length)];
-        gpsBeaconIndex++;
-      } else if (entrances.length > 0) {
-        detectedObj = entrances[0];
+    // Kullanıcı AVM dışındaysa (>350m) veya GPS yedeği tetiklendiyse:
+    // ASLA B1 katındaki bir mağazayı (örn: Adidas) seçme! Doğrudan C Kapısı (store_gate_c) olarak ata.
+    if (!isPhysicallyAtCapacity || !detectedObj) {
+      detectedObj = getGateCStartObject();
+      if (outsideDistKm === null) {
+        outsideDistKm = 1.2;
       }
     }
 
     if (!detectedObj) return;
 
-    const cleanName = (detectedObj.short_name || detectedObj.name || '').replace(/^📍\s*/, '');
+    const cleanName = stripUiEmojis(detectedObj.short_name || detectedObj.name || 'C Kapısı');
     const accText = `±${accuracyMeters || '1.8'}m`;
 
     if (gpsBtnLabel) gpsBtnLabel.textContent = `GPS: ${cleanName.slice(0, 14)}`;
-    if (gpsBtnIcon) gpsBtnIcon.textContent = '📡';
+    if (gpsBtnIcon) gpsBtnIcon.innerHTML = getMonoIconSvg('navigation', 14);
 
     if (statusPill) {
       statusPill.classList.remove('hidden');
@@ -6057,34 +6121,48 @@ function detectUserLocationGPS() {
     if (statusText) {
       statusText.textContent = isPhysicallyAtCapacity
         ? `CANLI GPS ${accText}`
-        : (outsideDistKm !== null ? `AVM Dışı (${outsideDistKm.toFixed(1)} km) • Simüle` : `IPS/GPS ${accText}`);
+        : `AVM Dışı (${outsideDistKm.toFixed(1)} km) • C Kapısı`;
+    }
+
+    // Haritada B1 katındaki bir mağaza seçili kalmasın
+    if (!isPhysicallyAtCapacity && mallMap) {
+      mallMap.selectedStore = null;
+      mallMap.setSelectedStore(null);
+      document.querySelectorAll('.store-card.is-active').forEach(c => c.classList.remove('is-active'));
     }
 
     setStartLocation(detectedObj);
+    window.selectedStartStore = selectedStartStore;
 
     // Harita üzerinde mavi canlı kullanıcı noktasını (#live-user-gps-dot) hemen göster
     if (mallMap && !isPhysicallyAtCapacity) {
       mallMap.updateLiveUserLocation(
         detectedObj.cx || 1245,
         detectedObj.cy || 410,
-        detectedObj.floor || activeFl,
+        detectedObj.floor || 4,
         0,
-        `Konumunuz: ${cleanName}`
+        'C Kapısı'
       );
     }
 
     startLiveGpsWatchTracking();
 
     if (isPhysicallyAtCapacity) {
-      showToast(`📡 Capacity AVM içi canlı GPS konumunuz algılandı: ${cleanName} (Doğruluk ${accText}). Yürürken haritada canlı takip edilir!`, 'success');
-    } else if (outsideDistKm !== null) {
-      showToast(`📍 Şu an Capacity AVM dışındasınız (${outsideDistKm.toFixed(1)} km uzakta). Test için ${cleanName} seçildi — Capacity AVM'ye gittiğinizde gerçek GPS konumunuz otomatik algılanır!`, 'info');
+      const insideMsg = `Canlı GPS konumunuz algılandı: ${cleanName} (${accText}).`;
+      showToast(insideMsg, 'success');
+      if (window.speakNavigationText && isVoiceEnabled) {
+        window.speakNavigationText(insideMsg, true);
+      }
     } else {
-      showToast(`📡 Konumunuz algılandı: ${cleanName} (Capacity AVM'ye gittiğinizde gerçek GPS/IPS konumunuz ve yürüyüşünüz haritada canlı takip edilir)`, 'success');
-    }
-
-    if (window.speakNavigationText && isVoiceEnabled) {
-      window.speakNavigationText(`Konumunuz ${cleanName} önünde algılandı.`, true);
+      const distKmFormatted = outsideDistKm.toFixed(1);
+      window.lastGpsDistanceToMallKm = outsideDistKm;
+      const outsideMsg = `AVM dışındasınız (${distKmFormatted} km). Navigasyon en yakın giriş olan C Kapısı üzerinden başlatıldı.`;
+      window.lastGpsOutsideNoticeText = outsideMsg;
+      showToast(outsideMsg, 'info');
+      updateVoiceSubtitleUI(outsideMsg, true);
+      if (window.speakNavigationText) {
+        window.speakNavigationText(outsideMsg, true);
+      }
     }
   };
 
@@ -6093,7 +6171,7 @@ function detectUserLocationGPS() {
     const fallbackTimer = setTimeout(() => {
       if (!settled) {
         settled = true;
-        finalizeLocation(null, null, '1.8', 'IPS/GPS');
+        finalizeLocation(null, null, '1.8');
       }
     }, 1500);
 
@@ -6104,23 +6182,23 @@ function detectUserLocationGPS() {
           settled = true;
           clearTimeout(fallbackTimer);
           const acc = pos.coords && pos.coords.accuracy ? Math.min(3.5, Math.max(1.2, +(pos.coords.accuracy / 10).toFixed(1))) : '1.6';
-          finalizeLocation(pos.coords.latitude, pos.coords.longitude, acc, 'GPS/IPS');
+          finalizeLocation(pos.coords.latitude, pos.coords.longitude, acc);
         },
         () => {
           if (settled) return;
           settled = true;
           clearTimeout(fallbackTimer);
-          finalizeLocation(null, null, '1.8', 'IPS/GPS');
+          finalizeLocation(null, null, '1.8');
         },
         { enableHighAccuracy: true, timeout: 1400, maximumAge: 15000 }
       );
     } catch (e) {
       clearTimeout(fallbackTimer);
-      finalizeLocation(null, null, '1.8', 'IPS/GPS');
+      finalizeLocation(null, null, '1.8');
     }
   } else {
     setTimeout(() => {
-      finalizeLocation(null, null, '1.8', 'IPS/GPS');
+      finalizeLocation(null, null, '1.8');
     }, 350);
   }
 }
@@ -6138,7 +6216,7 @@ function setupGpsAutoLocationEvents() {
 window.setupGpsAutoLocationEvents = setupGpsAutoLocationEvents;
 
 // ========================================================
-// 🧭 1. GPS KULLANIMI İÇİN SEÇİM MODU (📍 CANLI KONUMLA GİT VS. 🎬 ÖNİZLE / SİMÜLASYON)
+// 1. GPS KULLANIMI İÇİN SEÇİM MODU (CANLI NAVİGASYON VS. ROTA ÖNİZLEME)
 // ========================================================
 window.activeTravelNavigationMode = 'sim'; // 'gps' | 'sim'
 let routeGpsWatchId = null;
@@ -6177,47 +6255,54 @@ window.updateTravelModeButtonsUI = updateTravelModeButtonsUI;
 
 function startLiveGpsRouteWalk() {
   stopLiveGpsRouteWalk();
-  if (!lastCalculatedRoute || !Array.isArray(lastCalculatedRoute.pathNodes) || lastCalculatedRoute.pathNodes.length === 0) {
-    return;
-  }
+  window.activeTravelNavigationMode = 'gps';
 
-  const cKapisiRef = (mallData?.entrances || []).find(e => e.id === 'ent_fisekhane') || {
-    id: 'ent_fisekhane',
-    name: 'C Kapısı (Fişekhane Cad.)',
-    short_name: 'C Kapısı',
-    floor: 4,
-    cx: 1245.0,
-    cy: 410.0,
-    nav_node: 'n_ent_fisekhane'
-  };
-
-  const pathNodes = lastCalculatedRoute.pathNodes;
-  liveGpsRouteWalkIndex = 0;
-
-  // İlk düğümü hemen #live-user-gps-dot olarak haritada göster
-  const firstNode = pathNodes[0] || {
-    x: selectedStartStore?.cx || cKapisiRef.cx,
-    y: selectedStartStore?.cy || cKapisiRef.cy,
-    floor: selectedStartStore?.floor || 4
-  };
-  const secondNode = pathNodes[1] || firstNode;
-  const initHeading = (Math.atan2(secondNode.y - firstNode.y, secondNode.x - firstNode.x) * 180) / Math.PI;
-
-  if (mallMap && typeof mallMap.updateLiveUserLocation === 'function') {
-    if (mallMap.currentFloor !== firstNode.floor) {
-      mallMap.loadFloor(firstNode.floor).then(() => {
-        updateFloorUI(firstNode.floor);
-        mallMap.updateLiveUserLocation(firstNode.x, firstNode.y, firstNode.floor, initHeading, '📍 Canlı Konumla Git (C Kapısı Referansı)');
-      });
-    } else {
-      mallMap.updateLiveUserLocation(firstNode.x, firstNode.y, firstNode.floor, initHeading, '📍 Canlı Konumla Git (C Kapısı Referansı)');
-    }
-  }
+  const cKapisiRef = getGateCStartObject();
 
   let hasHandledOutsideNotice = false;
   const triggerOutsideReferenceWalk = (distKmVal) => {
     if (hasHandledOutsideNotice) return;
     hasHandledOutsideNotice = true;
+    const outsideNoticeShownAt = Date.now();
+
+    // Başlangıç düğümü doğrudan C Kapısı (store_gate_c) olarak atansın; haritada B1 katındaki bir mağaza seçili kalmasın!
+    selectedStartStore = cKapisiRef;
+    window.selectedStartStore = cKapisiRef;
+    currentFloor = 4;
+    updateStartBadgeUI(cKapisiRef.name);
+    const startInput = document.getElementById('input-start-loc');
+    if (startInput) startInput.value = cKapisiRef.name;
+
+    if (mallMap) {
+      mallMap.selectedStore = null;
+      mallMap.setSelectedStore(null);
+      mallMap.activeStartStore = cKapisiRef;
+    }
+
+    // Eğer hedef seçiliyse ve mevcut rota C Kapısı'ndan (n_ent_fisekhane) başlamıyorsa rotayı C Kapısı'ndan yeniden hesapla
+    if (selectedTargetStore && navEngine && typeof navEngine.findRoute === 'function') {
+      const currentFirstNodeId = lastCalculatedRoute?.pathNodes?.[0]?.id;
+      if (currentFirstNodeId !== cKapisiRef.nav_node) {
+        const recalc = navEngine.findRoute(
+          cKapisiRef.nav_node,
+          selectedTargetStore.nav_node,
+          activeRouteMode,
+          currentPathPreference
+        );
+        if (recalc && recalc.pathNodes && recalc.pathNodes.length > 0) {
+          recalc.path = recalc.pathNodes;
+          lastCalculatedRoute = recalc;
+          window.lastCalculatedRoute = recalc;
+          updateHeaderNavSummary(selectedTargetStore, recalc);
+          if (mallMap) {
+            mallMap.renderRoute(recalc);
+            mallMap.updateActiveStorePolygons();
+          }
+        }
+      }
+    } else if (mallMap) {
+      mallMap.updateActiveStorePolygons();
+    }
 
     const statusPill = document.getElementById('gps-live-status-pill');
     const statusText = document.getElementById('gps-live-status-text');
@@ -6226,23 +6311,58 @@ function startLiveGpsRouteWalk() {
       statusPill.classList.add('inline-flex');
     }
     if (statusText) {
-      statusText.textContent = 'CANLI KONUM • C KAPISI REF.';
+      statusText.textContent = 'CANLI NAVİGASYON • C KAPISI';
     }
 
-    const effectiveDistKm = (typeof distKmVal === 'number' && !isNaN(distKmVal) && distKmVal > 0) ? distKmVal : 1.2;
-    const distFormatted = effectiveDistKm >= 1.0
-      ? `${effectiveDistKm.toFixed(1)} km`
-      : `${Math.round(effectiveDistKm * 1000)} m`;
+    const effectiveDistKm = (typeof distKmVal === 'number' && !isNaN(distKmVal) && distKmVal > 0)
+      ? distKmVal
+      : (typeof window.lastGpsDistanceToMallKm === 'number' && window.lastGpsDistanceToMallKm > 0 ? window.lastGpsDistanceToMallKm : 1.2);
+    const distFormatted = effectiveDistKm.toFixed(1);
     window.lastGpsDistanceToMallKm = effectiveDistKm;
-    const politeMsg = `📍 Şu an Capacity AVM'ye yaklaşık ${distFormatted} uzaklıktasınız (>350m). C Kapısı referansıyla canlı konum (#live-user-gps-dot) yürüyüş takibi başlatıldı.`;
+
+    const politeMsg = `AVM dışındasınız (${distFormatted} km). Navigasyon en yakın giriş olan C Kapısı üzerinden başlatıldı.`;
     window.lastGpsOutsideNoticeText = politeMsg;
+
+    // Ekrana ve ses motoruna dış mekan C Kapısı başlangıç metnini ver
     showToast(politeMsg, 'info');
+    updateVoiceSubtitleUI(politeMsg, true);
+    const liveNavBanner = document.getElementById('header-live-nav-banner');
+    if (liveNavBanner) liveNavBanner.classList.remove('hidden');
+    const liveNavTextEl = document.getElementById('live-nav-text');
+    if (liveNavTextEl) {
+      liveNavTextEl.textContent = politeMsg;
+    }
+    if (typeof window.speakNavigationText === 'function') {
+      window.speakNavigationText(politeMsg, true);
+    }
+
+    // İlk düğümü C Kapısı (Zemin Kat - 4) üzerinde #live-user-gps-dot olarak göster
+    const nodesNow = lastCalculatedRoute?.pathNodes || [];
+    const firstNode = nodesNow[0] || { x: cKapisiRef.cx, y: cKapisiRef.cy, floor: 4 };
+    const secondNode = nodesNow[1] || firstNode;
+    const initHeading = (Math.atan2(secondNode.y - firstNode.y, secondNode.x - firstNode.x) * 180) / Math.PI;
+    liveGpsRouteWalkIndex = 0;
+
+    if (mallMap && typeof mallMap.updateLiveUserLocation === 'function') {
+      if (mallMap.currentFloor !== 4) {
+        mallMap.loadFloor(4).then(() => {
+          updateFloorUI(4);
+          mallMap.updateLiveUserLocation(firstNode.x, firstNode.y, 4, initHeading, 'Canlı Navigasyon (C Kapısı)');
+        });
+      } else {
+        mallMap.updateLiveUserLocation(firstNode.x, firstNode.y, 4, initHeading, 'Canlı Navigasyon (C Kapısı)');
+      }
+    }
 
     // Harita üzerinde #live-user-gps-dot noktasını rota boyunca adım adım ilerlet
     if (liveGpsSimulatedWalkTimer) clearInterval(liveGpsSimulatedWalkTimer);
     liveGpsSimulatedWalkTimer = setInterval(() => {
       if (window.activeTravelNavigationMode !== 'gps' || !lastCalculatedRoute) {
         stopLiveGpsRouteWalk();
+        return;
+      }
+      // İlk 2.5 saniye boyunca dış mekan C Kapısı anonsunu ekranda sabit tut
+      if (Date.now() - outsideNoticeShownAt < 2500) {
         return;
       }
       const nodes = lastCalculatedRoute.pathNodes || [];
@@ -6258,10 +6378,10 @@ function startLiveGpsRouteWalk() {
         if (mallMap.currentFloor !== cur.floor) {
           mallMap.loadFloor(cur.floor).then(() => {
             updateFloorUI(cur.floor);
-            mallMap.updateLiveUserLocation(cur.x, cur.y, cur.floor, headingDeg, '📍 Canlı Konumunuz');
+            mallMap.updateLiveUserLocation(cur.x, cur.y, cur.floor, headingDeg, 'Canlı Konumunuz');
           });
         } else {
-          mallMap.updateLiveUserLocation(cur.x, cur.y, cur.floor, headingDeg, '📍 Canlı Konumunuz');
+          mallMap.updateLiveUserLocation(cur.x, cur.y, cur.floor, headingDeg, 'Canlı Konumunuz');
         }
       }
 
@@ -6311,7 +6431,7 @@ function startLiveGpsRouteWalk() {
             hasHandledOutsideNotice = true;
             const { svgX, svgY } = projectGpsToMallSvg(latitude, longitude);
             const activeFl = mallMap.currentFloor || currentFloor || 4;
-            const proj = (navEngine && typeof navEngine.projectPointOntoRoute === 'function')
+            const proj = (navEngine && typeof navEngine.projectPointOntoRoute === 'function' && lastCalculatedRoute)
               ? navEngine.projectPointOntoRoute(lastCalculatedRoute, svgX, svgY, activeFl)
               : null;
             const dotX = proj ? proj.x : svgX;
@@ -6319,8 +6439,8 @@ function startLiveGpsRouteWalk() {
             const dotFloor = proj ? proj.floor : activeFl;
             const dotHeading = typeof heading === 'number' && !isNaN(heading) ? heading : (proj ? proj.heading : 0);
 
-            mallMap.updateLiveUserLocation(dotX, dotY, dotFloor, dotHeading, '📍 Canlı GPS Konumunuz');
-            if (proj) {
+            mallMap.updateLiveUserLocation(dotX, dotY, dotFloor, dotHeading, 'Canlı GPS Konumunuz');
+            if (proj && lastCalculatedRoute) {
               const insCount = (lastCalculatedRoute.instructions || []).length;
               const stepIdx = insCount > 1 ? Math.min(insCount - 1, Math.floor(proj.progressRatio * insCount)) : 0;
               updateLiveNavHUD(stepIdx, proj.progressRatio * 100);
@@ -6377,8 +6497,8 @@ function setTravelNavigationMode(mode) {
         cartSimulator.cartEl.style.display = 'none';
       }
     }
-    if (playText) playText.textContent = 'Canlı GPS Aktif';
-    if (hudPlayText) hudPlayText.textContent = 'Canlı GPS';
+    if (playText) playText.textContent = 'Canlı Navigasyon';
+    if (hudPlayText) hudPlayText.textContent = 'Canlı Navigasyon';
     startLiveGpsRouteWalk();
   } else {
     stopLiveGpsRouteWalk();
@@ -6404,25 +6524,25 @@ function setTravelNavigationMode(mode) {
 window.setTravelNavigationMode = setTravelNavigationMode;
 
 function setupTravelModeSelectorUI() {
-  // 1. Rota Hazır Kartındaki (#route-mode-choice-modal) butonları iki belirgin seçenek + Simülasyon Hız Kontrolü (1x, 2x, 4x) + 3B olarak yapılandır
+  // 1. Rota Hazır Kartındaki (#route-mode-choice-modal) butonları kurumsal sadelikte (Canlı Navigasyon vs. Rota Önizleme) yapılandır
   const choiceModal = document.getElementById('route-mode-choice-modal');
   if (choiceModal) {
-    const gridContainer = choiceModal.querySelector('.grid');
+    const gridContainer = choiceModal.querySelector('.grid') || choiceModal.querySelector('.flex.flex-col.gap-2');
     if (gridContainer) {
       gridContainer.className = 'flex flex-col gap-2';
       gridContainer.innerHTML = `
         <div class="grid grid-cols-2 gap-2">
           <button type="button" id="btn-choose-mode-gps" data-travel-mode="gps" class="nav-travel-mode-btn py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-emerald-600/25 active:scale-95 transition-all cursor-pointer">
-            <span class="text-sm sm:text-base leading-none">📍 Canlı Konumla Git</span>
+            <span class="text-sm sm:text-base leading-none flex items-center gap-1.5">${getMonoIconSvg('navigation', 15)}<span>Canlı Navigasyon</span></span>
             <span class="text-[10px] font-semibold text-emerald-100">Gerçek GPS ile Adım Adım</span>
           </button>
           <button type="button" id="btn-choose-mode-2d" data-travel-mode="sim" class="nav-travel-mode-btn is-active-mode py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-cyan-600/25 active:scale-95 transition-all cursor-pointer">
-            <span class="text-sm sm:text-base leading-none">🎬 Önizle / Simülasyon</span>
-            <span class="text-[10px] font-semibold text-cyan-100">Sanal Torba ile Prova</span>
+            <span class="text-sm sm:text-base leading-none flex items-center gap-1.5">${getMonoIconSvg('play', 15)}<span>Rota Önizleme</span></span>
+            <span class="text-[10px] font-semibold text-cyan-100">Adım Adım Simülasyon</span>
           </button>
         </div>
         <div id="modal-sim-speed-selector" class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80">
-          <span class="text-[10.5px] font-extrabold text-slate-600 dark:text-slate-300 flex items-center gap-1">⚡ Simülasyon Hızı:</span>
+          <span class="text-[10.5px] font-extrabold text-slate-600 dark:text-slate-300 flex items-center gap-1">Simülasyon Hızı:</span>
           <div class="flex items-center gap-1">
             <button type="button" id="btn-modal-speed-1x" data-sim-speed="1" class="sim-speed-choice-btn is-active-speed px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-cyan-500 bg-cyan-600 text-white shadow-xs transition-all cursor-pointer">1x</button>
             <button type="button" id="btn-modal-speed-2x" data-sim-speed="2" class="sim-speed-choice-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">2x</button>
@@ -6430,8 +6550,9 @@ function setupTravelModeSelectorUI() {
           </div>
         </div>
         <button type="button" id="btn-choose-mode-pov" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer">
-          <span class="text-sm leading-none">👁️ 3B Gözümden</span>
-          <span class="text-[10px] font-semibold text-orange-100">• Canlı 3B Koridorda Yürü</span>
+          ${getMonoIconSvg('eye', 15)}
+          <span class="text-sm leading-none">3B Görünüm</span>
+          <span class="text-[10px] font-semibold text-orange-100">• Koridorda Yürü</span>
         </button>
       `;
     }
@@ -6445,7 +6566,7 @@ function setupTravelModeSelectorUI() {
     drawerSpeedRow.id = 'drawer-sim-speed-selector';
     drawerSpeedRow.className = 'flex items-center justify-between gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800';
     drawerSpeedRow.innerHTML = `
-      <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">⚡ Simülasyon Hızı:</span>
+      <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">Simülasyon Hızı:</span>
       <div class="flex items-center gap-1">
         <button type="button" data-sim-speed="1" class="sim-speed-choice-btn is-active-speed px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-cyan-500 bg-cyan-600 text-white shadow-xs transition-all cursor-pointer">1x</button>
         <button type="button" data-sim-speed="2" class="sim-speed-choice-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">2x</button>
@@ -6484,21 +6605,19 @@ function setupTravelModeSelectorUI() {
     headerTopRow.classList.add('overflow-x-auto', 'horizontal-chip-scroller');
   }
 
-  // 3. Başlat butonunun yanına (#nav-hud-bar içine) tek tıkla geçiş sağlayan kompakt GPS / Simülasyon mod seçici butonları ekle
+  // 3. Başlat butonunun yanına (#nav-hud-bar içine) tek tıkla geçiş sağlayan kompakt Canlı Navigasyon / Rota Önizleme mod seçici butonları ekle
   if (hudPlayBtn && hudPlayBtn.parentElement && !document.getElementById('hud-travel-mode-switch')) {
     const modeSwitchWrap = document.createElement('div');
     modeSwitchWrap.id = 'hud-travel-mode-switch';
     modeSwitchWrap.className = 'flex items-center gap-0.5 sm:gap-1 bg-slate-100 dark:bg-slate-800 p-0.5 sm:p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 shrink-0';
     modeSwitchWrap.innerHTML = `
-      <button type="button" id="btn-hud-mode-gps" data-travel-mode="gps" class="nav-travel-mode-btn h-8 px-1.5 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-extrabold bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 flex items-center gap-0.5 sm:gap-1 cursor-pointer transition-all shrink-0" title="📍 Canlı Konumla Git (Gerçek Cihaz GPS'i ile Takip)">
-        <span>📍</span>
-        <span class="hidden md:inline">Canlı Konumla Git</span>
-        <span class="md:hidden">GPS</span>
+      <button type="button" id="btn-hud-mode-gps" data-travel-mode="gps" class="nav-travel-mode-btn h-8 px-1.5 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-extrabold bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 flex items-center gap-1 cursor-pointer transition-all shrink-0" title="Canlı Navigasyon (Gerçek Cihaz GPS'i ile Takip)">
+        ${getMonoIconSvg('navigation', 14)}
+        <span>Canlı Navigasyon</span>
       </button>
-      <button type="button" id="btn-hud-mode-sim" data-travel-mode="sim" class="nav-travel-mode-btn is-active-mode h-8 px-1.5 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-extrabold bg-cyan-600/15 hover:bg-cyan-600/25 text-cyan-700 dark:text-cyan-300 flex items-center gap-0.5 sm:gap-1 cursor-pointer transition-all shrink-0" title="🎬 Önizle / Simülasyon (Sanal Torba ile Adım Adım Prova)">
-        <span>🎬</span>
-        <span class="hidden md:inline">Önizle / Simülasyon</span>
-        <span class="md:hidden">Önizle</span>
+      <button type="button" id="btn-hud-mode-sim" data-travel-mode="sim" class="nav-travel-mode-btn is-active-mode h-8 px-1.5 sm:px-2.5 rounded-lg text-[10px] sm:text-xs font-extrabold bg-cyan-600/15 hover:bg-cyan-600/25 text-cyan-700 dark:text-cyan-300 flex items-center gap-1 cursor-pointer transition-all shrink-0" title="Rota Önizleme (Adım Adım Simülasyon)">
+        ${getMonoIconSvg('play', 14)}
+        <span>Rota Önizleme</span>
       </button>
     `;
     hudPlayBtn.parentElement.insertBefore(modeSwitchWrap, hudPlayBtn);
@@ -6543,15 +6662,14 @@ window.setupTravelModeSelectorUI = setupTravelModeSelectorUI;
 
 
 // ========================================================
-// 📅 TAKVİMİNİZDE YER ALAN ETKİNLİKLERİN KONUMLARI (SITUM EVENTS CALENDAR)
+// TAKVİMİNİZDE YER ALAN ETKİNLİKLERİN KONUMLARI (SITUM EVENTS CALENDAR)
 // ========================================================
 const CAPACITY_MALL_EVENTS = [
   {
     id: 'evt_fountain_show',
     title: 'Müzikli Gösteri Havuzu Su & Işık Şovu',
     category: 'Canlı Gösteri',
-    emoji: '🌊',
-    timeBadge: '🔴 Şu An Canlı • Her Saat Başı',
+    timeBadge: 'Şu An Canlı • Her Saat Başı',
     dateText: 'Bugün 10:00 - 22:00',
     floor: 4,
     floorLabel: 'Zemin Kat',
@@ -6564,8 +6682,7 @@ const CAPACITY_MALL_EVENTS = [
     id: 'evt_kids_robotics',
     title: 'Çocuk Bilim, Sanat & Robotik Atölyesi',
     category: 'Çocuk & Aile',
-    emoji: '🎨',
-    timeBadge: '⏳ Bugün 15:00 - 18:00',
+    timeBadge: 'Bugün 15:00 - 18:00',
     dateText: 'Bugün 15:00',
     floor: 3,
     floorLabel: '1. Bodrum Kat (B1)',
@@ -6579,23 +6696,21 @@ const CAPACITY_MALL_EVENTS = [
     id: 'evt_cinema_gala',
     title: 'Paribu Cineverse Özel Gala & Yönetmen Söyleşisi',
     category: 'Sinema & Sanat',
-    emoji: '🎬',
-    timeBadge: '🎟️ Bugün 19:30',
+    timeBadge: 'Bugün 19:30',
     dateText: 'Bugün 19:30',
     floor: 6,
     floorLabel: '2. Kat',
     venueName: 'Paribu Cineverse Sinema Fuaye Alanı',
     targetStoreName: 'Paribu Cineverse',
     targetId: 'store_6_1',
-    description: 'vizyondaki yeni filmin oyuncularıyla söyleşi ve özel ön gösterim etkinliği.',
+    description: 'Vizyondaki yeni filmin oyuncularıyla söyleşi ve özel ön gösterim etkinliği.',
     defaultInCalendar: false
   },
   {
     id: 'evt_jazz_concert',
     title: 'Akustik Caz & Piyano Dinletisi',
     category: 'Canlı Müzik',
-    emoji: '🎷',
-    timeBadge: '🎶 Bugün 17:00 - 19:00',
+    timeBadge: 'Bugün 17:00 - 19:00',
     dateText: 'Bugün 17:00',
     floor: 4,
     floorLabel: 'Zemin Kat',
@@ -6609,8 +6724,7 @@ const CAPACITY_MALL_EVENTS = [
     id: 'evt_beauty_masterclass',
     title: 'Sephora Cilt Bakımı & Makyaj Masterclass',
     category: 'Güzellik & Moda',
-    emoji: '✨',
-    timeBadge: '💄 Bugün 16:00 - 20:00',
+    timeBadge: 'Bugün 16:00 - 20:00',
     dateText: 'Bugün 16:00',
     floor: 5,
     floorLabel: '1. Kat',
@@ -6641,10 +6755,10 @@ function toggleSaveEventToCalendar(eventId) {
   const evt = CAPACITY_MALL_EVENTS.find(e => e.id === eventId);
   if (saved.has(eventId)) {
     saved.delete(eventId);
-    if (evt) showToast(`🗓️ "${evt.title}" takviminizden çıkarıldı.`, 'info');
+    if (evt) showToast(`"${evt.title}" takviminizden çıkarıldı.`, 'info');
   } else {
     saved.add(eventId);
-    if (evt) showToast(`🗓️ "${evt.title}" takviminize eklendi!`, 'success');
+    if (evt) showToast(`"${evt.title}" takviminize eklendi.`, 'success');
   }
   const arr = Array.from(saved);
   try {
@@ -6690,10 +6804,10 @@ function navigateToEventLocation(eventId) {
 
   setTargetLocation({
     ...targetObj,
-    name: `${evt.emoji} ${evt.title} (${targetObj.short_name || targetObj.name})`
+    name: `${evt.title} (${targetObj.short_name || targetObj.name})`
   });
 
-  showToast(`📅 "${evt.title}" etkinlik konumuna (${evt.floorLabel}) rota çizildi!`, 'success');
+  showToast(`"${evt.title}" etkinlik konumuna (${evt.floorLabel}) rota çizildi.`, 'success');
 }
 window.navigateToEventLocation = navigateToEventLocation;
 
@@ -6711,7 +6825,7 @@ function viewEventIn3D(eventId) {
   if (window.pov3dEngine && typeof window.pov3dEngine.teleportInFrontOfStore === 'function') {
     window.pov3dEngine.teleportInFrontOfStore(targetObj);
   }
-  showToast(`👁️ "${evt.title}" etkinlik alanı (${evt.venueName}) 3B Sokak Görünümünde açıldı!`, 'info');
+  showToast(`"${evt.title}" etkinlik alanı (${evt.venueName}) 3B görünümde açıldı.`, 'info');
 }
 window.viewEventIn3D = viewEventIn3D;
 
@@ -6742,7 +6856,7 @@ function renderEventsCalendarList() {
   if (items.length === 0) {
     listEl.innerHTML = `
       <div class="py-10 text-center text-slate-400 flex flex-col items-center gap-2">
-        <span class="text-3xl">🗓️</span>
+        ${getMonoIconSvg('info', 22)}
         <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Takviminizde henüz kayıtlı etkinlik yok</div>
         <p class="text-[11px] text-slate-400">Tüm etkinlikler sekmesinden ilgilendiğiniz etkinlikleri takviminize ekleyebilirsiniz.</p>
       </div>
@@ -6756,8 +6870,8 @@ function renderEventsCalendarList() {
       <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/75 border ${isSaved ? 'border-violet-500/45 ring-1 ring-violet-500/20' : 'border-slate-200/80 dark:border-slate-700/80'} flex flex-col gap-2 transition-all">
         <div class="flex items-start justify-between gap-2">
           <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-10 h-10 rounded-2xl bg-violet-500/15 text-violet-600 dark:text-violet-300 flex items-center justify-center text-xl shrink-0">
-              ${evt.emoji}
+            <div class="w-10 h-10 rounded-2xl bg-violet-500/15 text-violet-600 dark:text-violet-300 flex items-center justify-center shrink-0">
+              ${getMonoIconSvg('pin', 16)}
             </div>
             <div class="min-w-0">
               <div class="flex items-center gap-1.5 flex-wrap">
@@ -6768,12 +6882,12 @@ function renderEventsCalendarList() {
             </div>
           </div>
           <button type="button" onclick="window.toggleSaveEventToCalendar('${evt.id}')" class="px-2.5 py-1 rounded-xl text-[10.5px] font-extrabold shrink-0 transition-all cursor-pointer ${isSaved ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-violet-500/20'}">
-            ${isSaved ? '✓ Takvimimde' : '➕ Takvime Ekle'}
+            ${isSaved ? 'Takvimimde' : 'Takvime Ekle'}
           </button>
         </div>
 
         <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
-          <span>📍</span>
+          ${getMonoIconSvg('pin', 13)}
           <span>Konum: <strong class="text-slate-800 dark:text-slate-100">${evt.venueName}</strong></span>
         </div>
 
@@ -6781,12 +6895,12 @@ function renderEventsCalendarList() {
 
         <div class="grid grid-cols-2 gap-2 pt-1">
           <button type="button" onclick="window.navigateToEventLocation('${evt.id}')" class="py-2 px-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer">
-            <span>🎯</span>
+            ${getMonoIconSvg('navigation', 14)}
             <span>Etkinlik Konumuna Rota Çiz</span>
           </button>
           <button type="button" onclick="window.viewEventIn3D('${evt.id}')" class="py-2 px-3 rounded-xl bg-slate-200/90 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
-            <span>👁️</span>
-            <span>3B Sokak Görünümünde Gör</span>
+            ${getMonoIconSvg('eye', 14)}
+            <span>3B Görünümde Gör</span>
           </button>
         </div>
       </div>
@@ -6836,5 +6950,38 @@ function setupEventsCalendarEvents() {
   });
 }
 window.setupEventsCalendarEvents = setupEventsCalendarEvents;
+
+// Arayüzdeki tüm butonlardan, çip etiketlerinden ve modal başlıklarından ham Unicode emojileri temizleyen kurumsal sadeleştirici (De-AI Cleanup)
+function sanitizeUiDomEmojis() {
+  const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]/gu;
+  const selectors = 'button, .quick-start-chip, .amenity-pill, .parking-pillar-chip, h1, h2, h3, h4, #header-start-badge, #gps-live-status-pill';
+  document.querySelectorAll(selectors).forEach(el => {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) {
+      if (emojiRegex.test(n.nodeValue)) {
+        nodes.push(n);
+      }
+    }
+    nodes.forEach(textNode => {
+      const cleaned = textNode.nodeValue.replace(emojiRegex, '').replace(/\s+/g, ' ');
+      textNode.nodeValue = cleaned;
+    });
+    // İçi tamamen boşalan span'ları kaldır (SVG veya alt eleman içermiyorsa)
+    el.querySelectorAll('span').forEach(sp => {
+      if (sp.children.length === 0 && sp.textContent.trim() === '' && !sp.classList.contains('rounded-full') && !sp.id) {
+        sp.remove();
+      }
+    });
+  });
+}
+window.sanitizeUiDomEmojis = sanitizeUiDomEmojis;
+
+document.addEventListener('DOMContentLoaded', () => {
+  sanitizeUiDomEmojis();
+  setTimeout(sanitizeUiDomEmojis, 400);
+});
+
 
 

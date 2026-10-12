@@ -27,24 +27,37 @@ class PriorityQueue {
 }
 
 const ttsPronunciationMap = {
+  'W Collection': 'Dabılyu Kolekşın',
+  'Tommy Hilfiger': 'Tomi Hilfiger',
+  'English Home': 'İngliş Hom',
+  'Madame Coco': 'Madam Koko',
+  'Marks & Spencer': 'Marks end Spensır',
+  'Pull&Bear': 'Pul end Ber',
+  'Pull & Bear': 'Pul end Ber',
+  'U.S. Polo Assn.': 'Yu Es Polo',
+  'US Polo': 'Yu Es Polo',
+  'M·A·C': 'Mek',
+  'MAC': 'Mek',
+  'Mac': 'Mek',
+  'Yves Rocher': 'İv Roşe',
+  "L'Occitane": 'Loksitan',
+  'SuperStep': 'Süper Step',
+  'Sneaks Up': 'Sniks Ap',
+  'Skechers': 'Skeçırs',
+  'Pierre Cardin': 'Piyer Kardin',
+  'The North Face': 'Dı Nort Feys',
+  'Burger King': 'Börgır King',
+  'HD İskender': 'He De İskender',
+  'Tchibo': 'Çibo',
+  'Blue Diamond': 'Mavi Elmas',
   'D&R': 'De ve Er',
   'D & R': 'De ve Er',
   'LCWaikiki': 'El Si Vaykiki',
   'LC Waikiki': 'El Si Vaykiki',
   'H&M': 'Haş ve Em',
   'B&G Store': 'Be ve Ge Stor',
-  'Marks & Spencer': 'Marks end Spensır',
-  'Pull & Bear': 'Pul end Ber',
   'Jack & Jones': 'Cek end Cons',
   'Saat & Saat': 'Saat ve Saat',
-  'U.S. Polo Assn.': 'Yu Es Polo',
-  'US Polo': 'Yu Es Polo',
-  'W Collection': 'Dabılyu Koleksiyon',
-  'Pierre Cardin': 'Piyer Karden',
-  'Madame Coco': 'Madam Koko',
-  'Tommy Hilfiger': 'Tomi Hilfigır',
-  'Yves Rocher': 'İv Roşe',
-  "L'Occitane": 'Loksitan',
   'Sephora': 'Sefora',
   'DeFacto': 'Defakto',
   "Victoria's Secret": 'Viktoryaz Sikrıt',
@@ -53,30 +66,22 @@ const ttsPronunciationMap = {
   'Oysho': 'Oyşo',
   'Beymen Club': 'Beymen Klab',
   'Paribu Cineverse': 'Paribu Sinevörs',
-  'HD İskender': 'Eyç Di İskender',
   'KFC': 'Key Ef Si',
   "Arby's": 'Arbis',
   'Popeyes': 'Popays',
   "Carl's Jr.": 'Karls Cunyır',
   "McDonald's": 'Mekdanılds',
-  'Burger King': 'Börgır King',
   'Subway': 'Sabvey',
   'Starbucks': 'Starbaks',
   'Caribou Coffee': 'Karibu Kofi',
   'Caffè Nero': 'Kafe Nero',
   'Cafe Nero': 'Kafe Nero',
-  'Tchibo': 'Çibo',
   'Cold Stone': 'Kold Ston',
   'Krispy Kreme': 'Krispi Krim',
   'Rossmann': 'Rosman',
   'Watsons': 'Vatsıns',
-  'M·A·C': 'Mek Kozmetik',
-  'MAC': 'Mek Kozmetik',
   'Golden Rose': 'Goldın Roz',
-  'Skechers': 'Skeçırs',
-  'The North Face': 'Dı Nort Feys',
   'Timberland': 'Timbırlend',
-  'Sneaks Up': 'Sniks Ap',
   'New Balance': 'Niv Balans',
   'Under Armour': 'Andır Armır',
   'Nine West': 'Nayn Vest',
@@ -99,11 +104,8 @@ const ttsPronunciationMap = {
   'Calzedonia': 'Kalzedonya',
   'Suwen': 'Suven',
   'Cookshop': 'Kukşop',
-  'SuperStep': 'Süper Step',
   'The Hunger': 'Dı Hangır',
-  'Blue Diamond': 'Blu Daymınd',
   'Storks Diamond': 'Storks Daymınd',
-  'English Home': 'İngliş Hom',
   'G Lingerie': 'Ci Lanjeri',
   'So Chic': 'So Şik',
   'Sunglass Hut': 'Sanglas Hat',
@@ -143,6 +145,23 @@ class NavigationEngine {
     return normalizeStorePronunciation(rawText);
   }
 
+  _isEnglishMode() {
+    if (typeof window === 'undefined') return false;
+    const lang = window.currentLanguage || window.currentLang || document.documentElement?.lang || 'tr';
+    return String(lang).toLowerCase().startsWith('en');
+  }
+
+  _getStoreOrEntranceNameByNode(nodeId) {
+    if (!nodeId) return '';
+    for (const fl of Object.values(this.floors || {})) {
+      const found = (fl.stores || []).find(s => s.nav_node === nodeId);
+      if (found && found.name) return found.name;
+    }
+    const ent = (this.entrances || []).find(e => e.nav_node === nodeId);
+    if (ent && (ent.short_name || ent.name)) return ent.short_name || ent.name;
+    return '';
+  }
+
   /**
    * İki düğüm arasında en kısa yolu Dijkstra ile hesaplar
    * @param {string} startNodeId 
@@ -160,6 +179,11 @@ class NavigationEngine {
     if (startNodeId === targetNodeId) {
       const nodeData = this.nodes[startNodeId];
       if (!nodeData) return null;
+      const isEn = this._isEnglishMode();
+      const targetName = this._getStoreOrEntranceNameByNode(targetNodeId);
+      const sameNodeText = isEn
+        ? (targetName ? `You have arrived at ${targetName}.` : 'You have arrived at your destination.')
+        : 'Şu anda hedefin yanındasınız.';
       return {
         totalDistance: 0,
         totalUnits: 0,
@@ -183,8 +207,10 @@ class NavigationEngine {
           step: 1,
           type: 'destination',
           icon: 'check-circle',
+          emoji: '',
           floor: nodeData.floor,
-          text: 'Şu anda hedefin yanındasınız.'
+          text: sameNodeText,
+          voiceText: isEn ? sameNodeText : this.normalizeStorePronunciation(sameNodeText)
         }],
         mode,
         pathFilter
@@ -503,6 +529,9 @@ class NavigationEngine {
     let walkStartIndex = 0;
     let pendingTurn = null; // { isRight: boolean, landmark: string|null, nodeIndex: number }
 
+    const isEn = this._isEnglishMode();
+    const targetDisplayName = this._getStoreOrEntranceNameByNode(targetNodeId);
+
     const buildSegmentInstruction = (startIdx, endIdx, walkMeters, isFinalStretch, upcomingTurn = null) => {
       const passedObjs = this._getPassingStoresForRange(pathNodes, startIdx, endIdx, excludeEndpoints);
       const passedNames = recordPassingStores(passedObjs);
@@ -529,7 +558,19 @@ class NavigationEngine {
           ? `${pendingTurn.landmark} hizasından ${dirWord} dönün`
           : `${dirCap} dönün`;
 
-        const text = `${turnPrefix}; ${storeClause}${distPhrase} düz ilerleyin${upcomingSuffix}`;
+        const trText = `${turnPrefix}; ${storeClause}${distPhrase} düz ilerleyin${upcomingSuffix}`;
+
+        const dirEn = pendingTurn.isRight ? 'right' : 'left';
+        const turnPrefixEn = pendingTurn.landmark
+          ? `Turn ${dirEn} at ${pendingTurn.landmark}`
+          : `Turn ${dirEn}`;
+        const passClauseEn = picked.length > 0 ? ` past ${picked.join(', ')}` : '';
+        const upcomingSuffixEn = upcomingTurn
+          ? `, then turn ${upcomingTurn.isRight ? 'right' : 'left'}${upcomingTurn.landmark ? ' at ' + upcomingTurn.landmark : ''}.`
+          : '.';
+        const enText = `${turnPrefixEn} and continue straight for ${walkMeters} m${passClauseEn}${upcomingSuffixEn}`;
+
+        const text = isEn ? enText : trText;
         const allPassing = pendingTurn.landmark
           ? [pendingTurn.landmark, ...picked.filter(n => n !== pendingTurn.landmark)].slice(0, 3)
           : picked;
@@ -539,13 +580,13 @@ class NavigationEngine {
           nodeIndex: pendingTurn.nodeIndex,
           type: pendingTurn.isRight ? 'turn_right' : 'turn_left',
           icon: pendingTurn.isRight ? 'corner-up-right' : 'corner-up-left',
-          emoji: pendingTurn.isRight ? '↪️' : '↩️',
+          emoji: '',
           floor: currentFloor,
           meters: walkMeters,
           landmark: pendingTurn.landmark,
           passingStores: allPassing,
           text,
-          voiceText: this.normalizeStorePronunciation(text)
+          voiceText: isEn ? text : this.normalizeStorePronunciation(text)
         };
         pendingTurn = null;
         return ins;
@@ -553,19 +594,32 @@ class NavigationEngine {
 
       const startPrefix = startIdx === 0 ? `${this._getFloorLabel(currentFloor)} üzerinde ` : '';
       const rawBody = `${startPrefix}${storeClause}${distPhrase} düz ilerleyin${upcomingSuffix}`;
-      const text = rawBody.charAt(0).toUpperCase() + rawBody.slice(1);
+      const trText = rawBody.charAt(0).toUpperCase() + rawBody.slice(1);
+
+      const passClauseEn = picked.length > 0 ? ` past ${picked.join(', ')}` : '';
+      let enText = '';
+      if (upcomingTurn) {
+        const dirEn = upcomingTurn.isRight ? 'right' : 'left';
+        const atEn = upcomingTurn.landmark ? ` at ${upcomingTurn.landmark}` : '';
+        enText = `Continue straight for ${walkMeters} m${passClauseEn}, then turn ${dirEn}${atEn}.`;
+      } else {
+        const floorPrefixEn = startIdx === 0 ? `On ${this._getFloorLabelEn(currentFloor)}, c` : 'C';
+        enText = `${floorPrefixEn}ontinue straight for ${walkMeters} m${passClauseEn}.`;
+      }
+
+      const text = isEn ? enText : trText;
 
       return {
         step: stepNum++,
         nodeIndex: startIdx,
         type: upcomingTurn && walkMeters <= 18 ? (upcomingTurn.isRight ? 'turn_right' : 'turn_left') : 'straight',
         icon: upcomingTurn && walkMeters <= 18 ? (upcomingTurn.isRight ? 'corner-up-right' : 'corner-up-left') : 'arrow-up',
-        emoji: upcomingTurn && walkMeters <= 18 ? (upcomingTurn.isRight ? '↪️' : '↩️') : '⬆️',
+        emoji: '',
         floor: currentFloor,
         meters: walkMeters,
         passingStores: picked,
         text,
-        voiceText: this.normalizeStorePronunciation(text)
+        voiceText: isEn ? text : this.normalizeStorePronunciation(text)
       };
     };
 
@@ -584,20 +638,22 @@ class NavigationEngine {
         const isElevator = v.edgeType === 'elevator' || v.portalKind === 'elevator';
         const portalText = isElevator ? 'Asansör ile' : 'Yürüyen merdiven ile';
         const dirText = v.floor > u.floor ? 'çıkın' : 'inin';
-        const fcText = `${portalText} ${this._getFloorLabel(v.floor)} katına ${dirText}.`;
+        const trFcText = `${portalText} ${this._getFloorLabel(v.floor)} katına ${dirText}.`;
+        const enFcText = `Take the ${isElevator ? 'elevator' : 'escalator'} to ${this._getFloorLabelEn(v.floor)}.`;
+        const fcText = isEn ? enFcText : trFcText;
 
         instructions.push({
           step: stepNum++,
           nodeIndex: i,
           type: 'floor_change',
           icon: isElevator ? 'arrow-up-down' : 'layers',
-          emoji: isElevator ? '🛗' : '🪜',
+          emoji: '',
           floor: v.floor,
           fromFloor: u.floor,
           toFloor: v.floor,
           passingStores: [],
           text: fcText,
-          voiceText: this.normalizeStorePronunciation(fcText)
+          voiceText: isEn ? fcText : this.normalizeStorePronunciation(fcText)
         });
 
         currentFloor = v.floor;
@@ -656,32 +712,41 @@ class NavigationEngine {
       const walkMeters = Math.max(4, Math.round(accumulatedWalk * this.mPerUnit));
       instructions.push(buildSegmentInstruction(walkStartIndex, pathNodes.length - 1, walkMeters, true, null));
     } else if (instructions.length === 0) {
-      const startText = `${this._getFloorLabel(currentFloor)} üzerinde hedefe doğru ilerleyin.`;
+      const startText = isEn
+        ? `Continue straight toward your destination on ${this._getFloorLabelEn(currentFloor)}.`
+        : `${this._getFloorLabel(currentFloor)} üzerinde hedefe doğru ilerleyin.`;
       instructions.push({
         step: stepNum++,
         nodeIndex: 0,
         type: 'straight',
         icon: 'arrow-up',
-        emoji: '⬆️',
+        emoji: '',
         floor: currentFloor,
         passingStores: [],
         text: startText,
-        voiceText: this.normalizeStorePronunciation(startText)
+        voiceText: isEn ? startText : this.normalizeStorePronunciation(startText)
       });
     }
+
+    const arrivalShortText = isEn
+      ? (targetDisplayName ? `You have arrived at ${targetDisplayName}.` : 'You have arrived at your destination.')
+      : 'Hedefinize ulaştınız.';
+    const arrivalVoiceText = isEn
+      ? (targetDisplayName ? `You have arrived at ${targetDisplayName}.` : 'You have arrived at your destination.')
+      : 'Hedefinize ulaştınız. Keyifli alışverişler dileriz.';
 
     instructions.push({
       step: stepNum++,
       nodeIndex: pathNodes.length - 1,
       type: 'destination',
       icon: 'check-circle-2',
-      emoji: '🎯',
+      emoji: '',
       floor: pathNodes[pathNodes.length - 1].floor,
       passingStores: [],
       queueAfterPrevious: true,
       minQueueDelayMs: 450,
-      text: 'Hedefinize ulaştınız.',
-      voiceText: 'Hedefinize ulaştınız. Keyifli alışverişler dileriz.'
+      text: arrivalShortText,
+      voiceText: arrivalVoiceText
     });
 
     return {
@@ -695,7 +760,8 @@ class NavigationEngine {
    * Eğer speechSynthesis hala önceki cümleyi okuyorsa, hedefe varış anonsunu 400-500ms kuyruğa (queue) alır
    */
   queueArrivalSpeech(arrivalText, speakCallback, delayMs = 450) {
-    const normalized = this.normalizeStorePronunciation(arrivalText);
+    const isEn = this._isEnglishMode();
+    const normalized = isEn ? String(arrivalText || '') : this.normalizeStorePronunciation(arrivalText);
     const waitMs = Math.max(400, Math.min(500, delayMs || 450));
     const isBusy = typeof window !== 'undefined' && (
       Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking) ||
@@ -786,6 +852,19 @@ class NavigationEngine {
   _getFloorLabel(floorNum) {
     return this.floors[floorNum]?.label || `${floorNum}. Kat`;
   }
+
+  _getFloorLabelEn(floorNum) {
+    const map = {
+      6: 'Floor 2',
+      5: 'Floor 1',
+      4: 'Ground Floor',
+      3: 'Floor B1',
+      2: 'Floor B2',
+      1: 'Floor B3'
+    };
+    return map[Number(floorNum)] || `Floor ${floorNum}`;
+  }
 }
+
 
 
