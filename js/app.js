@@ -355,10 +355,10 @@ const TRANSLATIONS = {
     parkingZoneLabel: 'Hangi Bölge / Renk?',
     parkingPillarLabel: 'Direk No / Sütun / Not (İsteğe Bağlı):',
     parkingPillarPlaceholder: 'Örn: R08, S12, Voltrun şarj yanı...',
-    parkingSaveBtn: 'Otopark Konumunu Kaydet',
+    parkingSaveBtn: 'Aracımı Buraya Park Ettim',
     parkingSavedTitle: 'Kayıtlı Araç Konumu',
-    parkingDeleteBtn: 'Konumu Sil',
-    parkingNavigateBtn: 'Arabama Git (En Yakın Asansöre Yönlendir)',
+    parkingDeleteBtn: 'Otoparktan Ayrıldım',
+    parkingNavigateBtn: 'Arabama Rota Çiz',
     peekStartBtn: 'Buradayım (Başlangıç Yap)',
     peekTargetBtn: 'Hedef Yap',
     simStart: 'Simülasyonu Başlat',
@@ -408,7 +408,7 @@ const TRANSLATIONS = {
     parkingZoneLabel: 'Which Zone / Color?',
     parkingPillarLabel: 'Pillar No / Column / Note (Optional):',
     parkingPillarPlaceholder: 'e.g. R08, S12, near EV charger...',
-    parkingSaveBtn: 'Save Parking Spot',
+    parkingSaveBtn: 'I Parked My Car Here',
     parkingSavedTitle: 'Saved Vehicle Location',
     parkingDeleteBtn: 'Delete Spot',
     parkingNavigateBtn: 'Go to My Car (Nearest Elevator)',
@@ -3677,6 +3677,7 @@ function calculateAndDisplayRoute() {
 
   // 1. Dinamik Üst Başlık Kartı: 1. Satır: Hedef • Kat, 2. Satır: Mesafe • Süre
   lastCalculatedRoute = result;
+  window.lastCalculatedRoute = result;
   updateHeaderNavSummary(selectedTargetStore, result);
 
   // Koridor Tercih Çiplerini [🛣️ Geniş Yol] ve [✂️ Kısa Yol] Göster
@@ -4499,212 +4500,341 @@ window.openRouteQrModal = openRouteQrModal;
 window.closeRouteQrModal = closeRouteQrModal;
 
 // ========================================================
-// OTOPARK HAFIZASI VE KULLANICI PAYLAŞIM ALTYAPISI (PARKING MEMORY & SHARE)
+// OTOPARK HAFIZASI, GOOGLE SHEETS SERVİSİ VE AKILLI KARŞILAMA SİSTEMİ
 // ========================================================
 let selectedParkingFloor = { floor: 2, code: 'P2', name: 'P2 (2. Bodrum Kat)' };
 let selectedParkingZone = { name: 'Mavi', color: '#2563eb' };
+let currentParkingOccupancy = {
+  P1_Mavi: 18,
+  P1_Sarı: 34,
+  P1_Turuncu: 14,
+  P1_Kırmızı: 52,
+  P2_Mavi: 12,
+  P2_Sarı: 5,
+  P2_Turuncu: 36,
+  P2_Kırmızı: 54,
+  P3_Mavi: 9,
+  P3_Sarı: 15,
+  P3_Turuncu: 22,
+  P3_Kırmızı: 49
+};
 
 function getSavedParkingSpot() {
   try {
     const raw = localStorage.getItem('capacity_parking_spot');
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    const floorCode = String(parsed.code || parsed.floor_id || 'P2').toUpperCase();
+    const zoneName = String(parsed.zone || parsed.zone_color || 'Mavi');
+    const pillarCode = String(parsed.pillar ?? parsed.pillar_code ?? '').trim();
+    return {
+      ...parsed,
+      code: floorCode,
+      floor_id: floorCode,
+      zone: zoneName,
+      zone_color: zoneName,
+      pillar: pillarCode,
+      pillar_code: pillarCode
+    };
   } catch (e) {
     return null;
   }
 }
 window.getSavedParkingSpot = getSavedParkingSpot;
 
-function buildParkingShareUrl(spotObj) {
-  const spot = spotObj || getSavedParkingSpot() || {
-    floor: selectedParkingFloor.floor,
-    code: selectedParkingFloor.code,
-    name: selectedParkingFloor.name,
-    zone: selectedParkingZone.name,
-    pillar: document.getElementById('parking-spot-pillar')?.value?.trim() || ''
-  };
-  const urlObj = new URL(window.location.href);
-  urlObj.searchParams.set('parking', spot.code || 'P2');
-  urlObj.searchParams.set('zone', spot.zone || 'Mavi');
-  if (spot.pillar) {
-    urlObj.searchParams.set('pillar', spot.pillar);
-  } else {
-    urlObj.searchParams.delete('pillar');
+function computeZoneHeatbarMeta(activeCount) {
+  if (window.ParkingService && typeof window.ParkingService.getZoneHeatbarInfo === 'function') {
+    return window.ParkingService.getZoneHeatbarInfo(activeCount, 60);
   }
-  return urlObj.toString();
+  const capacity = 60;
+  const count = Math.max(0, Number(activeCount) || 0);
+  const pct = Math.min(100, Math.round((count / capacity) * 100));
+  if (pct < 50) {
+    return {
+      activeCount: count,
+      capacity,
+      pct,
+      level: 'green',
+      colorHex: '#10b981',
+      statusLabel: 'Rahat Park',
+      label: `%${pct} Dolu - Rahat Park`
+    };
+  }
+  if (pct < 80) {
+    return {
+      activeCount: count,
+      capacity,
+      pct,
+      level: 'orange',
+      colorHex: '#f59e0b',
+      statusLabel: 'Yoğun',
+      label: `%${pct} Dolu - Yoğun`
+    };
+  }
+  return {
+    activeCount: count,
+    capacity,
+    pct,
+    level: 'red',
+    colorHex: '#ef4444',
+    statusLabel: 'Doluya Yakın',
+    label: `%${pct} Dolu - Doluya Yakın`
+  };
 }
-window.buildParkingShareUrl = buildParkingShareUrl;
 
-function ensureParkingShareUI() {
-  const savedCard = document.getElementById('parking-saved-card');
-  const parkingForm = document.getElementById('parking-form');
+function getZoneOccupancyCount(occupancyData, floorCode, zoneName) {
+  const data = (occupancyData && typeof occupancyData === 'object') ? occupancyData : currentParkingOccupancy;
+  const exactKey = `${floorCode}_${zoneName}`;
+  if (data[exactKey] !== undefined && !isNaN(Number(data[exactKey]))) {
+    return Number(data[exactKey]);
+  }
+  // ASCII fallback (e.g. P2_Sari / P2_Kirmizi)
+  const asciiZone = zoneName
+    .replace(/ı/g, 'i')
+    .replace(/İ/g, 'I')
+    .replace(/ş/g, 's')
+    .replace(/Ş/g, 'S');
+  const asciiKey = `${floorCode}_${asciiZone}`;
+  if (data[asciiKey] !== undefined && !isNaN(Number(data[asciiKey]))) {
+    return Number(data[asciiKey]);
+  }
+  return Number(currentParkingOccupancy[exactKey] ?? 12);
+}
 
-  // 1. Kayıtlı Araç Kartına [🔗 Konumu Paylaş], [✏️ Konumu Güncelle] ve Paylaşım Link Kutusu ekle
-  if (savedCard && !document.getElementById('parking-saved-share-actions')) {
-    const shareActions = document.createElement('div');
-    shareActions.id = 'parking-saved-share-actions';
-    shareActions.className = 'flex flex-col gap-2 pt-1';
-    shareActions.innerHTML = `
-      <div class="grid grid-cols-2 gap-2">
-        <button type="button" id="btn-parking-share" class="py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
-          <span>🔗</span>
-          <span>Konumu Paylaş</span>
-        </button>
-        <button type="button" id="btn-parking-edit" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
-          <span>✏️</span>
-          <span>Yeni Konum Seç</span>
-        </button>
+function renderParkingHeatbars(occupancyMap = null) {
+  if (occupancyMap && typeof occupancyMap === 'object' && Object.keys(occupancyMap).length > 0) {
+    currentParkingOccupancy = { ...currentParkingOccupancy, ...occupancyMap };
+  }
+
+  const floorCode = selectedParkingFloor?.code || 'P2';
+  const zones = ['Mavi', 'Sarı', 'Turuncu', 'Kırmızı'];
+
+  // 1. Kat seçicilerinin yanına/altına kat bazlı doluluk barı ekle
+  document.querySelectorAll('#parking-floor-options .parking-floor-btn').forEach(btn => {
+    const fCode = btn.getAttribute('data-code') || 'P2';
+    const totalCars = zones.reduce((acc, z) => acc + getZoneOccupancyCount(currentParkingOccupancy, fCode, z), 0);
+    const avgCountPerZone = Math.round(totalCars / zones.length);
+    const meta = computeZoneHeatbarMeta(avgCountPerZone);
+
+    let heatEl = btn.querySelector('.parking-floor-heatbar-wrap');
+    if (!heatEl) {
+      heatEl = document.createElement('div');
+      heatEl.className = 'parking-floor-heatbar-wrap w-full mt-1.5 flex flex-col gap-0.5';
+      btn.appendChild(heatEl);
+    }
+    const textColorClass = meta.level === 'green'
+      ? 'text-emerald-600 dark:text-emerald-400'
+      : (meta.level === 'orange' ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400');
+
+    heatEl.innerHTML = `
+      <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+        <div class="parking-heatbar-fill h-full rounded-full transition-all duration-300" style="width: ${Math.max(6, meta.pct)}%; background-color: ${meta.colorHex};"></div>
       </div>
-      <div id="parking-share-link-box" class="hidden p-2.5 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-indigo-500/30 flex flex-col gap-1.5">
-        <div class="text-[10px] font-extrabold text-indigo-700 dark:text-indigo-300 flex items-center justify-between">
-          <span>🔗 Paylaşılabilir Otopark Bağlantısı</span>
-          <span id="parking-share-copied-badge" class="text-emerald-600 dark:text-emerald-400">Hazır</span>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <input id="parking-share-url-input" type="text" readonly class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 focus:outline-none" value="" />
-          <button type="button" id="btn-parking-copy-url" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-extrabold transition-all active:scale-95 cursor-pointer">
-            📋 Kopyala
-          </button>
-        </div>
+      <span class="parking-floor-heatbar-text text-[9px] font-extrabold leading-tight ${textColorClass}">%${meta.pct} Dolu</span>
+    `;
+  });
+
+  // 2. Bölge seçicilerinin içine ve yanına detaylı Heatbar (%X Dolu - Rahat Park / Yoğun / Doluya Yakın) ekle
+  document.querySelectorAll('#parking-zone-options .parking-zone-btn').forEach(btn => {
+    const zName = btn.getAttribute('data-zone') || 'Mavi';
+    const count = getZoneOccupancyCount(currentParkingOccupancy, floorCode, zName);
+    const meta = computeZoneHeatbarMeta(count);
+
+    btn.setAttribute('data-status', meta.level === 'red' ? 'full' : 'available');
+    btn.setAttribute('data-occupancy-pct', String(meta.pct));
+    btn.setAttribute('data-occupancy-level', meta.level);
+
+    // Mevcut durum etiketini güncelle
+    const statusSpan = btn.querySelector('.parking-zone-heat-label') || btn.querySelectorAll(':scope > span')[1];
+    const textColorClass = meta.level === 'green'
+      ? 'text-emerald-600 dark:text-emerald-400'
+      : (meta.level === 'orange' ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400');
+
+    if (statusSpan) {
+      statusSpan.className = `parking-zone-heat-label text-[9px] font-extrabold ${textColorClass}`;
+      statusSpan.textContent = meta.label;
+    }
+
+    let barWrap = btn.querySelector('.parking-zone-heatbar');
+    if (!barWrap) {
+      barWrap = document.createElement('div');
+      barWrap.className = 'parking-zone-heatbar w-full mt-1 flex flex-col gap-0.5';
+      btn.appendChild(barWrap);
+    }
+    barWrap.innerHTML = `
+      <div class="w-full h-1.5 rounded-full bg-slate-200/90 dark:bg-slate-700/90 overflow-hidden">
+        <div class="parking-heatbar-fill h-full rounded-full transition-all duration-300" style="width: ${Math.max(6, meta.pct)}%; background-color: ${meta.colorHex};"></div>
+      </div>
+      <div class="flex items-center justify-between text-[8px] font-bold text-slate-500 dark:text-slate-400 px-0.5">
+        <span>${meta.activeCount}/${meta.capacity} Araç</span>
+        <span>%${meta.pct}</span>
       </div>
     `;
-    savedCard.appendChild(shareActions);
+  });
 
-    document.getElementById('btn-parking-share')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      shareParkingLocation();
-    });
+  // 3. Seçili katın tüm bölgeleri için özet Heatbar listesi (#parking-occupancy-heatbar-panel)
+  const parkingForm = document.getElementById('parking-form');
+  const zoneContainer = document.getElementById('parking-zone-options');
+  if (parkingForm && zoneContainer) {
+    let summaryPanel = document.getElementById('parking-occupancy-heatbar-panel');
+    if (!summaryPanel) {
+      summaryPanel = document.createElement('div');
+      summaryPanel.id = 'parking-occupancy-heatbar-panel';
+      summaryPanel.className = 'mt-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 flex flex-col gap-1.5';
+      zoneContainer.parentElement.appendChild(summaryPanel);
+    }
 
-    document.getElementById('btn-parking-edit')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (parkingForm) {
-        parkingForm.classList.toggle('hidden');
+    const rowsHtml = zones.map(zName => {
+      const count = getZoneOccupancyCount(currentParkingOccupancy, floorCode, zName);
+      const meta = computeZoneHeatbarMeta(count);
+      const badgeClass = meta.level === 'green'
+        ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/30'
+        : (meta.level === 'orange'
+          ? 'text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-500/30'
+          : 'text-red-700 dark:text-red-300 bg-red-500/10 border-red-500/30');
+      return `
+        <div class="parking-heatbar-row flex flex-col gap-1" data-heatbar-key="${floorCode}_${zName}" data-heatbar-level="${meta.level}">
+          <div class="flex items-center justify-between text-[10px] font-extrabold">
+            <span class="text-slate-700 dark:text-slate-200">${floorCode} ${zName} Bölge <span class="text-[9px] font-semibold text-slate-400">(${meta.activeCount}/60)</span></span>
+            <span class="px-1.5 py-0.5 rounded-md border text-[9px] font-black ${badgeClass}">${meta.label}</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+            <div class="parking-heatbar-bar h-full rounded-full transition-all duration-300" style="width: ${Math.max(6, meta.pct)}%; background-color: ${meta.colorHex};"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    summaryPanel.innerHTML = `
+      <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span>📊 Canlı Bölge Doluluk Oranları (${floorCode})</span>
+        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400">Kapasite: 60 Araç/Bölge</span>
+      </div>
+      <div class="flex flex-col gap-1.5">${rowsHtml}</div>
+    `;
+  }
+}
+window.renderParkingHeatbars = renderParkingHeatbars;
+
+async function refreshParkingOccupancyHeatbars() {
+  renderParkingHeatbars(currentParkingOccupancy);
+  if (window.ParkingService && typeof window.ParkingService.getOccupancy === 'function') {
+    try {
+      const liveData = await window.ParkingService.getOccupancy();
+      if (liveData && typeof liveData === 'object' && Object.keys(liveData).length > 0) {
+        renderParkingHeatbars(liveData);
       }
-    });
+    } catch (e) {
+      // Fallback occupancy already rendered
+    }
+  }
+}
+window.refreshParkingOccupancyHeatbars = refreshParkingOccupancyHeatbars;
 
-    document.getElementById('btn-parking-copy-url')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const inputEl = document.getElementById('parking-share-url-input');
-      if (inputEl && inputEl.value) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(inputEl.value).catch(() => {});
-        }
-        const badgeEl = document.getElementById('parking-share-copied-badge');
-        if (badgeEl) badgeEl.textContent = '✓ Kopyalandı';
-        showToast('📋 Otopark paylaşım bağlantısı panoya kopyalandı!', 'success');
-      }
-    });
+function ensureCleanParkingModalUI() {
+  // Karmaşık URL/link paylaşım kutularını kaldır (Madde 2)
+  document.getElementById('parking-saved-share-actions')?.remove();
+  document.getElementById('parking-share-link-box')?.remove();
+  document.getElementById('btn-parking-save-and-share')?.remove();
+
+  // Kaydet butonunun tek ve belirgin olduğundan emin ol: [ 🚘 Aracımı Buraya Park Ettim ]
+  const saveBtn = document.getElementById('btn-parking-save');
+  if (saveBtn) {
+    saveBtn.innerHTML = '<span>🚘</span><span>Aracımı Buraya Park Ettim</span>';
   }
 
-  // 2. Otopark Kayıt Formuna Hızlı Sütun/Bölge Çipleri ve [🔗 Kaydet ve Paylaş] Butonu ekle
-  if (parkingForm) {
-    const pillarInput = document.getElementById('parking-spot-pillar');
-    if (pillarInput && pillarInput.parentElement && !document.getElementById('parking-quick-pillar-chips')) {
-      const chipsWrap = document.createElement('div');
-      chipsWrap.id = 'parking-quick-pillar-chips';
-      chipsWrap.className = 'flex items-center gap-1.5 flex-wrap mt-1.5';
-      const quickPillars = ['A-04', 'B-12', 'R-08', 'S-15', 'Asansör Karşısı', 'Oto Yıkama Yanı'];
-      chipsWrap.innerHTML = quickPillars.map(p => `
-        <button type="button" data-pillar-val="${p}" class="parking-pillar-chip px-2 py-1 rounded-lg bg-slate-100 hover:bg-amber-500/20 dark:bg-slate-800 dark:hover:bg-amber-500/20 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[10px] font-bold transition-all cursor-pointer">
-          📍 ${p}
+  // Hızlı sütun seçim çiplerini koru
+  const pillarInput = document.getElementById('parking-spot-pillar');
+  if (pillarInput && pillarInput.parentElement && !document.getElementById('parking-quick-pillar-chips')) {
+    const chipsWrap = document.createElement('div');
+    chipsWrap.id = 'parking-quick-pillar-chips';
+    chipsWrap.className = 'flex items-center gap-1.5 flex-wrap mt-1.5';
+    const quickPillars = ['A-04', 'B-12', 'C-14', 'R-08', 'S-15', 'Asansör Karşısı'];
+    chipsWrap.innerHTML = quickPillars.map(p => `
+      <button type="button" data-pillar-val="${p}" class="parking-pillar-chip px-2 py-1 rounded-lg bg-slate-100 hover:bg-amber-500/20 dark:bg-slate-800 dark:hover:bg-amber-500/20 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[10px] font-bold transition-all cursor-pointer">
+        📍 ${p}
+      </button>
+    `).join('');
+    pillarInput.parentElement.appendChild(chipsWrap);
+
+    chipsWrap.querySelectorAll('.parking-pillar-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const val = chip.getAttribute('data-pillar-val') || '';
+        if (pillarInput) pillarInput.value = val;
+      });
+    });
+  }
+}
+
+function ensureSmartParkingGreetingCard() {
+  const headerContainer = document.getElementById('floor-header-card');
+  if (!headerContainer) return null;
+
+  let card = document.getElementById('smart-parking-greeting-card');
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'smart-parking-greeting-card';
+    card.className = 'pointer-events-auto hidden mt-1.5 px-3 py-2 rounded-2xl glass-panel border-2 border-amber-500/50 bg-slate-900/95 text-white shadow-xl flex flex-wrap items-center justify-between gap-2 max-w-[96vw] transition-all';
+    card.innerHTML = `
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-sm shrink-0">🚘</span>
+        <span id="smart-parking-greeting-text" class="text-xs sm:text-sm font-black tracking-tight text-amber-100 truncate">
+          🚘 Aracınız: P2 - Mavi (B-12)
+        </span>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" id="btn-smart-parking-route" class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] shadow-sm flex items-center gap-1 transition-all active:scale-95 cursor-pointer">
+          <span>🧭</span>
+          <span>Arabama Rota Çiz</span>
         </button>
-      `).join('');
-      pillarInput.parentElement.appendChild(chipsWrap);
+        <button type="button" id="btn-smart-parking-release" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-red-950/80 text-slate-200 hover:text-red-200 border border-slate-700 hover:border-red-500/40 font-bold text-[11px] flex items-center gap-1 transition-all active:scale-95 cursor-pointer">
+          <span>🚪</span>
+          <span>Otoparktan Ayrıldım</span>
+        </button>
+      </div>
+    `;
+    headerContainer.appendChild(card);
 
-      chipsWrap.querySelectorAll('.parking-pillar-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          const val = chip.getAttribute('data-pillar-val') || '';
-          if (pillarInput) pillarInput.value = val;
-        });
-      });
-    }
+    card.querySelector('#btn-smart-parking-route')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigateToSavedCar();
+    });
 
-    const saveBtn = document.getElementById('btn-parking-save');
-    if (saveBtn && !document.getElementById('btn-parking-save-and-share')) {
-      const btnRow = document.createElement('div');
-      btnRow.id = 'parking-form-action-row';
-      btnRow.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1';
-      saveBtn.parentNode.insertBefore(btnRow, saveBtn);
-      saveBtn.classList.remove('mt-1');
-      btnRow.appendChild(saveBtn);
-
-      const saveAndShareBtn = document.createElement('button');
-      saveAndShareBtn.id = 'btn-parking-save-and-share';
-      saveAndShareBtn.type = 'button';
-      saveAndShareBtn.className = 'w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-extrabold text-xs shadow-md shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer';
-      saveAndShareBtn.innerHTML = '<span>🔗</span><span>Kaydet ve Paylaş</span>';
-      saveAndShareBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const savedSpot = saveParkingSpot(false);
-        shareParkingLocation(savedSpot);
-      });
-      btnRow.appendChild(saveAndShareBtn);
-    }
+    card.querySelector('#btn-smart-parking-release')?.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await deleteParkingSpot();
+    });
   }
+  return card;
 }
-
-function shareParkingLocation(customSpot = null) {
-  ensureParkingShareUI();
-  let spot = customSpot || getSavedParkingSpot();
-  if (!spot) {
-    spot = saveParkingSpot(false);
-  }
-
-  const shareUrl = buildParkingShareUrl(spot);
-  window.lastSharedParkingUrl = shareUrl;
-  window.lastSharedParkingSpot = spot;
-
-  const linkBox = document.getElementById('parking-share-link-box');
-  const urlInput = document.getElementById('parking-share-url-input');
-  const copiedBadge = document.getElementById('parking-share-copied-badge');
-  if (urlInput) {
-    urlInput.value = shareUrl;
-  }
-  if (linkBox) {
-    linkBox.classList.remove('hidden');
-  }
-
-  const shareTitle = `Capacity AVM Otopark Konumum (${spot.code} ${spot.zone})`;
-  const shareText = `🚗 Aracımı Capacity AVM ${spot.name || spot.code} - ${spot.zone} Bölge${spot.pillar ? ' (' + spot.pillar + ')' : ''} noktasına park ettim.`;
-
-  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-    navigator.clipboard.writeText(shareUrl).catch(() => {});
-  }
-  if (copiedBadge) {
-    copiedBadge.textContent = '✓ Kopyalandı';
-  }
-
-  if (navigator.share && typeof navigator.share === 'function') {
-    navigator.share({
-      title: shareTitle,
-      text: shareText,
-      url: shareUrl
-    }).catch(() => {});
-  }
-
-  showToast(`🔗 Otopark konumu paylaşım bağlantısı hazır: ${spot.code} ${spot.zone} Bölge`, 'success');
-  return {
-    spot,
-    shareUrl,
-    url: shareUrl,
-    text: shareText
-  };
-}
-window.shareParkingLocation = shareParkingLocation;
 
 function updateParkingUI() {
-  ensureParkingShareUI();
+  ensureCleanParkingModalUI();
   const saved = getSavedParkingSpot();
   const btnText = document.getElementById('parking-memory-btn-text');
   const headerBtn = document.getElementById('btn-header-find-car');
   const headerText = document.getElementById('header-car-spot-text');
   const savedCard = document.getElementById('parking-saved-card');
   const parkingForm = document.getElementById('parking-form');
+  const smartCard = ensureSmartParkingGreetingCard();
+  const smartText = document.getElementById('smart-parking-greeting-text');
 
   if (saved) {
-    const label = `${saved.code} ${saved.zone}`;
+    const floorCode = saved.code || saved.floor_id || 'P2';
+    const zoneName = saved.zone || saved.zone_color || 'Mavi';
+    const pillarText = (saved.pillar || saved.pillar_code || '').trim();
+    const label = `${floorCode} ${zoneName}`;
+
     if (btnText) btnText.textContent = `Arabama Git (${label})`;
     if (headerText) headerText.textContent = `Arabama Git (${label})`;
     if (headerBtn) headerBtn.classList.remove('hidden');
+
+    if (smartCard && smartText) {
+      const pillarSuffix = pillarText ? ` (${pillarText})` : ' (Genel Alan)';
+      smartText.textContent = `🚘 Aracınız: ${floorCode} - ${zoneName}${pillarSuffix}`;
+      smartCard.classList.remove('hidden');
+    }
 
     if (savedCard) {
       savedCard.classList.remove('hidden');
@@ -4712,21 +4842,20 @@ function updateParkingUI() {
       const title = document.getElementById('parking-saved-location-title');
       const pillar = document.getElementById('parking-saved-pillar-text');
       const time = document.getElementById('parking-saved-time-text');
-      const urlInput = document.getElementById('parking-share-url-input');
 
       if (badge) {
-        badge.textContent = saved.code || 'P2';
+        badge.textContent = floorCode;
         badge.style.backgroundColor = saved.zoneColor || '#2563eb';
       }
-      if (title) title.textContent = `${saved.name || saved.code + ' Katı'} • ${saved.zone} Bölge`;
-      if (pillar) pillar.textContent = saved.pillar ? `Direk / Not: ${saved.pillar}` : 'Genel Otopark Alanı';
+      if (title) title.textContent = `${saved.name || floorCode + ' Katı'} • ${zoneName} Bölge`;
+      if (pillar) pillar.textContent = pillarText ? `Direk / Not: ${pillarText}` : 'Genel Otopark Alanı';
       if (time) time.textContent = saved.time ? `Kaydedildi: ${saved.time}` : 'Kayıtlı';
-      if (urlInput) urlInput.value = buildParkingShareUrl(saved);
     }
-    if (parkingForm) parkingForm.classList.add('hidden');
+    if (parkingForm) parkingForm.classList.remove('hidden');
   } else {
     if (btnText) btnText.textContent = 'Otopark Konumu Kaydet';
     if (headerBtn) headerBtn.classList.add('hidden');
+    if (smartCard) smartCard.classList.add('hidden');
     if (savedCard) savedCard.classList.add('hidden');
     if (parkingForm) parkingForm.classList.remove('hidden');
   }
@@ -4737,6 +4866,7 @@ function openParkingMemoryModal() {
   if (!modal) return;
   updateParkingUI();
   modal.classList.remove('hidden');
+  refreshParkingOccupancyHeatbars();
   if (window.lucide) lucide.createIcons();
 }
 
@@ -4744,27 +4874,41 @@ function closeParkingMemoryModal() {
   document.getElementById('parking-memory-modal')?.classList.add('hidden');
 }
 
-function saveParkingSpot(closeModalAfter = true) {
+async function saveParkingSpot(closeModalAfter = true) {
   const pillarInput = document.getElementById('parking-spot-pillar');
   const pillar = pillarInput ? pillarInput.value.trim() : '';
+  const floorCode = selectedParkingFloor.code || 'P2';
+  const zoneName = selectedParkingZone.name || 'Mavi';
 
-  const spot = {
-    floor: selectedParkingFloor.floor,
-    code: selectedParkingFloor.code,
-    name: selectedParkingFloor.name,
-    zone: selectedParkingZone.name,
-    zoneColor: selectedParkingZone.color,
-    pillar: pillar,
-    time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
-  };
-
-  try {
-    localStorage.setItem('capacity_parking_spot', JSON.stringify(spot));
-  } catch (e) {
-    console.error('LocalStorage write error', e);
+  let spot = null;
+  if (window.ParkingService && typeof window.ParkingService.saveSpot === 'function') {
+    spot = await window.ParkingService.saveSpot(floorCode, zoneName, pillar);
+  } else {
+    spot = {
+      floor: selectedParkingFloor.floor,
+      code: floorCode,
+      floor_id: floorCode,
+      name: selectedParkingFloor.name,
+      zone: zoneName,
+      zone_color: zoneName,
+      zoneColor: selectedParkingZone.color,
+      pillar: pillar,
+      pillar_code: pillar,
+      time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+    };
+    try {
+      localStorage.setItem('capacity_parking_spot', JSON.stringify(spot));
+    } catch (e) {
+      console.error('LocalStorage write error', e);
+    }
   }
 
-  showToast(`🚗 Otopark konumu kaydedildi: ${spot.code} ${spot.zone} Bölge`, 'success');
+  // Aktif bölge sayacını yerel olarak da +1 güncelle
+  const key = `${floorCode}_${zoneName}`;
+  currentParkingOccupancy[key] = (Number(currentParkingOccupancy[key]) || 0) + 1;
+  renderParkingHeatbars(currentParkingOccupancy);
+
+  showToast(`🚘 Aracınız kaydedildi: ${floorCode} - ${zoneName} Bölge${pillar ? ' (' + pillar + ')' : ''}`, 'success');
   updateParkingUI();
   if (closeModalAfter) {
     closeParkingMemoryModal();
@@ -4773,12 +4917,15 @@ function saveParkingSpot(closeModalAfter = true) {
 }
 window.saveParkingSpot = saveParkingSpot;
 
-function deleteParkingSpot() {
-  try {
-    localStorage.removeItem('capacity_parking_spot');
-  } catch (e) {}
-  document.getElementById('parking-share-link-box')?.classList.add('hidden');
-  showToast('Otopark konumu silindi.', 'info');
+async function deleteParkingSpot() {
+  if (window.ParkingService && typeof window.ParkingService.releaseSpot === 'function') {
+    await window.ParkingService.releaseSpot();
+  } else {
+    try {
+      localStorage.removeItem('capacity_parking_spot');
+    } catch (e) {}
+  }
+  showToast('🚪 Otopark kaydınız silindi. İyi yolculuklar dileriz!', 'info');
   updateParkingUI();
 }
 window.deleteParkingSpot = deleteParkingSpot;
@@ -4809,9 +4956,13 @@ function navigateToSavedCar() {
     }
   }
 
+  const floorCode = saved.code || saved.floor_id || 'P2';
+  const zoneName = saved.zone || saved.zone_color || 'Mavi';
+  const pillarText = saved.pillar || saved.pillar_code || '';
+
   const elevatorStore = {
     id: nearestLift?.id || `am_lift_w_${currentFl}`,
-    name: 'Panoramik Asansörler (Otopark İnişi)',
+    name: `Otopark Asansörü (${floorCode} - ${zoneName}${pillarText ? ' ' + pillarText : ''})`,
     floor: currentFl,
     category_name: 'Asansör',
     kind: 'elevator',
@@ -4826,7 +4977,7 @@ function navigateToSavedCar() {
   }
   setTargetLocation(elevatorStore);
 
-  showToast(`🚗 Aracınız ${saved.code} ${saved.zone} katta (${saved.pillar || 'Otopark'}). Otoparka iniş için en yakın asansöre yönlendiriliyorsunuz.`, 'success');
+  showToast(`🚘 Aracınız ${floorCode} - ${zoneName} Bölge (${pillarText || 'Otopark'}) noktasında. En yakın otopark asansörüne rota çizildi.`, 'success');
 }
 
 function navigateToAvailableParking(recordFullZone = false) {
@@ -4878,15 +5029,18 @@ function navigateToAvailableParking(recordFullZone = false) {
   setTargetLocation(availableParkingTarget);
 
   if (recordFullZone) {
-    showToast('🚨 Dolu park alanı kaydedildi! En yakın boş park alanı olan P2 Mavi Bölge (142 Boş Yer) asansörüne yönlendiriliyorsunuz.', 'success');
+    showToast('🚨 Dolu park alanı kaydedildi! En yakın rahat park alanı olan P2 Mavi Bölge asansörüne yönlendiriliyorsunuz.', 'success');
   } else {
-    showToast('🅿️ En yakın boş otopark alanı olan P2 (-2. Kat) Mavi Bölge (142 Boş Yer) noktasına yönlendiriliyorsunuz.', 'success');
+    showToast('🅿️ En yakın rahat otopark alanı olan P2 (-2. Kat) Mavi Bölge noktasına yönlendiriliyorsunuz.', 'success');
   }
 }
 window.navigateToAvailableParking = navigateToAvailableParking;
 
 function setupParkingMemoryEvents() {
-  ensureParkingShareUI();
+  ensureCleanParkingModalUI();
+  ensureSmartParkingGreetingCard();
+  renderParkingHeatbars(currentParkingOccupancy);
+
   document.getElementById('btn-parking-memory')?.addEventListener('click', () => {
     openParkingMemoryModal();
   });
@@ -4903,12 +5057,12 @@ function setupParkingMemoryEvents() {
     closeParkingMemoryModal();
   });
 
-  document.getElementById('btn-parking-save')?.addEventListener('click', () => {
-    saveParkingSpot(true);
+  document.getElementById('btn-parking-save')?.addEventListener('click', async () => {
+    await saveParkingSpot(true);
   });
 
-  document.getElementById('btn-parking-delete')?.addEventListener('click', () => {
-    deleteParkingSpot();
+  document.getElementById('btn-parking-delete')?.addEventListener('click', async () => {
+    await deleteParkingSpot();
   });
 
   document.getElementById('btn-parking-navigate-car')?.addEventListener('click', () => {
@@ -4937,6 +5091,7 @@ function setupParkingMemoryEvents() {
       code: btn.getAttribute('data-code') || 'P2',
       name: btn.getAttribute('data-name') || 'P2 (2. Bodrum Kat)'
     };
+    renderParkingHeatbars(currentParkingOccupancy);
   }
   window.selectParkingFloor = selectParkingFloor;
 
@@ -4975,6 +5130,7 @@ function setupParkingMemoryEvents() {
       name: zone,
       color: color
     };
+    renderParkingHeatbars(currentParkingOccupancy);
   }
   window.selectParkingZone = selectParkingZone;
 
@@ -4997,6 +5153,9 @@ function setupParkingMemoryEvents() {
   document.querySelectorAll('.parking-zone-btn').forEach(btn => {
     btn.addEventListener('click', () => selectParkingZone(btn));
   });
+
+  // İlk açılışta doluluk ve akıllı karşılama kartını güncelle
+  updateParkingUI();
 }
 
 // ========================================================
