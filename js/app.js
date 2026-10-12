@@ -27,7 +27,8 @@ window.currentSimSpeed = currentSimSpeed;
 const simSpeedSteps = [1.0, 2.0, 4.0];
 
 function setSimSpeed(spd, silent = false) {
-  currentSimSpeed = spd;
+  const numericSpeed = Number(spd) || 1.0;
+  currentSimSpeed = numericSpeed;
   window.currentSimSpeed = currentSimSpeed;
 
   if (cartSimulator) {
@@ -55,17 +56,36 @@ function setSimSpeed(spd, silent = false) {
     deskSpeedBtn.className = 'px-2 py-1 rounded-lg bg-cyan-600 text-white font-bold';
   }
 
+  // Modal ve çekmecedeki 1x / 2x / 4x hız seçim butonlarını senkronize et
+  document.querySelectorAll('.sim-speed-choice-btn').forEach(btn => {
+    const btnSpd = Number(btn.getAttribute('data-sim-speed'));
+    if (btnSpd === currentSimSpeed) {
+      btn.classList.add('is-active-speed', 'bg-cyan-600', 'text-white', 'border-cyan-500', 'shadow-xs');
+      btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+    } else {
+      btn.classList.remove('is-active-speed', 'bg-cyan-600', 'text-white', 'border-cyan-500', 'shadow-xs');
+      btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+    }
+  });
+
+  const speedRangeSlider = document.getElementById('sim-speed-range-slider');
+  if (speedRangeSlider) {
+    speedRangeSlider.value = String(currentSimSpeed);
+  }
+
   if (!silent) {
-    showToast(`⚡ Yürüyüş ve seslendirme hızı: ${currentSimSpeed}x`, 'info');
+    showToast(`⚡ Simülasyon ve seslendirme hızı: ${currentSimSpeed}x`, 'info');
   }
 }
 window.setSimSpeed = setSimSpeed;
+window.setSimulationSpeed = setSimSpeed;
 
 function cycleSimSpeed() {
   const currentIndex = simSpeedSteps.indexOf(currentSimSpeed);
   const nextIndex = (currentIndex + 1) % simSpeedSteps.length;
   setSimSpeed(simSpeedSteps[nextIndex]);
 }
+window.cycleSimSpeed = cycleSimSpeed;
 
 // Cihaz ve Ekran Durum Yardımcısı (Mobil Dikey & Mobil Yatay/Landscape)
 function isMobileOrLandscape() {
@@ -814,6 +834,109 @@ function initApp() {
   }
   window.getTurkishPossessiveSuffix = getTurkishPossessiveSuffix;
 
+  const ttsPronunciationMap = window.ttsPronunciationMap || {
+    'D&R': 'De ve Er',
+    'D & R': 'De ve Er',
+    'LCWaikiki': 'El Si Vaykiki',
+    'LC Waikiki': 'El Si Vaykiki',
+    'H&M': 'Haş ve Em',
+    'B&G Store': 'Be ve Ge Stor',
+    'Marks & Spencer': 'Marks end Spensır',
+    'Pull & Bear': 'Pul end Ber',
+    'Jack & Jones': 'Cek end Cons',
+    'Saat & Saat': 'Saat ve Saat',
+    'U.S. Polo Assn.': 'Yu Es Polo',
+    'US Polo': 'Yu Es Polo',
+    'W Collection': 'Dabılyu Koleksiyon',
+    'Pierre Cardin': 'Piyer Karden',
+    'Madame Coco': 'Madam Koko',
+    'Tommy Hilfiger': 'Tomi Hilfigır',
+    'Yves Rocher': 'İv Roşe',
+    "L'Occitane": 'Loksitan',
+    'Sephora': 'Sefora',
+    'DeFacto': 'Defakto',
+    "Victoria's Secret": 'Viktoryaz Sikrıt',
+    'Stradivarius': 'Stradivaryus',
+    'Bershka': 'Berşka',
+    'Oysho': 'Oyşo',
+    'Massimo Dutti': 'Massimo Dutti',
+    'Beymen Club': 'Beymen Klab',
+    'Paribu Cineverse': 'Paribu Sinevörs',
+    'HD İskender': 'Eyç Di İskender',
+    'KFC': 'Key Ef Si',
+    "Arby's": 'Arbis',
+    'Popeyes': 'Popays',
+    "Carl's Jr.": 'Karls Cunyır',
+    "McDonald's": 'Mekdanılds',
+    'Burger King': 'Börgır King',
+    'Green Salads': 'Grin Salads',
+    'Subway': 'Sabvey',
+    'Starbucks': 'Starbaks',
+    'Caribou Coffee': 'Karibu Kofi',
+    'Caffè Nero': 'Kafe Nero',
+    'Cafe Nero': 'Kafe Nero',
+    'Tchibo': 'Çibo',
+    'Cold Stone': 'Kold Ston',
+    'Krispy Kreme': 'Krispi Krim',
+    'Rossmann': 'Rosman',
+    'Watsons': 'Vatsıns',
+    'M·A·C': 'Mek Kozmetik',
+    'MAC': 'Mek Kozmetik',
+    'Golden Rose': 'Goldın Roz',
+    'Hairist': 'Heyrist',
+    'Skechers': 'Skeçırs',
+    'Columbia': 'Kolombiya',
+    'The North Face': 'Dı Nort Feys',
+    'Timberland': 'Timbırlend',
+    'Sneaks Up': 'Sniks Ap',
+    'New Balance': 'Niv Balans',
+    'Under Armour': 'Andır Armır',
+    'Harley Davidson': 'Harli Devidsın',
+    'Hummel': 'Humel',
+    'Camper': 'Kempır',
+    'Crocs': 'Kroks',
+    'Ecco': 'Eko',
+    'Nine West': 'Nayn Vest',
+    'MediaMarkt': 'Medya Markt',
+    'Mi Store': 'Mi Stor',
+    'Apple': 'Epıl',
+    'Dyson': 'Daysın',
+    'Swarovski': 'Svarovski',
+    'Swatch': 'Svoç',
+    'Tobacco Shop': 'Tobako Şop',
+    'Dry Center': 'Dray Sentır',
+    'Pets Club': 'Pets Klab',
+    'FunTime': 'Fan Taym',
+    'Toyzz Shop': 'Toyz Şop',
+    'Mothercare': 'Madırkeyr',
+    'Chicco': 'Kiko',
+    'Flying Tiger': 'Flaying Taygır',
+    'Samsonite': 'Semsonayt',
+    "Levi's": 'Livays',
+    'Lee Wrangler': 'Li Renglır',
+    'Calvin Klein': 'Kalvin Klayn',
+    'Guess': 'Ges',
+    'Lacoste': 'Lakost',
+    'Nautica': 'Notika',
+    'Gant': 'Gent',
+    'Calzedonia': 'Kalzedonya',
+    'Suwen': 'Suven',
+    'Cookshop': 'Kukşop',
+    'SuperStep': 'Süper Step',
+    'The Hunger': 'Dı Hangır',
+    'Blue Diamond': 'Blu Daymınd',
+    'Storks Diamond': 'Storks Daymınd',
+    'English Home': 'İngliş Hom',
+    'G Lingerie': 'Ci Lanjeri',
+    'So Chic': 'So Şik',
+    'Sunglass Hut': 'Sanglas Hat',
+    'Cacharel': 'Kaşarel'
+  };
+  ttsPronunciationMap['D&R'] = 'De ve Er';
+  ttsPronunciationMap['LCWaikiki'] = 'El Si Vaykiki';
+  ttsPronunciationMap['LC Waikiki'] = 'El Si Vaykiki';
+  window.ttsPronunciationMap = ttsPronunciationMap;
+
   function toTurkishPhoneticSpeech(rawText) {
     if (!rawText) return '';
     let s = String(rawText)
@@ -822,98 +945,16 @@ function initApp() {
       .replace(/(\d+)\s*m\b/gi, '$1 metre')
       .replace(/(\d+)\s*dk\b/gi, '$1 dakika')
       .replace(/\bWC\b/gi, 'Tuvalet')
-      .replace(/\bAVM\b/g, 'A V M')
-      .replace(/W\s*Collection/gi, 'Dabılyu Koleksiyon')
-      .replace(/Pierre\s*Cardin/gi, 'Piyer Karden')
-      .replace(/Madame\s*Coco/gi, 'Madam Koko')
-      .replace(/Marks\s*&\s*Spencer/gi, 'Marks end Spensır')
-      .replace(/Tommy\s*Hilfiger/gi, 'Tomi Hilfigır')
-      .replace(/U\.?S\.?\s*Polo\s*Assn\.?/gi, 'Yu Es Polo')
-      .replace(/Yves\s*Rocher/gi, 'İv Roşe')
-      .replace(/L'Occitane/gi, 'Loksitan')
-      .replace(/Sephora/gi, 'Sefora')
-      .replace(/DeFacto/gi, 'Defakto')
-      .replace(/LC\s*Waikiki/gi, 'El Si Vaykiki')
-      .replace(/H&M/gi, 'Eyç end Em')
-      .replace(/D&R/gi, 'Di end Ar')
-      .replace(/B&G\s*Store/gi, 'Bi end Ci Stor')
-      .replace(/Pull\s*&\s*Bear/gi, 'Pul end Ber')
-      .replace(/Jack\s*&\s*Jones/gi, 'Cek end Cons')
-      .replace(/Saat\s*&\s*Saat/gi, 'Saat ve Saat')
-      .replace(/Victoria's\s*Secret/gi, 'Viktoryaz Sikrıt')
-      .replace(/Stradivarius/gi, 'Stradivaryus')
-      .replace(/Bershka/gi, 'Berşka')
-      .replace(/Oysho/gi, 'Oyşo')
-      .replace(/Massimo\s*Dutti/gi, 'Massimo Dutti')
-      .replace(/Beymen\s*Club/gi, 'Beymen Klab')
-      .replace(/paribu\s*cineverse/gi, 'Paribu Sinevörs')
-      .replace(/HD\s*İskender/gi, 'Eyç Di İskender')
-      .replace(/\bKFC\b/gi, 'Key Ef Si')
-      .replace(/Arby's/gi, 'Arbis')
-      .replace(/Popeyes/gi, 'Popays')
-      .replace(/Carl's\s*Jr\.?/gi, 'Karls Cunyır')
-      .replace(/McDonald's/gi, 'Mekdanılds')
-      .replace(/Burger\s*King/gi, 'Börgır King')
-      .replace(/Green\s*Salads/gi, 'Grin Salads')
-      .replace(/Subway/gi, 'Sabvey')
-      .replace(/Starbucks/gi, 'Starbaks')
-      .replace(/Caribou\s*Coffee/gi, 'Karibu Kofi')
-      .replace(/Caff[eé]\s*Nero/gi, 'Kafe Nero')
-      .replace(/tchibo/gi, 'Çibo')
-      .replace(/Cold\s*Stone/gi, 'Kold Ston')
-      .replace(/Krispy\s*Kreme/gi, 'Krispi Krim')
-      .replace(/Rossmann/gi, 'Rosman')
-      .replace(/Watsons/gi, 'Vatsıns')
-      .replace(/M·A·C|\bMAC\b/g, 'Mek Kozmetik')
-      .replace(/Golden\s*Rose/gi, 'Goldın Roz')
-      .replace(/Hairist/gi, 'Heyrist')
-      .replace(/Skechers/gi, 'Skeçırs')
-      .replace(/Columbia/gi, 'Kolombiya')
-      .replace(/The\s*North\s*Face/gi, 'Dı Nort Feys')
-      .replace(/Timberland/gi, 'Timbırlend')
-      .replace(/Sneaks\s*Up/gi, 'Sniks Ap')
-      .replace(/New\s*Balance/gi, 'Niv Balans')
-      .replace(/Under\s*Armour/gi, 'Andır Armır')
-      .replace(/Harley\s*Davidson/gi, 'Harli Devidsın')
-      .replace(/Hummel/gi, 'Humel')
-      .replace(/\bCamper\b/gi, 'Kempır')
-      .replace(/\bCrocs\b/gi, 'Kroks')
-      .replace(/\bEcco\b/gi, 'Eko')
-      .replace(/Nine\s*West/gi, 'Nayn Vest')
-      .replace(/MediaMarkt/gi, 'Medya Markt')
-      .replace(/Mi\s*Store/gi, 'Mi Stor')
-      .replace(/\bApple\b/gi, 'Epıl')
-      .replace(/\bDyson\b/gi, 'Daysın')
-      .replace(/Swarovski/gi, 'Svarovski')
-      .replace(/Swatch/gi, 'Svoç')
-      .replace(/Tobacco\s*Shop/gi, 'Tobako Şop')
-      .replace(/Dry\s*Center/gi, 'Dray Sentır')
-      .replace(/Pets\s*Club/gi, 'Pets Klab')
-      .replace(/FunTime/gi, 'Fan Taym')
-      .replace(/Toyzz\s*Shop/gi, 'Toyz Şop')
-      .replace(/Mothercare/gi, 'Madırkeyr')
-      .replace(/Chicco/gi, 'Kiko')
-      .replace(/Flying\s*Tiger/gi, 'Flaying Taygır')
-      .replace(/Samsonite/gi, 'Semsonayt')
-      .replace(/Levi's/gi, 'Livays')
-      .replace(/Lee\s*Wrangler/gi, 'Li Renglır')
-      .replace(/Calvin\s*Klein/gi, 'Kalvin Klayn')
-      .replace(/\bGuess\b/gi, 'Ges')
-      .replace(/Lacoste/gi, 'Lakost')
-      .replace(/Nautica/gi, 'Notika')
-      .replace(/\bGant\b/gi, 'Gent')
-      .replace(/Calzedonia/gi, 'Kalzedonya')
-      .replace(/Suwen/gi, 'Suven')
-      .replace(/Cookshop/gi, 'Kukşop')
-      .replace(/SuperStep/gi, 'Süper Step')
-      .replace(/The\s*Hunger/gi, 'Dı Hangır')
-      .replace(/Blue\s*Diamond/gi, 'Blu Daymınd')
-      .replace(/Storks\s*Diamond/gi, 'Storks Daymınd')
-      .replace(/English\s*Home/gi, 'İngliş Hom')
-      .replace(/G\s*Lingerie/gi, 'Ci Lanjeri')
-      .replace(/So\s*Chic/gi, 'So Şik')
-      .replace(/Sunglass\s*Hut/gi, 'Sanglas Hat')
-      .replace(/Cacharel/gi, 'Kaşarel');
+      .replace(/\bAVM\b/g, 'A V M');
+
+    for (const [brand, phonetic] of Object.entries(ttsPronunciationMap)) {
+      const escaped = brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = /^[A-Za-z0-9]+$/.test(brand)
+        ? new RegExp(`\\b${escaped}\\b`, 'gi')
+        : new RegExp(escaped, 'gi');
+      s = s.replace(regex, phonetic);
+    }
+
     return s.replace(/\s+/g, ' ').trim();
   }
   window.toTurkishPhoneticSpeech = toTurkishPhoneticSpeech;
@@ -978,9 +1019,13 @@ function initApp() {
     window.wasArrivalSpeechQueued = true;
     window.queuedArrivalDelayMs = queueWaitMs;
 
+    let pollCount = 0;
     const checkAndSpeak = () => {
-      const stillSpeaking = Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking) ||
-                            (performance.now() < (window.speechMainBusyUntil || 0));
+      pollCount++;
+      const stillSpeaking = (
+        Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking) ||
+        (performance.now() < (window.speechMainBusyUntil || 0))
+      ) && pollCount < 2;
       if (stillSpeaking) {
         window.queuedArrivalTimer = setTimeout(checkAndSpeak, 450);
         window.arrivalSpeechQueueTimer = window.queuedArrivalTimer;
@@ -4364,6 +4409,35 @@ function checkUrlParametersAndKiosk() {
   if (resolvedTo) {
     setTargetLocation(resolvedTo);
   }
+
+  // Paylaşılan Otopark Konumu URL Parametresi (?parking=P2&zone=Mavi&pillar=R08)
+  const parkingCodeParam = urlParams.get('parking') || urlParams.get('parkingFloor');
+  if (parkingCodeParam) {
+    const pCode = parkingCodeParam.toUpperCase();
+    const pFloorMap = {
+      P1: { floor: 3, name: 'P1 (1. Bodrum Kat)' },
+      P2: { floor: 2, name: 'P2 (2. Bodrum Kat)' },
+      P3: { floor: 1, name: 'P3 (3. Bodrum Kat)' }
+    };
+    const pFloorInfo = pFloorMap[pCode] || { floor: Number(urlParams.get('pfloor')) || 2, name: `${pCode} Otopark Katı` };
+    const pZone = urlParams.get('zone') || urlParams.get('parkingZone') || 'Mavi';
+    const pColorMap = { Mavi: '#2563eb', Sarı: '#eab308', Turuncu: '#f97316', Kırmızı: '#ef4444' };
+    const pPillar = urlParams.get('pillar') || urlParams.get('parkingPillar') || '';
+    const sharedSpot = {
+      floor: pFloorInfo.floor,
+      code: pCode,
+      name: pFloorInfo.name,
+      zone: pZone,
+      zoneColor: pColorMap[pZone] || '#2563eb',
+      pillar: pPillar,
+      time: 'Paylaşılan Konum'
+    };
+    try {
+      localStorage.setItem('capacity_parking_spot', JSON.stringify(sharedSpot));
+    } catch (e) {}
+    updateParkingUI();
+    showToast(`🚗 Paylaşılan otopark konumu yüklendi: ${sharedSpot.code} ${sharedSpot.zone} Bölge${sharedSpot.pillar ? ' (' + sharedSpot.pillar + ')' : ''}`, 'success');
+  }
 }
 
 // 13. Rotayı Cebine Al (QR Kod) Modalı
@@ -4425,7 +4499,7 @@ window.openRouteQrModal = openRouteQrModal;
 window.closeRouteQrModal = closeRouteQrModal;
 
 // ========================================================
-// OTOPARK HAFIZASI VE YÖNLENDİRME SİSTEMİ (PARKING MEMORY)
+// OTOPARK HAFIZASI VE KULLANICI PAYLAŞIM ALTYAPISI (PARKING MEMORY & SHARE)
 // ========================================================
 let selectedParkingFloor = { floor: 2, code: 'P2', name: 'P2 (2. Bodrum Kat)' };
 let selectedParkingZone = { name: 'Mavi', color: '#2563eb' };
@@ -4438,8 +4512,187 @@ function getSavedParkingSpot() {
     return null;
   }
 }
+window.getSavedParkingSpot = getSavedParkingSpot;
+
+function buildParkingShareUrl(spotObj) {
+  const spot = spotObj || getSavedParkingSpot() || {
+    floor: selectedParkingFloor.floor,
+    code: selectedParkingFloor.code,
+    name: selectedParkingFloor.name,
+    zone: selectedParkingZone.name,
+    pillar: document.getElementById('parking-spot-pillar')?.value?.trim() || ''
+  };
+  const urlObj = new URL(window.location.href);
+  urlObj.searchParams.set('parking', spot.code || 'P2');
+  urlObj.searchParams.set('zone', spot.zone || 'Mavi');
+  if (spot.pillar) {
+    urlObj.searchParams.set('pillar', spot.pillar);
+  } else {
+    urlObj.searchParams.delete('pillar');
+  }
+  return urlObj.toString();
+}
+window.buildParkingShareUrl = buildParkingShareUrl;
+
+function ensureParkingShareUI() {
+  const savedCard = document.getElementById('parking-saved-card');
+  const parkingForm = document.getElementById('parking-form');
+
+  // 1. Kayıtlı Araç Kartına [🔗 Konumu Paylaş], [✏️ Konumu Güncelle] ve Paylaşım Link Kutusu ekle
+  if (savedCard && !document.getElementById('parking-saved-share-actions')) {
+    const shareActions = document.createElement('div');
+    shareActions.id = 'parking-saved-share-actions';
+    shareActions.className = 'flex flex-col gap-2 pt-1';
+    shareActions.innerHTML = `
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" id="btn-parking-share" class="py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+          <span>🔗</span>
+          <span>Konumu Paylaş</span>
+        </button>
+        <button type="button" id="btn-parking-edit" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+          <span>✏️</span>
+          <span>Yeni Konum Seç</span>
+        </button>
+      </div>
+      <div id="parking-share-link-box" class="hidden p-2.5 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-indigo-500/30 flex flex-col gap-1.5">
+        <div class="text-[10px] font-extrabold text-indigo-700 dark:text-indigo-300 flex items-center justify-between">
+          <span>🔗 Paylaşılabilir Otopark Bağlantısı</span>
+          <span id="parking-share-copied-badge" class="text-emerald-600 dark:text-emerald-400">Hazır</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <input id="parking-share-url-input" type="text" readonly class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 focus:outline-none" value="" />
+          <button type="button" id="btn-parking-copy-url" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-extrabold transition-all active:scale-95 cursor-pointer">
+            📋 Kopyala
+          </button>
+        </div>
+      </div>
+    `;
+    savedCard.appendChild(shareActions);
+
+    document.getElementById('btn-parking-share')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      shareParkingLocation();
+    });
+
+    document.getElementById('btn-parking-edit')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (parkingForm) {
+        parkingForm.classList.toggle('hidden');
+      }
+    });
+
+    document.getElementById('btn-parking-copy-url')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const inputEl = document.getElementById('parking-share-url-input');
+      if (inputEl && inputEl.value) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(inputEl.value).catch(() => {});
+        }
+        const badgeEl = document.getElementById('parking-share-copied-badge');
+        if (badgeEl) badgeEl.textContent = '✓ Kopyalandı';
+        showToast('📋 Otopark paylaşım bağlantısı panoya kopyalandı!', 'success');
+      }
+    });
+  }
+
+  // 2. Otopark Kayıt Formuna Hızlı Sütun/Bölge Çipleri ve [🔗 Kaydet ve Paylaş] Butonu ekle
+  if (parkingForm) {
+    const pillarInput = document.getElementById('parking-spot-pillar');
+    if (pillarInput && pillarInput.parentElement && !document.getElementById('parking-quick-pillar-chips')) {
+      const chipsWrap = document.createElement('div');
+      chipsWrap.id = 'parking-quick-pillar-chips';
+      chipsWrap.className = 'flex items-center gap-1.5 flex-wrap mt-1.5';
+      const quickPillars = ['A-04', 'B-12', 'R-08', 'S-15', 'Asansör Karşısı', 'Oto Yıkama Yanı'];
+      chipsWrap.innerHTML = quickPillars.map(p => `
+        <button type="button" data-pillar-val="${p}" class="parking-pillar-chip px-2 py-1 rounded-lg bg-slate-100 hover:bg-amber-500/20 dark:bg-slate-800 dark:hover:bg-amber-500/20 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[10px] font-bold transition-all cursor-pointer">
+          📍 ${p}
+        </button>
+      `).join('');
+      pillarInput.parentElement.appendChild(chipsWrap);
+
+      chipsWrap.querySelectorAll('.parking-pillar-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const val = chip.getAttribute('data-pillar-val') || '';
+          if (pillarInput) pillarInput.value = val;
+        });
+      });
+    }
+
+    const saveBtn = document.getElementById('btn-parking-save');
+    if (saveBtn && !document.getElementById('btn-parking-save-and-share')) {
+      const btnRow = document.createElement('div');
+      btnRow.id = 'parking-form-action-row';
+      btnRow.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1';
+      saveBtn.parentNode.insertBefore(btnRow, saveBtn);
+      saveBtn.classList.remove('mt-1');
+      btnRow.appendChild(saveBtn);
+
+      const saveAndShareBtn = document.createElement('button');
+      saveAndShareBtn.id = 'btn-parking-save-and-share';
+      saveAndShareBtn.type = 'button';
+      saveAndShareBtn.className = 'w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-extrabold text-xs shadow-md shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer';
+      saveAndShareBtn.innerHTML = '<span>🔗</span><span>Kaydet ve Paylaş</span>';
+      saveAndShareBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const savedSpot = saveParkingSpot(false);
+        shareParkingLocation(savedSpot);
+      });
+      btnRow.appendChild(saveAndShareBtn);
+    }
+  }
+}
+
+function shareParkingLocation(customSpot = null) {
+  ensureParkingShareUI();
+  let spot = customSpot || getSavedParkingSpot();
+  if (!spot) {
+    spot = saveParkingSpot(false);
+  }
+
+  const shareUrl = buildParkingShareUrl(spot);
+  window.lastSharedParkingUrl = shareUrl;
+  window.lastSharedParkingSpot = spot;
+
+  const linkBox = document.getElementById('parking-share-link-box');
+  const urlInput = document.getElementById('parking-share-url-input');
+  const copiedBadge = document.getElementById('parking-share-copied-badge');
+  if (urlInput) {
+    urlInput.value = shareUrl;
+  }
+  if (linkBox) {
+    linkBox.classList.remove('hidden');
+  }
+
+  const shareTitle = `Capacity AVM Otopark Konumum (${spot.code} ${spot.zone})`;
+  const shareText = `🚗 Aracımı Capacity AVM ${spot.name || spot.code} - ${spot.zone} Bölge${spot.pillar ? ' (' + spot.pillar + ')' : ''} noktasına park ettim.`;
+
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(shareUrl).catch(() => {});
+  }
+  if (copiedBadge) {
+    copiedBadge.textContent = '✓ Kopyalandı';
+  }
+
+  if (navigator.share && typeof navigator.share === 'function') {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: shareUrl
+    }).catch(() => {});
+  }
+
+  showToast(`🔗 Otopark konumu paylaşım bağlantısı hazır: ${spot.code} ${spot.zone} Bölge`, 'success');
+  return {
+    spot,
+    shareUrl,
+    url: shareUrl,
+    text: shareText
+  };
+}
+window.shareParkingLocation = shareParkingLocation;
 
 function updateParkingUI() {
+  ensureParkingShareUI();
   const saved = getSavedParkingSpot();
   const btnText = document.getElementById('parking-memory-btn-text');
   const headerBtn = document.getElementById('btn-header-find-car');
@@ -4459,6 +4712,7 @@ function updateParkingUI() {
       const title = document.getElementById('parking-saved-location-title');
       const pillar = document.getElementById('parking-saved-pillar-text');
       const time = document.getElementById('parking-saved-time-text');
+      const urlInput = document.getElementById('parking-share-url-input');
 
       if (badge) {
         badge.textContent = saved.code || 'P2';
@@ -4467,6 +4721,7 @@ function updateParkingUI() {
       if (title) title.textContent = `${saved.name || saved.code + ' Katı'} • ${saved.zone} Bölge`;
       if (pillar) pillar.textContent = saved.pillar ? `Direk / Not: ${saved.pillar}` : 'Genel Otopark Alanı';
       if (time) time.textContent = saved.time ? `Kaydedildi: ${saved.time}` : 'Kayıtlı';
+      if (urlInput) urlInput.value = buildParkingShareUrl(saved);
     }
     if (parkingForm) parkingForm.classList.add('hidden');
   } else {
@@ -4489,7 +4744,7 @@ function closeParkingMemoryModal() {
   document.getElementById('parking-memory-modal')?.classList.add('hidden');
 }
 
-function saveParkingSpot() {
+function saveParkingSpot(closeModalAfter = true) {
   const pillarInput = document.getElementById('parking-spot-pillar');
   const pillar = pillarInput ? pillarInput.value.trim() : '';
 
@@ -4511,16 +4766,22 @@ function saveParkingSpot() {
 
   showToast(`🚗 Otopark konumu kaydedildi: ${spot.code} ${spot.zone} Bölge`, 'success');
   updateParkingUI();
-  closeParkingMemoryModal();
+  if (closeModalAfter) {
+    closeParkingMemoryModal();
+  }
+  return spot;
 }
+window.saveParkingSpot = saveParkingSpot;
 
 function deleteParkingSpot() {
   try {
     localStorage.removeItem('capacity_parking_spot');
   } catch (e) {}
+  document.getElementById('parking-share-link-box')?.classList.add('hidden');
   showToast('Otopark konumu silindi.', 'info');
   updateParkingUI();
 }
+window.deleteParkingSpot = deleteParkingSpot;
 
 function navigateToSavedCar() {
   const saved = getSavedParkingSpot();
@@ -4625,6 +4886,7 @@ function navigateToAvailableParking(recordFullZone = false) {
 window.navigateToAvailableParking = navigateToAvailableParking;
 
 function setupParkingMemoryEvents() {
+  ensureParkingShareUI();
   document.getElementById('btn-parking-memory')?.addEventListener('click', () => {
     openParkingMemoryModal();
   });
@@ -4642,7 +4904,7 @@ function setupParkingMemoryEvents() {
   });
 
   document.getElementById('btn-parking-save')?.addEventListener('click', () => {
-    saveParkingSpot();
+    saveParkingSpot(true);
   });
 
   document.getElementById('btn-parking-delete')?.addEventListener('click', () => {
@@ -5585,8 +5847,14 @@ function startLiveGpsRouteWalk() {
       statusText.textContent = 'CANLI KONUM • C KAPISI REF.';
     }
 
-    const distInfo = typeof distKmVal === 'number' && !isNaN(distKmVal) ? ` (${distKmVal.toFixed(1)} km)` : ' (>350m)';
-    showToast(`📍 AVM dışındasınız${distInfo}. C Kapısı referansıyla canlı konum (#live-user-gps-dot) yürüyüş takibi başlatıldı.`, 'info');
+    const effectiveDistKm = (typeof distKmVal === 'number' && !isNaN(distKmVal) && distKmVal > 0) ? distKmVal : 1.2;
+    const distFormatted = effectiveDistKm >= 1.0
+      ? `${effectiveDistKm.toFixed(1)} km`
+      : `${Math.round(effectiveDistKm * 1000)} m`;
+    window.lastGpsDistanceToMallKm = effectiveDistKm;
+    const politeMsg = `📍 Şu an Capacity AVM'ye yaklaşık ${distFormatted} uzaklıktasınız (>350m). C Kapısı referansıyla canlı konum (#live-user-gps-dot) yürüyüş takibi başlatıldı.`;
+    window.lastGpsOutsideNoticeText = politeMsg;
+    showToast(politeMsg, 'info');
 
     // Harita üzerinde #live-user-gps-dot noktasını rota boyunca adım adım ilerlet
     if (liveGpsSimulatedWalkTimer) clearInterval(liveGpsSimulatedWalkTimer);
@@ -5754,7 +6022,7 @@ function setTravelNavigationMode(mode) {
 window.setTravelNavigationMode = setTravelNavigationMode;
 
 function setupTravelModeSelectorUI() {
-  // 1. Rota Hazır Kartındaki (#route-mode-choice-modal) butonları iki belirgin seçenek + 3B olarak yapılandır
+  // 1. Rota Hazır Kartındaki (#route-mode-choice-modal) butonları iki belirgin seçenek + Simülasyon Hız Kontrolü (1x, 2x, 4x) + 3B olarak yapılandır
   const choiceModal = document.getElementById('route-mode-choice-modal');
   if (choiceModal) {
     const gridContainer = choiceModal.querySelector('.grid');
@@ -5771,6 +6039,14 @@ function setupTravelModeSelectorUI() {
             <span class="text-[10px] font-semibold text-cyan-100">Sanal Torba ile Prova</span>
           </button>
         </div>
+        <div id="modal-sim-speed-selector" class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80">
+          <span class="text-[10.5px] font-extrabold text-slate-600 dark:text-slate-300 flex items-center gap-1">⚡ Simülasyon Hızı:</span>
+          <div class="flex items-center gap-1">
+            <button type="button" id="btn-modal-speed-1x" data-sim-speed="1" class="sim-speed-choice-btn is-active-speed px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-cyan-500 bg-cyan-600 text-white shadow-xs transition-all cursor-pointer">1x</button>
+            <button type="button" id="btn-modal-speed-2x" data-sim-speed="2" class="sim-speed-choice-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">2x</button>
+            <button type="button" id="btn-modal-speed-4x" data-sim-speed="4" class="sim-speed-choice-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">4x</button>
+          </div>
+        </div>
         <button type="button" id="btn-choose-mode-pov" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer">
           <span class="text-sm leading-none">👁️ 3B Gözümden</span>
           <span class="text-[10px] font-semibold text-orange-100">• Canlı 3B Koridorda Yürü</span>
@@ -5778,6 +6054,32 @@ function setupTravelModeSelectorUI() {
       `;
     }
   }
+
+  // Adım Adım Detay Çekmecesine de (#hud-steps-drawer) 1x / 2x / 4x Hız Seçici Ekle
+  const stepsDrawer = document.getElementById('hud-steps-drawer');
+  const routePathChips = document.getElementById('route-path-chips');
+  if (stepsDrawer && routePathChips && !document.getElementById('drawer-sim-speed-selector')) {
+    const drawerSpeedRow = document.createElement('div');
+    drawerSpeedRow.id = 'drawer-sim-speed-selector';
+    drawerSpeedRow.className = 'flex items-center justify-between gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800';
+    drawerSpeedRow.innerHTML = `
+      <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">⚡ Simülasyon Hızı:</span>
+      <div class="flex items-center gap-1">
+        <button type="button" data-sim-speed="1" class="sim-speed-choice-btn is-active-speed px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-cyan-500 bg-cyan-600 text-white shadow-xs transition-all cursor-pointer">1x</button>
+        <button type="button" data-sim-speed="2" class="sim-speed-choice-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">2x</button>
+        <button type="button" data-sim-speed="4" class="sim-speed-choice-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">4x</button>
+      </div>
+    `;
+    stepsDrawer.insertBefore(drawerSpeedRow, routePathChips.nextSibling);
+  }
+
+  document.querySelectorAll('.sim-speed-choice-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const spd = Number(btn.getAttribute('data-sim-speed')) || 1;
+      setSimSpeed(spd);
+    });
+  });
 
   // 2. #nav-hud-bar ve iç kapsayıcısındaki 'overflow-hidden' kısıtlamasını kaldırıp yatay kaydırmayı (horizontal-chip-scroller) aktif et
   const hudBar = document.getElementById('nav-hud-bar');

@@ -26,6 +26,108 @@ class PriorityQueue {
   }
 }
 
+const ttsPronunciationMap = {
+  'D&R': 'De ve Er',
+  'D & R': 'De ve Er',
+  'LCWaikiki': 'El Si Vaykiki',
+  'LC Waikiki': 'El Si Vaykiki',
+  'H&M': 'Haş ve Em',
+  'B&G Store': 'Be ve Ge Stor',
+  'Marks & Spencer': 'Marks end Spensır',
+  'Pull & Bear': 'Pul end Ber',
+  'Jack & Jones': 'Cek end Cons',
+  'Saat & Saat': 'Saat ve Saat',
+  'U.S. Polo Assn.': 'Yu Es Polo',
+  'US Polo': 'Yu Es Polo',
+  'W Collection': 'Dabılyu Koleksiyon',
+  'Pierre Cardin': 'Piyer Karden',
+  'Madame Coco': 'Madam Koko',
+  'Tommy Hilfiger': 'Tomi Hilfigır',
+  'Yves Rocher': 'İv Roşe',
+  "L'Occitane": 'Loksitan',
+  'Sephora': 'Sefora',
+  'DeFacto': 'Defakto',
+  "Victoria's Secret": 'Viktoryaz Sikrıt',
+  'Stradivarius': 'Stradivaryus',
+  'Bershka': 'Berşka',
+  'Oysho': 'Oyşo',
+  'Beymen Club': 'Beymen Klab',
+  'Paribu Cineverse': 'Paribu Sinevörs',
+  'HD İskender': 'Eyç Di İskender',
+  'KFC': 'Key Ef Si',
+  "Arby's": 'Arbis',
+  'Popeyes': 'Popays',
+  "Carl's Jr.": 'Karls Cunyır',
+  "McDonald's": 'Mekdanılds',
+  'Burger King': 'Börgır King',
+  'Subway': 'Sabvey',
+  'Starbucks': 'Starbaks',
+  'Caribou Coffee': 'Karibu Kofi',
+  'Caffè Nero': 'Kafe Nero',
+  'Cafe Nero': 'Kafe Nero',
+  'Tchibo': 'Çibo',
+  'Cold Stone': 'Kold Ston',
+  'Krispy Kreme': 'Krispi Krim',
+  'Rossmann': 'Rosman',
+  'Watsons': 'Vatsıns',
+  'M·A·C': 'Mek Kozmetik',
+  'MAC': 'Mek Kozmetik',
+  'Golden Rose': 'Goldın Roz',
+  'Skechers': 'Skeçırs',
+  'The North Face': 'Dı Nort Feys',
+  'Timberland': 'Timbırlend',
+  'Sneaks Up': 'Sniks Ap',
+  'New Balance': 'Niv Balans',
+  'Under Armour': 'Andır Armır',
+  'Nine West': 'Nayn Vest',
+  'MediaMarkt': 'Medya Markt',
+  'Mi Store': 'Mi Stor',
+  'Apple': 'Epıl',
+  'Dyson': 'Daysın',
+  'Swarovski': 'Svarovski',
+  'Swatch': 'Svoç',
+  'Toyzz Shop': 'Toyz Şop',
+  'Mothercare': 'Madırkeyr',
+  'Chicco': 'Kiko',
+  'Flying Tiger': 'Flaying Taygır',
+  'Samsonite': 'Semsonayt',
+  "Levi's": 'Livays',
+  'Calvin Klein': 'Kalvin Klayn',
+  'Guess': 'Ges',
+  'Lacoste': 'Lakost',
+  'Nautica': 'Notika',
+  'Calzedonia': 'Kalzedonya',
+  'Suwen': 'Suven',
+  'Cookshop': 'Kukşop',
+  'SuperStep': 'Süper Step',
+  'The Hunger': 'Dı Hangır',
+  'Blue Diamond': 'Blu Daymınd',
+  'Storks Diamond': 'Storks Daymınd',
+  'English Home': 'İngliş Hom',
+  'G Lingerie': 'Ci Lanjeri',
+  'So Chic': 'So Şik',
+  'Sunglass Hut': 'Sanglas Hat',
+  'Cacharel': 'Kaşarel'
+};
+
+function normalizeStorePronunciation(rawText) {
+  if (!rawText) return '';
+  let result = String(rawText);
+  for (const [brand, phonetic] of Object.entries(ttsPronunciationMap)) {
+    const escaped = brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = /^[A-Za-z0-9]+$/.test(brand)
+      ? new RegExp(`\\b${escaped}\\b`, 'gi')
+      : new RegExp(escaped, 'gi');
+    result = result.replace(regex, phonetic);
+  }
+  return result;
+}
+
+if (typeof window !== 'undefined') {
+  window.ttsPronunciationMap = ttsPronunciationMap;
+  window.normalizeStorePronunciation = normalizeStorePronunciation;
+}
+
 class NavigationEngine {
   constructor(mallData) {
     this.mallData = mallData;
@@ -34,6 +136,11 @@ class NavigationEngine {
     this.floors = mallData.floors;
     this.entrances = mallData.entrances;
     this.mPerUnit = mallData.meta?.mPerUnit || 0.48;
+    this.ttsPronunciationMap = ttsPronunciationMap;
+  }
+
+  normalizeStorePronunciation(rawText) {
+    return normalizeStorePronunciation(rawText);
   }
 
   /**
@@ -438,7 +545,7 @@ class NavigationEngine {
           landmark: pendingTurn.landmark,
           passingStores: allPassing,
           text,
-          voiceText: text
+          voiceText: this.normalizeStorePronunciation(text)
         };
         pendingTurn = null;
         return ins;
@@ -458,7 +565,7 @@ class NavigationEngine {
         meters: walkMeters,
         passingStores: picked,
         text,
-        voiceText: text
+        voiceText: this.normalizeStorePronunciation(text)
       };
     };
 
@@ -490,7 +597,7 @@ class NavigationEngine {
           toFloor: v.floor,
           passingStores: [],
           text: fcText,
-          voiceText: fcText
+          voiceText: this.normalizeStorePronunciation(fcText)
         });
 
         currentFloor = v.floor;
@@ -559,7 +666,7 @@ class NavigationEngine {
         floor: currentFloor,
         passingStores: [],
         text: startText,
-        voiceText: startText
+        voiceText: this.normalizeStorePronunciation(startText)
       });
     }
 
@@ -582,6 +689,40 @@ class NavigationEngine {
       enRouteStoreIds: Array.from(enRouteStoreIdSet),
       enRouteStoreNames
     };
+  }
+
+  /**
+   * Eğer speechSynthesis hala önceki cümleyi okuyorsa, hedefe varış anonsunu 400-500ms kuyruğa (queue) alır
+   */
+  queueArrivalSpeech(arrivalText, speakCallback, delayMs = 450) {
+    const normalized = this.normalizeStorePronunciation(arrivalText);
+    const waitMs = Math.max(400, Math.min(500, delayMs || 450));
+    const isBusy = typeof window !== 'undefined' && (
+      Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking) ||
+      (typeof performance !== 'undefined' && performance.now() < (window.speechMainBusyUntil || 0))
+    );
+    if (!isBusy) {
+      if (typeof speakCallback === 'function') speakCallback(normalized);
+      return null;
+    }
+    const pollSpeak = () => {
+      const stillBusy = typeof window !== 'undefined' && (
+        Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking) ||
+        (typeof performance !== 'undefined' && performance.now() < (window.speechMainBusyUntil || 0))
+      );
+      if (stillBusy) {
+        if (typeof window !== 'undefined') {
+          window.queuedArrivalTimer = setTimeout(pollSpeak, waitMs);
+        }
+        return;
+      }
+      if (typeof speakCallback === 'function') speakCallback(normalized);
+    };
+    const timerId = setTimeout(pollSpeak, waitMs);
+    if (typeof window !== 'undefined') {
+      window.queuedArrivalTimer = timerId;
+    }
+    return timerId;
   }
 
   /**
@@ -625,13 +766,19 @@ class NavigationEngine {
 
     const totalSegs = Math.max(1, nodes.length - 1);
     const progressPct = Math.min(100, Math.max(0, ((bestSegIdx + bestT) / totalSegs) * 100));
+    const resolvedFloor = floor !== undefined && floor !== null ? floor : nodes[bestSegIdx].floor;
     return {
       segIndex: bestSegIdx,
       segProgress: bestT,
       progressPct,
+      progressRatio: progressPct / 100,
       snappedX: bestX,
       snappedY: bestY,
+      x: bestX,
+      y: bestY,
+      floor: resolvedFloor,
       headingDeg: bestHeading,
+      heading: bestHeading,
       distanceFromRoute: bestDist
     };
   }
