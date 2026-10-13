@@ -183,6 +183,19 @@ class NavigationEngine {
     return /(saglik|sağlık|ilk yardim|ilk yardım|revir|mescit|bebek|wc|tuvalet|lavabo|danisma|danışma|atm|bankamatik|otopark|asansor|asansör|merdiven|acil cikis|acil çıkış|kiosk)/.test(norm);
   }
 
+  _getAmenityLabelEn(name) {
+    const norm = String(name || '').toLowerCase();
+    if (norm.includes('wc') || norm.includes('tuvalet') || norm.includes('lavabo')) return 'Restroom';
+    if (norm.includes('bebek')) return 'Baby Care Room';
+    if (norm.includes('mescit')) return 'Prayer Room';
+    if (norm.includes('danisma') || norm.includes('danışma') || norm.includes('info')) return 'Information Desk';
+    if (norm.includes('atm') || norm.includes('bankamatik')) return 'ATM';
+    if (norm.includes('saglik') || norm.includes('sağlık') || norm.includes('revir')) return 'Health & First Aid Room';
+    if (norm.includes('otopark') || norm.includes('vale')) return 'Parking Area';
+    if (norm.includes('asansor') || norm.includes('asansör')) return 'Elevator';
+    return name || 'Service Point';
+  }
+
   /**
    * İki düğüm arasında en kısa yolu Dijkstra ile hesaplar
    * @param {string} startNodeId 
@@ -231,7 +244,7 @@ class NavigationEngine {
           emoji: '',
           floor: nodeData.floor,
           text: sameNodeText,
-          voiceText: isEn ? sameNodeText : this.normalizeStorePronunciation(sameNodeText)
+          voiceText: sameNodeText
         }],
         mode,
         pathFilter
@@ -557,7 +570,6 @@ class NavigationEngine {
       const passedObjs = this._getPassingStoresForRange(pathNodes, startIdx, endIdx, excludeEndpoints);
       const passedNames = recordPassingStores(passedObjs);
       const picked = passedNames.slice(0, 3);
-      const distPhrase = isFinalStretch ? `son ${walkMeters} m` : `${walkMeters} m`;
 
       let storeClause = '';
       if (picked.length === 3) {
@@ -568,10 +580,6 @@ class NavigationEngine {
         storeClause = `${picked[0]} mağazasını geçerek `;
       }
 
-      const upcomingSuffix = upcomingTurn
-        ? `, ardından ${upcomingTurn.landmark ? upcomingTurn.landmark + ' hizasından ' : ''}${upcomingTurn.isRight ? 'sağa' : 'sola'} dönün.`
-        : '.';
-
       if (pendingTurn) {
         const dirWord = pendingTurn.isRight ? 'sağa' : 'sola';
         const dirCap = pendingTurn.isRight ? 'Sağa' : 'Sola';
@@ -579,17 +587,21 @@ class NavigationEngine {
           ? `${pendingTurn.landmark} hizasından ${dirWord} dönün`
           : `${dirCap} dönün`;
 
-        const trText = `${turnPrefix}; ${storeClause}${distPhrase} düz ilerleyin${upcomingSuffix}`;
+        const upcomingSuffix = upcomingTurn
+          ? `, ardından ${upcomingTurn.landmark ? upcomingTurn.landmark + ' hizasından ' : ''}${upcomingTurn.isRight ? 'sağa' : 'sola'} dönün.`
+          : '.';
+
+        const trText = `${turnPrefix}; ${storeClause}${walkMeters} metre düz ilerleyin${upcomingSuffix}`;
 
         const dirEn = pendingTurn.isRight ? 'right' : 'left';
         const turnPrefixEn = pendingTurn.landmark
-          ? `Turn ${dirEn} at ${pendingTurn.landmark}`
+          ? `Turn ${dirEn} near ${pendingTurn.landmark}`
           : `Turn ${dirEn}`;
         const passClauseEn = picked.length > 0 ? ` past ${picked.join(', ')}` : '';
         const upcomingSuffixEn = upcomingTurn
-          ? `, then turn ${upcomingTurn.isRight ? 'right' : 'left'}${upcomingTurn.landmark ? ' at ' + upcomingTurn.landmark : ''}.`
+          ? `, then turn ${upcomingTurn.isRight ? 'right' : 'left'}${upcomingTurn.landmark ? ' near ' + upcomingTurn.landmark : ''}.`
           : '.';
-        const enText = `${turnPrefixEn} and continue straight for ${walkMeters} m${passClauseEn}${upcomingSuffixEn}`;
+        const enText = `${turnPrefixEn}; walk straight for ${walkMeters} meters${passClauseEn}${upcomingSuffixEn}`;
 
         const text = isEn ? enText : trText;
         const allPassing = pendingTurn.landmark
@@ -607,27 +619,36 @@ class NavigationEngine {
           landmark: pendingTurn.landmark,
           passingStores: allPassing,
           text,
-          voiceText: isEn ? text : this.normalizeStorePronunciation(text)
+          voiceText: text
         };
         pendingTurn = null;
         return ins;
       }
 
-      const startPrefix = startIdx === 0 ? `${this._getFloorLabel(currentFloor)} üzerinde ` : '';
-      const rawBody = `${startPrefix}${storeClause}${distPhrase} düz ilerleyin${upcomingSuffix}`;
-      const trText = rawBody.charAt(0).toUpperCase() + rawBody.slice(1);
-
-      const passClauseEn = picked.length > 0 ? ` past ${picked.join(', ')}` : '';
+      let trText = '';
       let enText = '';
+
       if (upcomingTurn) {
+        const dirTr = upcomingTurn.isRight ? 'sağa' : 'sola';
+        const nearTr = upcomingTurn.landmark ? `${upcomingTurn.landmark} hizasından ` : '';
+        trText = `${storeClause}${walkMeters} metre düz ilerleyin, ardından ${nearTr}${dirTr} dönün.`;
+
         const dirEn = upcomingTurn.isRight ? 'right' : 'left';
-        const atEn = upcomingTurn.landmark ? ` at ${upcomingTurn.landmark}` : '';
-        enText = `Continue straight for ${walkMeters} m${passClauseEn}, then turn ${dirEn}${atEn}.`;
+        const nearEn = upcomingTurn.landmark ? ` near ${upcomingTurn.landmark}` : '';
+        const passClauseEn = picked.length > 0 ? ` past ${picked.join(', ')}` : '';
+        enText = `Walk straight for ${walkMeters} meters${passClauseEn}, then turn ${dirEn}${nearEn}.`;
       } else {
-        const floorPrefixEn = startIdx === 0 ? `On ${this._getFloorLabelEn(currentFloor)}, c` : 'C';
-        enText = `${floorPrefixEn}ontinue straight for ${walkMeters} m${passClauseEn}.`;
+        const passClauseEn = picked.length > 0 ? ` past ${picked.join(', ')}` : '';
+        if (isFinalStretch) {
+          trText = `${storeClause}son ${walkMeters} metre düz ilerleyin.`;
+          enText = `Walk straight for the final ${walkMeters} meters${passClauseEn}.`;
+        } else {
+          trText = `${storeClause}${walkMeters} metre düz ilerleyin.`;
+          enText = `Walk straight for ${walkMeters} meters${passClauseEn}.`;
+        }
       }
 
+      trText = trText.charAt(0).toUpperCase() + trText.slice(1);
       const text = isEn ? enText : trText;
 
       return {
@@ -640,7 +661,7 @@ class NavigationEngine {
         meters: walkMeters,
         passingStores: picked,
         text,
-        voiceText: isEn ? text : this.normalizeStorePronunciation(text)
+        voiceText: text
       };
     };
 
@@ -698,8 +719,12 @@ class NavigationEngine {
 
         const portalText = isElevator ? 'Asansörü kullanarak' : 'Yürüyen merdivenleri kullanarak';
         const dirText = finalFloor > startFloor ? 'çıkın' : 'inin';
-        const trFcText = `${portalText} ${this._getFloorLabel(finalFloor)} katına ${dirText}.`;
-        const enFcText = `Take the ${isElevator ? 'elevator' : 'escalators'} ${finalFloor > startFloor ? 'up' : 'down'} to ${this._getFloorLabelEn(finalFloor)}.`;
+        const rawLabel = this._getFloorLabel(finalFloor);
+        const baseFloor = rawLabel.replace(/\s*Kat$/i, '').trim();
+        const trFcText = `${portalText} ${baseFloor} katına ${dirText}.`;
+        const portalEn = isElevator ? 'elevator' : 'escalator';
+        const targetFloorEn = this._getFloorLabelEn(finalFloor);
+        const enFcText = `Take the ${portalEn} to ${targetFloorEn}.`;
         const fcText = isEn ? enFcText : trFcText;
 
         instructions.push({
@@ -715,7 +740,7 @@ class NavigationEngine {
           consolidatedFloors,
           passingStores: [],
           text: fcText,
-          voiceText: isEn ? fcText : this.normalizeStorePronunciation(fcText)
+          voiceText: fcText
         });
 
         currentFloor = finalFloor;
@@ -788,7 +813,7 @@ class NavigationEngine {
         floor: currentFloor,
         passingStores: [],
         text: startText,
-        voiceText: isEn ? startText : this.normalizeStorePronunciation(startText)
+        voiceText: startText
       });
     }
 
@@ -798,9 +823,10 @@ class NavigationEngine {
     let arrivalVoiceText;
 
     if (isAmenityDest) {
-      const amName = cleanTargetName || (isEn ? 'Service Point' : 'Hizmet');
-      arrivalShortText = isEn ? `You are at ${amName}.` : `${amName} noktasındasınız.`;
-      arrivalVoiceText = isEn ? `You are at ${amName}.` : this.normalizeStorePronunciation(`${amName} noktasındasınız.`);
+      const amName = cleanTargetName || (isEn ? 'Service Point' : 'Hizmet Noktası');
+      const amNameEn = this._getAmenityLabelEn(cleanTargetName);
+      arrivalShortText = isEn ? `You have arrived at ${amNameEn}.` : `${amName} noktasındasınız.`;
+      arrivalVoiceText = arrivalShortText;
     } else {
       arrivalShortText = isEn
         ? (cleanTargetName ? `You have arrived at ${cleanTargetName}.` : 'You have arrived at your destination.')
@@ -808,7 +834,7 @@ class NavigationEngine {
       arrivalVoiceText = isEn
         ? (cleanTargetName ? `You have arrived at ${cleanTargetName}.` : 'You have arrived at your destination.')
         : (cleanTargetName
-          ? this.normalizeStorePronunciation(`Hedefe ulaştınız! ${cleanTargetName} mağazası önündesiniz. Keyifli alışverişler dileriz.`)
+          ? `Hedefe ulaştınız! ${cleanTargetName} mağazası önündesiniz. Keyifli alışverişler dileriz.`
           : 'Hedefinize ulaştınız. Keyifli alışverişler dileriz.');
     }
 
@@ -839,14 +865,14 @@ class NavigationEngine {
    */
   queueArrivalSpeech(arrivalText, speakCallback, delayMs = 450) {
     const isEn = this._isEnglishMode();
-    const normalized = isEn ? String(arrivalText || '') : this.normalizeStorePronunciation(arrivalText);
+    const cleanText = String(arrivalText || '');
     const waitMs = Math.max(400, Math.min(500, delayMs || 450));
     const isBusy = typeof window !== 'undefined' && (
       Boolean('speechSynthesis' in window && window.speechSynthesis && window.speechSynthesis.speaking) ||
       (typeof performance !== 'undefined' && performance.now() < (window.speechMainBusyUntil || 0))
     );
     if (!isBusy) {
-      if (typeof speakCallback === 'function') speakCallback(normalized);
+      if (typeof speakCallback === 'function') speakCallback(cleanText);
       return null;
     }
     const pollSpeak = () => {
@@ -860,7 +886,7 @@ class NavigationEngine {
         }
         return;
       }
-      if (typeof speakCallback === 'function') speakCallback(normalized);
+      if (typeof speakCallback === 'function') speakCallback(cleanText);
     };
     const timerId = setTimeout(pollSpeak, waitMs);
     if (typeof window !== 'undefined') {

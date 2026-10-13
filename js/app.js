@@ -618,11 +618,25 @@ function setLanguage(lang) {
   if (lastCalculatedRoute && navEngine && typeof navEngine._generateInstructions === 'function') {
     const nodes = lastCalculatedRoute.pathNodes || lastCalculatedRoute.path || [];
     if (nodes.length > 0) {
-      lastCalculatedRoute.instructions = navEngine._generateInstructions(
+      const startId = selectedStartStore?.nav_node || nodes[0]?.id || null;
+      const targetId = selectedTargetStore?.nav_node || nodes[nodes.length - 1]?.id || null;
+      const genRes = navEngine._generateInstructions(
         nodes,
-        activeRouteMode,
-        lastCalculatedRoute.enRouteStoreNames || []
+        startId,
+        targetId
       );
+      const newInstructions = Array.isArray(genRes) ? genRes : (genRes?.instructions || []);
+      lastCalculatedRoute.instructions = newInstructions;
+      if (genRes?.enRouteStoreIds) lastCalculatedRoute.enRouteStoreIds = genRes.enRouteStoreIds;
+      if (genRes?.enRouteStoreNames) lastCalculatedRoute.enRouteStoreNames = genRes.enRouteStoreNames;
+
+      if (selectedTargetStore && typeof updateHeaderNavSummary === 'function') {
+        updateHeaderNavSummary(selectedTargetStore, lastCalculatedRoute);
+      }
+      if (typeof renderHudStepsList === 'function') {
+        renderHudStepsList(lastCalculatedRoute, selectedTargetStore);
+      }
+
       if (typeof window.resetVoiceStepTracker === 'function') {
         window.resetVoiceStepTracker();
       }
@@ -1094,10 +1108,13 @@ function initApp() {
       const isAmenity = isServiceOrAmenityItem(arrMsgOrTarget);
       const destName = stripUiEmojis(arrMsgOrTarget.name || arrMsgOrTarget.short_name || (isEn ? 'Destination' : 'Hedef Nokta'));
       if (isAmenity) {
-        arrMsg = isEn ? `You are at ${destName}.` : `${destName} noktasındasınız.`;
+        const amEn = (navEngine && typeof navEngine._getAmenityLabelEn === 'function')
+          ? navEngine._getAmenityLabelEn(destName)
+          : destName;
+        arrMsg = isEn ? `You have arrived at ${amEn}.` : `${destName} noktasındasınız.`;
       } else {
         arrMsg = isEn
-          ? `You have arrived at ${destName}. Enjoy your shopping.`
+          ? `You have arrived at ${destName}.`
           : `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
       }
     } else {
@@ -1403,16 +1420,19 @@ function initApp() {
       let arrMsg = '';
       if (isAmenity) {
         // Donatı / Hizmet noktası için: ASLA 'mağazası önündesiniz' ve 'Keyifli alışverişler dileriz' deme!
-        arrMsg = isEn ? `You are at ${destName}.` : `${destName} noktasındasınız.`;
+        const amEn = (navEngine && typeof navEngine._getAmenityLabelEn === 'function')
+          ? navEngine._getAmenityLabelEn(destName)
+          : destName;
+        arrMsg = isEn ? `You have arrived at ${amEn}.` : `${destName} noktasındasınız.`;
         textEl.textContent = arrMsg;
         subEl.textContent = isEn
           ? 'Select a new destination or reset location'
           : 'Yeni hedef seçebilir veya konumu sıfırlayabilirsiniz';
       } else {
         arrMsg = isEn
-          ? `You have arrived at ${destName}. Enjoy your shopping.`
+          ? `You have arrived at ${destName}.`
           : `Hedefe ulaştınız! ${destName} mağazası önündesiniz. Keyifli alışverişler dileriz.`;
-        textEl.textContent = isEn ? `You have arrived at ${destName}!` : `${destName} mağazası önündesiniz.`;
+        textEl.textContent = isEn ? `You have arrived at ${destName}.` : `${destName} önündesiniz.`;
         subEl.textContent = isEn
           ? 'Enjoy your shopping • Select a new destination or reset'
           : 'Keyifli alışverişler dileriz • Yeni hedef seçebilirsiniz';
@@ -1820,12 +1840,76 @@ function updateHeaderNavSummary(targetStore, routeResult) {
   const titleEl = document.getElementById('current-floor-title');
   const subEl = document.getElementById('current-floor-sub');
   if (!titleEl || !subEl || !targetStore || !routeResult) return;
+  const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
   const flInfo = mallData?.floors[targetStore.floor];
-  const floorLabel = flInfo ? flInfo.label : (targetStore.floor + '. Kat');
-  titleEl.textContent = `${targetStore.name} • ${floorLabel}`;
-  subEl.textContent = `${routeResult.totalDistance} m • ~${routeResult.estimatedMinutes} dk`;
+  let floorLabel = flInfo ? flInfo.label : (targetStore.floor + '. Kat');
+  if (isEn && navEngine && typeof navEngine._getFloorLabelEn === 'function') {
+    floorLabel = navEngine._getFloorLabelEn(targetStore.floor);
+  }
+  const cleanTargetName = stripUiEmojis(targetStore.name);
+  const timeSuffix = isEn ? 'min' : 'dk';
+  titleEl.textContent = `${cleanTargetName} • ${floorLabel}`;
+  subEl.textContent = `${routeResult.totalDistance} m • ~${routeResult.estimatedMinutes} ${timeSuffix}`;
 }
 window.updateHeaderNavSummary = updateHeaderNavSummary;
+
+function renderHudStepsList(result, targetStore) {
+  const hudStepsList = document.getElementById('hud-steps-list');
+  const hudStepsCount = document.getElementById('hud-steps-count');
+  if (!result || !result.instructions) return;
+  const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
+  if (hudStepsCount) {
+    hudStepsCount.textContent = `${result.instructions.length} ${isEn ? 'Steps' : 'Adım'}`;
+  }
+  if (!hudStepsList) return;
+
+  const pmrHeaderHtml = activeRouteMode === 'elevator'
+    ? `<div class="p-2 rounded-xl bg-sky-500/12 border border-sky-500/35 text-sky-800 dark:text-sky-200 text-[10.5px] font-bold flex items-center gap-1.5">
+         ${getMonoIconSvg('info', 14)}
+         <span>${isEn ? 'Accessible Route for Reduced Mobility (Wide Corridors + Elevators)' : 'Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Güzergah (Geniş Koridor + Panoramik Asansör)'}</span>
+       </div>`
+    : '';
+
+  const storeObj = targetStore || selectedTargetStore;
+  let storeServiceGuideHtml = '';
+  if (storeObj) {
+    const targetCat = storeObj.category_name || storeObj.category || (isEn ? 'Service Point' : 'Hizmet Noktası');
+    const targetFloorName = isEn && navEngine && typeof navEngine._getFloorLabelEn === 'function'
+      ? navEngine._getFloorLabelEn(storeObj.floor)
+      : (mallData?.floors[storeObj.floor]?.label || (storeObj.floor + '. Kat'));
+    const openStatus = isEn ? 'Open (10:00-22:00)' : 'Açık (10:00-22:00)';
+    const timeSuffix = isEn ? 'min' : 'dk';
+    storeServiceGuideHtml = `
+      <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-slate-800 dark:text-slate-100 text-[10.5px] flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <div class="font-extrabold truncate flex items-center gap-1">${getMonoIconSvg('navigation', 13)}<span>${stripUiEmojis(storeObj.name)}</span></div>
+          <div class="text-[9.5px] text-slate-500 dark:text-slate-400 truncate">${targetFloorName} • ${targetCat} • ${openStatus}</div>
+        </div>
+        <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9.5px] font-black shrink-0">${result.totalDistance}m • ~${result.estimatedMinutes}${timeSuffix}</span>
+      </div>
+    `;
+  }
+
+  hudStepsList.innerHTML = pmrHeaderHtml + storeServiceGuideHtml + result.instructions.map(ins => {
+    const passingHtml = (ins.passingStores && ins.passingStores.length > 0)
+      ? `<div class="mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold"><span>${ins.passingStores.join(' ➔ ')}</span></div>`
+      : '';
+    const flLabel = isEn && navEngine && typeof navEngine._getFloorLabelEn === 'function'
+      ? navEngine._getFloorLabelEn(ins.floor)
+      : (mallData?.floors[ins.floor]?.label || ins.floor + '. Kat');
+    return `
+      <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+        <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
+        <div>
+          <div class="font-bold text-slate-800 dark:text-slate-200">${ins.text}</div>
+          ${passingHtml}
+          <div class="text-[10px] text-slate-400">${flLabel}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+window.renderHudStepsList = renderHudStepsList;
 
 // 2. Kat Değişimi & UI Güncellemesi
 function updateFloorUI(floorNum) {
@@ -3836,43 +3920,7 @@ function calculateAndDisplayRoute() {
   if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
 
   // Adım Adım Detay Listesi (Çekmece) - Mağaza/Hizmet Bilgisi & Engelsiz Rota Rozeti ile
-  const hudStepsList = document.getElementById('hud-steps-list');
-  const hudStepsCount = document.getElementById('hud-steps-count');
-  if (hudStepsCount) hudStepsCount.textContent = `${result.instructions?.length || 0} Adım`;
-  if (hudStepsList && result.instructions) {
-    const pmrHeaderHtml = activeRouteMode === 'elevator'
-      ? `<div class="p-2 rounded-xl bg-sky-500/12 border border-sky-500/35 text-sky-800 dark:text-sky-200 text-[10.5px] font-bold flex items-center gap-1.5">
-           ${getMonoIconSvg('info', 14)}
-           <span>Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Güzergah (Geniş Koridor + Panoramik Asansör)</span>
-         </div>`
-      : '';
-    const targetCat = selectedTargetStore.category_name || selectedTargetStore.category || 'Hizmet Noktası';
-    const targetFloorName = mallData?.floors[selectedTargetStore.floor]?.label || (selectedTargetStore.floor + '. Kat');
-    const storeServiceGuideHtml = `
-      <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-slate-800 dark:text-slate-100 text-[10.5px] flex items-center justify-between gap-2">
-        <div class="min-w-0">
-          <div class="font-extrabold truncate flex items-center gap-1">${getMonoIconSvg('navigation', 13)}<span>${stripUiEmojis(selectedTargetStore.name)}</span></div>
-          <div class="text-[9.5px] text-slate-500 dark:text-slate-400 truncate">${targetFloorName} • ${targetCat} • Açık (10:00-22:00)</div>
-        </div>
-        <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9.5px] font-black shrink-0">${result.totalDistance}m • ~${result.estimatedMinutes}dk</span>
-      </div>
-    `;
-    hudStepsList.innerHTML = pmrHeaderHtml + storeServiceGuideHtml + result.instructions.map(ins => {
-      const passingHtml = (ins.passingStores && ins.passingStores.length > 0)
-        ? `<div class="mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold"><span>${ins.passingStores.join(' ➔ ')}</span></div>`
-        : '';
-      return `
-      <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
-        <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
-        <div>
-          <div class="font-bold text-slate-800 dark:text-slate-200">${ins.text}</div>
-          ${passingHtml}
-          <div class="text-[10px] text-slate-400">${mallData.floors[ins.floor]?.label || ins.floor + '. Kat'}</div>
-        </div>
-      </div>
-    `;
-    }).join('');
-  }
+  renderHudStepsList(result, selectedTargetStore);
 
   // Yeni rota çizilirken önceki tamamlanmış rota (.route-completed) durumunu ve GPS yürüyüşünü sıfırla
   window.isRouteCompletedState = false;
