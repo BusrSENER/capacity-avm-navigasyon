@@ -51,7 +51,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Custom CSS (Cache-Busted) -->
-  <link rel="stylesheet" href="css/app.css?v=20261014_v12">
+  <link rel="stylesheet" href="css/app.css?v=20261014_v13">
 </head>
 <body class="h-screen w-screen overflow-hidden select-none bg-[#090d16] text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -240,8 +240,8 @@
           <div id="search-autocomplete-list" class="hidden absolute top-0 left-0 right-0 max-h-60 sm:max-h-72 overflow-y-auto bg-white/98 dark:bg-slate-900/98 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 divide-y divide-slate-100 dark:divide-slate-800"></div>
         </div>
 
-        <!-- GÖRÜNÜM MODU SEÇİCİ: [2B Plan] | [3B Maket] (Cevahir & Situm Minimal Mimarisi) -->
-        <div id="view-mode-switcher-bar" class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 mt-0.5">
+        <!-- GÖRÜNÜM MODU SEÇİCİ: [2B Plan] | [3B Maket] (Varsayılanda Harita İçi 3D Butonu Kullanılır) -->
+        <div id="view-mode-switcher-bar" class="hidden grid grid-cols-2 gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 mt-0.5">
           <button type="button" id="btn-mode-2d" class="view-mode-btn py-1.5 px-1.5 rounded-lg text-[10.5px] font-extrabold flex items-center justify-center gap-1 transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-sm" data-view-mode="2d" title="2B Kuşbakışı Kat Planı">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
             <span class="truncate">2B Plan</span>
@@ -252,8 +252,8 @@
           </button>
         </div>
 
-        <!-- Rota Tercih Sekmeleri: [ Yürüyen Merdiven ] ve [ Engelsiz / Asansör ] -->
-        <div class="flex items-center gap-1.5 pt-0.5">
+        <!-- Rota Tercih Sekmeleri: [ Yürüyen Merdiven ] ve [ Engelsiz / Asansör ] (Sadece Rota Sırasında Gösterilir) -->
+        <div id="route-pref-tabs-row" class="hidden flex items-center gap-1.5 pt-0.5">
           <button id="tab-pref-escalator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-red-600 bg-red-600 text-white shadow-xs cursor-pointer" data-mode="escalator" title="Yürüyen Merdiven ve Merdivenleri Tercih Et">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M4 18h4l8-8h4"/><path d="M14 6h6v6"/></svg>
             <span>Yürüyen Merdiven</span>
@@ -274,8 +274,8 @@
         </div>
       </div>
 
-      <!-- Hızlı Başlangıç, GPS Otomatik Konum & Etkinlik Takvimi Çipleri (Sol/Sağ Kaydırma Okları + Mouse Wheel & Sürükleme Destekli) -->
-      <div class="relative flex items-center gap-1 mb-1.5 shrink-0 group/scroll">
+      <!-- Hızlı Başlangıç, GPS Otomatik Konum & Etkinlik Takvimi Çipleri (Varsayılanda Sade Görünüm İçin Gizli) -->
+      <div id="quick-start-chips-wrapper" class="hidden relative flex items-center gap-1 mb-1.5 shrink-0 group/scroll">
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="quick-start-chips-row" data-scroll-dir="-1" title="Sola Kaydır" aria-label="Sola Kaydır">‹</button>
         <div id="quick-start-chips-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 select-none">
           <button id="btn-gps-auto-locate" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition-all shadow-sm shadow-sky-600/25 cursor-pointer active:scale-95" title="GPS ve İç Mekan Konumlandırma (IPS) ile Konumunuzu Otomatik Algıla">
@@ -348,8 +348,8 @@
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="category-pills-row" data-scroll-dir="1" title="Kategorileri Sağa Kaydır" aria-label="Sağa Kaydır">›</button>
       </div>
 
-      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: Asansör, Bebek Odası, WC, Acil Çıkış, Otopark, Etkinlikler vb. (Sol/Sağ Kaydırma Okları ile) -->
-      <div class="relative flex items-center gap-1 shrink-0">
+      <!-- Hızlı İhtiyaçlar (Amenities) Yatay Çipleri: Asansör, Bebek Odası, WC, Acil Çıkış, Otopark, Etkinlikler vb. (Varsayılanda Sade Görünüm İçin Gizli) -->
+      <div id="amenity-chips-wrapper" class="hidden relative flex items-center gap-1 shrink-0">
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="amenity-chips-row" data-scroll-dir="-1" title="Hizmetleri Sola Kaydır" aria-label="Sola Kaydır">‹</button>
         <div id="amenity-chips-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 select-none">
           <button class="amenity-pill px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-500/15 hover:bg-sky-500/25 dark:bg-sky-500/20 text-sky-800 dark:text-sky-200 border border-sky-500/30 shrink-0 flex items-center gap-1 transition-all cursor-pointer" data-amenity="elevator" title="Kattaki Tüm Asansörleri Haritada İşaretle ve Göster">
@@ -541,6 +541,13 @@
         <span class="font-semibold text-slate-700 dark:text-slate-300">10:00 - 22:00</span>
       </div>
     </aside>
+
+    <!-- MASAÜSTÜ SOL PANEL AÇILIR/KAPANIR KULAKÇIK BUTONU -->
+    <button id="desktop-sidebar-toggle" class="hidden md:flex items-center justify-center cursor-pointer select-none" title="Paneli Gizle / Göster" aria-label="Paneli Gizle / Göster">
+      <svg class="toggle-icon-arrow transition-transform duration-300" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
 
     <!-- SAĞ HARİTA ALANI (VIEWPORT - 100% TAM EKRAN) -->
     <main id="main-map-area" class="absolute inset-0 w-full h-full overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] transition-colors duration-200">
@@ -1178,13 +1185,13 @@
   <!-- TOAST BİLDİRİM KONTEYNERİ (Mobilde Alt Çekmecenin Üzerinde, Masaüstünde Sağ Altta) -->
   <div id="toast-container" class="fixed z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
 
-  <!-- JavaScript Modülleri (Cache-Busted v12 - Cevahir & Situm Minimal Mimarisi) -->
+  <!-- JavaScript Modülleri (Cache-Busted v13 - Cevahir & Situm Minimal Mimarisi) -->
   <script src="js/logos.js?v=20261013_v10"></script>
   <script src="js/qrcode.js?v=20261013_v10"></script>
-  <script src="js/parking-service.js?v=20261014_v12"></script>
-  <script src="js/navigation.js?v=20261014_v12"></script>
-  <script src="js/simulator.js?v=20261014_v12"></script>
-  <script src="js/map.js?v=20261014_v12"></script>
-  <script src="js/app.js?v=20261014_v12"></script>
+  <script src="js/parking-service.js?v=20261014_v13"></script>
+  <script src="js/navigation.js?v=20261014_v13"></script>
+  <script src="js/simulator.js?v=20261014_v13"></script>
+  <script src="js/map.js?v=20261014_v13"></script>
+  <script src="js/app.js?v=20261014_v13"></script>
 </body>
 </html>

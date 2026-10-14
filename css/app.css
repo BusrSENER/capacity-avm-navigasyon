@@ -161,7 +161,6 @@ html.dark .route__flow {
   pointer-events: none;
   z-index: 45;
   transition: none;
-  will-change: transform;
 }
 
 .cart-beacon {
@@ -195,12 +194,25 @@ html.dark .cart-beacon {
 .cart-rotator-wrapper {
   transform-origin: 0 0;
   transition: transform 0.12s ease-out;
-  will-change: transform;
 }
 
 .bag__shadow,
 .cart__shadow {
   fill: rgba(0, 0, 0, 0.35);
+}
+
+/* Vektörel Harita ve SVG Katmanlarında Yüksek Hassasiyet ve Bulanıklığı Önleme */
+#map-viewport,
+#map-rotator,
+#svg-layer svg,
+#route-svg {
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+/* Rota veya Simülasyon Aktifken Çift Konum Gösterimini Önle (Mavi Nokta ve Etiket Gizlenir) */
+body.has-active-route #live-user-gps-dot {
+  display: none !important;
 }
 
 .bag-svg-el {
@@ -216,52 +228,19 @@ html.dark .cart-beacon {
   cursor: pointer;
 }
 
-/* SVG Harita Zeminindeki Standart Mağaza İsim Metinleri (Net & Okunabilir) */
-.store-polygon text {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
-  font-size: 9px !important;
-  font-weight: 700 !important;
-  fill: #1e293b !important;
-  stroke: none !important;
-  stroke-width: 0 !important;
-  text-anchor: middle !important;
-  dominant-baseline: central !important;
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  user-select: none !important;
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  transition: fill 0.2s ease;
-}
-
-/* Yakın planda HTML .logo-tile-marker aktif olduğundan SVG içi gömülü logoları gizleyerek çift logo görünümünü önle */
-#map-canvas-container:not(.lod-far) #store-logos-svg-layer {
-  display: none !important;
-}
-
-html.dark .store-polygon text {
-  fill: #f1f5f9 !important;
-}
-
-/* Yalnızca üzerinde büyük bağımsız HTML rozet/logo bulunan Anchor Mağazaların SVG metinlerini gizle */
-.store-polygon.is-anchor text,
-.store-polygon[data-is-anchor="true"] text,
-#room_4_39 text, [data-id="store_4_39"] text,
-#room_4_42 text, [data-id="store_4_42"] text,
-#room_4_23 text, [data-id="store_4_23"] text,
-#room_4_3 text,  [data-id="store_4_3"] text,
-#room_4_24 text, [data-id="store_4_24"] text,
-#room_4_8 text,  [data-id="store_4_8"] text,
-#room_3_28 text, [data-id="store_3_28"] text,
-#room_3_32 text, [data-id="store_3_32"] text,
-#room_5_45 text, [data-id="store_5_45"] text,
-#room_6_4 text,  [data-id="store_6_4"] text,
-#room_6_19 text, [data-id="store_6_19"] text {
+/* SVG Harita Zeminindeki Ham Mağaza İsim Metinleri:
+   Haritada HTML logo-tile ve dinamik kartlar kullanıldığından alttaki bulanık çift SVG metinler gizlenir */
+.store-polygon text,
+.store-polygon tspan {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+}
+
+/* Yakın planda HTML .logo-tile-marker aktif olduğundan SVG içi gömülü logoları gizleyerek çift logo görünümünü önle */
+#map-canvas-container #store-logos-svg-layer {
+  display: none !important;
 }
 
 /* Light Mode: Temiz, aydınlık, ayırt edici pastel tonlar */
@@ -608,7 +587,7 @@ html.dark .store-polygon.no-logo text {
 /* Servis İkonu Rozetleri */
 .amenity-marker-wrapper {
   position: absolute;
-  transform: translate(-50%, -50%) rotate(var(--billboard-rot, 0deg));
+  transform: translate(-50%, -50%) scale(var(--amenity-scale, 1)) rotate(var(--billboard-rot, 0deg));
   transform-origin: center center;
   display: flex;
   flex-direction: column;
@@ -620,7 +599,7 @@ html.dark .store-polygon.no-logo text {
 }
 
 .amenity-marker-wrapper:hover {
-  transform: translate(-50%, -50%) scale(1.2) rotate(var(--billboard-rot, 0deg));
+  transform: translate(-50%, -50%) scale(calc(var(--amenity-scale, 1) * 1.2)) rotate(var(--billboard-rot, 0deg));
   z-index: 60 !important;
 }
 
@@ -673,16 +652,16 @@ html.dark .store-polygon.no-logo text {
 }
 
 .amenity-icon-circle {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: #ffffff;
   border: 1.5px solid #0284c7;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 11px;
   transition: all 0.2s ease;
 }
 
@@ -830,8 +809,11 @@ body.has-active-route #route-panel {
     /* Collapsed Height: 58px (Maksimum ferah viewport, sadece 58px ince arama/yeni rota barı) */
     transform: translateY(calc(75vh - 58px)) !important;
     transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
-    will-change: transform;
     overflow: hidden !important;
+  }
+
+  #desktop-sidebar-toggle {
+    display: none !important;
   }
 
   /* Çekmece Genişletildiğinde (Expanded State: 75vh) */
@@ -862,22 +844,38 @@ body.has-active-route #route-panel {
   }
 
   #sidebar-panel.is-expanded #dual-search-container,
-  #sidebar-panel.is-expanded #quick-start-chips-row,
-  #sidebar-panel.is-expanded #category-pills-row,
-  #sidebar-panel.is-expanded #amenity-chips-row,
-  #sidebar-panel.is-expanded #sidebar-tabs-container {
+  #sidebar-panel.is-expanded #category-pills-row {
     display: flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
   }
 
-  #sidebar-panel.is-expanded #sidebar-store-grid {
+  #sidebar-panel.is-expanded #sidebar-tabs-container:not(.hidden) {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  #sidebar-panel.is-expanded #sidebar-store-grid:not(.hidden) {
     display: grid !important;
     opacity: 1 !important;
     pointer-events: auto !important;
   }
 
-  #sidebar-panel.is-expanded #sidebar-poi-detail {
+  /* Mağaza Detay veya Rota Aktifken Store Grid ve Sekmeleri KESİNLİKLE Gizle */
+  body.has-poi-open #sidebar-store-grid,
+  body.has-poi-open #sidebar-tabs-container,
+  body.has-active-route #sidebar-store-grid,
+  body.has-active-route #sidebar-tabs-container,
+  #sidebar-panel .hidden,
+  #sidebar-panel [hidden] {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  #sidebar-panel.is-expanded #sidebar-poi-detail:not(.hidden) {
+    display: flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
   }
@@ -1203,19 +1201,62 @@ body.has-active-route #route-panel {
     border-bottom: none !important;
     border-left: none !important;
     z-index: 9000 !important;
-    transform: none !important;
+    transform: translateX(0) !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-shadow: 10px 0 35px rgba(0, 0, 0, 0.06) !important;
     overflow-y: auto !important;
   }
 
   body.sidebar-collapsed #sidebar-panel {
-    transform: translateX(-105%) !important;
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    padding: 0 !important;
-    opacity: 0 !important;
+    transform: translateX(-380px) !important;
+    box-shadow: none !important;
     pointer-events: none !important;
+  }
+
+  /* Masaüstü Sol Panel Açılır/Kapanır Kulakçık Butonu */
+  #desktop-sidebar-toggle {
+    display: flex !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 380px !important;
+    transform: translateY(-50%) !important;
+    width: 24px !important;
+    height: 54px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    border-left: none !important;
+    border-radius: 0 12px 12px 0 !important;
+    box-shadow: 4px 0 14px rgba(0, 0, 0, 0.08) !important;
+    z-index: 9005 !important;
+    cursor: pointer !important;
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #64748b !important;
+  }
+
+  html.dark #desktop-sidebar-toggle {
+    background: #1e293b !important;
+    border-color: rgba(51, 65, 85, 0.9) !important;
+    color: #94a3b8 !important;
+  }
+
+  #desktop-sidebar-toggle:hover {
+    color: #0f172a !important;
+    background: #f8fafc !important;
+  }
+
+  html.dark #desktop-sidebar-toggle:hover {
+    color: #f8fafc !important;
+    background: #334155 !important;
+  }
+
+  body.sidebar-collapsed #desktop-sidebar-toggle {
+    left: 0 !important;
+  }
+
+  body.sidebar-collapsed #desktop-sidebar-toggle .toggle-icon-arrow {
+    transform: rotate(180deg) !important;
   }
 
   #main-map-area {
@@ -1251,16 +1292,18 @@ body.has-active-route #route-panel {
     z-index: 35 !important;
   }
 
-  #floor-header-card {
-    top: 18px !important;
-    left: 400px !important;
-    margin: 0 !important;
-    max-width: min(450px, calc(100% - 500px)) !important;
-    transition: left 300ms ease !important;
+  /* Masaüstünde sol panel açıkken harita içi kat HUD kartını gizle; aynı bilgi tekrarlanmasın */
+  body:not(.sidebar-collapsed) #floor-header-card {
+    display: none !important;
   }
 
   body.sidebar-collapsed #floor-header-card {
+    display: block !important;
     left: 4.5rem !important;
+    top: 18px !important;
+    margin: 0 !important;
+    max-width: min(450px, calc(100% - 500px)) !important;
+    transition: left 300ms ease !important;
   }
 
   #toast-container {

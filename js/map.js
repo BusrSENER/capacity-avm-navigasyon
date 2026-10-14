@@ -239,9 +239,9 @@ class MallMap {
 
   initMap() {
     this.container.innerHTML = `
-      <div id="map-viewport" class="select-none" style="position: absolute; width: ${this.vbWidth}px; height: ${this.vbHeight}px; transform-origin: 0 0; will-change: transform;">
+      <div id="map-viewport" class="select-none" style="position: absolute; width: ${this.vbWidth}px; height: ${this.vbHeight}px; transform-origin: 0 0;">
         <!-- Rotation Container (Merkezden 700x425 İki Parmakla Döndürme & Billboard Kökü) -->
-        <div id="map-rotator" style="position: absolute; width: ${this.vbWidth}px; height: ${this.vbHeight}px; transform-origin: ${this.vbWidth / 2}px ${this.vbHeight / 2}px; will-change: transform;">
+        <div id="map-rotator" style="position: absolute; width: ${this.vbWidth}px; height: ${this.vbHeight}px; transform-origin: ${this.vbWidth / 2}px ${this.vbHeight / 2}px;">
           <!-- SVG Floor Layer -->
           <div id="svg-layer" class="absolute inset-0 pointer-events-auto" style="width: ${this.vbWidth}px; height: ${this.vbHeight}px; z-index: 5;"></div>
           
@@ -900,7 +900,8 @@ class MallMap {
       this.flyToAnimId = null;
     }
     const rect = this.container.getBoundingClientRect();
-    const cx = rect.width / 2;
+    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const cx = paddingLeft + (rect.width - paddingLeft) / 2;
     const cy = (rect.height / 2) - offsetY;
 
     const startX = this.panX;
@@ -958,7 +959,8 @@ class MallMap {
     const rect = this.container.getBoundingClientRect();
     const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
     const isMobile = window.innerWidth <= 768 && !isLandscape;
-    const availWidth = rect.width * (isLandscape ? 0.82 : (isMobile ? 0.78 : 0.65));
+    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const availWidth = (rect.width - paddingLeft) * (isLandscape ? 0.82 : (isMobile ? 0.78 : 0.80));
     const availHeight = rect.height * (isLandscape ? 0.72 : (isMobile ? 0.44 : 0.62));
 
     const fitScale = Math.min(this.maxScale, Math.max(this.minScale, Math.min(availWidth / spanX, availHeight / spanY)));
@@ -985,7 +987,10 @@ class MallMap {
     const isMobile = window.innerWidth <= 768 && !isLandscape;
     const offsetY = isLandscape ? 0 : (isMobile ? Math.min(80, rect.height * 0.12) : 0);
 
-    const targetPanX = (rect.width / 2) - (x * this.scale);
+    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const cx = paddingLeft + (rect.width - paddingLeft) / 2;
+
+    const targetPanX = cx - (x * this.scale);
     const targetPanY = ((rect.height / 2) - offsetY) - (y * this.scale);
 
     if (lerp) {
@@ -1013,11 +1018,13 @@ class MallMap {
     const cH = rect.height || this.containerHeight;
     const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
     const isMobile = window.innerWidth <= 768 && !isLandscape;
+    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const visibleWidth = Math.max(200, cW - paddingLeft);
 
-    const scaleX = cW / this.vbWidth;
+    const scaleX = visibleWidth / this.vbWidth;
     const scaleY = cH / this.vbHeight;
     this.scale = Math.max(this.minScale, Math.min(scaleX, scaleY) * (isLandscape ? 0.92 : (isMobile ? 0.90 : 0.94)));
-    this.panX = (cW - this.vbWidth * this.scale) / 2;
+    this.panX = paddingLeft + (visibleWidth - this.vbWidth * this.scale) / 2;
     const mobileOffset = isMobile ? -35 : 0;
     this.panY = ((cH - this.vbHeight * this.scale) / 2) + mobileOffset;
     this.applyTransform();
@@ -1052,6 +1059,8 @@ class MallMap {
       this.container.style.setProperty('--marker-scale', clampedScale.toFixed(3));
       const invScale = (1 / Math.max(1, this.scale * 0.72)).toFixed(3);
       this.container.style.setProperty('--label-inv-scale', invScale);
+      const amenityScale = (1 / Math.sqrt(Math.max(0.65, this.scale))).toFixed(3);
+      this.container.style.setProperty('--amenity-scale', amenityScale);
 
       // Kademeli Zoom Rozet Gösterimi (LOD):
       // Zoom < 1.2: Yalnızca ana/büyük mağazalar (is_anchor: true) ile hedef/başlangıç görünür.

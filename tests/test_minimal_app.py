@@ -97,9 +97,30 @@ async def run_tests():
             print("PASS: Bottom sheet collapses when map canvas is tapped.")
             
             # Check 6: Select Store & Sleek Cevahir-Style POI Card
+            # Check 6: Select Store & Sleek Cevahir-Style POI Card
             await page_mobile.evaluate("window.selectStore(mallData.floors[4].stores[0])")
             await page_mobile.wait_for_timeout(400)
             
+            # Check Mobile Collision Prevention: sidebar-store-grid MUST be hidden when POI detail is open!
+            is_grid_visible = await page_mobile.evaluate("""() => {
+                const grid = document.getElementById('sidebar-store-grid');
+                if (!grid) return false;
+                const style = window.getComputedStyle(grid);
+                return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+            }""")
+            assert not is_grid_visible, "FAIL: #sidebar-store-grid is still visible when POI detail is open! Collision detected!"
+            print("PASS: #sidebar-store-grid is strictly hidden (display: none) when POI detail is open.")
+
+            # Check SVG Text cleanup: raw store-polygon text must be display: none
+            svg_text_hidden = await page_mobile.evaluate("""() => {
+                const textEl = document.querySelector('.store-polygon text');
+                if (!textEl) return true;
+                const style = window.getComputedStyle(textEl);
+                return style.display === 'none';
+            }""")
+            assert svg_text_hidden, "FAIL: Raw SVG .store-polygon text is NOT hidden!"
+            print("PASS: Raw SVG text inside .store-polygon is display: none (crisp vector rendering without duplicate text).")
+
             # Check POI buttons: Primary 'Yol Tarifi Al' + 2 secondary 'Buradayım' & 'Ara'
             poi_target_btn = await page_mobile.query_selector("#poi-route-btn")
             assert poi_target_btn is not None, "FAIL: #poi-route-btn missing!"
@@ -145,6 +166,15 @@ async def run_tests():
             is_route_hidden = await route_detail.evaluate("el => el.classList.contains('hidden')")
             assert not is_route_hidden, "FAIL: #sidebar-route-detail is hidden during active route!"
             
+            # Check that live user GPS dot is hidden during route (single cart indicator rule)
+            gps_dot_display = await page_mobile.evaluate("""() => {
+                const dot = document.getElementById('live-user-gps-dot');
+                if (!dot) return 'none';
+                return window.getComputedStyle(dot).display;
+            }""")
+            assert gps_dot_display == "none", f"FAIL: #live-user-gps-dot is not hidden during active route (display={gps_dot_display})!"
+            print("PASS: #live-user-gps-dot is strictly hidden during active route (single 28px cart indicator).")
+
             # Check primary nav button
             sim_play_btn = await page_mobile.query_selector("#btn-route-sim-play")
             assert sim_play_btn is not None, "FAIL: #btn-route-sim-play missing!"
@@ -164,13 +194,6 @@ async def run_tests():
             print(f"Route steps count: {len(steps)}")
             assert len(steps) > 0, "FAIL: Route steps list is empty!"
             print("PASS: Step-by-step instructions rendered cleanly.")
-            
-            # Check 8: GPS Indoor Blue Dot Tracking
-            await page_mobile.evaluate("window.mallMap.updateLiveUserLocation(700, 425, 4, 90)")
-            await page_mobile.wait_for_timeout(200)
-            user_marker = await page_mobile.query_selector("#live-user-gps-dot")
-            assert user_marker is not None, "FAIL: #live-user-gps-dot (blue dot) missing!"
-            print("PASS: GPS Indoor Location (Blue Dot + directional cone) works smoothly on SVG map.")
             
             # Expand bottom sheet to see route detail screenshot
             await handle_bar.click()
@@ -199,6 +222,53 @@ async def run_tests():
             assert desk_box["width"] >= 370, f"FAIL: Desktop sidebar width={desk_box['width']} < 370!"
             print(f"PASS: Desktop sidebar pinned left with w={desk_box['width']}, h={desk_box['height']}.")
             
+            # Desktop Sidebar Open: #floor-header-card MUST be hidden (no duplicate header info)
+            floor_card_display = await page_desk.evaluate("""() => {
+                const card = document.getElementById('floor-header-card');
+                if (!card) return 'none';
+                return window.getComputedStyle(card).display;
+            }""")
+            assert floor_card_display == "none", f"FAIL: #floor-header-card should be hidden when desktop sidebar is open, got display={floor_card_display}!"
+            print("PASS: #floor-header-card is hidden when desktop sidebar is open (no duplicate information).")
+
+            # Check Desktop Sidebar Toggle Tab (#desktop-sidebar-toggle)
+            toggle_tab = await page_desk.query_selector("#desktop-sidebar-toggle")
+            assert toggle_tab is not None, "FAIL: #desktop-sidebar-toggle missing on desktop!"
+            tbox = await toggle_tab.bounding_box()
+            assert tbox is not None, "FAIL: #desktop-sidebar-toggle bounding box is None!"
+            print(f"Desktop sidebar toggle tab bbox: x={tbox['x']}, y={tbox['y']}, w={tbox['width']}, h={tbox['height']}")
+            assert abs(tbox["x"] - 380) < 15, f"FAIL: Toggle tab not at ~380px edge (x={tbox['x']})!"
+            print("PASS: Desktop toggle tab is positioned right at sidebar edge (x ~ 380px).")
+
+            # Click toggle tab to collapse sidebar
+            print("Collapsing desktop sidebar...")
+            await toggle_tab.click()
+            await page_desk.wait_for_timeout(600)
+            
+            is_collapsed = await page_desk.evaluate("document.body.classList.contains('sidebar-collapsed')")
+            assert is_collapsed, "FAIL: body does not have 'sidebar-collapsed' class after toggle click!"
+            
+            tbox_collapsed = await toggle_tab.bounding_box()
+            assert tbox_collapsed["x"] < 30, f"FAIL: Toggle tab should slide to left:0 when collapsed, got x={tbox_collapsed['x']}!"
+            print(f"PASS: Sidebar collapsed smoothly, toggle tab slid to x={tbox_collapsed['x']}.")
+            
+            # When collapsed, #floor-header-card MUST be visible
+            floor_card_collapsed_display = await page_desk.evaluate("""() => {
+                const card = document.getElementById('floor-header-card');
+                if (!card) return 'none';
+                return window.getComputedStyle(card).display;
+            }""")
+            assert floor_card_collapsed_display != "none", "FAIL: #floor-header-card is not visible when sidebar is collapsed!"
+            print("PASS: #floor-header-card is visible when desktop sidebar is collapsed.")
+
+            # Click toggle tab again to expand sidebar
+            print("Expanding desktop sidebar back...")
+            await toggle_tab.click()
+            await page_desk.wait_for_timeout(600)
+            is_collapsed_after = await page_desk.evaluate("document.body.classList.contains('sidebar-collapsed')")
+            assert not is_collapsed_after, "FAIL: body still has 'sidebar-collapsed' after second toggle click!"
+            print("PASS: Desktop sidebar expanded back successfully.")
+
             # Desktop Floor bar: right: 20px, vertical
             floor_bar_desk = await page_desk.query_selector(".floors-pill-bar")
             fbox_desk = await floor_bar_desk.bounding_box()
@@ -212,25 +282,6 @@ async def run_tests():
             print(f"Zoom bar bbox: x={zbox['x']}, y={zbox['y']}")
             assert zbox["y"] > fbox_desk["y"] + fbox_desk["height"], "FAIL: Zoom bar overlaps floor bar!"
             print("PASS: Zoom bar cleanly separated below floor selector without collision.")
-            
-            # Test 3D Perspective toggle (2.5D Maket angle)
-            print("\n--- TEST 3: 2D PLAN / 3D MAKET TOGGLE ---")
-            btn_3d = await page_desk.query_selector("#btn-mode-3d")
-            assert btn_3d is not None, "FAIL: #btn-mode-3d missing!"
-            await btn_3d.click()
-            await page_desk.wait_for_timeout(500)
-            
-            is_3d_active = await page_desk.evaluate("window.currentViewMode")
-            assert is_3d_active == "3d", f"FAIL: Expected currentViewMode to be '3d', got {is_3d_active}"
-            print("PASS: 3B Maket (isometric perspective) toggled successfully.")
-            
-            # Switch back to 2D
-            btn_2d = await page_desk.query_selector("#btn-mode-2d")
-            await btn_2d.click()
-            await page_desk.wait_for_timeout(300)
-            is_2d_active = await page_desk.evaluate("window.currentViewMode")
-            assert is_2d_active == "2d", f"FAIL: Expected currentViewMode to be '2d', got {is_2d_active}"
-            print("PASS: 2B Plan view toggled successfully.")
             
             # Desktop screenshot
             desk_screenshot_path = os.path.join(ARTIFACT_DIR, "test_desktop_minimal.png")

@@ -41,7 +41,7 @@ class CartSimulator {
       <div class="cart-beacon"></div>
       <div class="cart-marker" id="cart-mascot">
         <div id="cart-rotator" class="cart-rotator-wrapper">
-          <svg viewBox="-20 -36 40 42" width="46" height="46" class="bag-svg-el" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="-20 -36 40 42" width="28" height="28" class="bag-svg-el" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="routeBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#ff6b4a"/>
@@ -93,6 +93,10 @@ class CartSimulator {
     this.pathNodes = routeData?.pathNodes || [];
     this.currentIndex = 0;
     this.subProgress = 0;
+
+    if (this.map && typeof this.map.updateLiveUserLocation === 'function') {
+      this.map.updateLiveUserLocation(null, null);
+    }
 
     if (this.pathNodes.length > 0) {
       const startNode = this.pathNodes[0];
@@ -273,10 +277,6 @@ class CartSimulator {
       }
 
       this.updateCartPosition(curX, curY, angle, curFrom.floor);
-
-      if (this.map && typeof this.map.updateLiveUserLocation === 'function') {
-        this.map.updateLiveUserLocation(curX, curY, curFrom.floor, angle);
-      }
 
       // Yol Üstü Mağaza Kampanya Sensörü (Proximity Sensor)
       if (this.onProximityCheck) {

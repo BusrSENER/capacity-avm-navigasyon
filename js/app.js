@@ -2304,6 +2304,13 @@ function setupUIEventListeners() {
       collapseDesktopSidebar();
     });
   });
+
+  // Masaüstü Sol Panel Açılır/Kapanır Kulakçık Butonu (#desktop-sidebar-toggle)
+  const desktopSidebarToggle = document.getElementById('desktop-sidebar-toggle');
+  desktopSidebarToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleDesktopSidebar();
+  });
 }
 
 // 4. Çift Girdi Arama & Rota Motoru (Google Maps Standardı & Görsel Odak)
@@ -3529,6 +3536,7 @@ function renderPoiDetail(store) {
   if (!poiPanel) return;
 
   // Görünürlük
+  document.body.classList.add('has-poi-open');
   storeGrid?.classList.add('hidden');
   tabsContainer?.classList.add('hidden');
   poiPanel.classList.remove('hidden');
@@ -3658,6 +3666,7 @@ function renderPoiActionButtons(store) {
 
 function closePoiDetail() {
   activePoiStore = null;
+  document.body.classList.remove('has-poi-open');
   const poiPanel = document.getElementById('sidebar-poi-detail');
   const storeGrid = document.getElementById('sidebar-store-grid');
   const tabsContainer = document.getElementById('sidebar-tabs-container');
@@ -3702,9 +3711,12 @@ function calculateAndDisplayRoute() {
   updateHeaderNavSummary(selectedTargetStore, result);
 
   // 1. Sidebar / Çekmece İçi Aktif Rota Kartını (#sidebar-route-detail) Göster
+  document.body.classList.remove('has-poi-open');
+  document.body.classList.add('has-active-route');
   document.getElementById('sidebar-store-grid')?.classList.add('hidden');
   document.getElementById('sidebar-tabs-container')?.classList.add('hidden');
   document.getElementById('sidebar-poi-detail')?.classList.add('hidden');
+  document.getElementById('route-pref-tabs-row')?.classList.remove('hidden');
   const routeDetailEl = document.getElementById('sidebar-route-detail');
   if (routeDetailEl) {
     routeDetailEl.classList.remove('hidden');
@@ -3924,11 +3936,13 @@ function clearCurrentRoute() {
   document.getElementById('header-live-nav-banner')?.classList.add('hidden');
   cartSimulator.stop();
   document.body.classList.remove('has-active-route');
+  document.body.classList.remove('has-poi-open');
   updateFloatingToggleVisibility();
 
   // Header Kartını Varsayılan Kat Görünümüne Sıfırla
   updateFloorUI(mallMap.currentFloor || currentFloor);
 
+  document.getElementById('route-pref-tabs-row')?.classList.add('hidden');
   document.getElementById('sidebar-route-detail')?.classList.add('hidden');
   document.getElementById('sidebar-store-grid')?.classList.remove('hidden');
   document.getElementById('sidebar-tabs-container')?.classList.remove('hidden');
