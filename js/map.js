@@ -1050,6 +1050,8 @@ class MallMap {
       const maxScaleLimit = isMobile ? 1.85 : 1.75;
       const clampedScale = Math.min(maxScaleLimit, Math.max(minScaleLimit, rawScale));
       this.container.style.setProperty('--marker-scale', clampedScale.toFixed(3));
+      const invScale = (1 / Math.max(1, this.scale * 0.72)).toFixed(3);
+      this.container.style.setProperty('--label-inv-scale', invScale);
 
       // Kademeli Zoom Rozet Gösterimi (LOD):
       // Zoom < 1.2: Yalnızca ana/büyük mağazalar (is_anchor: true) ile hedef/başlangıç görünür.

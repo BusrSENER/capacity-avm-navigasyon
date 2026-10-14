@@ -1020,12 +1020,7 @@ body.has-active-route #route-panel {
     display: none !important;
   }
 
-  /* Rota Aktifken Alt Çekmece: Kullanıcı dilediğinde açıp kapatabilir */
-  body.has-active-route #sidebar-panel:not(.is-expanded) {
-    transform: translateY(100%) !important;
-    pointer-events: none !important;
-  }
-
+  /* Rota Aktifken Alt Çekmece: Kompakt bar olarak görünür, dokunulduğunda tam açılır */
   body.has-active-route #sidebar-panel.is-expanded {
     transform: translateY(0) !important;
     pointer-events: auto !important;
@@ -1069,27 +1064,27 @@ body.has-active-route #route-panel {
     text-overflow: ellipsis !important;
   }
 
-  /* Kat Seçici: Çekmecenin hemen üstüne ortalanmış yatay segmented control (B3 | B2 | B1 | Z | 1 | 2) */
+  /* Kat Seçici: Ekranın SAĞ KENARINA Dikey Sabitlenmiş Zarif Beyaz Kapsül (Cevahir Stili) */
   .floors-pill-bar {
     position: fixed !important;
-    bottom: 74px !important;
-    left: 50% !important;
-    right: auto !important;
-    top: auto !important;
-    transform: translateX(-50%) !important;
-    padding: 4px 8px !important;
+    right: 12px !important;
+    left: auto !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    padding: 6px 3px !important;
     gap: 4px !important;
-    z-index: 8500 !important;
+    z-index: 35 !important;
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
     align-items: center !important;
     border-radius: 9999px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
-    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid rgba(226, 232, 240, 0.85) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+    transition: opacity 0.25s ease, transform 0.25s ease !important;
   }
 
   html.dark .floors-pill-bar {
@@ -1098,22 +1093,30 @@ body.has-active-route #route-panel {
   }
 
   .floors-pill-bar span {
-    display: none !important;
+    font-size: 8px !important;
+    line-height: 1 !important;
+    padding: 2px 0 !important;
+    letter-spacing: 0.05em !important;
   }
 
   .floor-pill {
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
     font-size: 11px !important;
     font-weight: 800 !important;
     border-radius: 9999px !important;
   }
 
-  body.has-sheet-expanded .floors-pill-bar {
-    bottom: calc(75vh + 12px) !important;
-    opacity: 0.9 !important;
+  /* 3B Görünüm (POV) açıldığında veya Alt Çekmece tam ekran yukarı kaydırıldığında kat seçiciyi otomatik gizle */
+  body.has-sheet-expanded .floors-pill-bar,
+  body.has-pov-3d-active .floors-pill-bar,
+  body.is-pov-active .floors-pill-bar {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-50%) scale(0.92) !important;
+    transition: none !important;
   }
 
   /* Pusula ve Zoom Butonları: Sol Alt Köşede (Sol Başparmak Ergonomisi, 58px Çekmece Üstü) */
@@ -1234,11 +1237,29 @@ body.has-active-route #route-panel {
     top: 50% !important;
     transform: translateY(-50%) !important;
     flex-direction: column !important;
-    z-index: 8000 !important;
+    z-index: 35 !important;
     border-radius: 9999px !important;
     padding: 6px 3px !important;
     gap: 4px !important;
     display: flex !important;
+    transition: opacity 0.25s ease, transform 0.25s ease !important;
+  }
+
+  body.has-pov-3d-active .floors-pill-bar,
+  body.is-pov-active .floors-pill-bar {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-50%) scale(0.92) !important;
+    transition: none !important;
+  }
+
+  .zoom-bar {
+    position: fixed !important;
+    right: 20px !important;
+    bottom: 24px !important;
+    top: auto !important;
+    transform: none !important;
+    z-index: 35 !important;
   }
 
   #floor-header-card {
@@ -1336,13 +1357,6 @@ html.dark .active-focus-ring {
   #btn-peek-target {
     min-height: 42px !important;
     padding: 8px 10px !important;
-    font-size: 12px !important;
-  }
-
-  /* Kompakt Bilgi Kartı (Peek Mode) açıkken alt çekmece haritayı engellememek için aşağı iner */
-  body.has-peek-card #sidebar-panel:not(.is-expanded) {
-    transform: translateY(100%) !important;
-    pointer-events: none !important;
   }
 }
 
@@ -1389,13 +1403,20 @@ html.dark .search-autocomplete-item:hover {
   min-width: 44px !important;
 }
 
-/* 2. Yürürken Rahat Okunabilir Tipografi (14px - 16px Bandı) & Rozet Tıklama Geçirgenliği */
+/* 2. Kompakt Tipografi (11px) & Ters Ölçekli Zoom Desteği (Koridorları Asla Kapatmaz) */
 .marker-name-label {
-  font-size: 14px !important;
-  line-height: 1.25 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
   letter-spacing: -0.01em !important;
+  padding: 3px 8px !important;
+  max-width: 140px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   pointer-events: auto !important;
   cursor: pointer !important;
+  transform: scale(var(--label-inv-scale, 1)) !important;
+  transform-origin: center top !important;
 }
 
 .marker-name-anchor,
@@ -1415,11 +1436,18 @@ html.dark .search-autocomplete-item:hover {
 
 .marker-name-pinned {
   position: absolute !important;
-  top: calc(100% + 8px) !important;
+  top: calc(100% + 4px) !important;
   left: 50% !important;
-  transform: translateX(-50%) !important;
+  transform: translateX(-50%) scale(var(--label-inv-scale, 1)) !important;
+  transform-origin: center top !important;
   margin-top: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  padding: 3px 8px !important;
+  max-width: 150px !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   z-index: 80 !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
   pointer-events: auto !important;
@@ -2436,17 +2464,22 @@ body.has-pov-3d-active #floating-view-toggle {
 
 .live-user-gps-label {
   margin-top: 4px;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 9999px;
   background: rgba(2, 132, 199, 0.95);
   color: #ffffff;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   box-shadow: 0 3px 10px rgba(2, 132, 199, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.6);
   position: relative;
   z-index: 3;
+  transform: scale(var(--label-inv-scale, 1));
+  transform-origin: center top;
 }
 
 @keyframes gpsRadarPing {

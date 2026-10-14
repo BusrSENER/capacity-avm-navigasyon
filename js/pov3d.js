@@ -1323,7 +1323,10 @@ class Pov3DEngine {
           if (score < bestScore) {
             bestScore = score;
             closest = s;
-            closestSide = rightProj < 0 ? 'Solunuzda' : 'Sağınızda';
+            const isEn = (window.currentLanguage === 'en' || document.documentElement.lang === 'en');
+            closestSide = rightProj < 0 
+              ? (isEn ? 'On your left' : 'Solunuzda') 
+              : (isEn ? 'On your right' : 'Sağınızda');
             closestForwardProj = forwardProj;
           }
         }
@@ -1363,24 +1366,27 @@ class Pov3DEngine {
     const distEl = document.getElementById('pov-hud-distance');
     const progressFill = document.getElementById('pov-hud-progress-fill');
 
-    const floorLabel = this.mallData?.floors[this.currentFloor]?.label || 'Zemin Kat';
+    const isEn = (window.currentLanguage === 'en' || document.documentElement.lang === 'en');
+    const floorLabel = isEn && window.navEngine && typeof window.navEngine._getFloorLabelEn === 'function'
+      ? window.navEngine._getFloorLabelEn(this.currentFloor)
+      : (this.mallData?.floors[this.currentFloor]?.label || 'Zemin Kat');
     const zoneName = this._getCorridorZoneName(this.camX, this.camY);
 
     if (this.route && this.targetStore) {
       const isServiceTarget = (typeof window.isServiceOrAmenityItem === 'function') && window.isServiceOrAmenityItem(this.targetStore);
-      const cleanStart = this.startStore ? this.startStore.name.replace(/^📍\s*/, '') : 'Başlangıç';
+      const cleanStart = this.startStore ? this.startStore.name.replace(/^📍\s*/, '') : (isEn ? 'Start' : 'Başlangıç');
       const cleanTarget = (this.targetStore.name || '').replace(/^📍\s*/, '');
 
       if (modeBadgeEl) {
-        modeBadgeEl.textContent = '3B CANLI ROTA REHBERİ';
+        modeBadgeEl.textContent = isEn ? '3D LIVE ROUTE GUIDE' : '3B CANLI ROTA REHBERİ';
       }
       if (titleEl) {
         titleEl.textContent = `${cleanStart} ➔ ${cleanTarget} (${floorLabel})`;
       }
       if (distEl) {
         distEl.textContent = this.totalProgressPct >= 100
-          ? (isServiceTarget ? 'Noktadasınız' : 'Vardınız')
-          : `${this.remainingMeters} m kaldı`;
+          ? (isServiceTarget ? (isEn ? 'You have arrived' : 'Noktadasınız') : (isEn ? 'You have arrived' : 'Vardınız'))
+          : `${this.remainingMeters} ${isEn ? 'm left' : 'm kaldı'}`;
       }
       if (progressFill) {
         progressFill.style.width = `${this.totalProgressPct}%`;
@@ -1390,8 +1396,8 @@ class Pov3DEngine {
       if (stepEl && this.route.instructions && this.route.instructions.length > 0) {
         if (this.totalProgressPct >= 100) {
           stepEl.textContent = isServiceTarget
-            ? `${cleanTarget} noktasındasınız.`
-            : `${cleanTarget} mağazası önündesiniz.`;
+            ? (isEn ? `You have arrived at ${cleanTarget}.` : `${cleanTarget} noktasındasınız.`)
+            : (isEn ? `You are in front of ${cleanTarget}.` : `${cleanTarget} mağazası önündesiniz.`);
         } else {
           let activeIns = this.route.instructions[0];
           for (const ins of this.route.instructions) {
@@ -1404,7 +1410,7 @@ class Pov3DEngine {
       }
     } else {
       if (modeBadgeEl) {
-        modeBadgeEl.textContent = '360° SOKAK GÖRÜNÜMÜ • SERBEST GEZİNTİ';
+        modeBadgeEl.textContent = isEn ? '360° STREET VIEW • FREE WALK' : '360° SOKAK GÖRÜNÜMÜ • SERBEST GEZİNTİ';
       }
       if (titleEl) {
         if (this.startStore) {
@@ -1414,7 +1420,9 @@ class Pov3DEngine {
         }
       }
       if (stepEl) {
-        stepEl.textContent = 'Koridordaki mavi halkalara dokunarak ilerleyin veya mağaza vitrinlerine tıklayarak hedef seçin.';
+        stepEl.textContent = isEn 
+          ? 'Tap blue rings in corridor to move or click store facades to select destination.'
+          : 'Koridordaki mavi halkalara dokunarak ilerleyin veya mağaza vitrinlerine tıklayarak hedef seçin.';
       }
       if (distEl) distEl.textContent = `${floorLabel} • 360°`;
       if (progressFill) progressFill.style.width = '100%';
@@ -1430,7 +1438,7 @@ class Pov3DEngine {
           passingLogoEl.classList.remove('hidden');
         }
         const unitStr = s.unit ? ` (${s.unit})` : '';
-        passingText.textContent = `Hedefiniz Karşınızda: ${s.name}${unitStr}`;
+        passingText.textContent = isEn ? `Destination Ahead: ${s.name}${unitStr}` : `Hedefiniz Karşınızda: ${s.name}${unitStr}`;
         passingBadge.classList.remove('hidden');
       } else if (this.currentlyPassingStore) {
         const s = this.currentlyPassingStore;
@@ -1439,7 +1447,8 @@ class Pov3DEngine {
           passingLogoEl.classList.remove('hidden');
         }
         const unitStr = s.unit ? ` (${s.unit})` : '';
-        passingText.textContent = `${this.currentlyPassingSide || 'Yanınızda'}: ${s.name}${unitStr}`;
+        const sidePrefix = this.currentlyPassingSide || (isEn ? 'Near you' : 'Yanınızda');
+        passingText.textContent = `${sidePrefix}: ${s.name}${unitStr}`;
         passingBadge.classList.remove('hidden');
       } else if (this.route && this.route.enRouteStoreNames && this.route.enRouteStoreNames.length > 0) {
         const floorStores = this.mallData?.floors[this.currentFloor]?.stores || [];
@@ -1448,7 +1457,9 @@ class Pov3DEngine {
           passingLogoEl.innerHTML = window.getStoreLogo(firstEnRouteStore, 18);
           passingLogoEl.classList.remove('hidden');
         }
-        passingText.textContent = `Rota Üzerindeki Mağazalar: ${this.route.enRouteStoreNames.slice(0, 4).join(' ➔ ')}`;
+        passingText.textContent = isEn
+          ? `Stores on route: ${this.route.enRouteStoreNames.slice(0, 4).join(' ➔ ')}`
+          : `Rota Üzerindeki Mağazalar: ${this.route.enRouteStoreNames.slice(0, 4).join(' ➔ ')}`;
         passingBadge.classList.remove('hidden');
       } else {
         passingBadge.classList.add('hidden');
@@ -2275,7 +2286,7 @@ class Pov3DEngine {
       elevator:  { icon: '', label: 'PANORAMİK ASANSÖR', bg: '#0284c7', border: '#bae6fd' },
       escalator: { icon: '', label: 'YÜRÜYEN MERDİVEN', bg: '#4f46e5', border: '#a5b4fc' },
       baby:      { icon: '', label: 'BEBEK ODASI', bg: '#db2777', border: '#fbcfe8' },
-      wc:        { icon: '', label: 'WC / TUVALET', bg: '#0d9488', border: '#99f6e4' },
+      wc:        { icon: '', label: 'TUVALET', bg: '#0d9488', border: '#99f6e4' },
       kiosk:     { icon: '', label: 'KİOSK HARİTA', bg: '#ea580c', border: '#fed7aa' },
       carpark:   { icon: '', label: 'OTOPARK', bg: '#2563eb', border: '#bfdbfe' },
       atm:       { icon: '', label: 'ATM', bg: '#059669', border: '#a7f3d0' },
