@@ -407,16 +407,18 @@ html.dark .store-card:hover {
 }
 
 .store-card__logo {
-  width: 40px;
-  height: 40px;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   overflow: hidden;
   background: #ffffff;
-  padding: 3px;
+  padding: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.06);
   transition: transform 0.2s;
@@ -437,12 +439,17 @@ html.dark .store-card:hover {
   font-weight: 700;
   color: #0f172a;
   line-height: 1.2;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  word-break: break-word;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
   margin-bottom: 2px;
+}
+
+#sidebar-store-grid {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
 html.dark .store-card__name {
@@ -1062,25 +1069,51 @@ body.has-active-route #route-panel {
     text-overflow: ellipsis !important;
   }
 
-  /* Kat Seçici: Sağ Kenarda Tek Başına (Sağ Başparmak Ergonomisi) */
+  /* Kat Seçici: Çekmecenin hemen üstüne ortalanmış yatay segmented control (B3 | B2 | B1 | Z | 1 | 2) */
   .floors-pill-bar {
     position: fixed !important;
-    top: 50% !important;
-    right: 10px !important;
-    left: auto !important;
-    bottom: auto !important;
-    transform: translateY(-50%) !important;
-    padding: 4px 3px !important;
-    gap: 2.5px !important;
-    z-index: 35 !important;
+    bottom: 74px !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    transform: translateX(-50%) !important;
+    padding: 4px 8px !important;
+    gap: 4px !important;
+    z-index: 8500 !important;
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    border-radius: 9999px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+  }
+
+  html.dark .floors-pill-bar {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-color: rgba(51, 65, 85, 0.8) !important;
+  }
+
+  .floors-pill-bar span {
+    display: none !important;
   }
 
   .floor-pill {
-    width: 25px !important;
-    height: 25px !important;
-    font-size: 10.5px !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    border-radius: 9999px !important;
+  }
+
+  body.has-sheet-expanded .floors-pill-bar {
+    bottom: calc(75vh + 12px) !important;
+    opacity: 0.9 !important;
   }
 
   /* Pusula ve Zoom Butonları: Sol Alt Köşede (Sol Başparmak Ergonomisi, 58px Çekmece Üstü) */
@@ -1149,13 +1182,75 @@ body.has-active-route #route-panel {
   }
 }
 
-/* Masaüstü Toast Konteyneri & Başlık Kartı - Sağ Altta ve Sol Üstte Şık Konum */
-@media (min-width: 769px) {
+/* ==========================================================================
+   MASAÜSTÜ RESPONSIVE (min-width: 768px)
+   - Sol tarafa yapışık, tam boy Sidebar (380px, 100vh, border-radius: 0, z-index: 9000)
+   - Harita container'ı 100vw ve 100vh uçtan uca
+   - Kat Seçici sağ kenara (right: 20px) hizalı
+   ========================================================================== */
+@media (min-width: 768px) {
+  #sidebar-panel {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 380px !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    z-index: 9000 !important;
+    transform: none !important;
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.06) !important;
+    overflow-y: auto !important;
+  }
+
+  body.sidebar-collapsed #sidebar-panel {
+    transform: translateX(-105%) !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  #main-map-area {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    z-index: 10 !important;
+  }
+
+  .floors-pill-bar {
+    position: fixed !important;
+    right: 20px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    flex-direction: column !important;
+    z-index: 8000 !important;
+    border-radius: 9999px !important;
+    padding: 6px 3px !important;
+    gap: 4px !important;
+    display: flex !important;
+  }
+
   #floor-header-card {
     top: 18px !important;
-    left: 18px !important;
+    left: 400px !important;
     margin: 0 !important;
-    max-width: min(450px, calc(100% - 130px)) !important;
+    max-width: min(450px, calc(100% - 500px)) !important;
+    transition: left 300ms ease !important;
+  }
+
+  body.sidebar-collapsed #floor-header-card {
+    left: 4.5rem !important;
   }
 
   #toast-container {
@@ -1366,71 +1461,85 @@ body:has(#route-qr-modal:not(.hidden)) #toast-container {
   pointer-events: none !important;
 }
 
-/* 4. Açılış Ekranı (Splash Screen) - Temiz ve Minimalist Mimari Logo & Pin Reveal (1.8s) */
+/* ==========================================================================
+   4. AÇILIŞ EKRANI (SPLASH SCREEN - SÜRE: 3.5s)
+   - 0-1.5s: İnce çizgili beyaz çanta pendulum (sağa-sola sallanma) animasyonu
+   - 1.5s: Çanta oturur, CAPACITY AVM parlayarak büyür (scale 1.1 fade-in)
+   - 3.5s: Haritaya pürüzsüz geçiş (fade-out 0.8s)
+   ========================================================================== */
 #splash-screen {
-  background-color: #0a0f1d !important;
-  background-image: radial-gradient(circle at 50% 45%, rgba(30, 58, 138, 0.26) 0%, rgba(10, 15, 29, 0.98) 70%) !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 100000 !important;
+  background: radial-gradient(circle at 50% 45%, #0f172a 0%, #060913 85%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: opacity 0.8s ease, visibility 0.8s ease !important;
   overflow: hidden !important;
-  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#splash-stage {
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
+#splash-screen.splash-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
-/* Kurumsal nrdsor Logosu ve Harita Pini - Yumuşak Nefes Alma (scale: 0.96 -> 1.0) & Fade-In (1.8s) */
-#splash-logo-container {
+.splash-bag-wrapper {
+  animation: splashPendulum 1.5s ease-in-out infinite;
+  transform-origin: 50% 15%;
+  will-change: transform;
+}
+
+@keyframes splashPendulum {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-14deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(14deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.splash-bag-svg {
+  filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.3));
+}
+
+.splash-brand-reveal {
   opacity: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  transform-origin: center center;
-  animation: splash-minimal-reveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: scale(0.92);
+  animation: splashCapacityReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
   will-change: transform, opacity;
 }
 
-.splash-pin-icon-wrap {
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 12px 32px rgba(234, 87, 54, 0.22);
-}
-
-@keyframes splash-minimal-reveal {
+@keyframes splashCapacityReveal {
   0% {
-    transform: scale(0.96);
     opacity: 0;
+    transform: scale(0.92);
   }
-  45% {
-    transform: scale(0.985);
-    opacity: 0.92;
+  65% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.5));
   }
   100% {
-    transform: scale(1.0);
     opacity: 1;
+    transform: scale(1.0);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
   }
 }
 
-/* Ortadaki yatay çanta izi ve sert keyframe hareketleri tamamen kaldırıldı */
-#splash-bag-track,
-#splash-slide-bag {
-  display: none !important;
-  visibility: hidden !important;
-  width: 0 !important;
-  height: 0 !important;
-  animation: none !important;
+.splash-capacity-title {
+  font-family: 'Outfit', sans-serif !important;
 }
 
 

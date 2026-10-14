@@ -51,72 +51,50 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Custom CSS (Cache-Busted) -->
-  <link rel="stylesheet" href="css/app.css?v=20261011_v6">
+  <link rel="stylesheet" href="css/app.css?v=20261013_v10">
 </head>
-<body class="h-screen w-screen overflow-hidden select-none bg-[#eef2f6] text-slate-800 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-200">
+<body class="h-screen w-screen overflow-hidden select-none bg-[#090d16] text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
-  <!-- AÇILIŞ EKRANI (SPLASH SCREEN - MİNİMALİST LOGO REVEAL & ZARİF ÇANTA GEÇİŞİ) -->
-  <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0a0f1d] text-white select-none overflow-hidden transition-opacity duration-300">
-    <!-- Sahne Taşıyıcısı -->
-    <div id="splash-stage" class="relative z-10 flex flex-col items-center justify-center gap-3 w-[340px] max-w-[92vw]">
-      
-      <!-- Kurumsal 'nrdsor' Yatay Logosu (Yumuşak Nefes Alma & Hafif Parlama Efekti) -->
-      <div id="splash-logo-container">
-        <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" 
-             alt="nrdsor" 
-             id="splash-brand-logo" 
-             class="h-10 sm:h-12 w-auto max-w-[220px] object-contain select-none" />
+  <!-- AÇILIŞ EKRANI (SPLASH SCREEN: SÜRE ~3.5s) -->
+  <div id="splash-screen" class="fixed inset-0 z-[100000] flex flex-col items-center justify-center bg-[#070b14] text-white select-none overflow-hidden">
+    <!-- Merkez Animasyon Sahnesi -->
+    <div id="splash-stage" class="relative z-10 flex flex-col items-center justify-center">
+      <!-- Minimalist İnce Çizgili Beyaz SVG Alışveriş Çantası (0-1.5s Pendulum Sallantısı) -->
+      <div id="splash-bag-wrapper" class="splash-bag-wrapper flex items-center justify-center">
+        <svg viewBox="0 0 64 64" width="64" height="64" fill="none" class="splash-bag-svg">
+          <!-- Çanta Sapı -->
+          <path d="M22 25 C22 13, 42 13, 42 25" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Çanta Gövdesi -->
+          <path d="M14 25 L50 25 L46 55 L18 55 Z" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- İnce İç Pile / Detay Çizgileri -->
+          <line x1="26" y1="25" x2="27" y2="55" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" />
+          <line x1="38" y1="25" x2="37" y2="55" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
       </div>
 
-      <!-- Çantanın Zarifçe Süzüldüğü Mat Zemin Alanı -->
-      <div id="splash-bag-track" class="relative w-full h-14 flex items-center justify-center pointer-events-none overflow-hidden">
-        <!-- Zarif Süzülen Mat Alışveriş Çantası Taşıyıcısı -->
-        <div id="splash-slide-bag" class="absolute flex items-center justify-center" aria-label="Alışveriş Çantası">
-          <svg viewBox="-20 -36 40 42" width="42" height="44" class="splash-bag-svg" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="splashBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ff6b4a"/>
-                <stop offset="50%" stop-color="#ea5736"/>
-                <stop offset="100%" stop-color="#c2410c"/>
-              </linearGradient>
-              <linearGradient id="splashHandleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#475569"/>
-                <stop offset="100%" stop-color="#0f172a"/>
-              </linearGradient>
-            </defs>
-            <!-- Ground Shadow -->
-            <ellipse class="bag__shadow" cx="0" cy="1.5" rx="12" ry="2.8" fill="rgba(0, 0, 0, 0.35)" />
-            <!-- Back Handle -->
-            <path d="M-5 -21 C -5 -32, 5 -32, 5 -21" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>
-            <!-- Bag Main Body (Luxury nrdsor Coral Tote) -->
-            <path d="M-13 -20 L13 -20 L11 0 L-11 0 Z" fill="url(#splashBagGrad)" stroke="#c2410c" stroke-width="0.8" stroke-linejoin="round"/>
-            <!-- Luxury Side Pleats / Creases -->
-            <path d="M-11 0 L-7 -20" stroke="rgba(255, 255, 255, 0.35)" stroke-width="1.1" fill="none"/>
-            <path d="M11 0 L7 -20" stroke="rgba(0, 0, 0, 0.22)" stroke-width="1.2" fill="none"/>
-            <!-- Front Handle -->
-            <path d="M-4.5 -19.5 C -4.5 -29.5, 4.5 -29.5, 4.5 -19.5" fill="none" stroke="url(#splashHandleGrad)" stroke-width="2.4" stroke-linecap="round"/>
-            <!-- Top Turnover Fold Edge -->
-            <path d="M-13 -20 L13 -20 L12.5 -17.5 L-12.5 -17.5 Z" fill="#d94726" opacity="0.9"/>
-            <!-- Brand Navy Emblem Patch with nrdsor Coral Pin -->
-            <g transform="translate(0, -9.5)">
-              <rect x="-4.5" y="-4.5" width="9" height="9" rx="2.5" fill="#0f172a" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
-              <circle cx="0" cy="-0.6" r="1.7" fill="#ea5736"/>
-              <path d="M-1.4 -0.3 L0 2.5 L1.4 -0.3 Z" fill="#ea5736"/>
-              <circle cx="0" cy="-0.6" r="0.6" fill="#ffffff"/>
-            </g>
-            <!-- Luxury Gloss Reflection / Highlights -->
-            <path d="M-11.5 -19 L-4 -19 L-6.5 -1 L-10.5 -1 Z" fill="rgba(255, 255, 255, 0.22)"/>
-          </svg>
+      <!-- CAPACITY AVM Marka Yazısı & Parlama (1.5s anında fade-in & scale(1.1)) -->
+      <div id="splash-brand-reveal" class="splash-brand-reveal flex flex-col items-center text-center mt-5">
+        <div class="splash-capacity-title tracking-[0.24em] text-2xl sm:text-3xl font-black text-white uppercase drop-shadow-[0_0_25px_rgba(255,255,255,0.35)]">
+          CAPACITY <span class="text-rose-500">AVM</span>
         </div>
+        <p class="splash-capacity-subtitle text-xs sm:text-sm font-medium tracking-widest text-slate-400 uppercase mt-1.5">
+          İnteraktif AVM Rehberi &bull; Bakırköy
+        </p>
       </div>
+    </div>
+
+    <!-- Ekranın En Altına Sabitlenmiş Minik %50 Opaklıkta 'nrdsor' Rozeti -->
+    <div id="splash-bottom-badge" class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 opacity-50 z-10 pointer-events-none">
+      <span class="text-[10px] tracking-widest text-slate-400 uppercase font-semibold">powered by</span>
+      <img src="public/assets/branding/nrdsor-logo-horizontal-dark.png" alt="nrdsor" class="h-4 w-auto object-contain" style="height: 16px !important; max-height: 16px !important; width: auto !important; max-width: 90px !important;" />
     </div>
   </div>
 
-  <!-- Ana Uygulama Düzeni: Sol Panel + Sağ Harita Alanı -->
-  <div id="app-root-layout" class="flex h-screen w-screen overflow-hidden p-2.5 sm:p-3 gap-3">
+  <!-- Ana Uygulama Düzeni: Tam Ekran Harita + Yan Panel / Çekmece -->
+  <div id="app-root-layout" class="relative w-screen h-screen overflow-hidden">
 
     <!-- SOL PANEL / MOBİL BOTTOM SHEET: nrdsor & CAPACITY REHBER -->
-    <aside id="sidebar-panel" class="relative w-[350px] lg:w-[380px] h-full flex flex-col bg-white dark:bg-slate-900 rounded-[26px] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 p-4 z-40 shrink-0 transition-colors duration-200">
+    <aside id="sidebar-panel" class="bg-white dark:bg-slate-900 flex flex-col z-40 transition-all duration-300">
       
       <!-- Masaüstü Sol Panel Daraltma Butonu: Sağ Kenara Yapışık [<] (Daralt) Butonu -->
       <button id="btn-collapse-sidebar" 
@@ -516,8 +494,8 @@
       </div>
     </aside>
 
-    <!-- SAĞ HARİTA ALANI (VIEWPORT) -->
-    <main id="main-map-area" class="flex-1 relative h-full rounded-[26px] overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] shadow-[0_10px_35px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
+    <!-- SAĞ HARİTA ALANI (VIEWPORT - 100% TAM EKRAN) -->
+    <main id="main-map-area" class="absolute inset-0 w-full h-full overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] transition-colors duration-200">
       
       <!-- Mobil Yatay & Masaüstü Daraltılmış Menü Açma Butonu [☰ nrdsor] (Apple Haritalar Stili) -->
       <button id="btn-sidebar-toggle" class="hidden absolute top-2 left-2 z-30 px-2.5 h-9 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-md flex items-center gap-1.5 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Menüyü Aç" aria-label="Menüyü Aç">
@@ -1404,14 +1382,14 @@
   <!-- TOAST BİLDİRİM KONTEYNERİ (Mobilde Alt Çekmecenin Üzerinde, Masaüstünde Sağ Altta) -->
   <div id="toast-container" class="fixed z-50 flex flex-col gap-2 max-w-sm w-[90%] sm:w-auto pointer-events-none"></div>
 
-  <!-- JavaScript Modülleri (Cache-Busted) -->
-  <script src="js/logos.js?v=20261012_v8"></script>
-  <script src="js/qrcode.js?v=20261012_v8"></script>
-  <script src="js/parking-service.js?v=20261012_v8"></script>
-  <script src="js/navigation.js?v=20261012_v8"></script>
-  <script src="js/simulator.js?v=20261012_v8"></script>
-  <script src="js/map.js?v=20261012_v8"></script>
-  <script src="js/pov3d.js?v=20261012_v8"></script>
-  <script src="js/app.js?v=20261012_v8"></script>
+  <!-- JavaScript Modülleri (Cache-Busted v10) -->
+  <script src="js/logos.js?v=20261013_v10"></script>
+  <script src="js/qrcode.js?v=20261013_v10"></script>
+  <script src="js/parking-service.js?v=20261013_v10"></script>
+  <script src="js/navigation.js?v=20261013_v10"></script>
+  <script src="js/simulator.js?v=20261013_v10"></script>
+  <script src="js/map.js?v=20261013_v10"></script>
+  <script src="js/pov3d.js?v=20261013_v10"></script>
+  <script src="js/app.js?v=20261013_v10"></script>
 </body>
 </html>

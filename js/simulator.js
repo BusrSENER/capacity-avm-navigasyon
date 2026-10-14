@@ -128,6 +128,18 @@ class CartSimulator {
     this.lastTime = performance.now();
     this.show();
     if (this.cartMascotEl) this.cartMascotEl.classList.add('rolling');
+
+    // Cevahir Stili Yakın Çekim Kamera (zoom: 3.2)
+    if (this.map && typeof this.map.flyTo === 'function') {
+      const curX = this.currentX !== undefined ? this.currentX : this.pathNodes[this.currentIndex]?.x;
+      const curY = this.currentY !== undefined ? this.currentY : this.pathNodes[this.currentIndex]?.y;
+      if (curX !== undefined && curY !== undefined) {
+        const curScale = typeof this.map.scale === 'number' ? this.map.scale : 1;
+        const targetScale = Math.max(curScale, 3.2);
+        this.map.flyTo(curX, curY, targetScale, 400);
+      }
+    }
+
     this.tick = this.tick.bind(this);
     this.animFrameId = requestAnimationFrame(this.tick);
   }
@@ -355,8 +367,8 @@ class CartSimulator {
           this.onFloorChange(finalNode.floor);
         }
 
-        // Doğrudan sepetin çıktığı kapı/aktarma koordinatına TEK ve akıcı bir flyTo hareketiyle odaklanır
-        const targetScale = Math.max(this.map.scale, 1.35);
+        // Doğrudan sepetin çıktığı kapı/aktarma koordinatına TEK ve akıcı bir flyTo hareketiyle odaklanır (zoom: 3.2)
+        const targetScale = Math.max(this.map.scale, 3.2);
         const flyDuration = Math.max(200, Math.round(380 / Math.max(1, this.speed)));
         this.map.flyTo(finalNode.x, finalNode.y, targetScale, flyDuration);
 
@@ -416,12 +428,14 @@ class CartSimulator {
     const btn = document.getElementById('btn-recenter-cart');
     if (btn) btn.classList.add('hidden');
     if (this.map && this.currentX !== undefined && this.currentY !== undefined) {
+      const curScale = typeof this.map.scale === 'number' ? this.map.scale : 1;
+      const targetScale = Math.max(curScale, 3.2);
       if (this.currentFloor !== undefined && this.map.currentFloor !== this.currentFloor) {
         this.map.loadFloor(this.currentFloor).then(() => {
-          this.map.flyTo(this.currentX, this.currentY, 1.45, 350);
+          this.map.flyTo(this.currentX, this.currentY, targetScale, 350);
         });
       } else {
-        this.map.flyTo(this.currentX, this.currentY, 1.45, 350);
+        this.map.flyTo(this.currentX, this.currentY, targetScale, 350);
       }
     }
   }

@@ -185,7 +185,7 @@ window.toggleSidebarDrawer = toggleSidebarDrawer;
 
 // Masaüstü Sol Panel Daraltma / Tam Ekran Harita Yöneticisi (Desktop Collapse Sidebar)
 function collapseDesktopSidebar() {
-  if (window.innerWidth < 950) return;
+  if (window.innerWidth < 768) return;
   document.body.classList.add('sidebar-collapsed');
 
   // Haritayı hemen ve animasyon bitiminde (320ms) yeni genişliğe göre ortala
@@ -203,7 +203,7 @@ function collapseDesktopSidebar() {
 }
 
 function expandDesktopSidebar() {
-  if (window.innerWidth < 950) return;
+  if (window.innerWidth < 768) return;
   document.body.classList.remove('sidebar-collapsed');
 
   // Haritayı hemen ve animasyon bitiminde (320ms) yeni genişliğe göre ortala
@@ -221,7 +221,7 @@ function expandDesktopSidebar() {
 }
 
 function toggleDesktopSidebar() {
-  if (window.innerWidth < 950) return;
+  if (window.innerWidth < 768) return;
   if (document.body.classList.contains('sidebar-collapsed')) {
     expandDesktopSidebar();
   } else {
@@ -677,37 +677,19 @@ function setupLanguageToggle() {
 window.setupLanguageToggle = setupLanguageToggle;
 
 
-// Açılış Ekranı (Splash Screen): Temiz ve Minimalist Mimari Logo & Harita Pini Reveal (1.8s)
+// Açılış Ekranı (Splash Screen: 3.5s Giriş Koreografisi)
 const splashStartTime = Date.now();
 window.splashStartedAt = splashStartTime;
-const MIN_SPLASH_DURATION = 1800; // ms (1.8s yumuşak scale: 0.96 -> 1.0 ve fade-in reveal)
-const SPLASH_FADE_OUT_MS = 300;   // ms (pürüzsüz fade-out ile doğrudan haritaya geçiş)
-
-function setupMinimalistSplashLockup() {
-  const bagTrack = document.getElementById('splash-bag-track');
-  if (bagTrack) bagTrack.remove();
-  const slideBag = document.getElementById('splash-slide-bag');
-  if (slideBag) slideBag.remove();
-
-  const logoContainer = document.getElementById('splash-logo-container');
-  if (logoContainer && !document.getElementById('splash-pin-badge')) {
-    const pinWrap = document.createElement('div');
-    pinWrap.id = 'splash-pin-badge';
-    pinWrap.className = 'splash-pin-icon-wrap';
-    pinWrap.innerHTML = `<img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor Harita Pini" class="w-9 h-9 object-contain select-none" draggable="false" />`;
-    logoContainer.insertBefore(pinWrap, logoContainer.firstChild);
-  }
-}
-setupMinimalistSplashLockup();
+const MIN_SPLASH_DURATION = 3500; // ms (~3.5 saniye pendulum & CAPACITY reveal)
+const SPLASH_FADE_OUT_MS = 800;   // ms (0.8s pürüzsüz fade-out)
 
 function hideSplashScreen() {
-  setupMinimalistSplashLockup();
   const elapsed = Date.now() - splashStartTime;
   const remaining = Math.max(0, MIN_SPLASH_DURATION - elapsed);
   setTimeout(() => {
     const splash = document.getElementById('splash-screen');
     if (splash && !splash.classList.contains('pointer-events-none')) {
-      splash.classList.add('opacity-0', 'pointer-events-none');
+      splash.classList.add('splash-hidden', 'opacity-0', 'pointer-events-none');
       setTimeout(() => {
         splash.remove();
         window.splashFinishedAt = Date.now();
@@ -3805,6 +3787,20 @@ function renderPoiActionButtons(store) {
   const isServiceItem = isServiceOrAmenityItem(store);
   const targetStatusLabel = isServiceItem ? 'Mevcut Hedef Hizmet Noktanız' : 'Mevcut Hedef Mağazanız';
 
+  let callBtnHtml = '';
+  if (store.phone) {
+    const rawPhone = String(store.phone).trim();
+    const cleanPhone = rawPhone.replace(/[^\d+]/g, '');
+    if (cleanPhone) {
+      callBtnHtml = `
+        <a href="tel:${cleanPhone}" class="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 no-underline" title="Mağazayı Ara: ${rawPhone}">
+          <i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+          <span>Ara: ${rawPhone}</span>
+        </a>
+      `;
+    }
+  }
+
   if (isStart) {
     container.innerHTML = `
       <div class="w-full py-2.5 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs">
@@ -3815,6 +3811,7 @@ function renderPoiActionButtons(store) {
         <i data-lucide="x" class="w-3.5 h-3.5"></i>
         <span>Başlangıcı Kaldır</span>
       </button>
+      ${callBtnHtml}
     `;
   } else if (isTarget) {
     container.innerHTML = `
@@ -3826,6 +3823,7 @@ function renderPoiActionButtons(store) {
         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
         <span>Burayı Başlangıç Yap</span>
       </button>
+      ${callBtnHtml}
     `;
   } else if (!selectedStartStore || activeFocusSlot === 'start') {
     // 1. Durum: Nereden? boşsa veya odak Nereden? üzerindeyse ➔ Buradan Başla (öncelikli) ve Hedef Yap
@@ -3838,6 +3836,7 @@ function renderPoiActionButtons(store) {
         <i data-lucide="navigation" class="w-3.5 h-3.5 text-red-500"></i>
         <span>Hedef Yap</span>
       </button>
+      ${callBtnHtml}
     `;
   } else {
     // 2. Durum: Nereden? doluysa ve odak hedefteyse ➔ Hedef Yap (öncelikli) ve Başlangıcı Değiştir
@@ -3850,6 +3849,7 @@ function renderPoiActionButtons(store) {
         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-500"></i>
         <span>Başlangıcı Değiştir</span>
       </button>
+      ${callBtnHtml}
     `;
   }
 
