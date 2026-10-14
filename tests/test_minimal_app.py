@@ -10,14 +10,14 @@ from playwright.async_api import async_playwright
 ARTIFACT_DIR = r"C:\Users\busra.sener\.gemini\antigravity\brain\0bc22bcb-eb9a-4b82-83e6-4140b1da011c"
 
 async def run_tests():
-    print("=== STARTING PAKET 2 PLAYWRIGHT TESTS ===")
+    print("=== STARTING CEVAHIR & SITUM MINIMAL APP TESTS ===")
     
-    # Start local http server on port 8088 if not running
+    # Start local http server on port 8089 if not running
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     is_running = False
     try:
-        s.bind(("127.0.0.1", 8088))
+        s.bind(("127.0.0.1", 8089))
         s.close()
     except OSError:
         is_running = True
@@ -25,7 +25,7 @@ async def run_tests():
     server_proc = None
     if not is_running:
         server_proc = subprocess.Popen(
-            ["C:\\Users\\busra.sener\\AppData\\Local\\Python\\bin\\python3.14.exe", "-m", "http.server", "8088"],
+            ["C:\\Users\\busra.sener\\AppData\\Local\\Python\\bin\\python3.14.exe", "-m", "http.server", "8089"],
             cwd=r"C:\Users\busra.sener\.gemini\antigravity\scratch\capacity-avm-navigasyon"
         )
         time.sleep(1.5)
@@ -43,23 +43,27 @@ async def run_tests():
             page_mobile.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
             page_mobile.on("pageerror", lambda err: console_errors.append(str(err)))
             
-            await page_mobile.goto("http://127.0.0.1:8088/index.html")
+            await page_mobile.goto("http://127.0.0.1:8089/index.html")
             await page_mobile.wait_for_timeout(3800) # Wait for splash animation to fade out
             
-            # Check 1: [ Liste ] button removed
+            # Check 1: 3D POV Container completely removed
+            pov_container = await page_mobile.query_selector("#pov-3d-container")
+            assert pov_container is None, "FAIL: #pov-3d-container still exists in DOM!"
+            print("PASS: #pov-3d-container does NOT exist in DOM.")
+
+            # Check 2: POV view mode button removed from switcher
+            btn_mode_pov = await page_mobile.query_selector("#btn-mode-pov")
+            assert btn_mode_pov is None, "FAIL: #btn-mode-pov still exists in DOM!"
+            view_mode_btns = await page_mobile.query_selector_all(".view-mode-btn")
+            assert len(view_mode_btns) == 2, f"FAIL: Expected 2 view mode buttons (2B & 3B), got {len(view_mode_btns)}!"
+            print("PASS: Only 2 view mode buttons exist (2B Plan and 3B Maket).")
+            
+            # Check 3: Floating toggle and obsolete nav hud bar removed
             floating_toggle = await page_mobile.query_selector("#floating-view-toggle")
             assert floating_toggle is None, "FAIL: #floating-view-toggle still exists in DOM!"
-            print("PASS: #floating-view-toggle is completely removed.")
-            
-            # Check 2: #nav-hud-bar removed
             hud_bar = await page_mobile.query_selector("#nav-hud-bar")
             assert hud_bar is None, "FAIL: #nav-hud-bar still exists in DOM!"
-            print("PASS: #nav-hud-bar is completely removed.")
-            
-            # Check 3: #floor-header-card has no round buttons
-            round_btns = await page_mobile.query_selector_all("#floor-header-card button[id*='btn-header']")
-            assert len(round_btns) == 0, f"FAIL: Found {len(round_btns)} header buttons in #floor-header-card!"
-            print("PASS: #floor-header-card is clean with 0 circular action buttons.")
+            print("PASS: Floating toggle and bottom hud bar removed.")
             
             # Check 4: Floor selector is vertical on the RIGHT edge
             floor_bar = await page_mobile.query_selector(".floors-pill-bar")
@@ -92,24 +96,39 @@ async def run_tests():
             assert "is-expanded" not in classes_after_map, "FAIL: Sidebar did not collapse on map canvas tap!"
             print("PASS: Bottom sheet collapses when map canvas is tapped.")
             
-            # Check 6: Select Store & Unified 2x2 POI Card
+            # Check 6: Select Store & Sleek Cevahir-Style POI Card
             await page_mobile.evaluate("window.selectStore(mallData.floors[4].stores[0])")
             await page_mobile.wait_for_timeout(400)
             
-            poi_buttons = await page_mobile.query_selector_all("#poi-action-buttons > *")
-            assert len(poi_buttons) == 4, f"FAIL: Expected 4 action buttons (2x2 grid), got {len(poi_buttons)}!"
-            btn_texts = [await b.inner_text() for b in poi_buttons]
-            print(f"POI 2x2 action buttons: {btn_texts}")
-            assert any("Hedef" in t for t in btn_texts), "FAIL: 'Hedef Yap' button missing!"
-            assert any("Başlangıç" in t for t in btn_texts), "FAIL: 'Başlangıç Yap' button missing!"
-            assert any("Ara" in t for t in btn_texts), "FAIL: 'Ara' button missing!"
-            assert any("3B Görünüm" in t for t in btn_texts), "FAIL: '3B Görünüm' button missing!"
-            print("PASS: POI Detail Card displays unified 2x2 action buttons without separate peek balloon.")
+            # Check POI buttons: Primary 'Yol Tarifi Al' + 2 secondary 'Buradayım' & 'Ara'
+            poi_target_btn = await page_mobile.query_selector("#poi-route-btn")
+            assert poi_target_btn is not None, "FAIL: #poi-route-btn missing!"
+            target_text = await poi_target_btn.inner_text()
+            print(f"POI primary button: {target_text.strip()}")
+            assert "Yol Tarifi Al" in target_text or "Hedef" in target_text, f"Unexpected target text: {target_text}"
+            
+            poi_start_btn = await page_mobile.query_selector("#poi-start-btn")
+            assert poi_start_btn is not None, "FAIL: #poi-start-btn missing!"
+            start_text = await poi_start_btn.inner_text()
+            print(f"POI start button: {start_text.strip()}")
+            assert "Buradayım" in start_text or "Buradasınız" in start_text, f"Unexpected start text: {start_text}"
+
+            poi_call_btn = await page_mobile.query_selector("#poi-action-buttons a, #poi-action-buttons button[data-action='call-danisma']")
+            assert poi_call_btn is not None, "FAIL: Call button missing!"
+            call_text = await poi_call_btn.inner_text()
+            print(f"POI call button: {call_text.strip()}")
+            assert "Ara" in call_text or "Danışma" in call_text, f"Unexpected call text: {call_text}"
+            
+            # Verify no 3B button in POI actions
+            all_poi_btns = await page_mobile.query_selector_all("#poi-action-buttons button, #poi-action-buttons a")
+            all_texts = [await b.inner_text() for b in all_poi_btns]
+            assert not any("3B" in t for t in all_texts), f"FAIL: 3B button should not be in POI actions! Texts: {all_texts}"
+            print("PASS: POI Card has clean 3-button layout (Primary: Yol Tarifi Al, Secondary: Buradayım & Ara).")
             
             # Screenshot mobile POI card
-            mobile_poi_path = os.path.join(ARTIFACT_DIR, "test_mobile_paket2_poi.png")
+            mobile_poi_path = os.path.join(ARTIFACT_DIR, "test_mobile_minimal_poi.png")
             await page_mobile.screenshot(path=mobile_poi_path)
-            print(f"Saved mobile screenshot to {mobile_poi_path}")
+            print(f"Saved mobile POI screenshot to {mobile_poi_path}")
             
             # Check 7: Route calculation inside Bottom Sheet
             await page_mobile.evaluate("""() => {
@@ -126,15 +145,37 @@ async def run_tests():
             is_route_hidden = await route_detail.evaluate("el => el.classList.contains('hidden')")
             assert not is_route_hidden, "FAIL: #sidebar-route-detail is hidden during active route!"
             
+            # Check primary nav button
+            sim_play_btn = await page_mobile.query_selector("#btn-route-sim-play")
+            assert sim_play_btn is not None, "FAIL: #btn-route-sim-play missing!"
+            sim_text = await sim_play_btn.inner_text()
+            print(f"Route primary action: {sim_text.strip()}")
+            assert "Navigasyon" in sim_text or "Başlat" in sim_text or "Önizleme" in sim_text
+            
+            # Check secondary buttons: 1x Speed and QR Transfer
+            speed_btn = await page_mobile.query_selector("#btn-route-speed-toggle")
+            assert speed_btn is not None, "FAIL: #btn-route-speed-toggle missing!"
+            qr_btn = await page_mobile.query_selector("#btn-sidebar-route-qr")
+            assert qr_btn is not None, "FAIL: #btn-sidebar-route-qr missing!"
+            print("PASS: Route controls have clean Cevahir layout (Primary Navigasyonu Başlat + 1x Hız + Cebine Al).")
+            
+            # Check route steps
             steps = await page_mobile.query_selector_all("#sidebar-route-steps-list > div")
             print(f"Route steps count: {len(steps)}")
             assert len(steps) > 0, "FAIL: Route steps list is empty!"
-            print("PASS: Active route controls and step-by-step instructions unified inside bottom sheet.")
+            print("PASS: Step-by-step instructions rendered cleanly.")
+            
+            # Check 8: GPS Indoor Blue Dot Tracking
+            await page_mobile.evaluate("window.mallMap.updateLiveUserLocation(700, 425, 4, 90)")
+            await page_mobile.wait_for_timeout(200)
+            user_marker = await page_mobile.query_selector("#live-user-gps-dot")
+            assert user_marker is not None, "FAIL: #live-user-gps-dot (blue dot) missing!"
+            print("PASS: GPS Indoor Location (Blue Dot + directional cone) works smoothly on SVG map.")
             
             # Expand bottom sheet to see route detail screenshot
             await handle_bar.click()
             await page_mobile.wait_for_timeout(400)
-            mobile_route_path = os.path.join(ARTIFACT_DIR, "test_mobile_paket2_route.png")
+            mobile_route_path = os.path.join(ARTIFACT_DIR, "test_mobile_minimal_route.png")
             await page_mobile.screenshot(path=mobile_route_path)
             print(f"Saved mobile route screenshot to {mobile_route_path}")
             
@@ -148,7 +189,7 @@ async def run_tests():
             page_desk.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
             page_desk.on("pageerror", lambda err: console_errors.append(str(err)))
             
-            await page_desk.goto("http://127.0.0.1:8088/index.html")
+            await page_desk.goto("http://127.0.0.1:8089/index.html")
             await page_desk.wait_for_timeout(3800)
             
             # Desktop Sidebar: Left 380px full height
@@ -172,32 +213,29 @@ async def run_tests():
             assert zbox["y"] > fbox_desk["y"] + fbox_desk["height"], "FAIL: Zoom bar overlaps floor bar!"
             print("PASS: Zoom bar cleanly separated below floor selector without collision.")
             
-            # Test 3D POV in English mode
-            print("\n--- TEST 3: 3D POV & ENGLISH TRANSLATIONS ---")
-            # Switch to EN
-            lang_btn = await page_desk.query_selector("#lang-toggle-btn")
-            await lang_btn.click()
-            await page_desk.wait_for_timeout(300)
-            
-            # Enter POV 3D
-            await page_desk.evaluate("window.setMapViewMode('pov')")
+            # Test 3D Perspective toggle (2.5D Maket angle)
+            print("\n--- TEST 3: 2D PLAN / 3D MAKET TOGGLE ---")
+            btn_3d = await page_desk.query_selector("#btn-mode-3d")
+            assert btn_3d is not None, "FAIL: #btn-mode-3d missing!"
+            await btn_3d.click()
             await page_desk.wait_for_timeout(500)
             
-            # In POV 3D, floor selector should be hidden (opacity 0)
-            is_floor_visible = await floor_bar_desk.evaluate("el => window.getComputedStyle(el).opacity")
-            print(f"Floor bar opacity in POV 3D: {is_floor_visible}")
-            assert float(is_floor_visible) < 0.1, f"FAIL: Floor bar not hidden in POV 3D (opacity={is_floor_visible})!"
-            print("PASS: Floor selector automatically hidden in POV 3D mode.")
+            is_3d_active = await page_desk.evaluate("window.currentViewMode")
+            assert is_3d_active == "3d", f"FAIL: Expected currentViewMode to be '3d', got {is_3d_active}"
+            print("PASS: 3B Maket (isometric perspective) toggled successfully.")
             
-            # Check 3D HUD title / mode badge in EN
-            hud_badge = await page_desk.query_selector("#pov-hud-mode-badge")
-            badge_text = await hud_badge.inner_text()
-            print(f"POV HUD Mode Badge (EN): {badge_text}")
-            assert "360°" in badge_text or "3D" in badge_text, f"Unexpected badge text: {badge_text}"
+            # Switch back to 2D
+            btn_2d = await page_desk.query_selector("#btn-mode-2d")
+            await btn_2d.click()
+            await page_desk.wait_for_timeout(300)
+            is_2d_active = await page_desk.evaluate("window.currentViewMode")
+            assert is_2d_active == "2d", f"FAIL: Expected currentViewMode to be '2d', got {is_2d_active}"
+            print("PASS: 2B Plan view toggled successfully.")
             
-            desk_pov_path = os.path.join(ARTIFACT_DIR, "test_desktop_paket2_pov.png")
-            await page_desk.screenshot(path=desk_pov_path)
-            print(f"Saved desktop POV screenshot to {desk_pov_path}")
+            # Desktop screenshot
+            desk_screenshot_path = os.path.join(ARTIFACT_DIR, "test_desktop_minimal.png")
+            await page_desk.screenshot(path=desk_screenshot_path)
+            print(f"Saved desktop screenshot to {desk_screenshot_path}")
             
             await context_desk.close()
             await browser.close()
@@ -216,7 +254,7 @@ async def run_tests():
         if server_proc:
             server_proc.terminate()
             
-    print("\n=== ALL PAKET 2 TESTS PASSED SUCCESSFULLY! ===")
+    print("\n=== ALL MINIMAL APP TESTS PASSED SUCCESSFULLY! ===")
 
 if __name__ == "__main__":
     asyncio.run(run_tests())

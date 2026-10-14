@@ -34,13 +34,6 @@ function setSimSpeed(spd, silent = false) {
   if (cartSimulator) {
     cartSimulator.setSpeed(currentSimSpeed);
   }
-  if (window.pov3dEngine && window.pov3dEngine.walkSpeed !== currentSimSpeed) {
-    window.pov3dEngine.walkSpeed = currentSimSpeed;
-    const povSpeedBtn = document.getElementById('btn-pov-speed');
-    if (povSpeedBtn) {
-      povSpeedBtn.textContent = `${currentSimSpeed}x`;
-    }
-  }
 
   const hudSpeedText = document.getElementById('hud-speed-text');
   if (hudSpeedText) {
@@ -815,15 +808,11 @@ function initApp() {
   window.isVoiceEnabled = true;
   window.lastSpokenNavigationText = '';
 
-  // 👁️ Birinci Şahıs (X Kişisinin Gözü) 3B Koridor Motoru Başlatma
-  if (typeof Pov3DEngine !== 'undefined') {
-    window.pov3dEngine = new Pov3DEngine(mallData);
-  }
-
+  // Görünüm Modu Yöneticisi (Cevahir & Situm Standardı: 2B Plan / 3B Maket Perspektif)
   function setMapViewMode(mode) {
-    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
-
+    if (mode === 'pov') mode = '2d';
     window.currentViewMode = mode;
+
     const modeBtns = document.querySelectorAll('.view-mode-btn');
     modeBtns.forEach(btn => {
       const bMode = btn.getAttribute('data-view-mode');
@@ -834,93 +823,13 @@ function initApp() {
       }
     });
 
-    const headerPovBtn = document.getElementById('btn-header-pov-toggle');
-    const headerPovIcon = document.getElementById('header-pov-icon');
-    const headerPovText = document.getElementById('header-pov-text');
+    if (mallMap) {
+      mallMap.set3DMode(mode === '3d');
+    }
 
-    if (mode === 'pov') {
-      if (headerPovBtn) {
-        headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-400/40 text-[11px] font-extrabold flex items-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer';
-      }
-      if (headerPovIcon) headerPovIcon.innerHTML = getMonoIconSvg('layers', 14);
-      if (headerPovText) headerPovText.textContent = '2B Harita';
-
-      // 2B Çanta çalışıyorsa duraklat ve kaldığı segmenti (currentIndex, subProgress) 3B Gözümden kamerasına aktar
-      const savedIdx = cartSimulator ? cartSimulator.currentIndex : 0;
-      const savedProg = cartSimulator ? cartSimulator.subProgress : 0;
-      const savedX = cartSimulator ? cartSimulator.currentX : (selectedStartStore?.cx || 0);
-      const savedY = cartSimulator ? cartSimulator.currentY : (selectedStartStore?.cy || 0);
-      const savedFloor = cartSimulator ? cartSimulator.currentFloor : (selectedStartStore?.floor || currentFloor || 4);
-
-      if (cartSimulator && cartSimulator.isPlaying) {
-        cartSimulator.pause();
-      }
-
-      if (window.pov3dEngine) {
-        if (window.hasAnnouncedArrival || window.isRouteCompletedState) {
-          // Rota zaten tamamlanmışsa 3B butonuna tekrar basıldığında yürüyüşü ve varış anonsunu YENİDEN BAŞLATMA!
-          const reachedFocus = window.lastReachedStore || selectedTargetStore || selectedStartStore || activePoiStore || null;
-          window.pov3dEngine.hasAnnouncedArrival = true;
-          window.pov3dEngine.isWalking = false;
-          window.pov3dEngine.enterFreeRoam(reachedFocus?.floor || currentFloor || 4, reachedFocus);
-          window.pov3dEngine.totalProgressPct = 100;
-          window.pov3dEngine.remainingMeters = 0;
-          window.pov3dEngine._syncPlayPauseButton();
-          window.pov3dEngine._updateHUDTexts();
-        } else if (lastCalculatedRoute && selectedStartStore && selectedTargetStore) {
-          if (savedIdx > 0 || savedProg > 0.02) {
-            window.pov3dEngine.route = lastCalculatedRoute;
-            window.pov3dEngine.startStore = selectedStartStore;
-            window.pov3dEngine.targetStore = selectedTargetStore;
-            window.pov3dEngine.syncFromCart(savedIdx, savedProg, savedX, savedY, savedFloor);
-            window.pov3dEngine.isWalking = true;
-            window.pov3dEngine._syncPlayPauseButton();
-            window.pov3dEngine.activate();
-          } else {
-            window.pov3dEngine.startRouteWalk(lastCalculatedRoute, selectedStartStore, selectedTargetStore, true, true);
-          }
-        } else {
-          // Aktif rota yoksa: Google Street View tarzı 3B Serbest AVM Sokak Gezintisi başlat!
-          const focusStore = selectedStartStore || activePoiStore || null;
-          window.pov3dEngine.enterFreeRoam(focusStore?.floor || currentFloor || 4, focusStore);
-        }
-      }
-    } else {
-      // '2d' veya '3d' moduna geçiş: 3B Gözümden aktifse kaldığı noktayı 2B/3B Çanta Simülatörüne kesintisiz aktar
-      let shouldResumeCart = false;
-      if (window.pov3dEngine && window.pov3dEngine.isActive) {
-        shouldResumeCart = Boolean(window.pov3dEngine.isWalking && window.pov3dEngine.totalProgressPct < 99 && !window.hasAnnouncedArrival);
-        const povIdx = window.pov3dEngine.segIndex;
-        const povProg = window.pov3dEngine.segProgress;
-        const povX = window.pov3dEngine.camX;
-        const povY = window.pov3dEngine.camY;
-        const povFloor = window.pov3dEngine.currentFloor;
-        window.pov3dEngine.exit();
-
-        if (cartSimulator && lastCalculatedRoute && !window.hasAnnouncedArrival && !window.isRouteCompletedState) {
-          cartSimulator.syncFromPov(povIdx, povProg, povX, povY, povFloor);
-        }
-      }
-
-      if (mallMap) {
-        mallMap.set3DMode(mode === '3d');
-      }
-      if (headerPovBtn) {
-        headerPovBtn.className = 'header-pov-toggle-btn shrink-0 px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold flex items-center gap-1 shadow-sm shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer';
-      }
-      if (headerPovIcon) headerPovIcon.innerHTML = getMonoIconSvg('eye', 14);
-      if (headerPovText) headerPovText.textContent = '3B Görünüm';
-
-      if (shouldResumeCart && cartSimulator && !cartSimulator.isPlaying) {
-        cartSimulator.start();
-        const playText = document.getElementById('sim-play-text');
-        if (playText) playText.textContent = 'Duraklat';
-        const hudSimText = document.getElementById('hud-sim-text');
-        if (hudSimText) hudSimText.textContent = 'Duraklat';
-        const hudSimIcon = document.getElementById('hud-sim-icon');
-        if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'pause');
-        if (window.lucide) lucide.createIcons();
-      }
+    const btn3dLabel = document.getElementById('btn-3d-label');
+    if (btn3dLabel) {
+      btn3dLabel.textContent = (mode === '3d') ? '2D' : '3D';
     }
   }
   window.setMapViewMode = setMapViewMode;
@@ -1131,9 +1040,6 @@ function initApp() {
     // Mükerrer varış anonsunu engelle (hasAnnouncedArrival bayrağı)
     if (window.hasAnnouncedArrival) return;
     window.hasAnnouncedArrival = true;
-    if (window.pov3dEngine) {
-      window.pov3dEngine.hasAnnouncedArrival = true;
-    }
 
     if (window.queuedArrivalTimer) {
       clearTimeout(window.queuedArrivalTimer);
@@ -1205,7 +1111,7 @@ function initApp() {
     const spokenText = isEn ? stripUiEmojis(String(text)) : toTurkishPhoneticSpeech(text);
     window.lastSpokenPhoneticText = spokenText;
     const now = performance.now();
-    const spd = (window.pov3dEngine && window.pov3dEngine.walkSpeed) || currentSimSpeed || 1.0;
+    const spd = currentSimSpeed || 1.0;
     const baseRate = spd >= 3.5 ? 1.55 : (spd >= 1.8 ? 1.32 : 1.15);
     const rate = isStoreCue ? Math.min(1.65, baseRate * 1.08) : baseRate;
 
@@ -1517,9 +1423,6 @@ function initApp() {
   window.resetVoiceStepTracker = () => {
     lastSpokenStepIndex = -999;
     window.hasAnnouncedArrival = false;
-    if (window.pov3dEngine) {
-      window.pov3dEngine.hasAnnouncedArrival = false;
-    }
     if (window.queuedArrivalTimer) {
       clearTimeout(window.queuedArrivalTimer);
       window.queuedArrivalTimer = null;
@@ -1569,15 +1472,6 @@ function initApp() {
       // 1. Çakışan orta toast/modal kutusunu gösterme; yalnızca tekil üst varış kartını (updateLiveNavHUD) güncelle!
       hideToast();
       resetSimControls();
-
-      // 3B Gözümden Motorunu da varış durumuna senkronize et
-      if (window.pov3dEngine) {
-        window.pov3dEngine.isWalking = false;
-        window.pov3dEngine.totalProgressPct = 100;
-        window.pov3dEngine.remainingMeters = 0;
-        window.pov3dEngine._syncPlayPauseButton();
-        window.pov3dEngine._updateHUDTexts();
-      }
 
       // Az önce varılan hedef mağazayı sakla
       const reachedStore = selectedTargetStore;
@@ -1643,12 +1537,6 @@ function initApp() {
       closePoiDetail();
     }
 
-    // 3. 3B POV motorunun yürüyüşünü durdur
-    if (window.pov3dEngine) {
-      window.pov3dEngine.isWalking = false;
-      window.pov3dEngine.totalProgressPct = 100;
-    }
-
     // 4. KRİTİK: Kullanıcının yeni rotaya hemen geçebilmesi için:
     // - Alt HUD barı gizle ve 'has-active-route' kilidini kaldır ki mobilde alt arama çekmecesi (58px bar) geri gelsin!
     // - Varılan mağazayı yeni başlangıç noktası (selectedStartStore) olarak ata ve hedefi boşalt ki yeni mağaza seçildiğinde anında yeni rota çizilsin!
@@ -1701,40 +1589,6 @@ function initApp() {
         if (typeof mallMap.resetView === 'function') mallMap.resetView();
       }
     }
-  };
-
-  // 3B Sokak Görünümü İçinden Tıklanan Bir Mağazaya Anında Rota Çizip 3B Yürüyüş Başlatan Fonksiyon
-  window.startRouteFromCurrentPovToStore = (targetStore) => {
-    if (!targetStore || !window.pov3dEngine) return;
-    const eng = window.pov3dEngine;
-    const curFl = eng.currentFloor || currentFloor || 4;
-    const floorStores = (mallData?.floors[curFl]?.stores || []).filter(s => s.nav_node && s.id !== targetStore.id);
-    let nearestStart = selectedStartStore;
-    if (!nearestStart || nearestStart.id === targetStore.id || nearestStart.floor !== curFl) {
-      let bestDist = Infinity;
-      for (const s of floorStores) {
-        const d = Math.hypot((s.cx || 700) - eng.camX, (s.cy || 425) - eng.camY);
-        if (d < bestDist) {
-          bestDist = d;
-          nearestStart = s;
-        }
-      }
-      if (!nearestStart && mallData?.entrances?.length) {
-        nearestStart = mallData.entrances[0];
-      }
-    }
-    if (!nearestStart) return;
-
-    selectedStartStore = nearestStart;
-    updateStartBadgeUI(nearestStart.name);
-    selectedTargetStore = targetStore;
-    const targetInput = document.getElementById('input-target-loc');
-    if (targetInput) targetInput.value = targetStore.name;
-    document.getElementById('btn-clear-target')?.classList.remove('hidden');
-
-    calculateAndDisplayRoute();
-    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
-    window.setMapViewMode('pov');
   };
 
   // Yol Üstü Kampanya Sensörü & Rota Sıfırlama Kancaları
@@ -1981,9 +1835,6 @@ function setupUIEventListeners() {
         }
       });
       updateFloorUI(fl);
-      if (window.pov3dEngine && window.pov3dEngine.isActive && typeof window.pov3dEngine.switchFloorInFreeRoam === 'function') {
-        window.pov3dEngine.switchFloorInFreeRoam(fl);
-      }
     });
   });
 
@@ -2094,22 +1945,7 @@ function setupUIEventListeners() {
     });
   });
 
-  // Üst Başlık [👁️ Gözümden 3B / 🗺️ 2B Harita] Geçiş Çipi
-  document.getElementById('btn-header-pov-toggle')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isCurrentlyPov = window.pov3dEngine && window.pov3dEngine.isActive;
-    if (window.setMapViewMode) {
-      window.setMapViewMode(isCurrentlyPov ? '2d' : 'pov');
-    }
-  });
 
-  // 3B Gözümden İçinden [🗺️ 2B Plan] Çıkış Butonu
-  document.getElementById('btn-pov-exit-2d')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (window.setMapViewMode) {
-      window.setMapViewMode('2d');
-    }
-  });
 
   // Sesli Adım Adım Yönlendirme Butonu (#btn-voice-toggle)
   document.getElementById('btn-voice-toggle')?.addEventListener('click', (e) => {
@@ -2154,13 +1990,6 @@ function setupUIEventListeners() {
 
   document.getElementById('btn-route-sim-play')?.addEventListener('click', () => {
     toggleCartSimulation();
-  });
-
-  document.getElementById('btn-route-pov-toggle')?.addEventListener('click', () => {
-    if (typeof window.setMapViewMode === 'function') {
-      const targetMode = (window.currentViewMode === 'pov' || (window.pov3dEngine && window.pov3dEngine.isActive)) ? '2d' : 'pov';
-      window.setMapViewMode(targetMode);
-    }
   });
 
   document.getElementById('btn-route-speed-toggle')?.addEventListener('click', () => {
@@ -2363,7 +2192,6 @@ function setupUIEventListeners() {
     const startBtn = e.target.closest('#poi-start-btn, [data-action="start"]');
     const targetBtn = e.target.closest('#poi-route-btn, [data-action="target"]');
     const clearStartBtn = e.target.closest('[data-action="clear-start"]');
-    const povBtn = e.target.closest('[data-action="pov3d"]');
     const callDanismaBtn = e.target.closest('[data-action="call-danisma"]');
 
     if (startBtn && activePoiStore) {
@@ -2379,16 +2207,6 @@ function setupUIEventListeners() {
       if (mallMap.activeRoute) clearCurrentRoute();
       renderPoiActionButtons(activePoiStore);
       showToast('Başlangıç noktası kaldırıldı.', 'info');
-    } else if (povBtn && activePoiStore) {
-      if (typeof window.setMapViewMode === 'function') {
-        window.setMapViewMode('pov');
-      }
-      if (window.pov3dEngine && typeof window.pov3dEngine.teleportInFrontOfStore === 'function') {
-        window.pov3dEngine.teleportInFrontOfStore(activePoiStore);
-      }
-      if (isMobileOrLandscape()) {
-        collapseBottomSheet();
-      }
     } else if (callDanismaBtn) {
       window.location.href = 'tel:02125590000';
     }
@@ -2918,10 +2736,6 @@ function highlightAmenitiesOnMap(amenityKind, alsoRouteNearest = false) {
     setRoutePreference('elevator');
   }
 
-  // Harita üzerinde tüm noktaları net görebilmek için 3B POV açıksa 2B haritaya geç
-  if (window.currentViewMode === 'pov' && typeof window.setMapViewMode === 'function') {
-    window.setMapViewMode('2d');
-  }
 
   // Eğer bu katta hiç eşleşen servis yoksa (örn. Mescit B1'de, ATM Zemin'de), en yakın kata geç
   let matchesOnFloor = mallMap.getMatchingAmenitiesOnFloor(currentFloor, amenityKind);
@@ -3495,11 +3309,6 @@ function selectStore(store) {
   if (isMobileOrLandscape()) {
     expandBottomSheet();
   }
-
-  // Eğer 3B Sokak Görünümü (Gözümden 3B) açıksa, kamerayı doğrudan mağazanın 3B vitrini önüne götür!
-  if (window.pov3dEngine && window.pov3dEngine.isActive && typeof window.pov3dEngine.teleportInFrontOfStore === 'function') {
-    window.pov3dEngine.teleportInFrontOfStore(store);
-  }
 }
 
 function swapLocations() {
@@ -3806,23 +3615,23 @@ function renderPoiActionButtons(store) {
   const cleanPhone = rawPhone.replace(/[^\d+]/g, '');
 
   const targetBtnHtml = isTarget
-    ? `<button id="poi-route-btn" data-action="target" class="py-2.5 px-3 rounded-xl bg-red-700 text-white text-xs font-bold ring-2 ring-red-400 shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+    ? `<button id="poi-route-btn" data-action="target" class="w-full py-2.5 px-3 rounded-xl bg-red-700 text-white text-xs font-bold ring-2 ring-red-400 shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
         <i data-lucide="check" class="w-4 h-4"></i>
-        <span>🎯 Hedefte</span>
+        <span>🎯 Hedef Noktadasınız</span>
       </button>`
-    : `<button id="poi-route-btn" data-action="target" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold shadow-md shadow-red-600/25 flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+    : `<button id="poi-route-btn" data-action="target" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold shadow-md shadow-red-600/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
         <i data-lucide="navigation" class="w-4 h-4"></i>
-        <span>🎯 Hedef Yap</span>
+        <span>🎯 Yol Tarifi Al (Hedef Yap)</span>
       </button>`;
 
   const startBtnHtml = isStart
     ? `<button id="poi-start-btn" data-action="clear-start" class="py-2.5 px-3 rounded-xl bg-emerald-700 text-white text-xs font-bold ring-2 ring-emerald-400 shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer" title="Başlangıcı Kaldır">
         <i data-lucide="check" class="w-4 h-4"></i>
-        <span>📍 Başlangıçta</span>
+        <span>📍 Buradasınız</span>
       </button>`
     : `<button id="poi-start-btn" data-action="start" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer">
         <i data-lucide="map-pin" class="w-4 h-4"></i>
-        <span>📍 Başlangıç Yap</span>
+        <span>📍 Buradayım</span>
       </button>`;
 
   const callBtnHtml = cleanPhone
@@ -3832,19 +3641,16 @@ function renderPoiActionButtons(store) {
       </a>`
     : `<button type="button" data-action="call-danisma" class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-bold border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer" title="Capacity Danışma: 0212 559 0000">
         <i data-lucide="phone" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
-        <span>📞 Ara</span>
+        <span>📞 Danışma</span>
       </button>`;
 
-  const povBtnHtml = `<button type="button" data-action="pov3d" class="py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/25 flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer" title="Mağaza Önüne 3B Işınlan">
-      <i data-lucide="eye" class="w-4 h-4"></i>
-      <span>👁️ 3B Görünüm</span>
-    </button>`;
-
+  container.className = 'flex flex-col gap-2 pt-1';
   container.innerHTML = `
     ${targetBtnHtml}
-    ${startBtnHtml}
-    ${callBtnHtml}
-    ${povBtnHtml}
+    <div class="grid grid-cols-2 gap-2">
+      ${startBtnHtml}
+      ${callBtnHtml}
+    </div>
   `;
 
   if (window.lucide) lucide.createIcons();
@@ -3934,9 +3740,6 @@ function calculateAndDisplayRoute() {
   // Yeni rota çizilirken önceki tamamlanmış rota (.route-completed) durumunu ve GPS yürüyüşünü sıfırla
   window.isRouteCompletedState = false;
   window.hasAnnouncedArrival = false;
-  if (window.pov3dEngine) {
-    window.pov3dEngine.hasAnnouncedArrival = false;
-  }
   if (typeof stopLiveGpsRouteWalk === 'function') {
     stopLiveGpsRouteWalk();
   }
@@ -3975,9 +3778,6 @@ function calculateAndDisplayRoute() {
   updateFloatingToggleVisibility();
   closePoiPeekCard(); // Rota başlayınca peek card gizlenir, tekil 64px HUD kalır
 
-  // Kullanıcı zaten "Gözümden 3B" modundaysa 2B haritaya geri atma; doğrudan 3B yürüyüşü başlat!
-  const wasAlreadyInPov = (window.currentViewMode === 'pov') || Boolean(window.pov3dEngine && window.pov3dEngine.isActive);
-
   cartSimulator.setRoute(result);
   cartSimulator.resetToStart();
   if (cartSimulator.cartEl) {
@@ -4009,17 +3809,6 @@ function calculateAndDisplayRoute() {
     choiceTitle.textContent = `${cleanStart} ➔ ${selectedTargetStore.name}`;
   }
 
-  if (wasAlreadyInPov && window.pov3dEngine) {
-    choiceModal?.classList.add('hidden');
-    window.currentViewMode = 'pov';
-    window.pov3dEngine.startRouteWalk(result, selectedStartStore, selectedTargetStore, true, true);
-  } else {
-    if (window.pov3dEngine) {
-      window.pov3dEngine.startRouteWalk(result, selectedStartStore, selectedTargetStore, false, false);
-    }
-    choiceModal?.classList.remove('hidden');
-  }
-
   hideToast();
   if (window.lucide) lucide.createIcons();
 }
@@ -4028,9 +3817,6 @@ window.calculateAndDisplayRoute = calculateAndDisplayRoute;
 function clearCurrentRoute() {
   window.isRouteCompletedState = false;
   window.hasAnnouncedArrival = false;
-  if (window.pov3dEngine) {
-    window.pov3dEngine.hasAnnouncedArrival = false;
-  }
   window.lastReachedStore = null;
   if (window.arrivalResetTimer) {
     clearTimeout(window.arrivalResetTimer);
@@ -4044,9 +3830,6 @@ function clearCurrentRoute() {
   document.getElementById('arrival-action-bar')?.classList.add('hidden');
   if (typeof clearAmenityHighlightOnMap === 'function') {
     clearAmenityHighlightOnMap();
-  }
-  if (window.pov3dEngine && window.pov3dEngine.isActive) {
-    window.setMapViewMode('2d');
   }
   if (mallMap && mallMap.routeSvg) {
     mallMap.routeSvg.classList.remove('route-completed');
@@ -5667,7 +5450,7 @@ let currentActiveCampaign = null;
 
 function checkEnRouteCampaignProximity(curX, curY, curFloor) {
   // Aktif yürüyüş / simülasyon sırasında ekranı kaplayan kampanya bildirimini bastır (yalnızca duraklatıldığında veya manuel çağrıda göster)
-  if ((cartSimulator && cartSimulator.isPlaying) || (window.pov3dEngine && window.pov3dEngine.isActive)) {
+  if (cartSimulator && cartSimulator.isPlaying) {
     return;
   }
   for (const campaign of Object.values(ACTIVE_STORE_CAMPAIGNS)) {
@@ -6065,7 +5848,7 @@ function executeVoiceCommandText(rawText) {
 window.executeVoiceCommandText = executeVoiceCommandText;
 
 function setupVoiceCommandEvents() {
-  const openTriggers = ['btn-sidebar-voice-cmd', 'btn-header-voice-command', 'btn-pov-voice-cmd'];
+  const openTriggers = ['btn-sidebar-voice-cmd', 'btn-header-voice-command'];
   openTriggers.forEach(id => {
     document.getElementById(id)?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -6609,10 +6392,6 @@ function setTravelNavigationMode(mode) {
 
   document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
 
-  if (window.pov3dEngine && window.pov3dEngine.isActive) {
-    window.setMapViewMode('2d');
-  }
-
   // Eğer rota daha önce tamamlanmışsa (.route-completed), tekrar yürüyüş/önizleme için aktif görünüme döndür
   if (window.isRouteCompletedState && mallMap && mallMap.routeSvg) {
     window.isRouteCompletedState = false;
@@ -6687,11 +6466,6 @@ function setupTravelModeSelectorUI() {
             <button type="button" id="btn-modal-speed-4x" data-sim-speed="4" class="sim-speed-choice-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer">4x</button>
           </div>
         </div>
-        <button type="button" id="btn-choose-mode-pov" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer">
-          ${getMonoIconSvg('eye', 15)}
-          <span class="text-sm leading-none">3B Görünüm</span>
-          <span class="text-[10px] font-semibold text-orange-100">• Koridorda Yürü</span>
-        </button>
       `;
     }
   }
@@ -6775,12 +6549,6 @@ function setupTravelModeSelectorUI() {
   document.getElementById('btn-choose-mode-2d')?.addEventListener('click', (e) => {
     e.stopPropagation();
     setTravelNavigationMode('sim');
-  });
-
-  document.getElementById('btn-choose-mode-pov')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
-    window.setMapViewMode('pov');
   });
 
   document.getElementById('btn-hud-mode-gps')?.addEventListener('click', (e) => {
@@ -6958,12 +6726,18 @@ function viewEventIn3D(eventId) {
   closeEventsCalendarModal();
 
   if (window.setMapViewMode) {
-    window.setMapViewMode('pov');
+    window.setMapViewMode('3d');
   }
-  if (window.pov3dEngine && typeof window.pov3dEngine.teleportInFrontOfStore === 'function') {
-    window.pov3dEngine.teleportInFrontOfStore(targetObj);
+  if (targetObj.floor) {
+    currentFloor = targetObj.floor;
+    updateFloorUI(targetObj.floor);
+    mallMap?.loadFloor(targetObj.floor).then(() => {
+      selectStore(targetObj);
+    });
+  } else {
+    selectStore(targetObj);
   }
-  showToast(`"${evt.title}" etkinlik alanı (${evt.venueName}) 3B görünümde açıldı.`, 'info');
+  showToast(`"${evt.title}" etkinlik alanı (${evt.venueName}) haritada gösteriliyor.`, 'info');
 }
 window.viewEventIn3D = viewEventIn3D;
 

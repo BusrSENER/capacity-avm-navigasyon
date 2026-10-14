@@ -278,11 +278,6 @@ class CartSimulator {
         this.map.updateLiveUserLocation(curX, curY, curFrom.floor, angle);
       }
 
-      // POV 3B Motorunu arka planda birebir aynı koordinat ve segmentte tut
-      if (window.pov3dEngine && !window.pov3dEngine.isActive && typeof window.pov3dEngine.syncFromCart === 'function') {
-        window.pov3dEngine.syncFromCart(this.currentIndex, this.subProgress, curX, curY, curFrom.floor);
-      }
-
       // Yol Üstü Mağaza Kampanya Sensörü (Proximity Sensor)
       if (this.onProximityCheck) {
         this.onProximityCheck(curX, curY, curFrom.floor);
@@ -307,33 +302,6 @@ class CartSimulator {
     this.animFrameId = requestAnimationFrame(this.tick);
   }
 
-  /**
-   * 3B Gözümden (POV) modunda yürürken 2B Çanta simülatörünü birebir aynı noktada senkronize tutar
-   */
-  syncFromPov(segIndex, segProgress, curX, curY, floor) {
-    if (!this.pathNodes || this.pathNodes.length < 2) return;
-    this.currentIndex = Math.max(0, Math.min(this.pathNodes.length - 2, segIndex));
-    this.subProgress = Math.max(0, Math.min(1, segProgress));
-    this.currentX = curX;
-    this.currentY = curY;
-    this.currentFloor = floor;
-
-    const curFrom = this.pathNodes[this.currentIndex];
-    const curTo = this.pathNodes[this.currentIndex + 1];
-    let angle = 0;
-    if (curFrom && curTo) {
-      const dx = curTo.x - curFrom.x;
-      const dy = curTo.y - curFrom.y;
-      angle = Math.atan2(dy, dx) * (180 / Math.PI);
-      if (Math.abs(dx) > 1.5) {
-        this.facingX = dx > 0 ? 1 : -1;
-      }
-    }
-    this.updateCartPosition(curX, curY, angle, floor);
-    if (this.map && typeof this.map.updateLiveUserLocation === 'function') {
-      this.map.updateLiveUserLocation(curX, curY, floor, angle);
-    }
-  }
 
   handleFloorTransition(fromNode, toNode) {
     this.pause();
