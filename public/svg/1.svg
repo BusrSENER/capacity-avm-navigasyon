@@ -46,14 +46,14 @@
     <text x="159" y="488" fill="#b91c1c" font-size="9.5" font-weight="900" text-anchor="middle">🏥 SAĞLIK</text>
     <text x="159" y="502" fill="#dc2626" font-size="8.5" font-weight="800" text-anchor="middle">ODASI</text>
   </g>
-  <!-- 💳 Kiosk B3 Otopark Ödeme Noktası & 🅿️ B3 (P3) Kapalı Otopark Renk ve Harf Planı -->
+  <!-- 💳 Kiosk B3 Otopark Ödeme Noktası & 🅿️ B3 Kapalı Otopark Renk ve Harf Planı -->
   <g id="b3-parking-layout-grid">
     <rect x="936" y="415" width="358" height="316" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 4" />
     <rect x="946" y="423" width="338" height="26" rx="6" fill="#0f172a" />
-    <text x="1115" y="440" fill="#f8fafc" font-size="9.5" font-weight="900" text-anchor="middle" letter-spacing="0.6">🅿️ 3. BODRUM (B3 / P3) KAPALI OTOPARK • RENK &amp; SÜTUN PLANI</text>
+    <text x="1115" y="440" fill="#f8fafc" font-size="9.5" font-weight="900" text-anchor="middle" letter-spacing="0.6">🅿️ 3. BODRUM (B3) KAPALI OTOPARK • RENK &amp; SÜTUN PLANI</text>
 
     <!-- 🔵 MAVİ BÖLGE (A AKSI: A-01..A-15) -->
-    <g id="parking-zone-b3-mavi" class="parking-svg-zone" data-floor-code="P3" data-zone="Mavi" data-cx="1026" data-cy="505">
+    <g id="parking-zone-b3-mavi" class="parking-svg-zone" data-floor-code="B3" data-zone="Mavi" data-cx="1026" data-cy="505">
       <rect x="948" y="456" width="162" height="106" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8" />
       <rect x="948" y="456" width="162" height="20" rx="6" fill="#2563eb" />
       <text x="1029" y="469" fill="#ffffff" font-size="8.5" font-weight="900" text-anchor="middle">🔵 MAVİ • A AKSI (A-01..15)</text>
@@ -64,7 +64,7 @@
     </g>
 
     <!-- 🟡 SARI BÖLGE (B AKSI: B-01..B-15) -->
-    <g id="parking-zone-b3-sari" class="parking-svg-zone" data-floor-code="P3" data-zone="Sarı" data-cx="1202" data-cy="505">
+    <g id="parking-zone-b3-sari" class="parking-svg-zone" data-floor-code="B3" data-zone="Sarı" data-cx="1202" data-cy="505">
       <rect x="1120" y="456" width="164" height="106" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="1.8" />
       <rect x="1120" y="456" width="164" height="20" rx="6" fill="#eab308" />
       <text x="1202" y="469" fill="#0f172a" font-size="8.5" font-weight="900" text-anchor="middle">🟡 SARI • B AKSI (B-01..15)</text>
@@ -75,7 +75,7 @@
     </g>
 
     <!-- 🟠 TURUNCU BÖLGE (C AKSI: C-01..C-15) -->
-    <g id="parking-zone-b3-turuncu" class="parking-svg-zone" data-floor-code="P3" data-zone="Turuncu" data-cx="1026" data-cy="635">
+    <g id="parking-zone-b3-turuncu" class="parking-svg-zone" data-floor-code="B3" data-zone="Turuncu" data-cx="1026" data-cy="635">
       <rect x="948" y="572" width="162" height="112" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="1.8" />
       <rect x="948" y="572" width="162" height="20" rx="6" fill="#f97316" />
       <text x="1029" y="585" fill="#ffffff" font-size="8.5" font-weight="900" text-anchor="middle">🟠 TURUNCU • C AKSI (C-01..15)</text>
@@ -86,7 +86,7 @@
     </g>
 
     <!-- 🔴 KIRMIZI BÖLGE (D AKSI: D-01..D-15) -->
-    <g id="parking-zone-b3-kirmizi" class="parking-svg-zone" data-floor-code="P3" data-zone="Kırmızı" data-cx="1202" data-cy="635">
+    <g id="parking-zone-b3-kirmizi" class="parking-svg-zone" data-floor-code="B3" data-zone="Kırmızı" data-cx="1202" data-cy="635">
       <rect x="1120" y="572" width="164" height="112" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.8" />
       <rect x="1120" y="572" width="164" height="20" rx="6" fill="#ef4444" />
       <text x="1202" y="585" fill="#ffffff" font-size="8.5" font-weight="900" text-anchor="middle">🔴 KIRMIZI • D AKSI (D-01..15)</text>

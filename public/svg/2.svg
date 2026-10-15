@@ -52,15 +52,15 @@
       <text x="59" y="47" fill="#0891b2" font-size="7" font-weight="800" text-anchor="middle">Doğu Asansör Lobisi Yanı</text>
     </g>
 
-    <!-- 🅿️ B2 (P2) KAPALI OTOPARK RENK BLOKLARI VE HARF/KOLON AKSLARI (A, B, C, D) -->
+    <!-- 🅿️ B2 KAPALI OTOPARK RENK BLOKLARI VE HARF/KOLON AKSLARI (A, B, C, D) -->
     <g id="b2-parking-layout-grid">
       <!-- Otopark Ana Çerçevesi -->
       <rect x="795" y="412" width="498" height="318" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 4" />
       <rect x="805" y="420" width="478" height="28" rx="6" fill="#0f172a" />
-      <text x="1044" y="438" fill="#f8fafc" font-size="10.5" font-weight="900" text-anchor="middle" letter-spacing="0.8">🅿️ 2. BODRUM (B2 / P2) KAPALI OTOPARK • RENK &amp; SÜTUN PLANI</text>
+      <text x="1044" y="438" fill="#f8fafc" font-size="10.5" font-weight="900" text-anchor="middle" letter-spacing="0.8">🅿️ 2. BODRUM (B2) KAPALI OTOPARK • RENK &amp; SÜTUN PLANI</text>
 
       <!-- 🔵 MAVİ BÖLGE (A SÜTUN AKSI: A-01 .. A-15) - Batı/Kuzey Yönü -->
-      <g id="parking-zone-b2-mavi" class="parking-svg-zone" data-floor-code="P2" data-zone="Mavi" data-cx="918" data-cy="495">
+      <g id="parking-zone-b2-mavi" class="parking-svg-zone" data-floor-code="B2" data-zone="Mavi" data-cx="918" data-cy="495">
         <rect x="808" y="456" width="228" height="112" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2" />
         <rect x="808" y="456" width="228" height="22" rx="6" fill="#2563eb" />
         <text x="922" y="471" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">🔵 MAVİ BÖLGE • A AKSI (A-01 – A-15)</text>
@@ -75,7 +75,7 @@
       </g>
 
       <!-- 🟡 SARI BÖLGE (B SÜTUN AKSI: B-01 .. B-15) - Hibatech Oto Yıkama Yanı -->
-      <g id="parking-zone-b2-sari" class="parking-svg-zone" data-floor-code="P2" data-zone="Sarı" data-cx="1165" data-cy="495">
+      <g id="parking-zone-b2-sari" class="parking-svg-zone" data-floor-code="B2" data-zone="Sarı" data-cx="1165" data-cy="495">
         <rect x="1050" y="456" width="230" height="112" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="2" />
         <rect x="1050" y="456" width="230" height="22" rx="6" fill="#eab308" />
         <text x="1165" y="471" fill="#0f172a" font-size="9.5" font-weight="900" text-anchor="middle">🟡 SARI BÖLGE • B AKSI (B-01 – B-15)</text>
@@ -90,7 +90,7 @@
       </g>
 
       <!-- 🟠 TURUNCU BÖLGE (C SÜTUN AKSI: C-01 .. C-15) - E-Şarj & Doğu Lobisi -->
-      <g id="parking-zone-b2-turuncu" class="parking-svg-zone" data-floor-code="P2" data-zone="Turuncu" data-cx="918" data-cy="645">
+      <g id="parking-zone-b2-turuncu" class="parking-svg-zone" data-floor-code="B2" data-zone="Turuncu" data-cx="918" data-cy="645">
         <rect x="808" y="582" width="228" height="136" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="2" />
         <rect x="808" y="582" width="228" height="22" rx="6" fill="#f97316" />
         <text x="922" y="597" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">🟠 TURUNCU BÖLGE • C AKSI (C-01 – C-15)</text>
@@ -106,7 +106,7 @@
       </g>
 
       <!-- 🔴 KIRMIZI BÖLGE (D SÜTUN AKSI: D-01 .. D-15) - Vale Park & Fişekhane Çıkışı -->
-      <g id="parking-zone-b2-kirmizi" class="parking-svg-zone" data-floor-code="P2" data-zone="Kırmızı" data-cx="1165" data-cy="645">
+      <g id="parking-zone-b2-kirmizi" class="parking-svg-zone" data-floor-code="B2" data-zone="Kırmızı" data-cx="1165" data-cy="645">
         <rect x="1050" y="582" width="230" height="136" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2" />
         <rect x="1050" y="582" width="230" height="22" rx="6" fill="#ef4444" />
         <text x="1165" y="597" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">🔴 KIRMIZI BÖLGE • D AKSI (D-01 – D-15)</text>

@@ -34,6 +34,10 @@ class CartSimulator {
     this.createCartAvatar();
   }
 
+  get isRunning() {
+    return this.isPlaying;
+  }
+
   createCartAvatar() {
     this.cartEl = document.createElement('div');
     this.cartEl.className = 'cart-avatar hidden';
@@ -119,11 +123,16 @@ class CartSimulator {
     this.play();
   }
 
-  play() {
+  play(forceRestart = false) {
     if (!this.activeRoute || this.pathNodes.length < 2) return;
     if (this.currentIndex >= this.pathNodes.length - 1) {
-      this.currentIndex = 0;
-      this.subProgress = 0;
+      if (forceRestart) {
+        this.currentIndex = 0;
+        this.subProgress = 0;
+      } else {
+        this.finish();
+        return;
+      }
     }
     this.isPlaying = true;
     this.autoFollow = true;
@@ -139,7 +148,7 @@ class CartSimulator {
       const curY = this.currentY !== undefined ? this.currentY : this.pathNodes[this.currentIndex]?.y;
       if (curX !== undefined && curY !== undefined) {
         const curScale = typeof this.map.scale === 'number' ? this.map.scale : 1;
-        const targetScale = Math.min(Math.max(curScale, 1.25), 1.5);
+        const targetScale = Math.min(Math.max(curScale, 0.95), 1.25);
         this.map.flyTo(curX, curY, targetScale, 400);
       }
     }
@@ -320,10 +329,12 @@ class CartSimulator {
     this.showFloorTransitionCard(fromNode, finalNode);
 
     // 2. Bildirim süresi: Eğer yürüyen merdiven/asansör seslendirmesi yapılıyorsa, cümlenin bitmesini bekle!
-    const now = Date.now();
-    const remainingSpeechMs = Math.max(0, (window.speechMainBusyUntil || 0) - now);
-    const baseWaitMs = Math.max(700, Math.round(1100 / Math.max(1, this.speed)));
-    const waitMs = Math.max(baseWaitMs, remainingSpeechMs + 200);
+    const perfNow = performance.now();
+    const isSpeaking = (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) ||
+                       (perfNow < (window.speechMainBusyUntil || 0));
+    const remainingSpeechMs = Math.max(0, (window.speechMainBusyUntil || 0) - perfNow);
+    const baseWaitMs = Math.max(650, Math.round(900 / Math.max(1, this.speed)));
+    const waitMs = isSpeaking ? Math.max(1200, remainingSpeechMs + 300) : baseWaitMs;
 
     this.transitionTimer = setTimeout(() => {
       this.currentIndex = finalIdx;
@@ -339,8 +350,8 @@ class CartSimulator {
           this.onFloorChange(finalNode.floor);
         }
 
-        // Doğrudan sepetin çıktığı kapı/aktarma koordinatına odaklanır (rahat genel bakış: 1.35x)
-        const targetScale = Math.min(Math.max(this.map.scale, 1.25), 1.5);
+        // Doğrudan sepetin çıktığı kapı/aktarma koordinatına odaklanır (rahat genel bakış: 1.0 - 1.25x)
+        const targetScale = Math.min(Math.max(this.map.scale, 0.95), 1.25);
         const flyDuration = Math.max(200, Math.round(380 / Math.max(1, this.speed)));
         this.map.flyTo(finalNode.x, finalNode.y, targetScale, flyDuration);
 
@@ -350,7 +361,16 @@ class CartSimulator {
           // Yeni kata varıldığında konuşma kilidini sıfırla ki yeni katın yönlendirmesi mutlaka seslendirilsin
           window.speechMainBusyUntil = 0;
           window.speechBusyUntil = 0;
-          this.play();
+          if (this.currentIndex >= this.pathNodes.length - 1) {
+            this.finish();
+          } else {
+            this.play();
+            if (this.onProgress && this.pathNodes[this.currentIndex]) {
+              const totalNodes = Math.max(1, this.pathNodes.length - 1);
+              const pct = (this.currentIndex / totalNodes) * 100;
+              this.onProgress(pct, this.pathNodes[this.currentIndex]);
+            }
+          }
         }, flyDuration + 100);
       });
     }, waitMs);

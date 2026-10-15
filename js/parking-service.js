@@ -7,12 +7,15 @@ const PARKING_API_URL = 'https://script.google.com/macros/s/AKfycbyIG6moSh1AXVgK
 const DEFAULT_ZONE_CAPACITY = 60;
 
 const FLOOR_META_MAP = {
-  P1: { floor: 3, code: 'P1', name: 'P1 (1. Bodrum Kat)' },
-  P2: { floor: 2, code: 'P2', name: 'P2 (2. Bodrum Kat)' },
-  P3: { floor: 1, code: 'P3', name: 'P3 (3. Bodrum Kat)' },
-  '3': { floor: 3, code: 'P1', name: 'P1 (1. Bodrum Kat)' },
-  '2': { floor: 2, code: 'P2', name: 'P2 (2. Bodrum Kat)' },
-  '1': { floor: 1, code: 'P3', name: 'P3 (3. Bodrum Kat)' }
+  B1: { floor: 3, code: 'B1', name: 'B1 (-1. Kat • Kapalı Otopark 1)' },
+  B2: { floor: 2, code: 'B2', name: 'B2 (-2. Kat • Kapalı Otopark 2)' },
+  B3: { floor: 1, code: 'B3', name: 'B3 (-3. Kat • Kapalı Otopark 3)' },
+  P1: { floor: 3, code: 'B1', name: 'B1 (-1. Kat • Kapalı Otopark 1)' },
+  P2: { floor: 2, code: 'B2', name: 'B2 (-2. Kat • Kapalı Otopark 2)' },
+  P3: { floor: 1, code: 'B3', name: 'B3 (-3. Kat • Kapalı Otopark 3)' },
+  '3': { floor: 3, code: 'B1', name: 'B1 (-1. Kat • Kapalı Otopark 1)' },
+  '2': { floor: 2, code: 'B2', name: 'B2 (-2. Kat • Kapalı Otopark 2)' },
+  '1': { floor: 1, code: 'B3', name: 'B3 (-3. Kat • Kapalı Otopark 3)' }
 };
 
 const ZONE_COLOR_HEX_MAP = {
@@ -23,6 +26,18 @@ const ZONE_COLOR_HEX_MAP = {
 };
 
 const DEFAULT_FALLBACK_OCCUPANCY = {
+  B1_Mavi: 24,
+  B1_Sarı: 38,
+  B1_Turuncu: 51,
+  B1_Kırmızı: 49,
+  B2_Mavi: 12,
+  B2_Sarı: 19,
+  B2_Turuncu: 34,
+  B2_Kırmızı: 22,
+  B3_Mavi: 9,
+  B3_Sarı: 14,
+  B3_Turuncu: 18,
+  B3_Kırmızı: 11,
   P1_Mavi: 24,
   P1_Sarı: 38,
   P1_Turuncu: 51,
@@ -83,8 +98,8 @@ class ParkingService {
    *    (action: 'save', mall_id: 'capacity', floor_id, zone_color, pillar_code, device_id)
    */
   static async saveSpot(floorId, zoneColor, pillarCode = '') {
-    const floorKey = String(floorId || 'P2').toUpperCase();
-    const floorMeta = FLOOR_META_MAP[floorKey] || FLOOR_META_MAP.P2;
+    const floorKey = String(floorId || 'B2').toUpperCase();
+    const floorMeta = FLOOR_META_MAP[floorKey] || FLOOR_META_MAP.B2;
     const cleanZone = zoneColor || 'Mavi';
     const cleanPillar = String(pillarCode || '').trim();
     const deviceId = ParkingService.getDeviceId();

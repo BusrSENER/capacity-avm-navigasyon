@@ -610,11 +610,12 @@ html.dark .store-polygon.no-logo text {
 }
 
 /* Level of Detail (LoD) Kuralları */
-/* Harita genel bakıştayken (Zoom < 1.2): YALNIZCA is_anchor: true olan ana mağazalar ve hedef/başlangıç görünür */
-.lod-far .logo-tile-marker:not(.is-anchor):not(.is-target):not(.is-start) {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+/* Harita genel bakıştayken tüm marka logoları açık ve net görünür; kalabalığı önlemek için yalnızca uzun ikincil metin etiketleri gizlenir */
+.lod-far .marker-name-secondary {
+  display: none !important;
+}
+.lod-far .logo-tile-marker:not(.is-anchor):not(.is-target):not(.is-start) .logo-tile {
+  opacity: 0.95;
 }
 
 .logo-tile-marker {
@@ -816,10 +817,6 @@ body.has-active-route #route-panel {
     transform: translateY(calc(75vh - 58px)) !important;
     transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
     overflow: hidden !important;
-  }
-
-  #desktop-sidebar-toggle {
-    display: none !important;
   }
 
   /* Çekmece Genişletildiğinde (Expanded State: 75vh) */
@@ -1233,50 +1230,12 @@ body.has-active-route #route-panel {
     pointer-events: none !important;
   }
 
-  /* Masaüstü Sol Panel Açılır/Kapanır Kulakçık Butonu */
-  #desktop-sidebar-toggle {
-    display: flex !important;
-    position: fixed !important;
-    top: 50% !important;
-    left: 380px !important;
-    transform: translateY(-50%) !important;
-    width: 24px !important;
-    height: 54px !important;
-    background: #ffffff !important;
-    border: 1px solid rgba(226, 232, 240, 0.9) !important;
-    border-left: none !important;
-    border-radius: 0 12px 12px 0 !important;
-    box-shadow: 4px 0 14px rgba(0, 0, 0, 0.08) !important;
-    z-index: 9005 !important;
-    cursor: pointer !important;
-    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #64748b !important;
-  }
-
-  html.dark #desktop-sidebar-toggle {
-    background: #1e293b !important;
-    border-color: rgba(51, 65, 85, 0.9) !important;
-    color: #94a3b8 !important;
-  }
-
-  #desktop-sidebar-toggle:hover {
-    color: #0f172a !important;
-    background: #f8fafc !important;
-  }
-
-  html.dark #desktop-sidebar-toggle:hover {
-    color: #f8fafc !important;
-    background: #334155 !important;
-  }
-
-  body.sidebar-collapsed #desktop-sidebar-toggle {
-    left: 0 !important;
-  }
-
-  body.sidebar-collapsed #desktop-sidebar-toggle .toggle-icon-arrow {
-    transform: rotate(180deg) !important;
+  /* Aktif rota veya navigasyon sırasında üst üste binen selamlama ve otopark kartlarını gizle */
+  body.has-active-route #smart-parking-greeting-card,
+  body.has-active-route #parking-saved-card,
+  body.has-active-route #kiosk-sidebar-banner,
+  body.has-active-route #parking-full-warning-box {
+    display: none !important;
   }
 
   #main-map-area {
@@ -1829,6 +1788,42 @@ body:has(#route-qr-modal:not(.hidden)) #toast-container {
   #sidebar-panel:is(.is-expanded, .is-drawer-open) #sidebar-poi-detail {
     opacity: 1 !important;
     pointer-events: auto !important;
+  }
+
+  /* 3.1. Yatay Modda Açılan Sanal Klavye ve Arama Ergonomisi */
+  #sidebar-panel:has(#dual-search-container input:focus) #sidebar-header-row,
+  #sidebar-panel:has(#dual-search-container input:focus) #category-pills-row,
+  #sidebar-panel:has(#dual-search-container input:focus) #amenity-chips-wrapper,
+  #sidebar-panel:has(#dual-search-container input:focus) #sidebar-tabs-container {
+    display: none !important;
+  }
+
+  #sidebar-panel #dual-search-container input {
+    height: 34px !important;
+    font-size: 11.5px !important;
+    padding: 4px 8px !important;
+  }
+
+  #sidebar-panel:has(#dual-search-container input:focus) #sidebar-store-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 4px !important;
+    max-height: calc(100vh - 110px) !important;
+    max-height: calc(100dvh - 110px) !important;
+    overflow-y: auto !important;
+  }
+
+  #sidebar-panel .store-card {
+    padding: 6px 10px !important;
+    gap: 8px !important;
+    min-height: auto !important;
+  }
+  #sidebar-panel .store-card .store-name {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+  }
+  #sidebar-panel .store-card .store-category {
+    font-size: 9.5px !important;
   }
 
   /* 4. Sağ Alttaki Siyah Floating Toggle (Liste) Butonunu TAMAMEN KALDIR */

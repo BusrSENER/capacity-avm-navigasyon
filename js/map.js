@@ -269,7 +269,7 @@ class MallMap {
     });
   }
 
-  async loadFloor(floorNum) {
+  async loadFloor(floorNum, preserveView = false) {
     this.currentFloor = floorNum;
     const floorInfo = this.mallData.floors[floorNum];
     if (!floorInfo) return;
@@ -322,6 +322,11 @@ class MallMap {
       this.renderBrandMarkers(floorNum);
       this.renderRoute();
       this.updateActiveStorePolygons();
+
+      // Eğer aktif bir simülasyon yürüyüşü yoksa, yeni katın planını her zaman rahat ve dengeli bir genel bakışla (overview) göster
+      if (!preserveView && (!window.cartSimulator || !window.cartSimulator.isPlaying)) {
+        this.resetView();
+      }
     } catch (err) {
       console.error('Error loading floor SVG:', err);
     }
@@ -894,12 +899,14 @@ class MallMap {
     }
   }
 
-  flyTo(x, y, targetScale = 1.35, duration = 400, offsetY = 0) {
+  flyTo(x, y, targetScale = null, duration = 380, offsetY = 0) {
     if (this.flyToAnimId) {
       cancelAnimationFrame(this.flyToAnimId);
       this.flyToAnimId = null;
     }
     const rect = this.container.getBoundingClientRect();
+    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
+    const isMobile = window.innerWidth <= 768 && !isLandscape;
     const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
     const cx = paddingLeft + (rect.width - paddingLeft) / 2;
     const cy = (rect.height / 2) - offsetY;
@@ -908,7 +915,10 @@ class MallMap {
     const startY = this.panY;
     const startScale = this.scale;
 
-    const endScale = Math.min(this.maxScale, Math.max(this.minScale, targetScale));
+    const defaultFocusScale = isMobile ? 0.95 : 1.15;
+    const requestedScale = (targetScale !== null && targetScale !== undefined) ? targetScale : defaultFocusScale;
+    // Maksimum yakınlaştırma tavanı: Aşırı yakın çekimi engelle, kat planı bağlamını koru
+    const endScale = Math.min(isMobile ? 1.08 : 1.25, Math.max(this.minScale, requestedScale));
     const endX = cx - x * endScale;
     const endY = cy - y * endScale;
 

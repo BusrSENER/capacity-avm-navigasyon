@@ -145,8 +145,11 @@ function collapseBottomSheet() {
   if (toggleIcon) toggleIcon.innerHTML = getMonoIconSvg('layers', 14);
   if (toggleText) toggleText.textContent = 'Liste';
   if (sheetToggleIcon) sheetToggleIcon.style.transform = 'rotate(0deg)';
-  if (sheetHint) sheetHint.innerHTML = '<span>Yeni Rota Çiz</span> <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">&bull; Mağaza Ara</span>';
-  if (sheetSubhint) sheetSubhint.textContent = 'Paneli açmak için dokunun';
+  if (!document.body.classList.contains('has-active-route')) {
+    if (sheetHint) sheetHint.innerHTML = '<span>Yeni Rota Çiz</span> <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">&bull; Mağaza Ara</span>';
+    if (sheetSubhint) sheetSubhint.textContent = 'Paneli açmak için dokunun';
+    document.getElementById('btn-handle-start-nav')?.classList.add('hidden');
+  }
 
   updateFloatingToggleVisibility();
 }
@@ -1510,7 +1513,7 @@ function initApp() {
         cartSimulator.stop();
       }
 
-      // Hedefe varıldığında seslendirme ve tebrik bildiriminin ardından (~4.5s) rotayı kendiliğinden tamamla
+      // Hedefe varıldığında seslendirme ve tebrik bildiriminin ardından (~3.5s) rotayı kendiliğinden tamamla
       if (window.arrivalResetTimer) {
         clearTimeout(window.arrivalResetTimer);
       }
@@ -1518,13 +1521,13 @@ function initApp() {
         if (typeof window.completeAndResetRouteTo2D === 'function') {
           window.completeAndResetRouteTo2D(reachedStore);
         }
-      }, 4500);
+      }, 3500);
     }
   );
   window.cartSimulator = cartSimulator;
 
   // Hedefe Varıldığında Rota Çizgisini Haritada ('route-completed', opacity: 0.5) Bırakarak
-  // Yeni Rota Seçimine ve Konum Sıfırlamaya İzin Veren Merkezi Fonksiyon
+  // Yeni Rota Seçimine ve Konum Sıfırlamaya İzin Veren Merkezi Fonksiyon (Kullanıcı 'Bitir' Demeden Kendiliğinden Biter)
   window.completeAndResetRouteTo2D = (reachedStore) => {
     if (window.arrivalResetTimer) {
       clearTimeout(window.arrivalResetTimer);
@@ -1541,7 +1544,7 @@ function initApp() {
       window.setMapViewMode('2d');
     }
 
-    // 2. Simülatörü ve canlı GPS yürüyüşünü durdur, ancak ROTA ÇİZGİSİNİ HARİTADAN SİLME (.route-completed olarak bırak)
+    // 2. Simülatörü ve canlı GPS yürüyüşünü durdur
     if (cartSimulator) {
       if (cartSimulator.cartEl) {
         cartSimulator.cartEl.classList.add('hidden');
@@ -1555,10 +1558,17 @@ function initApp() {
       closePoiDetail();
     }
 
-    // 4. KRİTİK: Kullanıcının yeni rotaya hemen geçebilmesi için:
-    // - Alt HUD barı gizle ve 'has-active-route' kilidini kaldır ki mobilde alt arama çekmecesi (58px bar) geri gelsin!
-    // - Varılan mağazayı yeni başlangıç noktası (selectedStartStore) olarak ata ve hedefi boşalt ki yeni mağaza seçildiğinde anında yeni rota çizilsin!
+    // 3. UI Temizliği: Canlı HUD bannerı, varış çubuğu, otopark kartı ve alt hızlı başlat butonunu gizle
+    document.getElementById('header-live-nav-banner')?.classList.add('hidden');
+    document.getElementById('arrival-action-bar')?.classList.add('hidden');
+    document.getElementById('smart-parking-greeting-card')?.classList.add('hidden');
+    document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
+    document.getElementById('btn-handle-start-nav')?.classList.add('hidden');
+    document.getElementById('sidebar-route-detail')?.classList.add('hidden');
+    document.getElementById('sidebar-store-grid')?.classList.remove('hidden');
+    document.getElementById('sidebar-tabs-container')?.classList.remove('hidden');
     document.body.classList.remove('has-active-route');
+
     const hudBar = document.getElementById('nav-hud-bar');
     if (hudBar) {
       hudBar.classList.remove('is-active');
@@ -1577,9 +1587,15 @@ function initApp() {
     if (targetInput) targetInput.value = '';
     document.getElementById('btn-clear-target')?.classList.add('hidden');
     setActiveFocusSlot('target');
+
+    const sheetHint = document.getElementById('bottom-sheet-hint');
+    const sheetSubhint = document.getElementById('bottom-sheet-subhint');
+    if (sheetHint) sheetHint.innerHTML = '<span>Yeni Rota Çiz</span> <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">&bull; Mağaza Ara</span>';
+    if (sheetSubhint) sheetSubhint.textContent = 'Paneli açmak için dokunun';
+
     updateFloatingToggleVisibility();
 
-    // 5. Varılan katın 2B haritasını göster ve rota çizgisini 'route-completed' (mat gri-mavi, opacity: 0.5) olarak koru
+    // 4. Varılan katın 2B haritasını göster ve rota çizgisini 'route-completed' (mat gri-mavi, opacity: 0.5) olarak koru
     const applyCompletedRouteState = () => {
       if (mallMap && lastCalculatedRoute) {
         if (!mallMap.routeSvg?.querySelector('.route-group')) {
@@ -1601,18 +1617,10 @@ function initApp() {
       if (mallMap.currentFloor !== targetFloor) {
         mallMap.loadFloor(targetFloor).then(() => {
           applyCompletedRouteState();
-          if (storeObj && storeObj.cx && storeObj.cy) {
-            mallMap.flyTo(storeObj.cx, storeObj.cy, 1.35, 400);
-          } else if (typeof mallMap.resetView === 'function') {
-            mallMap.resetView();
-          }
+          mallMap.resetView();
         });
       } else {
-        if (storeObj && storeObj.cx && storeObj.cy) {
-          mallMap.flyTo(storeObj.cx, storeObj.cy, 1.35, 400);
-        } else if (typeof mallMap.resetView === 'function') {
-          mallMap.resetView();
-        }
+        mallMap.resetView();
       }
     }
   };
@@ -2027,6 +2035,30 @@ function setupUIEventListeners() {
     toggleCartSimulation();
   });
 
+  document.getElementById('btn-handle-start-nav')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleCartSimulation();
+  });
+
+  document.getElementById('btn-header-toggle-steps')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isMobileOrLandscape()) {
+      if (isBottomSheetExpanded) {
+        collapseBottomSheet();
+      } else {
+        expandBottomSheet();
+        setTimeout(() => {
+          document.getElementById('sidebar-route-detail')?.scrollIntoView({ behavior: 'smooth' });
+        }, 120);
+      }
+    } else {
+      if (document.body.classList.contains('sidebar-collapsed')) {
+        document.body.classList.remove('sidebar-collapsed');
+      }
+      document.getElementById('sidebar-route-detail')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
   document.getElementById('btn-route-speed-toggle')?.addEventListener('click', () => {
     cycleSimSpeed();
   });
@@ -2338,13 +2370,6 @@ function setupUIEventListeners() {
       e.stopPropagation();
       collapseDesktopSidebar();
     });
-  });
-
-  // Masaüstü Sol Panel Açılır/Kapanır Kulakçık Butonu (#desktop-sidebar-toggle)
-  const desktopSidebarToggle = document.getElementById('desktop-sidebar-toggle');
-  desktopSidebarToggle?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleDesktopSidebar();
   });
 }
 
@@ -3295,14 +3320,16 @@ function setStartLocation(loc) {
     setActiveFocusSlot(null);
   } else {
     setActiveFocusSlot('target');
-    // Başlangıç katına ve koordinatına odaklan
+    const isMobile = window.innerWidth <= 768;
+    const gentleScale = isMobile ? 0.72 : 1.05;
+    // Başlangıç katına ve koordinatına odaklan (aşırı yakınlaşmadan tüm koridoru göster)
     if (mallMap.currentFloor !== loc.floor) {
       mallMap.loadFloor(loc.floor).then(() => {
         updateFloorUI(loc.floor);
-        mallMap.flyTo(loc.cx, loc.cy, 1.35);
+        mallMap.flyTo(loc.cx, loc.cy, gentleScale);
       });
     } else {
-      mallMap.flyTo(loc.cx, loc.cy, 1.35);
+      mallMap.flyTo(loc.cx, loc.cy, gentleScale);
     }
   }
 
@@ -3497,15 +3524,17 @@ function selectStore(store) {
   // Haritada seçili mağazayı ve kalıcı seçim vurgusunu (highlight / active stroke) ayarla
   mallMap.setSelectedStore(store);
 
+  const isMobile = window.innerWidth <= 768;
+  const gentleScale = isMobile ? 0.75 : 1.10;
   // Farklı kattaysa kata geç ve mağazaya odaklan
   if (mallMap.currentFloor !== store.floor) {
     mallMap.loadFloor(store.floor).then(() => {
       updateFloorUI(store.floor);
-      mallMap.flyTo(store.cx, store.cy, 1.45);
+      mallMap.flyTo(store.cx, store.cy, gentleScale);
       mallMap.setSelectedStore(store);
     });
   } else {
-    mallMap.flyTo(store.cx, store.cy, 1.45);
+    mallMap.flyTo(store.cx, store.cy, gentleScale);
     mallMap.setSelectedStore(store);
   }
 
@@ -3713,6 +3742,11 @@ function toggleCartSimulation() {
     const headerStartLabel = document.getElementById('header-start-nav-label');
     if (headerStartIcon) headerStartIcon.textContent = '⏸';
     if (headerStartLabel) headerStartLabel.textContent = isEn ? 'Pause' : 'Durdur';
+
+    const handleStartIcon = document.getElementById('handle-start-nav-icon');
+    const handleStartLabel = document.getElementById('handle-start-nav-label');
+    if (handleStartIcon) handleStartIcon.textContent = '⏸';
+    if (handleStartLabel) handleStartLabel.textContent = isEn ? 'Pause' : 'Durdur';
   } else {
     cartSimulator.pause();
     const playText = document.getElementById('sim-play-text');
@@ -3731,6 +3765,11 @@ function toggleCartSimulation() {
     const headerStartLabel = document.getElementById('header-start-nav-label');
     if (headerStartIcon) headerStartIcon.textContent = '▶';
     if (headerStartLabel) headerStartLabel.textContent = isEn ? 'Start' : 'Başlat';
+
+    const handleStartIcon = document.getElementById('handle-start-nav-icon');
+    const handleStartLabel = document.getElementById('handle-start-nav-label');
+    if (handleStartIcon) handleStartIcon.textContent = '▶';
+    if (handleStartLabel) handleStartLabel.textContent = isEn ? 'Start' : 'Başlat';
   }
   if (window.lucide) lucide.createIcons();
 }
@@ -3991,11 +4030,13 @@ function calculateAndDisplayRoute() {
   }
   updateLiveNavHUD(0, 0);
 
-  // Mobilde Alt Çekmeceyi Otomatik Küçült ve Rota Modunu Aktif Et
+  document.body.classList.add('has-active-route');
+  // Mobilde Alt Çekmeceyi Otomatik Küçült ve Hızlı Başlat Butonunu Göster
   if (isMobileOrLandscape()) {
     collapseBottomSheet();
   }
-  document.body.classList.add('has-active-route');
+  document.getElementById('btn-handle-start-nav')?.classList.remove('hidden');
+  document.getElementById('smart-parking-greeting-card')?.classList.add('hidden');
   updateFloatingToggleVisibility();
   closePoiPeekCard(); // Rota başlayınca peek card gizlenir, tekil 64px HUD kalır
 
@@ -4049,6 +4090,8 @@ function clearCurrentRoute() {
   document.getElementById('route-mode-choice-modal')?.classList.add('hidden');
   document.getElementById('live-voice-subtitle-bar')?.classList.add('hidden');
   document.getElementById('arrival-action-bar')?.classList.add('hidden');
+  document.getElementById('btn-handle-start-nav')?.classList.add('hidden');
+  document.getElementById('smart-parking-greeting-card')?.classList.add('hidden');
   if (typeof clearAmenityHighlightOnMap === 'function') {
     clearAmenityHighlightOnMap();
   }
@@ -4210,6 +4253,10 @@ function resetSimControls() {
   const headerStartLabel = document.getElementById('header-start-nav-label');
   if (headerStartIcon) headerStartIcon.textContent = '▶';
   if (headerStartLabel) headerStartLabel.textContent = (currentLanguage === 'en' || window.currentLanguage === 'en') ? 'Start' : 'Başlat';
+  const handleStartIcon = document.getElementById('handle-start-nav-icon');
+  const handleStartLabel = document.getElementById('handle-start-nav-label');
+  if (handleStartIcon) handleStartIcon.textContent = '▶';
+  if (handleStartLabel) handleStartLabel.textContent = (currentLanguage === 'en' || window.currentLanguage === 'en') ? 'Start' : 'Başlat';
   const hudPct = document.getElementById('hud-progress-pct');
   if (hudPct) hudPct.textContent = '(%0)';
   if (window.lucide) lucide.createIcons();
@@ -4708,9 +4755,21 @@ window.closeRouteQrModal = closeRouteQrModal;
 // ========================================================
 // OTOPARK HAFIZASI, GOOGLE SHEETS SERVİSİ VE AKILLI KARŞILAMA SİSTEMİ
 // ========================================================
-let selectedParkingFloor = { floor: 2, code: 'P2', name: 'P2 (2. Bodrum Kat)' };
+let selectedParkingFloor = { floor: 2, code: 'B2', name: 'B2 (-2. Kat • Kapalı Otopark 2)' };
 let selectedParkingZone = { name: 'Mavi', color: '#2563eb' };
 let currentParkingOccupancy = {
+  B1_Mavi: 18,
+  B1_Sarı: 34,
+  B1_Turuncu: 14,
+  B1_Kırmızı: 52,
+  B2_Mavi: 12,
+  B2_Sarı: 5,
+  B2_Turuncu: 36,
+  B2_Kırmızı: 54,
+  B3_Mavi: 9,
+  B3_Sarı: 15,
+  B3_Turuncu: 22,
+  B3_Kırmızı: 49,
   P1_Mavi: 18,
   P1_Sarı: 34,
   P1_Turuncu: 14,
@@ -4879,47 +4938,8 @@ function renderParkingHeatbars(occupancyMap = null) {
     `;
   });
 
-  // 3. Seçili katın tüm bölgeleri için özet Heatbar listesi (#parking-occupancy-heatbar-panel)
-  const parkingForm = document.getElementById('parking-form');
-  const zoneContainer = document.getElementById('parking-zone-options');
-  if (parkingForm && zoneContainer) {
-    let summaryPanel = document.getElementById('parking-occupancy-heatbar-panel');
-    if (!summaryPanel) {
-      summaryPanel = document.createElement('div');
-      summaryPanel.id = 'parking-occupancy-heatbar-panel';
-      summaryPanel.className = 'mt-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 flex flex-col gap-1.5';
-      zoneContainer.parentElement.appendChild(summaryPanel);
-    }
-
-    const rowsHtml = zones.map(zName => {
-      const count = getZoneOccupancyCount(currentParkingOccupancy, floorCode, zName);
-      const meta = computeZoneHeatbarMeta(count);
-      const badgeClass = meta.level === 'green'
-        ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/30'
-        : (meta.level === 'orange'
-          ? 'text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-500/30'
-          : 'text-red-700 dark:text-red-300 bg-red-500/10 border-red-500/30');
-      return `
-        <div class="parking-heatbar-row flex flex-col gap-1" data-heatbar-key="${floorCode}_${zName}" data-heatbar-level="${meta.level}">
-          <div class="flex items-center justify-between text-[10px] font-extrabold">
-            <span class="text-slate-700 dark:text-slate-200">${floorCode} ${zName} Bölge <span class="text-[9px] font-semibold text-slate-400">(${meta.activeCount}/60)</span></span>
-            <span class="px-1.5 py-0.5 rounded-md border text-[9px] font-black ${badgeClass}">${meta.label}</span>
-          </div>
-          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-            <div class="parking-heatbar-bar h-full rounded-full transition-all duration-300" style="width: ${Math.max(6, meta.pct)}%; background-color: ${meta.colorHex};"></div>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    summaryPanel.innerHTML = `
-      <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-        <span>Canlı Bölge Doluluk Oranları (${floorCode})</span>
-        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400">Kapasite: 60 Araç/Bölge</span>
-      </div>
-      <div class="flex flex-col gap-1.5">${rowsHtml}</div>
-    `;
-  }
+  // 3. Bölge kartları zaten doluluk yüzdesini ve araç sayısını gösterdiği için gereksiz mükerrer listeyi kaldır
+  document.getElementById('parking-occupancy-heatbar-panel')?.remove();
 }
 window.renderParkingHeatbars = renderParkingHeatbars;
 
@@ -4965,23 +4985,34 @@ const CAPACITY_PARKING_ZONE_AXIS_META = {
   }
 };
 
-function renderQuickPillarChipsForZone(zoneName = 'Mavi', floorCode = 'P2') {
+function renderQuickPillarChipsForZone(zoneName = 'Mavi', floorCode = 'B2') {
   const chipsWrap = document.getElementById('parking-quick-pillar-chips');
   const pillarInput = document.getElementById('parking-spot-pillar');
   if (!chipsWrap) return;
 
+  const rawCode = String(floorCode || 'B2').toUpperCase();
+  const cleanCode = rawCode.startsWith('P') ? 'B' + rawCode.slice(1) : rawCode;
+
   const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
-  const L = axisMeta.letter;
+  const L = axisMeta.letter || 'A';
 
   const quickPillars = [
-    { val: 'B-04', label: 'B-04' },
-    ...(L !== 'B' ? [{ val: `${L}-04`, label: `${L}-04` }] : []),
+    { val: `${L}-04`, label: `${L}-04` },
     { val: `${L}-08`, label: `${L}-08` },
-    { val: `${L}-12`, label: `${L}-12` },
-    { val: 'B2-03 Hibatech', label: 'B2-03 Hibatech' },
-    { val: 'E-Şarj İstasyonu', label: 'E-Şarj İstasyonu' },
-    { val: 'Asansör Karşısı', label: 'Asansör Karşısı' }
+    { val: `${L}-12`, label: `${L}-12` }
   ];
+
+  if (cleanCode === 'B2') {
+    quickPillars.push({ val: 'B2-03 Hibatech', label: 'B2-03 Hibatech' });
+  } else if (cleanCode === 'B3') {
+    quickPillars.push({ val: 'B3-10 Başak Lostra', label: 'B3-10 Lostra' });
+    quickPillars.push({ val: 'B3-05 Dry Clean', label: 'B3-05 Dry Clean' });
+  } else if (cleanCode === 'B1') {
+    quickPillars.push({ val: 'B1 Ödeme Noktası', label: 'Ödeme Noktası' });
+  }
+
+  quickPillars.push({ val: 'E-Şarj İstasyonu', label: 'E-Şarj' });
+  quickPillars.push({ val: 'Asansör Yanı', label: 'Asansör Yanı' });
 
   chipsWrap.innerHTML = quickPillars.map(item => `
     <button type="button" data-pillar-val="${item.val}" class="parking-pillar-chip px-2 py-1 rounded-lg bg-slate-100 hover:bg-amber-500/20 dark:bg-slate-800 dark:hover:bg-amber-500/20 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-[10px] font-bold transition-all cursor-pointer">
@@ -5113,7 +5144,7 @@ function ensureSmartParkingGreetingCard() {
       <div class="flex items-center gap-2 min-w-0">
         <span class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center shrink-0">${getMonoIconSvg('car', 15)}</span>
         <span id="smart-parking-greeting-text" class="text-xs sm:text-sm font-black tracking-tight text-amber-100 truncate">
-          Aracınız: P2 - Mavi (B-12)
+          Aracınız: B2 - Mavi (A Aksı)
         </span>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
@@ -5154,7 +5185,8 @@ function updateParkingUI() {
   const smartText = document.getElementById('smart-parking-greeting-text');
 
   if (saved) {
-    const floorCode = saved.code || saved.floor_id || 'P2';
+    const rawCode = String(saved.code || saved.floor_id || 'B2').toUpperCase();
+    const floorCode = rawCode.startsWith('P') ? 'B' + rawCode.slice(1) : rawCode;
     const zoneName = saved.zone || saved.zone_color || 'Mavi';
     const pillarText = stripUiEmojis((saved.pillar || saved.pillar_code || '').trim());
     const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
@@ -5167,7 +5199,12 @@ function updateParkingUI() {
     if (smartCard && smartText) {
       const pillarSuffix = pillarText ? ` (${pillarText})` : ` (${axisMeta.letter} Aksı)`;
       smartText.textContent = `Aracınız: ${floorCode} - ${zoneName}${pillarSuffix}`;
-      smartCard.classList.remove('hidden');
+      // Sadece aktif bir rota yokken gösterilir; rota başladığında veya varışta gizlenir
+      if (!document.body.classList.contains('has-active-route') && !lastCalculatedRoute) {
+        smartCard.classList.remove('hidden');
+      } else {
+        smartCard.classList.add('hidden');
+      }
     }
 
     if (savedCard) {
@@ -5267,16 +5304,28 @@ async function deleteParkingSpot() {
 window.deleteParkingSpot = deleteParkingSpot;
 
 function resolveSavedParkingTargetStore(saved, currentFl) {
-  const floorCode = String(saved?.code || saved?.floor_id || 'P2').toUpperCase();
+  const rawCode = String(saved?.code || saved?.floor_id || 'B2').toUpperCase();
+  const floorCode = rawCode.startsWith('P') ? 'B' + rawCode.slice(1) : rawCode;
   const zoneName = String(saved?.zone || saved?.zone_color || 'Mavi');
   const pillarText = stripUiEmojis(String(saved?.pillar || saved?.pillar_code || '').trim());
   const pillarNorm = normalizeTr(pillarText);
   const axisMeta = CAPACITY_PARKING_ZONE_AXIS_META[zoneName] || CAPACITY_PARKING_ZONE_AXIS_META.Mavi;
 
-  const targetFloorNum = floorCode === 'P1' ? 3 : (floorCode === 'P3' ? 1 : 2);
+  // B1 (-1) -> Kat 3, B2 (-2) -> Kat 2, B3 (-3) -> Kat 1
+  let targetFloorNum = 2;
+  if (floorCode === 'B1' || floorCode === 'P1' || floorCode === '3') {
+    targetFloorNum = 3;
+  } else if (floorCode === 'B3' || floorCode === 'P3' || floorCode === '1') {
+    targetFloorNum = 1;
+  } else if (saved?.floor && saved.floor >= 1 && saved.floor <= 3) {
+    targetFloorNum = saved.floor;
+  } else {
+    targetFloorNum = 2;
+  }
+
   const allStores = getAllStores();
 
-  // Eğer B2 (P2) katında Hibatech Oto Yıkama referansı veya Sarı Bölge seçildiyse ve B2-03 Hibatech mevcutsa:
+  // Eğer B2 katında Hibatech Oto Yıkama referansı veya Sarı Bölge seçildiyse:
   if (targetFloorNum === 2 && (pillarNorm.includes('hibatech') || pillarNorm.includes('yikama') || zoneName === 'Sarı')) {
     const hibatech = allStores.find(s => s.id === 'store_2_1');
     if (hibatech && hibatech.nav_node) {
@@ -5284,12 +5333,13 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
         ...hibatech,
         name: `${floorCode} ${zoneName} Bölge (${pillarText || 'B2-03 Hibatech'})`,
         category_name: 'Kayıtlı Araç Konumu (B2 Otopark)',
-        is_service_area: true
+        is_service_area: true,
+        is_car_spot: true
       };
     }
   }
 
-  // Eğer B3 (P3) katında Lostra / Dry Clean / Mescit referansı seçildiyse:
+  // Eğer B3 katında Lostra / Dry Clean / Mescit referansı seçildiyse:
   if (targetFloorNum === 1) {
     if (pillarNorm.includes('lostra') || zoneName === 'Sarı') {
       const lostra = allStores.find(s => s.id === 'store_1_2');
@@ -5298,7 +5348,8 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
           ...lostra,
           name: `${floorCode} ${zoneName} Bölge (${pillarText || 'B3-10 Başak Lostra Lobisi'})`,
           category_name: 'Kayıtlı Araç Konumu (B3 Otopark)',
-          is_service_area: true
+          is_service_area: true,
+          is_car_spot: true
         };
       }
     }
@@ -5309,7 +5360,8 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
           ...dryClean,
           name: `${floorCode} ${zoneName} Bölge (${pillarText || 'B3-05 Dry Clean Lobisi'})`,
           category_name: 'Kayıtlı Araç Konumu (B3 Otopark)',
-          is_service_area: true
+          is_service_area: true,
+          is_car_spot: true
         };
       }
     }
@@ -5344,6 +5396,7 @@ function resolveSavedParkingTargetStore(saved, currentFl) {
     category_name: `${floorCode} Kapalı Otopark (${axisMeta.lobbyLabel})`,
     kind: 'carpark',
     is_service_area: true,
+    is_car_spot: true,
     cx,
     cy,
     nav_node: navNode
@@ -5358,11 +5411,12 @@ function navigateToSavedCar() {
   }
 
   closeParkingMemoryModal();
+  if (typeof closePoiPeekCard === 'function') closePoiPeekCard();
 
   const currentFl = mallMap ? mallMap.currentFloor : 4;
   let startStoreObj = null;
 
-  if (selectedStartStore && selectedStartStore.floor === currentFl) {
+  if (selectedStartStore && selectedStartStore.floor === currentFl && !selectedStartStore.is_car_spot) {
     startStoreObj = selectedStartStore;
   } else {
     if (currentFl === 4) {
@@ -5378,11 +5432,12 @@ function navigateToSavedCar() {
       const floorStores = getAllStores().filter(s => s.floor === currentFl && s.nav_node);
       startStoreObj = floorStores.length > 0
         ? floorStores[0]
-        : { id: 'door_0', name: 'Kat Girişi', floor: currentFl, cx: 240, cy: 440, nav_node: `c_${currentFl}_m_240` };
+        : { id: `door_${currentFl}`, name: 'Kat Girişi', floor: currentFl, cx: 240, cy: 440, nav_node: `c_${currentFl}_m_240` };
     }
   }
 
-  const floorCode = saved.code || saved.floor_id || 'P2';
+  const rawCode = String(saved.code || saved.floor_id || 'B2').toUpperCase();
+  const floorCode = rawCode.startsWith('P') ? 'B' + rawCode.slice(1) : rawCode;
   const zoneName = saved.zone || saved.zone_color || 'Mavi';
   const pillarText = stripUiEmojis(saved.pillar || saved.pillar_code || '');
   const targetParkingObj = resolveSavedParkingTargetStore(saved, currentFl);
@@ -5399,12 +5454,31 @@ function navigateToSavedCar() {
     };
   }
 
-  if (startStoreObj) {
-    setStartLocation(startStoreObj);
-  }
-  setTargetLocation(targetParkingObj);
+  // Başlangıç ve hedefi doğrudan ata, aradaki döngüleri ve çift tetiklemeyi önle
+  selectedStartStore = startStoreObj;
+  selectedTargetStore = targetParkingObj;
 
-  showToast(`Aracınız ${floorCode} - ${zoneName} Bölge (${pillarText || 'Otopark'}) noktasında. Otopark katına ve bölgesine rota çizildi.`, 'success');
+  const startInput = document.getElementById('input-start-loc');
+  if (startInput) startInput.value = startStoreObj.name;
+  updateStartBadgeUI(startStoreObj.name);
+
+  const targetInput = document.getElementById('input-target-loc');
+  if (targetInput) targetInput.value = targetParkingObj.name;
+  const clearTargetBtn = document.getElementById('btn-clear-target');
+  if (clearTargetBtn) clearTargetBtn.classList.remove('hidden');
+
+  mallMap.activeStartStore = startStoreObj;
+  mallMap.activeTargetStore = targetParkingObj;
+  mallMap.updateActiveStorePolygons();
+
+  calculateAndDisplayRoute();
+  setActiveFocusSlot(null);
+
+  // Üst üste binen greeting card'ı derhal gizle
+  const smartCard = document.getElementById('smart-parking-greeting-card');
+  if (smartCard) smartCard.classList.add('hidden');
+
+  showToast(`Aracınız ${floorCode} - ${zoneName} Bölge (${pillarText || 'Otopark'}) noktasında. Bulunduğunuz kattan araca rota çizildi.`, 'success');
 }
 
 function navigateToAvailableParking(recordFullZone = false) {
@@ -6321,7 +6395,7 @@ function detectUserLocationGPS() {
         settled = true;
         finalizeLocation(null, null, '1.8');
       }
-    }, 1500);
+    }, 7500);
 
     try {
       navigator.geolocation.getCurrentPosition(
@@ -6338,7 +6412,7 @@ function detectUserLocationGPS() {
           clearTimeout(fallbackTimer);
           finalizeLocation(null, null, '1.8');
         },
-        { enableHighAccuracy: true, timeout: 1400, maximumAge: 15000 }
+        { enableHighAccuracy: true, timeout: 7000, maximumAge: 10000 }
       );
     } catch (e) {
       clearTimeout(fallbackTimer);

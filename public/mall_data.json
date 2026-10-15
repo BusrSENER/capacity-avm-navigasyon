@@ -80,7 +80,7 @@
       "kind": "carpark",
       "type": "carpark",
       "category_name": "Otopark Hizmeti",
-      "unit": "P2 Vale"
+      "unit": "B2 Vale"
     },
     {
       "id": "ent_havuz",
@@ -389,7 +389,7 @@
     },
     {
       "id": "am_carpark_1",
-      "name": "P3 (-3) Kapalı Otopark & Ödeme Noktası",
+      "name": "B3 (-3. Kat) Kapalı Otopark & Ödeme Noktası",
       "floor": 1,
       "floor_name": "3. Bodrum (B3)",
       "kind": "carpark",
@@ -401,7 +401,7 @@
       "nav_node": "c_1_s_760",
       "category": "service",
       "category_name": "AVM Hizmet Noktası",
-      "unit": "P3 Otopark",
+      "unit": "B3 Otopark",
       "is_service_point": true
     },
     {
@@ -661,7 +661,7 @@
     },
     {
       "id": "am_carpark_2",
-      "name": "P2 (-2) Kapalı Otopark, Vale & Ödeme Noktası",
+      "name": "B2 (-2. Kat) Kapalı Otopark, Vale & Ödeme Noktası",
       "floor": 2,
       "floor_name": "2. Bodrum (B2)",
       "kind": "carpark",
@@ -673,7 +673,7 @@
       "nav_node": "c_2_s_760",
       "category": "service",
       "category_name": "AVM Hizmet Noktası",
-      "unit": "P2 Otopark",
+      "unit": "B2 Otopark",
       "is_service_point": true
     },
     {
@@ -950,7 +950,7 @@
     },
     {
       "id": "am_carpark_3",
-      "name": "P1 (-1) Otopark Geçişi & Ödeme Noktası",
+      "name": "B1 (-1. Kat) Otopark Geçişi & Ödeme Noktası",
       "floor": 3,
       "floor_name": "1. Bodrum (B1)",
       "kind": "carpark",
@@ -962,7 +962,7 @@
       "nav_node": "c_3_s_760",
       "category": "service",
       "category_name": "AVM Hizmet Noktası",
-      "unit": "P1 Otopark",
+      "unit": "B1 Otopark",
       "is_service_point": true
     },
     {
@@ -2394,7 +2394,7 @@
         },
         {
           "id": "am_carpark_1",
-          "name": "P3 (-3) Kapalı Otopark & Ödeme Noktası",
+          "name": "B3 (-3. Kat) Kapalı Otopark & Ödeme Noktası",
           "floor": 1,
           "floor_name": "3. Bodrum (B3)",
           "kind": "carpark",
@@ -2406,7 +2406,7 @@
           "nav_node": "c_1_s_760",
           "category": "service",
           "category_name": "AVM Hizmet Noktası",
-          "unit": "P3 Otopark",
+          "unit": "B3 Otopark",
           "is_service_point": true
         }
       ]
@@ -2710,7 +2710,7 @@
         },
         {
           "id": "am_carpark_2",
-          "name": "P2 (-2) Kapalı Otopark, Vale & Ödeme Noktası",
+          "name": "B2 (-2. Kat) Kapalı Otopark, Vale & Ödeme Noktası",
           "floor": 2,
           "floor_name": "2. Bodrum (B2)",
           "kind": "carpark",
@@ -2722,7 +2722,7 @@
           "nav_node": "c_2_s_760",
           "category": "service",
           "category_name": "AVM Hizmet Noktası",
-          "unit": "P2 Otopark",
+          "unit": "B2 Otopark",
           "is_service_point": true
         }
       ]
@@ -4763,7 +4763,7 @@
         },
         {
           "id": "am_carpark_3",
-          "name": "P1 (-1) Otopark Geçişi & Ödeme Noktası",
+          "name": "B1 (-1. Kat) Otopark Geçişi & Ödeme Noktası",
           "floor": 3,
           "floor_name": "1. Bodrum (B1)",
           "kind": "carpark",
@@ -4775,7 +4775,7 @@
           "nav_node": "c_3_s_760",
           "category": "service",
           "category_name": "AVM Hizmet Noktası",
-          "unit": "P1 Otopark",
+          "unit": "B1 Otopark",
           "is_service_point": true
         }
       ]
