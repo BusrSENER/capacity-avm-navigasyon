@@ -939,6 +939,7 @@ body.has-active-route #route-panel {
   body.has-active-route #category-pills-container,
   body.has-active-route #quick-start-chips-wrapper,
   body.has-active-route #amenity-chips-wrapper,
+  body.has-active-route #smart-parking-greeting-card,
   body.has-active-route #header-deals-strip {
     display: none !important;
     height: 0 !important;
@@ -1838,9 +1839,13 @@ body:has(#route-qr-modal:not(.hidden)) #toast-container {
     pointer-events: none !important;
   }
 
-  /* 5. Sol Üst Çekmece Butonu Mobilde Gizli (Alt Çekmece Kullanılır) */
+  /* 5. Sol Üst Çekmece Butonu: Yatay Modda (Landscape) Menüyü ve Aramayı Açmak İçin Görünür */
   #btn-sidebar-toggle {
-    display: none !important;
+    display: flex !important;
+    position: fixed !important;
+    top: 8px !important;
+    left: 8px !important;
+    z-index: 55 !important;
   }
 
   /* 6. Üst Bilgi Kartı: Ekrana Ortalı ve Kompakt (#floor-header-card) */

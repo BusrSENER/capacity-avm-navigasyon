@@ -317,6 +317,22 @@
       <div id="category-pills-container" class="relative flex items-center gap-1 shrink-0 transition-all duration-300">
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="category-pills-row" data-scroll-dir="-1" title="Kategorileri Sola Kaydır" aria-label="Sola Kaydır">‹</button>
         <div id="category-pills-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 select-none">
+          <!-- Sık Kullanılan Temel İhtiyaçlar (En Öne Alındı - Hızlı 1-Tık Erişim) -->
+          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-300/50 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs" data-amenity="wc" title="Kattaki Tuvaletleri (WC) Göster">
+            <span>🚻</span> <span>WC</span>
+          </button>
+          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-300/50 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs" data-amenity="elevator" title="Kattaki Asansörleri Göster">
+            <span>🛗</span> <span>Asansör</span>
+          </button>
+          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-300/50 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs" data-amenity="carpark" title="Otopark Girişlerini Göster">
+            <span>🅿️</span> <span>Otopark</span>
+          </button>
+          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-bold bg-pink-50 dark:bg-pink-950/40 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-900/50 border border-pink-300/50 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs" data-amenity="baby" title="Bebek Odalarını Göster">
+            <span>👶</span> <span>Bebek Odası</span>
+          </button>
+          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-bold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/50 border border-violet-300/50 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs" data-amenity="prayer" title="Mescit (B3) Konumunu Göster">
+            <span>🕌</span> <span>Mescit</span>
+          </button>
           <button class="cat-pill active px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900 dark:bg-white text-white dark:text-slate-900 shrink-0 shadow-sm transition-all cursor-pointer" data-category="all">
             Tümü
           </button>
@@ -349,19 +365,6 @@
           </button>
           <button class="cat-pill px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-category="service">
             <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>Hizmet
-          </button>
-          <!-- Sık Kullanılan Temel İhtiyaçlar (Hızlı 1-Tık Erişim) -->
-          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-medium bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-300/40 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-amenity="wc" title="Kattaki Tuvaletleri (WC) Göster">
-            <span>🚻</span> <span>WC</span>
-          </button>
-          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-medium bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-300/40 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-amenity="elevator" title="Kattaki Asansörleri Göster">
-            <span>🛗</span> <span>Asansör</span>
-          </button>
-          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-300/40 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-amenity="carpark" title="Otopark Girişlerini Göster">
-            <span>🅿️</span> <span>Otopark</span>
-          </button>
-          <button class="amenity-pill px-3 py-1.5 rounded-full text-xs font-medium bg-pink-50 dark:bg-pink-950/40 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-900/50 border border-pink-300/40 shrink-0 flex items-center gap-1.5 transition-all cursor-pointer" data-amenity="baby" title="Bebek Odalarını Göster">
-            <span>👶</span> <span>Bebek Odası</span>
           </button>
         </div>
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="category-pills-row" data-scroll-dir="1" title="Kategorileri Sağa Kaydır" aria-label="Sağa Kaydır">›</button>
@@ -635,6 +638,11 @@
                 Rotayı takip edin
               </div>
             </div>
+            <!-- Doğrudan Harita Üzerinden Navigasyonu Başlat / Durdur Butonu (Çekmece Açmaya Gerek Bırakmaz) -->
+            <button id="btn-header-start-nav" class="shrink-0 h-8 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-sm text-xs font-black flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer" title="Navigasyonu Başlat veya Duraklat">
+              <span id="header-start-nav-icon">▶</span>
+              <span id="header-start-nav-label">Başlat</span>
+            </button>
             <!-- Sesli Rehber (Web Speech API - tr-TR / en-US) Butonu -->
             <button id="btn-voice-toggle" class="shrink-0 h-8 px-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sesli Yol Tarifini Aç / Kapat veya Tekrar Dinle">
               <span id="voice-toggle-icon" class="inline-flex items-center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>

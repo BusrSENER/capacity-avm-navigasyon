@@ -319,8 +319,12 @@ class CartSimulator {
     // 1. Ekranın merkezinde yarı şeffaf cam (glassmorphism) kat geçiş kartını göster
     this.showFloorTransitionCard(fromNode, finalNode);
 
-    // 2. Bildirim süresi (hız çarpanına göre ölçekli), ardından hedef kata geç
-    const waitMs = Math.max(250, Math.round(550 / Math.max(1, this.speed)));
+    // 2. Bildirim süresi: Eğer yürüyen merdiven/asansör seslendirmesi yapılıyorsa, cümlenin bitmesini bekle!
+    const now = Date.now();
+    const remainingSpeechMs = Math.max(0, (window.speechMainBusyUntil || 0) - now);
+    const baseWaitMs = Math.max(700, Math.round(1100 / Math.max(1, this.speed)));
+    const waitMs = Math.max(baseWaitMs, remainingSpeechMs + 200);
+
     this.transitionTimer = setTimeout(() => {
       this.currentIndex = finalIdx;
       this.subProgress = 0;
@@ -347,7 +351,7 @@ class CartSimulator {
           window.speechMainBusyUntil = 0;
           window.speechBusyUntil = 0;
           this.play();
-        }, flyDuration + 40);
+        }, flyDuration + 100);
       });
     }, waitMs);
   }

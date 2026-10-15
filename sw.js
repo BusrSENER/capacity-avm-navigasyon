@@ -3,7 +3,7 @@
  * Alt katlarda (B1, B2, B3) internet kopsa bile harita ve navigasyonun kesintisiz çalışmasını sağlar.
  */
 
-const CACHE_NAME = 'nrdsor-capacity-v1.1';
+const CACHE_NAME = 'nrdsor-capacity-v1.2';
 const STATIC_ASSETS = [
   './',
   './index.html',

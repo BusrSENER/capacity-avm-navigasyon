@@ -1510,11 +1510,15 @@ function initApp() {
         cartSimulator.stop();
       }
 
-      // Hedefe varıldığında kullanıcıyı zorla ekrandan atmıyoruz; varış bildirimi ve butonlar kullanıcı seçim yapana kadar kalır.
+      // Hedefe varıldığında seslendirme ve tebrik bildiriminin ardından (~4.5s) rotayı kendiliğinden tamamla
       if (window.arrivalResetTimer) {
         clearTimeout(window.arrivalResetTimer);
-        window.arrivalResetTimer = null;
       }
+      window.arrivalResetTimer = setTimeout(() => {
+        if (typeof window.completeAndResetRouteTo2D === 'function') {
+          window.completeAndResetRouteTo2D(reachedStore);
+        }
+      }, 4500);
     }
   );
   window.cartSimulator = cartSimulator;
@@ -1849,6 +1853,10 @@ function setupUIEventListeners() {
     btn.addEventListener('click', () => {
       const fl = parseInt(btn.getAttribute('data-floor'), 10);
       mallMap.loadFloor(fl).then(() => {
+        // Eğer aktif simülasyon yürümüyorsa, yeni katın tüm planını rahat bir genel bakışla (overview) göster
+        if (!cartSimulator || !cartSimulator.isRunning) {
+          mallMap.resetView();
+        }
         if (window.isRouteCompletedState && typeof window.markRouteAsCompletedOnMap === 'function') {
           window.markRouteAsCompletedOnMap();
         }
@@ -2011,6 +2019,11 @@ function setupUIEventListeners() {
   });
 
   document.getElementById('btn-route-sim-play')?.addEventListener('click', () => {
+    toggleCartSimulation();
+  });
+
+  document.getElementById('btn-header-start-nav')?.addEventListener('click', (e) => {
+    e.stopPropagation();
     toggleCartSimulation();
   });
 
@@ -3695,6 +3708,11 @@ function toggleCartSimulation() {
     const routeSimIcon = document.getElementById('route-sim-icon');
     if (routeSimText) routeSimText.textContent = isEn ? 'Pause' : 'Durdur';
     if (routeSimIcon) routeSimIcon.setAttribute('data-lucide', 'pause');
+
+    const headerStartIcon = document.getElementById('header-start-nav-icon');
+    const headerStartLabel = document.getElementById('header-start-nav-label');
+    if (headerStartIcon) headerStartIcon.textContent = '⏸';
+    if (headerStartLabel) headerStartLabel.textContent = isEn ? 'Pause' : 'Durdur';
   } else {
     cartSimulator.pause();
     const playText = document.getElementById('sim-play-text');
@@ -3708,6 +3726,11 @@ function toggleCartSimulation() {
     const routeSimIcon = document.getElementById('route-sim-icon');
     if (routeSimText) routeSimText.textContent = isEn ? 'Navigation' : 'Navigasyon';
     if (routeSimIcon) routeSimIcon.setAttribute('data-lucide', 'play');
+
+    const headerStartIcon = document.getElementById('header-start-nav-icon');
+    const headerStartLabel = document.getElementById('header-start-nav-label');
+    if (headerStartIcon) headerStartIcon.textContent = '▶';
+    if (headerStartLabel) headerStartLabel.textContent = isEn ? 'Start' : 'Başlat';
   }
   if (window.lucide) lucide.createIcons();
 }
@@ -4183,6 +4206,10 @@ function resetSimControls() {
   if (hudSimText) hudSimText.textContent = 'Başlat';
   const hudSimIcon = document.getElementById('hud-sim-icon');
   if (hudSimIcon) hudSimIcon.setAttribute('data-lucide', 'play');
+  const headerStartIcon = document.getElementById('header-start-nav-icon');
+  const headerStartLabel = document.getElementById('header-start-nav-label');
+  if (headerStartIcon) headerStartIcon.textContent = '▶';
+  if (headerStartLabel) headerStartLabel.textContent = (currentLanguage === 'en' || window.currentLanguage === 'en') ? 'Start' : 'Başlat';
   const hudPct = document.getElementById('hud-progress-pct');
   if (hudPct) hudPct.textContent = '(%0)';
   if (window.lucide) lucide.createIcons();
