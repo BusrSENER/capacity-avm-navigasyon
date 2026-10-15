@@ -1180,7 +1180,14 @@ function initApp() {
           }
         };
         window.lastSpeechUtterance = utterance;
-        window.speechSynthesis.speak(utterance);
+        // Android Chrome'da cancel() sonrasında speak() çağrısının yutulmaması için 50ms tampon süre
+        setTimeout(() => {
+          try {
+            if ('speechSynthesis' in window && window.speechSynthesis) {
+              window.speechSynthesis.speak(utterance);
+            }
+          } catch (err) {}
+        }, 50);
       }
     } catch (e) {
       // Headless / kısıtlı tarayıcı ortamlarında sessizce geç
@@ -1503,14 +1510,11 @@ function initApp() {
         cartSimulator.stop();
       }
 
-      // Kısa bir varış kutlaması ardından 2B Haritaya dön, arama barını aç ve rotayı 'route-completed' olarak ekranda tut
-      if (window.arrivalResetTimer) clearTimeout(window.arrivalResetTimer);
-      const extraSpeechDelay = window.wasArrivalSpeechQueued ? Math.min(1500, window.queuedArrivalDelayMs || 500) : 0;
-      window.arrivalResetTimer = setTimeout(() => {
-        if (typeof window.completeAndResetRouteTo2D === 'function') {
-          window.completeAndResetRouteTo2D(reachedStore);
-        }
-      }, 1500 + extraSpeechDelay);
+      // Hedefe varıldığında kullanıcıyı zorla ekrandan atmıyoruz; varış bildirimi ve butonlar kullanıcı seçim yapana kadar kalır.
+      if (window.arrivalResetTimer) {
+        clearTimeout(window.arrivalResetTimer);
+        window.arrivalResetTimer = null;
+      }
     }
   );
   window.cartSimulator = cartSimulator;
@@ -1593,10 +1597,18 @@ function initApp() {
       if (mallMap.currentFloor !== targetFloor) {
         mallMap.loadFloor(targetFloor).then(() => {
           applyCompletedRouteState();
-          if (typeof mallMap.resetView === 'function') mallMap.resetView();
+          if (storeObj && storeObj.cx && storeObj.cy) {
+            mallMap.flyTo(storeObj.cx, storeObj.cy, 1.35, 400);
+          } else if (typeof mallMap.resetView === 'function') {
+            mallMap.resetView();
+          }
         });
       } else {
-        if (typeof mallMap.resetView === 'function') mallMap.resetView();
+        if (storeObj && storeObj.cx && storeObj.cy) {
+          mallMap.flyTo(storeObj.cx, storeObj.cy, 1.35, 400);
+        } else if (typeof mallMap.resetView === 'function') {
+          mallMap.resetView();
+        }
       }
     }
   };

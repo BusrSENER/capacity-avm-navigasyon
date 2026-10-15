@@ -133,13 +133,13 @@ class CartSimulator {
     this.show();
     if (this.cartMascotEl) this.cartMascotEl.classList.add('rolling');
 
-    // Cevahir Stili Yakın Çekim Kamera (zoom: 3.2)
+    // Dengeli Kamera Görünümü (tüm koridor ve kat planını net görebilme)
     if (this.map && typeof this.map.flyTo === 'function') {
       const curX = this.currentX !== undefined ? this.currentX : this.pathNodes[this.currentIndex]?.x;
       const curY = this.currentY !== undefined ? this.currentY : this.pathNodes[this.currentIndex]?.y;
       if (curX !== undefined && curY !== undefined) {
         const curScale = typeof this.map.scale === 'number' ? this.map.scale : 1;
-        const targetScale = Math.max(curScale, 3.2);
+        const targetScale = Math.min(Math.max(curScale, 1.25), 1.5);
         this.map.flyTo(curX, curY, targetScale, 400);
       }
     }
@@ -335,14 +335,17 @@ class CartSimulator {
           this.onFloorChange(finalNode.floor);
         }
 
-        // Doğrudan sepetin çıktığı kapı/aktarma koordinatına TEK ve akıcı bir flyTo hareketiyle odaklanır (zoom: 3.2)
-        const targetScale = Math.max(this.map.scale, 3.2);
+        // Doğrudan sepetin çıktığı kapı/aktarma koordinatına odaklanır (rahat genel bakış: 1.35x)
+        const targetScale = Math.min(Math.max(this.map.scale, 1.25), 1.5);
         const flyDuration = Math.max(200, Math.round(380 / Math.max(1, this.speed)));
         this.map.flyTo(finalNode.x, finalNode.y, targetScale, flyDuration);
 
-        // Sepet yerleştikten ve flyTo animasyonu tamamen bittikten sonra simülasyon devam eder (kamera titremesini önler)
+        // Sepet yerleştikten ve flyTo animasyonu tamamen bittikten sonra simülasyon devam eder
         this.transitionTimer = setTimeout(() => {
           this.hideFloorTransitionCard();
+          // Yeni kata varıldığında konuşma kilidini sıfırla ki yeni katın yönlendirmesi mutlaka seslendirilsin
+          window.speechMainBusyUntil = 0;
+          window.speechBusyUntil = 0;
           this.play();
         }, flyDuration + 40);
       });
@@ -397,7 +400,7 @@ class CartSimulator {
     if (btn) btn.classList.add('hidden');
     if (this.map && this.currentX !== undefined && this.currentY !== undefined) {
       const curScale = typeof this.map.scale === 'number' ? this.map.scale : 1;
-      const targetScale = Math.max(curScale, 3.2);
+      const targetScale = Math.min(Math.max(curScale, 1.25), 1.5);
       if (this.currentFloor !== undefined && this.map.currentFloor !== this.currentFloor) {
         this.map.loadFloor(this.currentFloor).then(() => {
           this.map.flyTo(this.currentX, this.currentY, targetScale, 350);
