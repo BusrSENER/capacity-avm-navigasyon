@@ -11,8 +11,8 @@
 
 > [!WARNING]
 > ### ⚖️ FİKRİ MÜLKİYET & KATI TELİF HAKKI BİLDİRİMİ
-> **Telif Hakkı © 2026 Büşra Şener (BusrSENER). Tüm Hakları Saklıdır.**
-> Bu yazılım, mimari SVG kat planları, iç mekan Dijkstra navigasyon grafı, koordinat matrisleri ve tüm kaynak kodları Büşra Şener'in münhasır mülkiyetindedir.
+> **Telif Hakkı © 2026 nrdsor (nrdsor.com). Tüm Hakları Saklıdır.**
+> Bu yazılım, mimari SVG kat planları, iç mekan Dijkstra navigasyon grafı, koordinat matrisleri ve tüm kaynak kodları **nrdsor**'un münhasır mülkiyetindedir.
 > **İŞBU PROJE AÇIK KAYNAK DEĞİLDİR.**
 > Yazılı izin alınmaksızın; projenin tamamının veya herhangi bir parçasının kopyalanması, klonlanması, dağıtılması, başka bir depoya taşınması veya ticari/gayriticari amaçla kullanılması **5846 sayılı Fikir ve Sanat Eserleri Kanunu** ve uluslararası telif hakkı mevzuatı uyarınca kesinlikle yasaktır. Ayrıntılar için [`LICENSE`](./LICENSE) belgesini inceleyiniz.
 

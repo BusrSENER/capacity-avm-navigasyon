@@ -935,6 +935,19 @@ body.has-active-route #route-panel {
     display: none !important;
   }
 
+  /* Akıllı Odak Modu: Rota Başladığında Ekran Alanını Maksimuma Çıkar, Kalabalığı Gizle */
+  body.has-active-route #category-pills-container,
+  body.has-active-route #quick-start-chips-wrapper,
+  body.has-active-route #amenity-chips-wrapper,
+  body.has-active-route #header-deals-strip {
+    display: none !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+  }
+
   /* 4. Minimal 64px HUD Navigasyon Çubuğu - Yatay Kaydırılabilir & 360-390px Mobil Ekrana Tam Sığan Kompakt Düzen */
   #nav-hud-bar {
     height: 60px !important;

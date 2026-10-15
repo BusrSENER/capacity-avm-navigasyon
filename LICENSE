@@ -1,12 +1,12 @@
 PROPRIETARY & CONFIDENTIAL LICENSE
 TÜM HAKLARI SAKLIDIR (ALL RIGHTS RESERVED)
 
-Telif Hakkı (c) 2026 Büşra Şener (BusrSENER). Tüm Hakları Saklıdır.
-Copyright (c) 2026 Busra Sener. All Rights Reserved.
+Telif Hakkı (c) 2026 nrdsor (nrdsor.com). Tüm Hakları Saklıdır.
+Copyright (c) 2026 nrdsor. All Rights Reserved.
 
 Bu yazılım ve ilgili tüm belgeler, mimari vektörel kat planları (SVG),
 iç mekan Dijkstra navigasyon grafı ve koordinat matrisleri ("Yazılım"),
-Büşra Şener'in münhasır mülkiyetindedir ve 5846 sayılı Fikir ve Sanat Eserleri Kanunu
+nrdsor'un (nrdsor.com) münhasır mülkiyetindedir ve 5846 sayılı Fikir ve Sanat Eserleri Kanunu
 ile uluslararası telif hakkı anlaşmalarıyla korunmaktadır.
 
 İŞBU YAZILIM AÇIK KAYNAK DEĞİLDİR (NOT OPEN SOURCE).
@@ -14,7 +14,7 @@ ile uluslararası telif hakkı anlaşmalarıyla korunmaktadır.
 Aşağıdaki koşullar ve kısıtlamalar Yazılım'ı inceleyen veya erişen her kişi ve kuruluş için bağlayıcıdır:
 
 1. KOPYALAMA VE ÇOĞALTMA YASAĞI:
-   Yazarın (Büşra Şener) önceden verilmiş açık ve ıslak/dijital imzalı yazılı izni olmaksızın;
+   nrdsor'un (nrdsor.com) önceden verilmiş açık ve ıslak/dijital imzalı yazılı izni olmaksızın;
    işbu Yazılım'ın veya herhangi bir parçasının (kodlar, stil dosyaları, algoritmalar,
    koordinat veritabanı, SVG çizimleri, ses telaffuz modelleri dahil olmak üzere) kopyalanması,
    klonlanması, çoğaltılması, başka bir depoya aktarılması, fork edilmesi veya taklit edilmesi
@@ -32,11 +32,11 @@ Aşağıdaki koşullar ve kısıtlamalar Yazılım'ı inceleyen veya erişen her
    amacıyla izinsiz kullanılması yasaktır.
 
 4. HUKUKİ YAPTIRIMLAR:
-   Bu lisans şartlarının ihlali durumunda, telif hakkı sahibi tarafından maddi ve manevi tazminat
+   Bu lisans şartlarının ihlali durumunda, nrdsor tarafından maddi ve manevi tazminat
    davaları açılacak, izinsiz barındırılan içeriklerin kaldırılması için DMCA ve ilgili yasal
    mecralara derhal resmi bildirimde bulunulacaktır.
 
 İletişim ve Lisans İzin Talepleri:
-Geliştirici & Hak Sahibi: Büşra Şener
-GitHub: https://github.com/BusrSENER
-E-posta: busra.sener8194@gmail.com
+Marka & Hak Sahibi: nrdsor
+Web Sitesi: https://nrdsor.com
+E-posta: iletisim@nrdsor.com / busra.sener8194@gmail.com

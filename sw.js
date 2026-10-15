@@ -3,15 +3,16 @@
  * Alt katlarda (B1, B2, B3) internet kopsa bile harita ve navigasyonun kesintisiz çalışmasını sağlar.
  */
 
-const CACHE_NAME = 'capacity-nav-v1.0';
+const CACHE_NAME = 'nrdsor-capacity-v1.1';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './css/app.css',
   './public/mall_data.json',
   './public/favicon.svg',
-  './public/favicon.png',
-  './public/apple-touch-icon.png',
+  './public/assets/branding/nrdsor-logo-horizontal.png',
+  './public/assets/branding/nrdsor-logo-horizontal-dark.png',
+  './public/assets/branding/nrdsor-icon-pin.png',
   './public/svg/1.svg',
   './public/svg/2.svg',
   './public/svg/3.svg',

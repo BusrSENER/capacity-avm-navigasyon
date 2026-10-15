@@ -2,6 +2,9 @@
   "meta": {
     "name": "İstanbul Bakırköy Capacity AVM",
     "shortName": "Capacity AVM",
+    "author": "nrdsor",
+    "website": "https://nrdsor.com",
+    "copyright": "Copyright (c) 2026 nrdsor (nrdsor.com). All rights reserved.",
     "address": "Zeytinlik, Fişekhane Cd. No:7, 34158 Bakırköy/İstanbul",
     "width": 1400,
     "height": 850,

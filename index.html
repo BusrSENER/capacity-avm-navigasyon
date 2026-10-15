@@ -314,7 +314,7 @@
       </div>
 
       <!-- Kategori Filtre Butonları (Yatay Kaydırılabilir + Sol/Sağ Oklar) -->
-      <div class="relative flex items-center gap-1 shrink-0">
+      <div id="category-pills-container" class="relative flex items-center gap-1 shrink-0 transition-all duration-300">
         <button type="button" class="chip-scroll-btn shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-xs transition-all active:scale-90 cursor-pointer" data-scroll-target="category-pills-row" data-scroll-dir="-1" title="Kategorileri Sola Kaydır" aria-label="Sola Kaydır">‹</button>
         <div id="category-pills-row" class="horizontal-chip-scroller flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 select-none">
           <button class="cat-pill active px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900 dark:bg-white text-white dark:text-slate-900 shrink-0 shadow-sm transition-all cursor-pointer" data-category="all">

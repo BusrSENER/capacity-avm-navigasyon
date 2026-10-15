@@ -2361,11 +2361,109 @@ window.setActiveFocusSlot = setActiveFocusSlot;
 
 function getAllMallStores() {
   const list = [];
-  if (!mallData || !mallData.floors) return list;
-  Object.values(mallData.floors).forEach(fl => {
-    (fl.stores || []).forEach(s => list.push(s));
-  });
+  if (!mallData) return list;
+
+  // 1. Mağazalar
+  if (mallData.floors) {
+    Object.values(mallData.floors).forEach(fl => {
+      (fl.stores || []).forEach(s => list.push(s));
+    });
+  }
+
+  // 2. Giriş Kapıları (Fişekhane, Carousel, Ataköy, vb.)
+  if (mallData.entrances && Array.isArray(mallData.entrances)) {
+    mallData.entrances.forEach(ent => {
+      list.push({
+        ...ent,
+        is_entrance: true,
+        category_name: ent.category_name || 'Giriş Kapısı',
+        category: 'entrance'
+      });
+    });
+  }
+
+  // 3. Temel Hizmet Noktaları (WC, Asansör, Mescit, Bebek Odası, Otopark)
+  if (mallData.floors) {
+    Object.values(mallData.floors).forEach(fl => {
+      (fl.amenities || []).forEach(am => {
+        if (['wc', 'elevator', 'baby', 'prayer', 'carpark', 'info'].includes(am.kind)) {
+          list.push({
+            ...am,
+            is_amenity: true,
+            category_name: am.category_name || 'AVM Hizmet Noktası',
+            category: 'service'
+          });
+        }
+      });
+    });
+  }
+
   return list;
+}
+
+const SEARCH_INTENT_MAP = {
+  'kahve': ['starbucks', 'caribou', 'tchibo', 'espressolab', 'kahve', 'cafe', 'kahve dunyasi', 'gloria'],
+  'coffee': ['starbucks', 'caribou', 'tchibo', 'espressolab', 'kahve', 'cafe'],
+  'cay': ['kahve', 'cafe', 'simit', 'starbucks'],
+  'yemek': ['burger', 'iskender', 'doner', 'kebap', 'tavuk', 'pizza', 'makarna', 'fast food', 'kfc', 'mcdonalds', 'kofte', 'pidem', 'sushico', 'green salads', 'subway', 'restoran', 'midpoint', 'cookshop', 'kitchen'],
+  'restoran': ['burger', 'iskender', 'doner', 'kebap', 'tavuk', 'pizza', 'makarna', 'sushico', 'green salads', 'midpoint', 'cookshop'],
+  'tatli': ['waffle', 'dondurma', 'pasta', 'cikolata', 'baklava', 'mado', 'kahve dunyasi', 'ozsut'],
+  'dondurma': ['mado', 'kahve dunyasi', 'waffle'],
+  'burger': ['burger king', 'mcdonalds', 'shake shack'],
+  'pizza': ['sbarro', 'terra pizza', 'dominos', 'pizza'],
+  'doner': ['hd iskender', 'doner', 'baydoner', 'bereket doner', 'kasap doner'],
+  'kebap': ['hd iskender', 'kebap', 'kofteci ramiz'],
+  'sinema': ['paribu cineverse', 'cinema', 'film', 'bilet'],
+  'film': ['paribu cineverse', 'sinema'],
+  'tuvalet': ['wc', 'lavabo', 'tuvalet'],
+  'wc': ['wc', 'lavabo', 'tuvalet'],
+  'lavabo': ['wc', 'lavabo', 'tuvalet'],
+  'asansor': ['asansor', 'panoramik asansor', 'engelli asansor'],
+  'otopark': ['otopark', 'arac', 'vale', 'park'],
+  'vale': ['vale', 'otopark'],
+  'bebek': ['bebek', 'emzirme', 'alt degistirme', 'civil', 'ebebek', 'joker'],
+  'mescit': ['mescit', 'prayer room', 'namaz'],
+  'namaz': ['mescit', 'prayer room'],
+  'spor': ['nike', 'adidas', 'sneaks up', 'skechers', 'puma', 'under armour', 'sportive', 'in street', 'superstep'],
+  'ayakkabi': ['derimod', 'inci', 'flo', 'kemal tanca', 'hotic', 'greyder', 'elle', 'skechers', 'superstep', 'in street', 'desa'],
+  'canta': ['samsonite', 'matmazel', 'vakko', 'beymen', 'derimod', 'desa'],
+  'kitap': ['d&r', 'dr', 'kitap', 'kirtasiye', 'simurg'],
+  'kirtasiye': ['d&r', 'dr', 'kirtasiye', 'simurg'],
+  'oyuncak': ['armagan', 'toyzz shop', 'd&r'],
+  'teknoloji': ['mediamarkt', 'teknosa', 'apple', 'troy', 'samsung', 'turkcell', 'vodafone', 'turk telekom', 'xiaomi'],
+  'telefon': ['apple', 'troy', 'samsung', 'turkcell', 'vodafone', 'turk telekom', 'xiaomi', 'mediamarkt', 'teknosa'],
+  'kozmetik': ['sephora', 'gratis', 'watsons', 'flormar', 'mac', 'yves rocher', 'golden rose', 'rossmann', 'kiehls', 'loccitane', 'eczane'],
+  'parfum': ['sephora', 'tekin acar', 'boyner', 'vakko', 'gratis', 'watsons', 'bargello', 'mad'],
+  'eczane': ['eczane', 'saglik', 'dermokozmetik'],
+  'kuafor': ['kuafor', 'berber', 'kuafor salonu', 'sac', 'nail'],
+  'terzi': ['lostra', 'kuru temizleme', 'terzi', 'altin igne'],
+  'lostra': ['lostra', 'ayakkabi tamir', 'kuru temizleme'],
+  'banka': ['atm', 'is bankasi', 'garanti', 'akbank', 'yapi kredi', 'qnb'],
+  'atm': ['atm', 'bankamatik', 'para'],
+  'kapi': ['giris', 'kapi', 'fisekhane', 'carousel', 'atakoy'],
+  'giris': ['giris', 'kapi', 'fisekhane', 'carousel', 'atakoy']
+};
+
+function searchLevenshtein(a, b) {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
 }
 
 function normalizeSearchStr(str) {
@@ -2406,16 +2504,26 @@ function handleStoreSelectedFromSearch(store, targetSlot) {
     mallMap.loadFloor(store.floor).then(() => {
       updateFloorUI(store.floor);
       mallMap.flyTo(store.cx, store.cy, 1.45);
-      mallMap.highlightStore(store.id, true);
+      if (!store.is_amenity && !store.is_entrance) {
+        mallMap.highlightStore(store.id, true);
+      }
     });
   } else {
     mallMap.flyTo(store.cx, store.cy, 1.45);
-    mallMap.highlightStore(store.id, true);
+    if (!store.is_amenity && !store.is_entrance) {
+      mallMap.highlightStore(store.id, true);
+    }
   }
 
   // 5. Altta 130px'lik kompakt kartı (Peek Mode) aç (rota başlamadıysa)
   if (!mallMap.activeRoute) {
-    showPoiPeekCard(store);
+    if (store.is_amenity || store.is_entrance) {
+      if (selectedStartStore && selectedTargetStore && selectedStartStore.id !== selectedTargetStore.id) {
+        calculateAndDisplayRoute();
+      }
+    } else {
+      showPoiPeekCard(store);
+    }
   }
 }
 
@@ -2438,13 +2546,57 @@ function setupSearchEngine() {
     }
 
     const allStores = getAllMallStores();
-    const matches = allStores.filter(s => {
+    const intentKeywords = SEARCH_INTENT_MAP[q] || [];
+
+    const scored = [];
+    allStores.forEach(s => {
       const nameNorm = normalizeSearchStr(s.name);
       const catNorm = normalizeSearchStr(s.category_name || s.category || '');
       const floorNorm = normalizeSearchStr(s.floor_name || '');
       const unitNorm = (s.unit || '').toLowerCase();
-      return nameNorm.includes(q) || catNorm.includes(q) || floorNorm.includes(q) || unitNorm.includes(q);
+
+      let score = 0;
+      // 1. Doğrudan İsim Eşleşmesi
+      if (nameNorm === q) score += 200;
+      else if (nameNorm.startsWith(q)) score += 120;
+      else if (nameNorm.includes(q)) score += 80;
+      else if (catNorm.includes(q)) score += 50;
+      else if (floorNorm.includes(q) || unitNorm.includes(q)) score += 30;
+
+      // 2. Kategori / Niyet Sözlüğü Eşleşmesi
+      if (intentKeywords.length > 0) {
+        for (const kw of intentKeywords) {
+          if (nameNorm.includes(kw) || catNorm.includes(kw)) {
+            score += 75;
+            break;
+          }
+        }
+      }
+
+      // 3. Yazım Hatası / Fuzzy Eşleşmesi (Levenshtein)
+      if (score === 0 && q.length >= 3) {
+        const words = nameNorm.split(' ');
+        for (const w of words) {
+          if (w.length >= 3) {
+            const dist = searchLevenshtein(q, w);
+            if (dist === 1) {
+              score += 60;
+              break;
+            } else if (dist === 2 && q.length >= 5) {
+              score += 40;
+              break;
+            }
+          }
+        }
+      }
+
+      if (score > 0) {
+        scored.push({ store: s, score });
+      }
     });
+
+    scored.sort((a, b) => b.score - a.score);
+    const matches = scored.map(x => x.store);
 
     if (matches.length === 0) {
       autoList.innerHTML = `<div class="p-3 text-center text-xs text-slate-400">Sonuç bulunamadı ("${query}")</div>`;
@@ -2452,18 +2604,30 @@ function setupSearchEngine() {
       return;
     }
 
+    const amenityIcons = { wc: '🚻', elevator: '🛗', baby: '👶', prayer: '🕌', carpark: '🅿️', info: 'ℹ️' };
+
     autoList.innerHTML = matches.slice(0, 16).map(s => {
       const landmark = getStoreLandmark(s);
       const wing = landmark.includes('•') ? landmark.split('•')[1].trim() : (s.floor_name || '');
+      
+      let badgeHtml = getStoreLogo(s, 20);
+      if (s.is_entrance) {
+        badgeHtml = `<span class="text-base select-none leading-none">🚪</span>`;
+      } else if (s.is_amenity) {
+        badgeHtml = `<span class="text-base select-none leading-none">${amenityIcons[s.kind] || '📍'}</span>`;
+      }
+
+      const categoryLabel = s.category_name || s.category || (s.is_entrance ? 'Giriş Kapısı' : (s.is_amenity ? 'Hizmet Noktası' : 'Mağaza'));
+
       return `
         <div class="search-autocomplete-item p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between gap-2 transition-colors active:bg-slate-200 dark:active:bg-slate-700 select-none" data-store-id="${s.id}">
           <div class="flex items-center gap-2.5 min-w-0">
             <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 p-1">
-              ${getStoreLogo(s, 20)}
+              ${badgeHtml}
             </div>
             <div class="flex flex-col min-w-0">
               <span class="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">${s.name}</span>
-              <span class="text-[10px] text-slate-400 dark:text-slate-400 truncate">${s.category_name || s.category || 'Mağaza'}</span>
+              <span class="text-[10px] text-slate-400 dark:text-slate-400 truncate">${categoryLabel}</span>
             </div>
           </div>
           <div class="flex flex-col items-end shrink-0 gap-0.5">
