@@ -552,10 +552,13 @@ function setLanguage(lang) {
   });
 
   // 6. Amenity Pills (Monochrome SVG + Clean Text, 0 Emojis)
-  document.querySelectorAll('#amenity-chips-row .amenity-pill').forEach(pill => {
+  document.querySelectorAll('.amenity-pill[data-amenity]').forEach(pill => {
     const amen = pill.getAttribute('data-amenity');
     if (amen && t.amenities[amen]) {
-      pill.innerHTML = `${getMonoIconSvg('pin', 13)} <span>${t.amenities[amen]}</span>`;
+      const labelSpan = pill.querySelector('span:last-child');
+      if (labelSpan) {
+        labelSpan.textContent = t.amenities[amen];
+      }
     }
   });
 
@@ -1002,7 +1005,7 @@ function initApp() {
     const subBar = document.getElementById('live-voice-subtitle-bar');
     const subText = document.getElementById('live-voice-subtitle-text');
     if (!subBar || !subText) return;
-    if (!rawText || window.hasAnnouncedArrival || window.isRouteCompletedState) {
+    if (!rawText || window.hasAnnouncedArrival || window.isRouteCompletedState || document.body.classList.contains('has-active-route')) {
       subBar.classList.add('hidden');
       return;
     }
@@ -2343,6 +2346,7 @@ function setupUIEventListeners() {
   // Apple Haritalar Tarzı Hamburger Drawer Butonu (#btn-sidebar-toggle), Kapatma Butonu ve Backdrop
   const btnSidebarToggle = document.getElementById('btn-sidebar-toggle');
   const btnSidebarClose = document.getElementById('btn-sidebar-close');
+  const btnSidebarCloseSticky = document.getElementById('btn-sidebar-close-sticky');
   const landscapeBackdrop = document.getElementById('landscape-drawer-backdrop');
 
   btnSidebarToggle?.addEventListener('click', (e) => {
@@ -2359,9 +2363,32 @@ function setupUIEventListeners() {
     closeSidebarDrawer();
   });
 
+  btnSidebarCloseSticky?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeSidebarDrawer();
+  });
+
   landscapeBackdrop?.addEventListener('click', () => {
     closeSidebarDrawer();
   });
+
+  // Üst Kat Kartı & Navigasyon HUD Açılır/Kapanır (Collapse/Expand) Dinleyicileri
+  const btnFloorCollapse = document.getElementById('btn-floor-card-collapse');
+  const floorHeaderTitleArea = document.getElementById('floor-header-title-area');
+  const floorCard = document.getElementById('floor-header-card');
+
+  function toggleFloorCardCollapse(e) {
+    if (e) e.stopPropagation();
+    if (!floorCard) return;
+    floorCard.classList.toggle('is-collapsed');
+    const collapseIcon = document.getElementById('floor-card-collapse-icon');
+    if (collapseIcon) {
+      collapseIcon.style.transform = floorCard.classList.contains('is-collapsed') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+  }
+
+  btnFloorCollapse?.addEventListener('click', toggleFloorCardCollapse);
+  floorHeaderTitleArea?.addEventListener('click', toggleFloorCardCollapse);
 
   // Masaüstü Sidebar Daraltma Butonları (Sağ kenar [<] butonu ve header butonu)
   const desktopCollapseBtns = document.querySelectorAll('.desktop-collapse-btn');
@@ -3466,7 +3493,12 @@ function showPoiPeekCard(store) {
   currentPeekStore = store;
   renderPoiDetail(store);
   if (isMobileOrLandscape()) {
-    expandBottomSheet();
+    const isLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 650;
+    if (isLandscape) {
+      collapseBottomSheet();
+    } else {
+      expandBottomSheet();
+    }
   }
 }
 window.showPoiPeekCard = showPoiPeekCard;
@@ -3542,7 +3574,12 @@ function selectStore(store) {
   renderPoiDetail(store);
 
   if (isMobileOrLandscape()) {
-    expandBottomSheet();
+    const isLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 650;
+    if (isLandscape) {
+      collapseBottomSheet();
+    } else {
+      expandBottomSheet();
+    }
   }
 }
 

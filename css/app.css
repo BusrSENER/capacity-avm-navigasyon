@@ -1057,14 +1057,15 @@ body.has-active-route #route-panel {
   }
 
   #floor-header-card > div:first-child {
-    flex-wrap: wrap !important;
-    gap: 5px !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
   }
 
   #floor-header-card > div:first-child > div:first-child {
-    flex: 1 1 100% !important;
-    width: 100% !important;
-    margin-bottom: 2px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin-bottom: 0 !important;
   }
 
   #current-floor-title {
@@ -1077,6 +1078,24 @@ body.has-active-route #route-panel {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+  }
+
+  /* Açılır / Kapanır (Collapsible) Üst Kart Durumu - Ekranı Tamamen Haritaya Açar */
+  #floor-header-card.is-collapsed {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    max-height: 48px !important;
+    overflow: hidden !important;
+  }
+
+  #floor-header-card.is-collapsed #amenity-highlight-banner,
+  #floor-header-card.is-collapsed #header-live-nav-banner,
+  #floor-header-card.is-collapsed #current-floor-sub {
+    display: none !important;
+  }
+
+  #floor-header-card.is-collapsed #floor-card-collapse-icon {
+    transform: rotate(180deg) !important;
   }
 
   /* Kat Seçici: Ekranın SAĞ KENARINA Dikey Sabitlenmiş Zarif Beyaz Kapsül (Cevahir Stili) */
@@ -1755,9 +1774,9 @@ body:has(#route-qr-modal:not(.hidden)) #toast-container {
     top: 0 !important;
     left: 0 !important;
     bottom: 0 !important;
-    width: 360px !important;
-    max-width: 42vw !important;
-    min-width: 300px !important;
+    width: 320px !important;
+    max-width: 38vw !important;
+    min-width: 270px !important;
     height: 100vh !important;
     height: 100dvh !important;
     height: calc(100dvh - env(safe-area-inset-top, 0px)) !important;
@@ -1777,12 +1796,22 @@ body:has(#route-qr-modal:not(.hidden)) #toast-container {
     display: none !important;
   }
 
-  #sidebar-panel:is(.is-expanded, .is-drawer-open) #btn-sidebar-close {
+  #sidebar-panel:is(.is-expanded, .is-drawer-open) #btn-sidebar-close,
+  #sidebar-panel:is(.is-expanded, .is-drawer-open) #btn-sidebar-close-sticky {
     display: flex !important;
   }
 
+  #btn-sidebar-close-sticky {
+    display: flex !important;
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 100 !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
   #sidebar-panel:is(.is-expanded, .is-drawer-open) #category-pills-row,
-  #sidebar-panel:is(.is-expanded, .is-drawer-open) #amenity-chips-row,
   #sidebar-panel:is(.is-expanded, .is-drawer-open) #sidebar-tabs-container,
   #sidebar-panel:is(.is-expanded, .is-drawer-open) #sidebar-store-grid,
   #sidebar-panel:is(.is-expanded, .is-drawer-open) #sidebar-poi-detail {
@@ -1793,9 +1822,14 @@ body:has(#route-qr-modal:not(.hidden)) #toast-container {
   /* 3.1. Yatay Modda Açılan Sanal Klavye ve Arama Ergonomisi */
   #sidebar-panel:has(#dual-search-container input:focus) #sidebar-header-row,
   #sidebar-panel:has(#dual-search-container input:focus) #category-pills-row,
-  #sidebar-panel:has(#dual-search-container input:focus) #amenity-chips-wrapper,
   #sidebar-panel:has(#dual-search-container input:focus) #sidebar-tabs-container {
     display: none !important;
+  }
+
+  #sidebar-panel:has(#dual-search-container input:focus) #btn-sidebar-close-sticky {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   #sidebar-panel #dual-search-container input {
@@ -2324,6 +2358,17 @@ html.dark .store-polygon.store-enroute {
   #floor-header-card #btn-header-voice-command,
   #floor-header-card #header-live-nav-banner {
     display: none !important;
+  }
+  #floor-header-card #amenity-highlight-banner {
+    margin-top: 2px !important;
+    padding-top: 2px !important;
+    gap: 4px !important;
+  }
+  #floor-header-card #amenity-banner-sub {
+    display: none !important;
+  }
+  #floor-header-card.is-collapsed {
+    max-height: 38px !important;
   }
 }
 
