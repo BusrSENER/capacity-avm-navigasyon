@@ -1,0 +1,42 @@
+PROPRIETARY & CONFIDENTIAL LICENSE
+TÜM HAKLARI SAKLIDIR (ALL RIGHTS RESERVED)
+
+Telif Hakkı (c) 2026 Büşra Şener (BusrSENER). Tüm Hakları Saklıdır.
+Copyright (c) 2026 Busra Sener. All Rights Reserved.
+
+Bu yazılım ve ilgili tüm belgeler, mimari vektörel kat planları (SVG),
+iç mekan Dijkstra navigasyon grafı ve koordinat matrisleri ("Yazılım"),
+Büşra Şener'in münhasır mülkiyetindedir ve 5846 sayılı Fikir ve Sanat Eserleri Kanunu
+ile uluslararası telif hakkı anlaşmalarıyla korunmaktadır.
+
+İŞBU YAZILIM AÇIK KAYNAK DEĞİLDİR (NOT OPEN SOURCE).
+
+Aşağıdaki koşullar ve kısıtlamalar Yazılım'ı inceleyen veya erişen her kişi ve kuruluş için bağlayıcıdır:
+
+1. KOPYALAMA VE ÇOĞALTMA YASAĞI:
+   Yazarın (Büşra Şener) önceden verilmiş açık ve ıslak/dijital imzalı yazılı izni olmaksızın;
+   işbu Yazılım'ın veya herhangi bir parçasının (kodlar, stil dosyaları, algoritmalar,
+   koordinat veritabanı, SVG çizimleri, ses telaffuz modelleri dahil olmak üzere) kopyalanması,
+   klonlanması, çoğaltılması, başka bir depoya aktarılması, fork edilmesi veya taklit edilmesi
+   KESİNLİKLE YASAKTIR.
+
+2. TİCARİ VE TİCARİ OLMAYAN KULLANIM YASAĞI:
+   Yazılım'ın tamamı veya bir kısmı ticari veya gayriticari hiçbir projede, kiosk uygulamasında,
+   harita/yönlendirme sisteminde, kurumsal web sitesinde veya türev çalışmada izin alınmadan
+   kullanılamaz, dağıtılamaz, kiralanamaz veya alt lisanslanamaz.
+
+3. TERSİNE MÜHENDİSLİK VE VERİ ÇEKME (SCRAPING) YASAĞI:
+   Yazılım'a ait graf düğümleri (nodes), kenar ağırlıkları (edges), mimari koordinatlar (cx, cy)
+   ve rota optimizasyon algoritmalarının tersine mühendislikle (reverse engineering) çözülmesi,
+   ayrıştırılması, otomatik botlar/örümceklerle kazınması veya yapay zeka modellerinin eğitimi
+   amacıyla izinsiz kullanılması yasaktır.
+
+4. HUKUKİ YAPTIRIMLAR:
+   Bu lisans şartlarının ihlali durumunda, telif hakkı sahibi tarafından maddi ve manevi tazminat
+   davaları açılacak, izinsiz barındırılan içeriklerin kaldırılması için DMCA ve ilgili yasal
+   mecralara derhal resmi bildirimde bulunulacaktır.
+
+İletişim ve Lisans İzin Talepleri:
+Geliştirici & Hak Sahibi: Büşra Şener
+GitHub: https://github.com/BusrSENER
+E-posta: busra.sener8194@gmail.com

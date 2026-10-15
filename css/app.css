@@ -153,6 +153,12 @@ html.dark .route__flow {
   white-space: nowrap !important;
 }
 
+@media (max-width: 640px) {
+  .chip-scroll-btn {
+    display: none !important;
+  }
+}
+
 /* 3. LÜKS ALIŞVERİŞ TORBASI (SHOPPING BAG) SİMÜLATÖRÜ VE ANİMASYONLARI */
 .cart-avatar {
   position: absolute;

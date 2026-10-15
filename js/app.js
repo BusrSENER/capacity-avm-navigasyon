@@ -696,7 +696,17 @@ function hideSplashScreen() {
     }
   }, remaining);
 }
-window.hideSplashScreen = hideSplashScreen;
+function dismissSplashScreenNow() {
+  const splash = document.getElementById('splash-screen');
+  if (splash && !splash.classList.contains('pointer-events-none')) {
+    splash.classList.add('splash-hidden', 'opacity-0', 'pointer-events-none');
+    setTimeout(() => {
+      if (splash && splash.parentNode) splash.remove();
+      window.splashFinishedAt = Date.now();
+    }, 200);
+  }
+}
+window.dismissSplashScreenNow = dismissSplashScreenNow;
 
 // Rota Koridor Tercihi ([🛣️ Geniş Yol] vs [✂️ Kısa Yol])
 function setPathPreference(pref) {
