@@ -101,21 +101,8 @@
 
     <!-- SOL PANEL / MOBİL BOTTOM SHEET: nrdsor & CAPACITY REHBER -->
     <aside id="sidebar-panel" class="bg-white dark:bg-slate-900 flex flex-col z-40 transition-all duration-300">
-      
-      <!-- Mobil Yatay Modda Her Zaman Görünür Sabit Kapatma Butonu (Sticky Close Button) -->
-      <button id="btn-sidebar-close-sticky" type="button" class="hidden absolute top-2 right-2 z-50 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-black shadow-md cursor-pointer active:scale-95 transition-all" title="Menüyü Kapat" aria-label="Menüyü Kapat">
-        ✕
-      </button>
 
-      <!-- Masaüstü Sol Panel Daraltma Butonu: Sağ Kenara Yapışık [<] (Daralt) Butonu -->
-      <button id="btn-collapse-sidebar" 
-              class="desktop-collapse-btn hidden md:flex absolute -right-3.5 top-6 z-50 w-7 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-md items-center justify-center text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer group active:scale-95" 
-              title="Paneli Daralt (<)" 
-              aria-label="Daralt">
-        <i data-lucide="chevron-left" class="w-4 h-4 transition-transform group-hover:-translate-x-0.5"></i>
-      </button>
-
-      <!-- Mobil Bottom Sheet Tutamacı & Hızlı Eylem Çubuğu (Kompakt 58px Bar) -->
+      <!-- Mobil Bottom Sheet Tutamacı & Hızlı Eylem Çubuğu (Kompakt 58px Bar - Sadece Mobil Dikeyde Görünür) -->
       <div id="bottom-sheet-handle-bar" class="w-full flex items-center justify-between h-[52px] pb-1 cursor-pointer md:hidden shrink-0 select-none">
         <div class="flex items-center gap-2.5 min-w-0 flex-1">
           <div class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-500 dark:bg-orange-500/20 flex items-center justify-center text-sm font-bold shrink-0">
@@ -130,11 +117,6 @@
           </div>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-          <!-- Hızlı Navigasyonu Başlat Butonu (Çekmeceyi Açmaya Gerek Bırakmaz) -->
-          <button id="btn-handle-start-nav" type="button" class="hidden px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs shadow-sm flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer" title="Navigasyonu Başlat veya Durdur">
-            <span id="handle-start-nav-icon">▶</span>
-            <span id="handle-start-nav-label">Başlat</span>
-          </button>
           <div class="w-8 h-1 rounded-full bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
           <button id="btn-sheet-toggle" class="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all active:scale-95" title="Genişlet / Kapat" aria-label="Genişlet / Kapat">
             <i data-lucide="chevron-up" id="sheet-toggle-icon" class="w-4 h-4 transition-transform duration-300"></i>
@@ -267,27 +249,6 @@
             <span class="truncate">3B Maket</span>
           </button>
         </div>
-
-        <!-- Rota Tercih Sekmeleri: [ Yürüyen Merdiven ] ve [ Engelsiz / Asansör ] (Sadece Rota Sırasında Gösterilir) -->
-        <div id="route-pref-tabs-row" class="hidden flex items-center gap-1.5 pt-0.5">
-          <button id="tab-pref-escalator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-red-600 bg-red-600 text-white shadow-xs cursor-pointer" data-mode="escalator" title="Yürüyen Merdiven ve Merdivenleri Tercih Et">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M4 18h4l8-8h4"/><path d="M14 6h6v6"/></svg>
-            <span>Yürüyen Merdiven</span>
-          </button>
-          <button id="tab-pref-elevator" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-mode="elevator" title="Hareket Kabiliyeti Kısıtlı Kişiler, Tekerlekli Sandalye ve Bebek Arabası İçin Uyarlanmış Engelsiz Güzergah">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 10 10 8 12 10"/><polyline points="12 14 14 16 16 14"/></svg>
-            <span>Engelsiz / Asansör</span>
-          </button>
-        </div>
-
-        <!-- Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Rota Bilgi Şeridi -->
-        <div id="pmr-accessible-banner" class="hidden mt-1 px-2.5 py-1.5 rounded-xl bg-sky-500/12 dark:bg-sky-500/20 border border-sky-500/35 text-[10.5px] font-bold text-sky-800 dark:text-sky-200 flex items-center justify-between gap-1.5 animate-in fade-in duration-150">
-          <div class="flex items-center gap-1.5 min-w-0">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="5" r="2"/><path d="M10 9h4l1 5h4"/><path d="M9 13a5 5 0 1 0 5 6"/></svg>
-            <span class="truncate">Engelsiz Güzergah: Geniş koridor + Panoramik asansör</span>
-          </div>
-          <span class="px-1.5 py-0.5 rounded bg-sky-600 text-white text-[9px] font-black uppercase shrink-0">PMR Aktif</span>
-        </div>
       </div>
 
       <!-- Hızlı Başlangıç, GPS Otomatik Konum & Etkinlik Takvimi Çipleri (Varsayılanda Sade Görünüm İçin Gizli) -->
@@ -416,11 +377,10 @@
       </div>
 
       <!-- Detaylı POI (Point of Interest) Kartı (Seçilen Mağaza / Servis) -->
-      <div id="sidebar-poi-detail" class="hidden flex-1 flex-col gap-3 overflow-y-auto pr-1 py-1 animate-in fade-in slide-in-from-right-3 duration-200">
+      <div id="sidebar-poi-detail" class="hidden flex-1 flex-col gap-3 pr-1 py-1 animate-in fade-in slide-in-from-right-3 duration-200">
         <!-- Geri Butonu -->
-        <button id="poi-back-btn" class="flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors self-start py-1">
-          <i data-lucide="arrow-left" class="w-4 h-4"></i>
-          <span>Tüm Mağazalar</span>
+        <button id="poi-back-btn" type="button" class="flex items-center gap-1.5 text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-xl transition-colors self-start cursor-pointer">
+          <span>← Tüm Mağazalar</span>
         </button>
 
         <!-- POI Kart Gövdesi -->
@@ -454,7 +414,7 @@
             </div>
           </div>
 
-          <!-- Aksiyon Butonları (Dinamik 2x2 Grid: Hedef Yap, Buradan Başla, 📞 Ara, 👁️ 3B Görünüm) -->
+          <!-- Aksiyon Butonları (Dinamik 2x2 Grid: Hedef Yap, Buradan Başla, 📞 Ara) -->
           <div id="poi-action-buttons" class="grid grid-cols-2 gap-2 pt-1">
             <button id="poi-route-btn" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-bold shadow-md shadow-red-600/30 hover:from-red-500 hover:to-red-600 flex items-center justify-center gap-1.5 transition-all cursor-pointer">
               <i data-lucide="navigation" class="w-4 h-4"></i>
@@ -485,59 +445,91 @@
       </div>
 
       <!-- Aktif Rota Kartı & Kontrolleri (Unified Route Panel) -->
-      <div id="sidebar-route-detail" class="hidden flex-1 flex-col gap-2.5 overflow-y-auto pr-1 py-1 animate-in fade-in slide-in-from-right-3 duration-200">
-        <!-- Üst Rota Özeti & Kapat (Rotayı Bitir) Butonu -->
-        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80">
-          <div class="min-w-0 flex-1">
-            <div id="route-summary-title" class="text-xs font-extrabold text-slate-900 dark:text-white truncate">Giriş ➔ Mağaza</div>
-            <div id="route-summary-meta" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">120m • ~2 dk</div>
-          </div>
-          <button id="btn-sidebar-route-finish" class="px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-95 flex items-center gap-1 cursor-pointer" title="Rotayı Bitir">
+      <div id="sidebar-route-detail" class="hidden flex-1 flex-col gap-2 pr-1 py-1 animate-in fade-in slide-in-from-right-3 duration-200">
+        <!-- Geri Butonu: Aramaya Dön -->
+        <div class="flex items-center justify-between gap-2">
+          <button id="btn-route-back-search" type="button" class="flex items-center gap-1.5 text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-xl transition-colors cursor-pointer">
+            <span>← Aramaya Dön</span>
+          </button>
+          <button id="btn-sidebar-route-finish" type="button" class="px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-95 flex items-center gap-1 cursor-pointer" title="Rotayı Bitir">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
             <span>Bitir</span>
           </button>
         </div>
 
-        <!-- Rota Navigasyon Kontrolleri (Cevahir & Situm Standardı: Büyük Başlat Butonu + Hız & QR) -->
+        <!-- Üst Rota Özeti -->
+        <div class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80">
+          <div class="min-w-0 flex-1">
+            <div id="route-summary-title" class="text-xs font-extrabold text-slate-900 dark:text-white truncate">Giriş ➔ Mağaza</div>
+            <div id="route-summary-meta" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">120m • ~2 dk</div>
+          </div>
+        </div>
+
+        <!-- Rota Navigasyon Kontrolleri (Tekil Başlat/Durdur Butonu + Hız + Ses + QR) -->
         <div class="flex flex-col gap-2">
-          <button id="btn-route-sim-play" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 active:scale-95 transition-all cursor-pointer">
+          <button id="btn-route-sim-play" type="button" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 active:scale-95 transition-all cursor-pointer">
             <i data-lucide="play" id="route-sim-icon" class="w-4 h-4 fill-current"></i>
             <span id="route-sim-text">Navigasyonu Başlat</span>
           </button>
-          <div class="grid grid-cols-2 gap-2">
-            <button id="btn-route-speed-toggle" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer">
-              <i data-lucide="gauge" class="w-3.5 h-3.5 text-cyan-500"></i>
-              <span id="route-speed-text">1x Hız</span>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button id="btn-route-speed-toggle" type="button" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-[11px] flex items-center justify-center gap-1 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer">
+              <i data-lucide="gauge" class="w-3.5 h-3.5 text-cyan-500 shrink-0"></i>
+              <span id="route-speed-text" class="truncate">1x Hız</span>
             </button>
-            <button id="btn-sidebar-route-qr" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-              <span>Cebine Al</span>
+            <button id="btn-voice-toggle" type="button" class="py-2 px-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sesli Yol Tarifini Aç / Kapat">
+              <span id="voice-toggle-icon" class="inline-flex items-center shrink-0"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>
+              <span id="voice-toggle-label" class="truncate">Sesli Açık</span>
+            </button>
+            <button id="btn-sidebar-route-qr" type="button" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-[11px] flex items-center justify-center gap-1 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500 shrink-0"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span class="truncate">Cebine Al</span>
             </button>
           </div>
         </div>
 
+        <!-- Rota Tercih Sekmeleri: [ Yürüyen Merdiven ] ve [ Engelsiz / Asansör ] -->
+        <div id="route-pref-tabs-row" class="hidden flex items-center gap-1.5">
+          <button id="tab-pref-escalator" type="button" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-red-600 bg-red-600 text-white shadow-xs cursor-pointer" data-mode="escalator" title="Yürüyen Merdiven ve Merdivenleri Tercih Et">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M4 18h4l8-8h4"/><path d="M14 6h6v6"/></svg>
+            <span>Yürüyen Merdiven</span>
+          </button>
+          <button id="tab-pref-elevator" type="button" class="flex-1 py-1 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition-all border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer" data-mode="elevator" title="Hareket Kabiliyeti Kısıtlı Kişiler, Tekerlekli Sandalye ve Bebek Arabası İçin Uyarlanmış Engelsiz Güzergah">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 10 10 8 12 10"/><polyline points="12 14 14 16 16 14"/></svg>
+            <span>Engelsiz / Asansör</span>
+          </button>
+        </div>
+
+        <!-- Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Rota Bilgi Şeridi -->
+        <div id="pmr-accessible-banner" class="hidden px-2.5 py-1.5 rounded-xl bg-sky-500/12 dark:bg-sky-500/20 border border-sky-500/35 text-[10.5px] font-bold text-sky-800 dark:text-sky-200 flex items-center justify-between gap-1.5">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="5" r="2"/><path d="M10 9h4l1 5h4"/><path d="M9 13a5 5 0 1 0 5 6"/></svg>
+            <span class="truncate">Engelsiz Güzergah: Geniş koridor + Panoramik asansör</span>
+          </div>
+          <span class="px-1.5 py-0.5 rounded bg-sky-600 text-white text-[9px] font-black uppercase shrink-0">PMR Aktif</span>
+        </div>
+
         <!-- Rota Tercihleri (Geniş Yol / Kısa Yol) -->
         <div class="flex items-center gap-2">
-          <button id="chip-path-wide-sidebar" class="flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-indigo-600 bg-indigo-600 text-white flex items-center justify-center gap-1 cursor-pointer active:scale-95 transition-all" data-path="wide">
+          <button id="chip-path-wide-sidebar" type="button" class="flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-indigo-600 bg-indigo-600 text-white flex items-center justify-center gap-1 cursor-pointer active:scale-95 transition-all" data-path="wide">
             <span>Geniş Yol</span>
           </button>
-          <button id="chip-path-short-sidebar" class="flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1 cursor-pointer active:scale-95 transition-all" data-path="short">
+          <button id="chip-path-short-sidebar" type="button" class="flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1 cursor-pointer active:scale-95 transition-all" data-path="short">
             <span>Kısa Yol</span>
           </button>
         </div>
 
         <!-- Adım Adım Tarif Listesi -->
         <div class="flex flex-col gap-1.5 pt-1">
-          <div class="flex items-center justify-between text-xs font-extrabold text-slate-700 dark:text-slate-300">
-            <span>Adım Adım Yol Tarifi</span>
-            <span id="sidebar-steps-count" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">3 Adım</span>
+          <div id="route-steps-header-row" class="flex items-center justify-between text-xs font-extrabold text-slate-700 dark:text-slate-300" style="display: flex; justify-content: space-between; align-items: center; position: static !important;">
+            <span id="route-steps-title" style="position: static !important;">Adım Adım Yol Tarifi</span>
+            <span id="sidebar-steps-count" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 shrink-0" style="position: static !important;">3 Adım</span>
           </div>
-          <div id="sidebar-route-steps-list" class="space-y-1.5 text-xs max-h-60 overflow-y-auto pr-1"></div>
+          <div id="sidebar-route-steps-list" class="space-y-1.5 text-xs pr-1"></div>
         </div>
       </div>
 
       <!-- Alt Bilgi: Capacity Müzikli Havuz Saatleri & Konum -->
-      <div class="pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-between shrink-0">
+      <div id="sidebar-footer-row" class="pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-between shrink-0">
         <span class="flex items-center gap-1 font-medium">
           <i data-lucide="waves" class="w-3 h-3 text-cyan-600 dark:text-cyan-400"></i>
           <span>Müzikli Havuz Gösterisi: Her Saat Başı</span>
@@ -546,15 +538,17 @@
       </div>
     </aside>
 
+    <!-- YATAY EKRAN & MASAÜSTÜ SOL PANEL KULAKÇIK BUTONU (#desktop-sidebar-toggle: Sağ Dış Kenar Dikey Ortada) -->
+    <button id="desktop-sidebar-toggle"
+            type="button"
+            class="hidden items-center justify-center bg-white dark:bg-slate-800 border border-l-0 border-slate-200/90 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-lg cursor-pointer transition-all"
+            title="Paneli Aç / Kapat"
+            aria-label="Paneli Aç / Kapat">
+      <svg id="desktop-sidebar-toggle-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+
     <!-- SAĞ HARİTA ALANI (VIEWPORT - 100% TAM EKRAN) -->
     <main id="main-map-area" class="absolute inset-0 w-full h-full overflow-hidden bg-[#eef2f6] dark:bg-[#0c1220] transition-colors duration-200">
-      
-      <!-- Mobil Yatay & Masaüstü Daraltılmış Menü Açma Butonu [☰ nrdsor] (Apple Haritalar Stili) -->
-      <button id="btn-sidebar-toggle" class="hidden absolute top-2 left-2 z-30 px-2.5 h-9 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-md flex items-center gap-1.5 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer" title="Menüyü Aç" aria-label="Menüyü Aç">
-        <i data-lucide="menu" class="w-4 h-4"></i>
-        <img src="public/assets/branding/nrdsor-icon-pin.png" alt="nrdsor" class="w-4 h-4 object-contain">
-        <span class="text-xs font-bold font-heading">nrdsor</span>
-      </button>
 
       <!-- Kiosk Modu Kurumsal nrdsor Rozeti (?kiosk=true) -->
       <div id="kiosk-brand-badge" class="hidden absolute top-4 right-16 md:right-20 z-30 px-3 py-1.5 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800 shadow-md items-center gap-2 select-none pointer-events-auto">
@@ -564,7 +558,7 @@
         <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Danışma Kiosk Modu</span>
       </div>
 
-      <!-- Sol Üst Yüzen Kat Başlığı & Canlı Yönlendirme Bannerı -->
+      <!-- Sol Üst Yüzen Kat Başlığı (Rota/Adım/Başlat-Durdur barı tamamen kaldırıldı; tekil kontrol sol panelde) -->
       <div id="floor-header-card" class="absolute top-4 left-4 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200/80 dark:border-slate-800 pointer-events-auto transition-all max-w-[calc(100vw-65px)]">
         <div class="flex items-center justify-between gap-1.5 sm:gap-2 min-w-0">
           <div class="min-w-0 flex-1 cursor-pointer" id="floor-header-title-area" title="Aç / Kapat">
@@ -602,53 +596,19 @@
             <button type="button" id="btn-amenity-clear-highlight" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center text-xs font-bold cursor-pointer" title="İşaretleri Kaldır">✕</button>
           </div>
         </div>
+      </div>
 
-        <!-- Canlı Turn-by-Turn Navigasyon Barı (Adım Adım Yönlendirme HUD & Yanından Geçilen Mağazalar & Sesli Altyazı) -->
-        <div id="header-live-nav-banner" class="hidden mt-2 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col gap-1.5 transition-all">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div id="live-nav-icon" class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex items-center justify-center text-base sm:text-lg font-bold shrink-0 shadow-xs select-none">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-            </div>
-            <div class="flex flex-col min-w-0 flex-1">
-              <div id="live-nav-text" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-snug">
-                Düz İlerleyin
-              </div>
-              <div id="live-nav-sub" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">
-                Rotayı takip edin
-              </div>
-            </div>
-            <!-- Doğrudan Harita Üzerinden Navigasyonu Başlat / Durdur Butonu (Çekmece Açmaya Gerek Bırakmaz) -->
-            <button id="btn-header-start-nav" class="shrink-0 h-8 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-sm text-xs font-black flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer" title="Navigasyonu Başlat veya Duraklat">
-              <span id="header-start-nav-icon">▶</span>
-              <span id="header-start-nav-label">Başlat</span>
-            </button>
-            <!-- Sesli Rehber (Web Speech API - tr-TR / en-US) Butonu -->
-            <button id="btn-voice-toggle" class="shrink-0 h-8 px-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer" title="Sesli Yol Tarifini Aç / Kapat veya Tekrar Dinle">
-              <span id="voice-toggle-icon" class="inline-flex items-center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>
-              <span id="voice-toggle-label" class="hidden sm:inline">Sesli Açık</span>
-            </button>
-            <!-- Adım Adım Tarif Listesi Butonu (Kullanıcı İsterse Açar) -->
-            <button id="btn-header-toggle-steps" type="button" class="shrink-0 h-8 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-[11px] font-extrabold flex items-center gap-1 transition-all active:scale-95 cursor-pointer" title="Adım Adım Listeyi Göster / Gizle">
-              <span class="inline-flex items-center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
-              <span class="hidden sm:inline">Adımlar</span>
-            </button>
-          </div>
-          <!-- Sesli Komut Canlı Altyazı Şeridi (Kalabalık yapmadan mevcut HUD içinde o an okunan cümleyi gösterir) -->
-          <div id="live-voice-subtitle-bar" class="hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/25 text-[10.5px] font-bold text-cyan-900 dark:text-cyan-200">
-            <span class="inline-block w-2 h-2 rounded-full bg-cyan-500 animate-ping shrink-0"></span>
-            <span id="live-voice-subtitle-text" class="leading-snug">Sesli Rehber: Rotanız hazır.</span>
-          </div>
-          <!-- Yanından Geçilen Mağazalar (Landmark Strip) -->
-          <div id="live-nav-landmarks" class="hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-[10.5px] font-bold text-amber-800 dark:text-amber-300 truncate">
-            <span id="live-nav-landmarks-text" class="truncate">Yanından geçilecek: W Collection, Madame Coco</span>
-          </div>
-        </div>
+      <!-- Ses Motoru İç Durum Tutucusu (Görsel olarak gizli, ses motoru DOM referanslarını korur) -->
+      <div id="header-live-nav-banner" class="hidden" style="display: none !important;" aria-hidden="true">
+        <div id="live-nav-icon"></div>
+        <div id="live-nav-text"></div>
+        <div id="live-nav-sub"></div>
+        <div id="live-voice-subtitle-bar" class="hidden"><span id="live-voice-subtitle-text"></span></div>
+        <div id="live-nav-landmarks" class="hidden"><span id="live-nav-landmarks-text"></span></div>
       </div>
 
       <!-- İnteraktif SVG Harita Konteyneri -->
       <div id="map-canvas-container" class="w-full h-full relative overflow-hidden select-none cursor-grab active:cursor-grabbing"></div>
-
-
 
       <!-- 2.5D / 3D Perspektif Kamera Açısı Butonu -->
       <button id="btn-3d-toggle" class="absolute right-28 top-4 z-30 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-[0_8px_25px_rgba(0,0,0,0.08)] border border-slate-200/80 dark:border-slate-800 flex items-center justify-center text-xs font-black text-slate-700 dark:text-slate-200 transition-all hover:scale-105 active:scale-95 cursor-pointer" title="2D / 3D Perspektif Harita Görünümü">
@@ -679,8 +639,8 @@
         <button class="floor-pill w-7.5 h-7.5 min-w-[30px] min-h-[30px] rounded-full flex items-center justify-center text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" data-floor="1" title="3. Bodrum Kat: Hizmet &amp; Otopark">B3</button>
       </div>
 
-      <!-- Yüzen [ Çantaya Dön ] Butonu (Serbest Kamera Modunda Çıkar) -->
-      <button id="btn-recenter-cart" class="fixed sm:absolute right-4 bottom-24 sm:bottom-28 z-40 hidden flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md border border-white/20 dark:border-slate-800 transition-all duration-300 hover:scale-105 active:scale-95">
+      <!-- Yüzen [ Çantaya Dön ] Butonu (#btn-recenter-bag: Kat seçicinin soluna right: 68px, bottom: 20px hizalı) -->
+      <button id="btn-recenter-bag" class="fixed right-[68px] bottom-[20px] z-40 hidden flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md border border-white/20 dark:border-slate-800 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer" style="right: 68px !important; bottom: 20px !important;">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
         <span>Çantaya Dön</span>
       </button>

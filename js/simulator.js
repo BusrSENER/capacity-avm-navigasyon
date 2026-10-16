@@ -136,7 +136,7 @@ class CartSimulator {
     }
     this.isPlaying = true;
     this.autoFollow = true;
-    const btn = document.getElementById('btn-recenter-cart');
+    const btn = document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart');
     if (btn) btn.classList.add('hidden');
     this.lastTime = performance.now();
     this.show();
@@ -176,7 +176,7 @@ class CartSimulator {
     this.currentIndex = 0;
     this.subProgress = 0;
     this.autoFollow = true;
-    const btn = document.getElementById('btn-recenter-cart');
+    const btn = document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart');
     if (btn) btn.classList.add('hidden');
     this.hide();
   }
@@ -188,7 +188,7 @@ class CartSimulator {
     this.currentIndex = 0;
     this.subProgress = 0;
     this.autoFollow = true;
-    const btn = document.getElementById('btn-recenter-cart');
+    const btn = document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart');
     if (btn) btn.classList.add('hidden');
     if (this.pathNodes && this.pathNodes.length > 0) {
       const startNode = this.pathNodes[0];
@@ -412,7 +412,7 @@ class CartSimulator {
     this.currentIndex = this.pathNodes.length - 1;
     this.subProgress = 0;
     this.autoFollow = true;
-    const btn = document.getElementById('btn-recenter-cart');
+    const btn = document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart');
     if (btn) btn.classList.add('hidden');
     if (this.onProgress) this.onProgress(100, this.pathNodes[this.currentIndex]);
     if (this.onComplete) this.onComplete();
@@ -420,7 +420,7 @@ class CartSimulator {
 
   recenter() {
     this.autoFollow = true;
-    const btn = document.getElementById('btn-recenter-cart');
+    const btn = document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart');
     if (btn) btn.classList.add('hidden');
     if (this.map && this.currentX !== undefined && this.currentY !== undefined) {
       const curScale = typeof this.map.scale === 'number' ? this.map.scale : 1;

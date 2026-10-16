@@ -86,15 +86,14 @@ function cycleSimSpeed() {
 }
 window.cycleSimSpeed = cycleSimSpeed;
 
-// Cihaz ve Ekran Durum Yardımcısı (Mobil Dikey & Mobil Yatay/Landscape)
+// Cihaz ve Ekran Durum Yardımcısı (Yalnızca Mobil Dikey / Portrait Bottom Sheet Modu)
 function isMobileOrLandscape() {
-  const isPortraitMobile = window.innerWidth < 768;
-  const isLandscapeMobile = window.innerWidth <= 950 && (window.innerHeight < 550 || (window.matchMedia && window.matchMedia('(orientation: landscape)').matches));
-  return isPortraitMobile || isLandscapeMobile;
+  const isLandscape = (window.innerWidth > window.innerHeight) || Boolean(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
+  return window.innerWidth < 768 && !isLandscape;
 }
 window.isMobileOrLandscape = isMobileOrLandscape;
 
-// Mobil Bottom Sheet (Alt Çekmece) ve Yatay Mod Çekmecesi Durum Yöneticisi
+// Mobil Bottom Sheet (Alt Çekmece) Durum Yöneticisi
 let isBottomSheetExpanded = false;
 
 function toggleBottomSheet() {
@@ -156,74 +155,76 @@ function collapseBottomSheet() {
 window.expandBottomSheet = expandBottomSheet;
 window.collapseBottomSheet = collapseBottomSheet;
 
-// Mobil Yatay (Landscape) Çekmece (Drawer) Yöneticisi (Apple Haritalar Stili)
+// Yatay (Landscape) & Masaüstü Split-Screen Panel Yöneticisi
 function openSidebarDrawer() {
-  const panel = document.getElementById('sidebar-panel');
-  const backdrop = document.getElementById('landscape-drawer-backdrop');
-  if (!panel) return;
-  panel.classList.add('is-expanded', 'is-drawer-open');
-  document.body.classList.add('has-sheet-expanded');
-  isBottomSheetExpanded = true;
-  if (backdrop) backdrop.classList.remove('hidden');
-  if (window.lucide) lucide.createIcons();
+  if (!isMobileOrLandscape()) {
+    expandDesktopSidebar();
+    return;
+  }
+  expandBottomSheet();
 }
 
 function closeSidebarDrawer() {
+  if (!isMobileOrLandscape()) {
+    collapseDesktopSidebar();
+    return;
+  }
   collapseBottomSheet();
 }
 
 function toggleSidebarDrawer() {
-  const panel = document.getElementById('sidebar-panel');
-  if (panel && (panel.classList.contains('is-drawer-open') || panel.classList.contains('is-expanded'))) {
-    closeSidebarDrawer();
-  } else {
-    openSidebarDrawer();
+  if (!isMobileOrLandscape()) {
+    toggleDesktopSidebar();
+    return;
   }
+  toggleBottomSheet();
 }
 
 window.openSidebarDrawer = openSidebarDrawer;
 window.closeSidebarDrawer = closeSidebarDrawer;
 window.toggleSidebarDrawer = toggleSidebarDrawer;
 
-// Masaüstü Sol Panel Daraltma / Tam Ekran Harita Yöneticisi (Desktop Collapse Sidebar)
-function collapseDesktopSidebar() {
-  if (window.innerWidth < 768) return;
-  document.body.classList.add('sidebar-collapsed');
-
-  // Haritayı hemen ve animasyon bitiminde (320ms) yeni genişliğe göre ortala
-  if (window.mallMap && typeof window.mallMap.resetView === 'function') {
+function recenterMapForSplitScreen() {
+  if (!window.mallMap) return;
+  if (window.mallMap.activeRoute && typeof window.mallMap.fitRoute === 'function') {
+    window.mallMap.fitRoute(window.mallMap.activeRoute, 260);
+  } else if (typeof window.mallMap.resetView === 'function') {
     window.mallMap.resetView();
   }
+}
+
+// Yatay (Landscape) ve Masaüstü Sol Panel Daraltma / Tam Ekran Harita Yöneticisi (translateX(-320px))
+function collapseDesktopSidebar() {
+  if (isMobileOrLandscape()) return;
+  document.body.classList.add('sidebar-collapsed');
+
+  recenterMapForSplitScreen();
   setTimeout(() => {
     window.dispatchEvent(new Event('resize'));
-    if (window.mallMap && typeof window.mallMap.resetView === 'function') {
-      window.mallMap.resetView();
-    }
+    recenterMapForSplitScreen();
   }, 320);
 
   if (window.lucide) lucide.createIcons();
 }
 
 function expandDesktopSidebar() {
-  if (window.innerWidth < 768) return;
+  if (isMobileOrLandscape()) return;
   document.body.classList.remove('sidebar-collapsed');
 
-  // Haritayı hemen ve animasyon bitiminde (320ms) yeni genişliğe göre ortala
-  if (window.mallMap && typeof window.mallMap.resetView === 'function') {
-    window.mallMap.resetView();
-  }
+  recenterMapForSplitScreen();
   setTimeout(() => {
     window.dispatchEvent(new Event('resize'));
-    if (window.mallMap && typeof window.mallMap.resetView === 'function') {
-      window.mallMap.resetView();
-    }
+    recenterMapForSplitScreen();
   }, 320);
 
   if (window.lucide) lucide.createIcons();
 }
 
 function toggleDesktopSidebar() {
-  if (window.innerWidth < 768) return;
+  if (isMobileOrLandscape()) {
+    toggleBottomSheet();
+    return;
+  }
   if (document.body.classList.contains('sidebar-collapsed')) {
     expandDesktopSidebar();
   } else {
@@ -236,7 +237,7 @@ window.expandDesktopSidebar = expandDesktopSidebar;
 window.toggleDesktopSidebar = toggleDesktopSidebar;
 
 window.addEventListener('resize', () => {
-  if (window.innerWidth < 950 && document.body.classList.contains('sidebar-collapsed')) {
+  if (isMobileOrLandscape() && document.body.classList.contains('sidebar-collapsed')) {
     document.body.classList.remove('sidebar-collapsed');
   }
 });
@@ -813,7 +814,7 @@ function initApp() {
     }
     if (cartSimulator && cartSimulator.isPlaying && cartSimulator.autoFollow) {
       cartSimulator.autoFollow = false;
-      const recenterBtn = document.getElementById('btn-recenter-cart');
+      const recenterBtn = document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart');
       if (recenterBtn) recenterBtn.classList.remove('hidden');
     }
   };
@@ -901,8 +902,8 @@ function initApp() {
     'HD İskender': 'He De İskender',
     'Tchibo': 'Çibo',
     'Blue Diamond': 'Mavi Elmas',
-    'D&R': 'De ve Er',
-    'D & R': 'De ve Er',
+    'D&R': 'Di end Ar',
+    'D & R': 'Di end Ar',
     'LCWaikiki': 'El Si Vaykiki',
     'LC Waikiki': 'El Si Vaykiki',
     'H&M': 'Haş ve Em',
@@ -1760,12 +1761,15 @@ function renderHudStepsList(result, targetStore) {
 
   if (!result || !result.instructions) return;
   const isEn = (currentLanguage === 'en' || window.currentLanguage === 'en');
+  const timeSuffix = isEn ? 'min' : 'dk';
+  const estMins = result.estimatedMinutes || Math.max(1, Math.ceil(result.totalDistance / 60));
+  const distBadgeText = `${Math.round(result.totalDistance)}m • ~${estMins}${timeSuffix}`;
   const countText = `${result.instructions.length} ${isEn ? 'Steps' : 'Adım'}`;
-  if (sidebarStepsCount) sidebarStepsCount.textContent = countText;
+  if (sidebarStepsCount) sidebarStepsCount.textContent = `${distBadgeText} • ${countText}`;
   if (hudStepsCount) hudStepsCount.textContent = countText;
 
   const pmrHeaderHtml = activeRouteMode === 'elevator'
-    ? `<div class="p-2 rounded-xl bg-sky-500/12 border border-sky-500/35 text-sky-800 dark:text-sky-200 text-[10.5px] font-bold flex items-center gap-1.5">
+    ? `<div class="p-2 rounded-xl bg-sky-500/12 border border-sky-500/35 text-sky-800 dark:text-sky-200 text-[10.5px] font-bold flex items-center gap-1.5" style="position: static !important;">
          ${getMonoIconSvg('info', 14)}
          <span>${isEn ? 'Accessible Route for Reduced Mobility (Wide Corridors + Elevators)' : 'Hareket Kabiliyeti Kısıtlı Kişiler İçin Uyarlanmış Engelsiz Güzergah (Geniş Koridor + Panoramik Asansör)'}</span>
        </div>`
@@ -1779,14 +1783,13 @@ function renderHudStepsList(result, targetStore) {
       ? navEngine._getFloorLabelEn(storeObj.floor)
       : (mallData?.floors[storeObj.floor]?.label || (storeObj.floor + '. Kat'));
     const openStatus = isEn ? 'Open (10:00-22:00)' : 'Açık (10:00-22:00)';
-    const timeSuffix = isEn ? 'min' : 'dk';
     storeServiceGuideHtml = `
-      <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-slate-800 dark:text-slate-100 text-[10.5px] flex items-center justify-between gap-2">
-        <div class="min-w-0">
+      <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-slate-800 dark:text-slate-100 text-[10.5px] flex items-center justify-between gap-2" style="display: flex; justify-content: space-between; align-items: center; position: static !important;">
+        <div class="min-w-0 flex-1">
           <div class="font-extrabold truncate flex items-center gap-1">${getMonoIconSvg('navigation', 13)}<span>${stripUiEmojis(storeObj.name)}</span></div>
           <div class="text-[9.5px] text-slate-500 dark:text-slate-400 truncate">${targetFloorName} • ${targetCat} • ${openStatus}</div>
         </div>
-        <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9.5px] font-black shrink-0">${Math.round(result.totalDistance)}m • ~${result.estimatedMinutes || Math.max(1, Math.ceil(result.totalDistance / 60))}${timeSuffix}</span>
+        <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9.5px] font-black shrink-0" style="position: static !important;">${distBadgeText}</span>
       </div>
     `;
   }
@@ -1801,8 +1804,8 @@ function renderHudStepsList(result, targetStore) {
     return `
       <div class="flex items-start gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
         <span class="w-5 h-5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-[9px] shrink-0 mt-0.5">${ins.step}</span>
-        <div>
-          <div class="font-bold text-slate-800 dark:text-slate-200">${ins.text}</div>
+        <div class="min-w-0 flex-1">
+          <div class="font-bold text-slate-800 dark:text-slate-200 break-words">${ins.text}</div>
           ${passingHtml}
           <div class="text-[10px] text-slate-400">${flLabel}</div>
         </div>
@@ -1936,7 +1939,7 @@ function setupUIEventListeners() {
       }
 
       // Mobilde kategori filtresine tıklandığında mağaza listesini göstermek için çekmeceyi genişlet
-      if (window.innerWidth <= 768 && !isBottomSheetExpanded) {
+      if (isMobileOrLandscape() && !isBottomSheetExpanded) {
         expandBottomSheet();
       }
     });
@@ -1986,8 +1989,6 @@ function setupUIEventListeners() {
     });
   });
 
-
-
   // Sesli Adım Adım Yönlendirme Butonu (#btn-voice-toggle)
   document.getElementById('btn-voice-toggle')?.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1996,8 +1997,9 @@ function setupUIEventListeners() {
     }
   });
 
-  // Simülasyonda Sepete Yeniden Odaklan (Recenter Cart)
-  document.getElementById('btn-recenter-cart')?.addEventListener('click', () => {
+  // Simülasyonda Çantaya / Sepete Yeniden Odaklan (#btn-recenter-bag / #btn-recenter-cart)
+  const recenterBtnEl = document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart');
+  recenterBtnEl?.addEventListener('click', () => {
     if (cartSimulator) {
       cartSimulator.recenter();
     }
@@ -2025,6 +2027,10 @@ function setupUIEventListeners() {
   });
 
   // Sidebar İçi Birleşik Rota Kontrolleri (#sidebar-route-detail)
+  document.getElementById('btn-route-back-search')?.addEventListener('click', () => {
+    clearCurrentRoute();
+  });
+
   document.getElementById('btn-sidebar-route-finish')?.addEventListener('click', () => {
     clearCurrentRoute();
   });
@@ -2390,7 +2396,12 @@ function setupUIEventListeners() {
   btnFloorCollapse?.addEventListener('click', toggleFloorCardCollapse);
   floorHeaderTitleArea?.addEventListener('click', toggleFloorCardCollapse);
 
-  // Masaüstü Sidebar Daraltma Butonları (Sağ kenar [<] butonu ve header butonu)
+  // Masaüstü & Yatay Ekran Split-Screen Kulakçık Butonu (#desktop-sidebar-toggle) ve Daraltma Butonları
+  document.getElementById('desktop-sidebar-toggle')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleDesktopSidebar();
+  });
+
   const desktopCollapseBtns = document.querySelectorAll('.desktop-collapse-btn');
   desktopCollapseBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -3493,12 +3504,9 @@ function showPoiPeekCard(store) {
   currentPeekStore = store;
   renderPoiDetail(store);
   if (isMobileOrLandscape()) {
-    const isLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 650;
-    if (isLandscape) {
-      collapseBottomSheet();
-    } else {
-      expandBottomSheet();
-    }
+    expandBottomSheet();
+  } else if (document.body.classList.contains('sidebar-collapsed')) {
+    expandDesktopSidebar();
   }
 }
 window.showPoiPeekCard = showPoiPeekCard;
@@ -3556,7 +3564,7 @@ function selectStore(store) {
   // Haritada seçili mağazayı ve kalıcı seçim vurgusunu (highlight / active stroke) ayarla
   mallMap.setSelectedStore(store);
 
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = isMobileOrLandscape();
   const gentleScale = isMobile ? 0.75 : 1.10;
   // Farklı kattaysa kata geç ve mağazaya odaklan
   if (mallMap.currentFloor !== store.floor) {
@@ -3570,18 +3578,16 @@ function selectStore(store) {
     mallMap.setSelectedStore(store);
   }
 
-  // POI Detay Panelini Güncelle (Masaüstü genişliğinde #sidebar-poi-detail görünür kılınır)
+  // POI Detay Panelini Güncelle (#sidebar-poi-detail görünür kılınır)
   renderPoiDetail(store);
 
   if (isMobileOrLandscape()) {
-    const isLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 650;
-    if (isLandscape) {
-      collapseBottomSheet();
-    } else {
-      expandBottomSheet();
-    }
+    expandBottomSheet();
+  } else if (document.body.classList.contains('sidebar-collapsed')) {
+    expandDesktopSidebar();
   }
 }
+window.selectStore = selectStore;
 
 function swapLocations() {
   if (window.isKioskMode) {
@@ -3825,6 +3831,8 @@ function renderPoiDetail(store) {
   storeGrid?.classList.add('hidden');
   tabsContainer?.classList.add('hidden');
   poiPanel.classList.remove('hidden');
+  const sidebarPanelEl = document.getElementById('sidebar-panel');
+  if (sidebarPanelEl) sidebarPanelEl.scrollTop = 0;
 
   const isServiceItem = isServiceOrAmenityItem(store);
 
@@ -4068,14 +4076,20 @@ function calculateAndDisplayRoute() {
   updateLiveNavHUD(0, 0);
 
   document.body.classList.add('has-active-route');
-  // Mobilde Alt Çekmeceyi Otomatik Küçült ve Hızlı Başlat Butonunu Göster
+  // Ekranda tek bir yerde (panel/çekmece içinde) Başlat/Durdur kontrolü olduğundan,
+  // rota çizildiğinde panel kapalıysa aç ve en üste kaydır
   if (isMobileOrLandscape()) {
-    collapseBottomSheet();
+    expandBottomSheet();
+  } else if (document.body.classList.contains('sidebar-collapsed')) {
+    expandDesktopSidebar();
   }
-  document.getElementById('btn-handle-start-nav')?.classList.remove('hidden');
+  const sidebarPanelRouteEl = document.getElementById('sidebar-panel');
+  if (sidebarPanelRouteEl) sidebarPanelRouteEl.scrollTop = 0;
+
+  document.getElementById('btn-handle-start-nav')?.classList.add('hidden');
   document.getElementById('smart-parking-greeting-card')?.classList.add('hidden');
   updateFloatingToggleVisibility();
-  closePoiPeekCard(); // Rota başlayınca peek card gizlenir, tekil 64px HUD kalır
+  closePoiPeekCard(); // Rota başlayınca peek card gizlenir
 
   cartSimulator.setRoute(result);
   cartSimulator.resetToStart();
@@ -4172,7 +4186,7 @@ function clearCurrentRoute() {
     document.getElementById('btn-clear-target')?.classList.add('hidden');
 
     document.querySelectorAll('.store-card').forEach(c => c.classList.remove('is-active'));
-    document.getElementById('btn-recenter-cart')?.classList.add('hidden');
+    (document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart'))?.classList.add('hidden');
     if (cartSimulator) cartSimulator.autoFollow = true;
 
     currentSimSpeed = 1.0;
@@ -4261,7 +4275,7 @@ function clearCurrentRoute() {
   document.querySelectorAll('.store-card').forEach(c => c.classList.remove('is-active'));
   renderSidebarStoreGrid();
 
-  document.getElementById('btn-recenter-cart')?.classList.add('hidden');
+  (document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart'))?.classList.add('hidden');
   if (cartSimulator) cartSimulator.autoFollow = true;
 
   currentSimSpeed = 1.0;
@@ -4276,7 +4290,7 @@ function clearCurrentRoute() {
 window.clearCurrentRoute = clearCurrentRoute;
 
 function resetSimControls() {
-  document.getElementById('btn-recenter-cart')?.classList.add('hidden');
+  (document.getElementById('btn-recenter-bag') || document.getElementById('btn-recenter-cart'))?.classList.add('hidden');
   if (cartSimulator) cartSimulator.autoFollow = true;
   const progressBar = document.getElementById('sim-progress-bar');
   if (progressBar) progressBar.style.width = '0%';

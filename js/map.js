@@ -905,9 +905,10 @@ class MallMap {
       this.flyToAnimId = null;
     }
     const rect = this.container.getBoundingClientRect();
-    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
-    const isMobile = window.innerWidth <= 768 && !isLandscape;
-    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const isLandscape = (window.innerWidth > window.innerHeight) || Boolean(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
+    const isSplitScreen = isLandscape || window.innerWidth >= 768;
+    const isMobile = window.innerWidth < 768 && !isLandscape;
+    const paddingLeft = (isSplitScreen && !document.body.classList.contains('sidebar-collapsed')) ? 320 : 0;
     const cx = paddingLeft + (rect.width - paddingLeft) / 2;
     const cy = (rect.height / 2) - offsetY;
 
@@ -967,9 +968,10 @@ class MallMap {
     const spanY = Math.max(160, maxY - minY);
 
     const rect = this.container.getBoundingClientRect();
-    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
-    const isMobile = window.innerWidth <= 768 && !isLandscape;
-    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const isLandscape = (window.innerWidth > window.innerHeight) || Boolean(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
+    const isSplitScreen = isLandscape || window.innerWidth >= 768;
+    const isMobile = window.innerWidth < 768 && !isLandscape;
+    const paddingLeft = (isSplitScreen && !document.body.classList.contains('sidebar-collapsed')) ? 320 : 0;
     const availWidth = (rect.width - paddingLeft) * (isLandscape ? 0.82 : (isMobile ? 0.78 : 0.80));
     const availHeight = rect.height * (isLandscape ? 0.72 : (isMobile ? 0.44 : 0.62));
 
@@ -993,11 +995,12 @@ class MallMap {
     const rect = this.container.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
 
-    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
-    const isMobile = window.innerWidth <= 768 && !isLandscape;
+    const isLandscape = (window.innerWidth > window.innerHeight) || Boolean(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
+    const isSplitScreen = isLandscape || window.innerWidth >= 768;
+    const isMobile = window.innerWidth < 768 && !isLandscape;
     const offsetY = isLandscape ? 0 : (isMobile ? Math.min(80, rect.height * 0.12) : 0);
 
-    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const paddingLeft = (isSplitScreen && !document.body.classList.contains('sidebar-collapsed')) ? 320 : 0;
     const cx = paddingLeft + (rect.width - paddingLeft) / 2;
 
     const targetPanX = cx - (x * this.scale);
@@ -1026,9 +1029,10 @@ class MallMap {
     const rect = this.container.getBoundingClientRect();
     const cW = rect.width || this.containerWidth;
     const cH = rect.height || this.containerHeight;
-    const isLandscape = (window.innerWidth > window.innerHeight && window.innerHeight < 650) || (window.innerWidth <= 950 && window.innerWidth > window.innerHeight);
-    const isMobile = window.innerWidth <= 768 && !isLandscape;
-    const paddingLeft = (window.innerWidth > 768 && !document.body.classList.contains('sidebar-collapsed')) ? 380 : 0;
+    const isLandscape = (window.innerWidth > window.innerHeight) || Boolean(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
+    const isSplitScreen = isLandscape || window.innerWidth >= 768;
+    const isMobile = window.innerWidth < 768 && !isLandscape;
+    const paddingLeft = (isSplitScreen && !document.body.classList.contains('sidebar-collapsed')) ? 320 : 0;
     const visibleWidth = Math.max(200, cW - paddingLeft);
 
     const scaleX = visibleWidth / this.vbWidth;
